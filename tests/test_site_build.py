@@ -141,9 +141,26 @@ def test_no_external_requests_in_the_markup(built):
     assert third_party == [], third_party
 
 
-def test_build_warns_about_unfilled_placeholders(built):
-    """実在しない住所・電話番号がそのまま公開されるのを防ぐ。"""
-    result, _ = built
+def test_build_warns_about_unfilled_placeholders(tmp_path):
+    """実在しない住所・電話番号がそのまま公開されるのを防ぐ。
+
+    実際の site/ は記入が進むと未記入項目が減るため、コピーに印を入れて試す。
+    """
+    import shutil
+
+    from seo_meo.site.content import PLACEHOLDER
+
+    site = tmp_path / "site"
+    shutil.copytree(SITE_ROOT, site)
+    company = site / "company.toml"
+    company.write_text(
+        company.read_text(encoding="utf-8").replace(
+            'phone = "', f'phone = "{PLACEHOLDER}', 1
+        ),
+        encoding="utf-8",
+    )
+
+    result = site_build.build(site, tmp_path / "d", base_url=BASE_URL)
     assert any("company.toml の phone" in w for w in result.warnings)
 
 

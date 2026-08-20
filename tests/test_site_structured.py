@@ -165,3 +165,36 @@ def test_graph_appends_extra_nodes_and_skips_none():
         "WebSite",
         "Service",
     ]
+
+
+def test_placeholder_values_never_reach_structured_data():
+    """未記入のまま公開されても、誤った情報を検索エンジンに渡さない。"""
+    from seo_meo.site.content import PLACEHOLDER
+
+    company = Company(
+        **{
+            **vars(COMPANY),
+            "representative": f"{PLACEHOLDER}代表者名",
+            "areas": ["秋田市", f"{PLACEHOLDER}〇〇市"],
+        }
+    )
+    org = structured.organization(SETTINGS, company)
+
+    assert "founder" not in org
+    assert [area["name"] for area in org["areaServed"]] == ["秋田市"]
+    assert PLACEHOLDER not in json.dumps(org, ensure_ascii=False)
+
+
+def test_founding_date_is_machine_readable():
+    """schema.org は ISO 形式の日付を期待する。表示用の「2021年」とは分ける。"""
+    company = Company(**{**vars(COMPANY), "founded_on": "2021-04-01"})
+    assert structured.organization(SETTINGS, company)["foundingDate"] == "2021-04-01"
+
+
+def test_instagram_is_included_in_same_as():
+    company = Company(
+        **{**vars(COMPANY), "instagram_url": "https://www.instagram.com/example/"}
+    )
+    assert structured.organization(SETTINGS, company)["sameAs"] == [
+        "https://www.instagram.com/example/"
+    ]

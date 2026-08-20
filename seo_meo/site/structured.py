@@ -13,7 +13,15 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from .content import Company, Content, Post, Service, SiteSettings, Work
+from .content import (
+    Company,
+    Content,
+    Post,
+    Service,
+    SiteSettings,
+    Work,
+    is_placeholder,
+)
 
 # 検索結果でこの事業者を一意に指すための識別子。
 # 複数ページの JSON-LD が同じ事業者を指していることを示すために使う。
@@ -25,12 +33,32 @@ def _absolute(settings: SiteSettings, path: str) -> str:
 
 
 def _clean(data: dict) -> dict:
-    """空の値を落とす。未記入の項目を空文字のまま出さないため。"""
-    result = {}
+    """空の値と未記入の値を落とす。
+
+    【要記入】のまま構造化データに出ると、検索エンジンに誤った情報を渡す
+    ことになる。ビルドは警告を出すだけで止めないので、ここでも防いでおく。
+    """
+    result: dict = {}
     for key, value in data.items():
-        if value in ("", None, [], {}):
+        if value in ("", None, [], {}) or is_placeholder(value):
             continue
-        result[key] = _clean(value) if isinstance(value, dict) else value
+        if isinstance(value, dict):
+            cleaned = _clean(value)
+            # 中身が消えて "@type" だけ残った殻は落とす。
+            # ("@id" だけのものは他ノードへの参照なので残す)
+            if cleaned and set(cleaned) != {"@type"}:
+                result[key] = cleaned
+        elif isinstance(value, list):
+            kept = [
+                item
+                for item in value
+                if not is_placeholder(item)
+                and not (isinstance(item, dict) and is_placeholder(item.get("name")))
+            ]
+            if kept:
+                result[key] = kept
+        else:
+            result[key] = value
     return result
 
 
@@ -66,8 +94,11 @@ def organization(settings: SiteSettings, company: Company) -> dict:
                 if company.representative
                 else None
             ),
-            "foundingDate": company.established,
-            "sameAs": [url for url in (company.gbp_url,) if url],
+            "foundingDate": company.founded_on,
+            # 同一の事業者だと検索エンジンに伝えるための外部プロフィール
+            "sameAs": [
+                url for url in (company.gbp_url, company.instagram_url) if url
+            ],
         }
     )
 

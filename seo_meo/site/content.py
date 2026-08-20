@@ -54,12 +54,15 @@ class Company:
     license_number: str
     business_hours: str
     holidays: str
+    # 表示用の創業年 (established) とは別に、構造化データ用の ISO 形式の日付
+    founded_on: str = ""
     areas: list[str] = field(default_factory=list)
     # 表示用の営業時間は自由文だが、構造化データには機械可読な形が要る。
     # 例: ["Mo-Fr 08:00-18:00", "Sa 08:00-17:00"]
     opening_hours_spec: list[str] = field(default_factory=list)
     price_range: str = ""
     gbp_url: str = ""
+    instagram_url: str = ""
     map_embed_url: str = ""
 
     @property
@@ -237,6 +240,7 @@ def load_company(root: Path) -> Company:
         email=company.get("email", ""),
         representative=company.get("representative", ""),
         established=company.get("established", ""),
+        founded_on=company.get("founded_on", ""),
         license_number=company.get("license_number", ""),
         business_hours=company.get("business_hours", ""),
         holidays=company.get("holidays", ""),
@@ -244,6 +248,7 @@ def load_company(root: Path) -> Company:
         opening_hours_spec=list(company.get("opening_hours_spec", [])),
         price_range=company.get("price_range", ""),
         gbp_url=company.get("gbp_url", ""),
+        instagram_url=company.get("instagram_url", ""),
         map_embed_url=company.get("map_embed_url", ""),
     )
 
