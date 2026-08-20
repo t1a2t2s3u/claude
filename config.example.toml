@@ -1,0 +1,29 @@
+# config.example.toml をコピーして config.toml を作り、値を埋めてください。
+# config.toml は .gitignore 済み (拠点IDや認証情報を含むため)。
+
+[business]
+name = "辰弥塗装工業"
+
+# Google ビジネスプロフィールの拠点ID。
+# "locations/" 接頭辞は付けても付けなくても構いません。
+# 調べ方は README の「拠点IDの調べ方」を参照。
+location_id = "PUT-YOUR-LOCATION-ID-HERE"
+
+[storage]
+database = "data/seo_meo.sqlite3"
+
+[auth]
+# Google Cloud コンソールで作成した OAuth クライアント (デスクトップ) の JSON。
+client_secret_file = "secrets/client_secret.json"
+# auth-login が書き出すトークン。これがあれば以降は無人で動きます。
+token_file = "secrets/token.json"
+
+[collection]
+# 毎回さかのぼって取り直す日数。Performance API は数日かけて値が確定するため、
+# 「前回の続きから」ではなく窓ごと取り直して上書きします。
+lookback_days = 30
+# 確定済みとみなす最終日を、今日から何日前にするか。
+data_lag_days = 5
+
+[report]
+output_dir = "reports"

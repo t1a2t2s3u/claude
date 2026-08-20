@@ -2,51 +2,88 @@
 
 Guidance for Claude Code and other AI assistants working in this repository.
 
-## Current repository state
-
-**This repository is empty.** As of the creation of this file it contains no
-source code, no build configuration, no tests, and no commit history — this
-file is the initial commit.
-
-Everything below is therefore a scaffold. Do not treat any section as
-describing real, existing behaviour until it has been filled in against
-actual code. If you are the first assistant to work here after code has been
-added, replace the placeholder sections with what you find in the tree, and
-delete this notice.
-
 ## Project overview
 
-_To be filled in._ Record here: what the project does, who it is for, and the
-one or two design decisions a newcomer would otherwise get wrong.
+辰弥塗装工業（塗装工事業）の SEO/MEO 施策を自動化するためのツール群。
+
+現時点で実装されているのは **MEO のデータ収集・レポート基盤** のみ。Google
+ビジネスプロフィール (GBP) の日次指標と月次検索キーワードを Business Profile
+Performance API から取得し、SQLite に蓄積して、週次レポートを Markdown で
+生成する。
+
+前提として押さえておくべきこと:
+
+- **自社サイトも Search Console も、まだ無い。** 施策の対象は GBP のみ。
+  SEO 側（構造化データ、施工事例ページ等）はサイト構築後の話。
+- **Business Profile API は Google の利用申請・承認が必要。** 承認前は API を
+  有効化すらできない。そのため承認待ちでも動作確認できるよう、実データと
+  同じ形のサンプルを生成する経路 (`--source sample`) を用意してある。
+- **口コミの自動投稿や量産ページ生成は実装しない。** Google のポリシー違反、
+  またはスパム判定の対象。README の「やらないこと」を参照。
 
 ## Repository structure
 
-_To be filled in._ Once directories exist, describe the top-level layout and
-what belongs in each part — enough that an assistant can guess correctly
-where a new file should go.
+```
+seo_meo/
+  cli.py               argparse によるコマンド定義。運用の入口はすべてここ
+  config.py            config.toml の読み込み。相対パスは設定ファイル基準で解決
+  auth.py              Google OAuth。google-auth 系の import は関数内（遅延）
+  metrics.py           扱う DailyMetric の定義と日本語ラベル
+  storage.py           SQLite スキーマ・upsert・集計クエリ
+  sources/
+    base.py            共通のエラー型と、指数バックオフ付き GET
+    gbp_performance.py 日次指標・月次キーワードの取得
+    gbp_locations.py   拠点ID の一覧取得（初期設定用）
+    fixture.py         承認待ち用のサンプルデータ生成（決定的）
+  report/
+    weekly.py          週次の集計と Markdown 出力
+tests/                 pytest。外部 API は叩かない
+```
+
+新しい取得元を足すときは `sources/` にモジュールを作り、`storage.DailyValue`
+を返す関数を用意して `cli.cmd_fetch` から呼ぶ。storage と report は指標名を
+知っていれば動くので、変更は `metrics.py` への追記で済むことが多い。
 
 ## Development workflow
 
 ### Setup
 
-_To be filled in._ The exact commands to get from a fresh clone to a working
-environment.
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+cp config.example.toml config.toml   # location_id を記入する
+```
 
 ### Build, test, lint
 
-_To be filled in._ Record the canonical commands, not approximations — an
-assistant will run these verbatim. Note which are fast enough to run on every
-change and which are slow.
+```bash
+python3 -m pytest        # 全テスト。1秒未満なので毎回の変更ごとに回してよい
+```
+
+リンタ・フォーマッタは未導入。
 
 ### Running the application
 
-_To be filled in._
+API 承認前でも通しで動かせる:
+
+```bash
+seo-meo fetch --source sample --end 2026-08-15
+seo-meo report --end 2026-08-15 --out -
+```
 
 ## Conventions
 
-_To be filled in._ Language and formatting rules, naming patterns, error
-handling style, testing approach, and anything that is enforced in review but
-not by tooling.
+- **コメントと出力は日本語。** 運用するのは開発者ではないため、CLI の出力・
+  エラーメッセージ・レポートはすべて日本語で書く。コード中のコメントは
+  「なぜそうしたか」を書く（何をしているかはコードを読めば分かる）。
+- **識別子は英語。** 変数名・関数名・テーブル名は英語のまま。
+- **API クライアントはパース関数を分ける。** `fetch_*` が HTTP を担当し、
+  `parse_*` が純粋関数として応答を変換する。テストは `parse_*` に対して、
+  実際の応答と同じ構造の dict を直接渡す形で書く。ネットワークはモックしない。
+- **書き込みはすべて upsert。** 同じ範囲を何度取り直しても行が重複しない
+  ことを前提に設計している。テストで必ず担保すること。
+- **欠損と 0 を混同しない。** API が値を省略した日は 0 として明示的に書き込む。
+  「未取得」と「0件」が区別できなくなる変更を入れない。
 
 ## Git workflow
 
@@ -55,10 +92,11 @@ not by tooling.
 - Push with `git push -u origin <branch-name>`.
 - Never force-push or rewrite history on a branch owned by someone else.
 - Open a pull request only when explicitly asked.
+- **`config.toml` と `secrets/` は絶対にコミットしない。** `.gitignore` 済み。
 
 ## Notes for assistants
 
 - Prefer reading the code over trusting this file where the two disagree, and
   fix this file when you find a discrepancy.
-- Keep this document short and specific. Sections that restate general good
-  practice should be deleted rather than expanded.
+- Google の API 仕様（承認フロー、エンドポイント、enum 値）は変わる。実装と
+  食い違ったら公式ドキュメントを確認すること。
