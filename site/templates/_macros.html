@@ -1,9 +1,9 @@
 {% macro work_card(work) %}
 <article class="work-card">
   <a href="{{ work.url }}">
-    {% if work.after_image %}
+    {% if work.cover_image %}
     <div class="work-thumb">
-      <img src="/assets/{{ work.after_image }}" alt="{{ work.title }} の施工後" loading="lazy" width="640" height="480">
+      <img src="/assets/{{ work.cover_image }}" alt="{{ work.title }} の施工後" loading="lazy" width="640" height="480">
     </div>
     {% endif %}
     <div class="work-body">

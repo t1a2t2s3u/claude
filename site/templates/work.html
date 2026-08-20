@@ -10,18 +10,25 @@
     <time class="entry-date" datetime="{{ work.date.isoformat() }}">{{ work.date.strftime('%Y年%m月') }} 施工</time>
   </header>
 
-  {% if work.before_image and work.after_image %}
-  <div class="ba-pair">
-    <figure>
-      <img src="/assets/{{ work.before_image }}" alt="{{ work.title }} の施工前" width="800" height="600">
-      <figcaption>施工前</figcaption>
-    </figure>
-    <figure>
-      <img src="/assets/{{ work.after_image }}" alt="{{ work.title }} の施工後" width="800" height="600">
-      <figcaption>施工後</figcaption>
-    </figure>
+  {% for pair in work.pairs %}
+  <div class="ba-block">
+    {% if pair.label %}<h2 class="ba-label">{{ pair.label }}</h2>{% endif %}
+    <div class="ba-pair">
+      {% if pair.before %}
+      <figure>
+        <img src="/assets/{{ pair.before }}" alt="{{ work.title }}{% if pair.label %} {{ pair.label }}{% endif %} の施工前" loading="lazy" width="800" height="600">
+        <figcaption>施工前</figcaption>
+      </figure>
+      {% endif %}
+      {% if pair.after %}
+      <figure>
+        <img src="/assets/{{ pair.after }}" alt="{{ work.title }}{% if pair.label %} {{ pair.label }}{% endif %} の施工後" loading="lazy" width="800" height="600">
+        <figcaption>施工後</figcaption>
+      </figure>
+      {% endif %}
+    </div>
   </div>
-  {% endif %}
+  {% endfor %}
 
   <dl class="spec spec-grid">
     {% if work.building %}<div><dt>建物</dt><dd>{{ work.building }}</dd></div>{% endif %}

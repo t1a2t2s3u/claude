@@ -209,17 +209,26 @@ seo-meo site-build --strict   # 未記入があれば一覧を出して失敗す
 
 ```markdown
 +++
-title = "〇〇市 K様邸 外壁塗装"
+title = "秋田市〇〇 K様邸 外壁・屋根塗装"
 date = 2026-08-15
-area = "〇〇市"
-service = "外壁塗装"
+area = "秋田市〇〇"
+service = "外壁塗装・屋根塗装"
 building = "戸建て 2階建て・築15年"
 duration = "12日間"
 paint = "メーカー名／製品名"
-price_range = "98万円"
-before_image = "works/k-before.jpg"
-after_image = "works/k-after.jpg"
-images = ["works/k-1.jpg"]
+price_range = "98万円（税込）"
+
+[[pair]]
+label = "屋根"
+before = "works/k-yane-before.jpg"
+after = "works/k-yane-after.jpg"
+
+[[pair]]
+label = "外壁"
+before = "works/k-gaiheki-before.jpg"
+after = "works/k-gaiheki-after.jpg"
+
+images = ["works/k-sagyou.jpg"]
 +++
 
 ## ご相談の内容
@@ -230,6 +239,14 @@ images = ["works/k-1.jpg"]
 
 （実際の工程）
 ```
+
+**建物全体の遠景写真は必須ではありません。** 屋根と外壁でそれぞれ施工前後を
+1組ずつ、のほうが仕事の中身が伝わります。`[[pair]]` は何組でも置けます
+(付帯部、コーキングなど)。組が1つだけなら `before_image` / `after_image` と
+書く短い形も使えます。
+
+前後の写真は**同じ位置・同じ角度**で撮ってください。画角がずれていると、
+何がどう変わったのか読み手に伝わりません。
 
 ファイル名がそのまま URL になります (`/works/2026-08-〇〇/`)。
 `site/works/2026-04-example.md` が書き方の見本です。**実際の工事に書き換えるか、

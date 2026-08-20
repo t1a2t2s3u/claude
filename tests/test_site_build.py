@@ -55,7 +55,7 @@ def test_urls_end_in_a_slash_not_an_extension(built):
 
 def test_assets_are_copied(built):
     _, out = built
-    assert (out / "assets" / "works" / "example-before.svg").exists()
+    assert (out / "assets" / "works" / "example-yane-before.svg").exists()
     assert (out / "assets" / "favicon.svg").exists()
 
 

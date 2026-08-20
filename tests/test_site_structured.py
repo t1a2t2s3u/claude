@@ -3,6 +3,7 @@ from datetime import date
 
 from seo_meo.site import structured
 from seo_meo.site.content import (
+    BeforeAfter,
     Company,
     Content,
     Package,
@@ -113,14 +114,18 @@ def test_work_article_collects_images_as_absolute_urls():
         service="外壁塗装",
         summary="概要",
         body_html="<p>本文</p>",
-        before_image="works/a-before.jpg",
-        after_image="works/a-after.jpg",
+        pairs=[
+            BeforeAfter(label="屋根", before="works/a-yane-before.jpg", after="works/a-yane-after.jpg"),
+            BeforeAfter(label="外壁", before="works/a-kabe-before.jpg", after="works/a-kabe-after.jpg"),
+        ],
         images=["works/a-1.jpg"],
     )
     node = structured.work_article(SETTINGS, work)
     assert node["image"] == [
-        "https://example.jp/assets/works/a-before.jpg",
-        "https://example.jp/assets/works/a-after.jpg",
+        "https://example.jp/assets/works/a-yane-before.jpg",
+        "https://example.jp/assets/works/a-yane-after.jpg",
+        "https://example.jp/assets/works/a-kabe-before.jpg",
+        "https://example.jp/assets/works/a-kabe-after.jpg",
         "https://example.jp/assets/works/a-1.jpg",
     ]
     assert node["mainEntityOfPage"] == "https://example.jp/works/a/"

@@ -152,6 +152,19 @@ class Testimonial:
 
 
 @dataclass
+class BeforeAfter:
+    """同じ場所を撮った施工前後の組。
+
+    建物全体の遠景より、屋根・外壁それぞれの寄りを前後で並べたほうが
+    仕事の中身が伝わる。組は何組でも置ける。
+    """
+
+    label: str
+    before: str
+    after: str
+
+
+@dataclass
 class Work:
     """施工事例。塗装業では最も問い合わせに繋がるコンテンツ。"""
 
@@ -166,13 +179,22 @@ class Work:
     duration: str = ""
     paint: str = ""
     price_range: str = ""
-    before_image: str = ""
-    after_image: str = ""
+    pairs: list[BeforeAfter] = field(default_factory=list)
     images: list[str] = field(default_factory=list)
 
     @property
     def url(self) -> str:
         return f"/works/{self.slug}/"
+
+    @property
+    def cover_image(self) -> str:
+        """一覧のサムネイルに使う画像。最初の組の施工後を使う。"""
+        return self.pairs[0].after if self.pairs else (self.images[0] if self.images else "")
+
+    @property
+    def all_images(self) -> list[str]:
+        paths = [path for pair in self.pairs for path in (pair.before, pair.after)]
+        return [path for path in paths + self.images if path]
 
 
 @dataclass
@@ -392,8 +414,7 @@ def load_works(root: Path) -> list[Work]:
                 duration=front.get("duration", ""),
                 paint=front.get("paint", ""),
                 price_range=front.get("price_range", ""),
-                before_image=front.get("before_image", ""),
-                after_image=front.get("after_image", ""),
+                pairs=_parse_pairs(front),
                 images=list(front.get("images", [])),
             )
         )
@@ -435,6 +456,30 @@ def load_pages(root: Path) -> list[StaticPage]:
             )
         )
     return pages
+
+
+def _parse_pairs(front: dict) -> list[BeforeAfter]:
+    """フロントマターから施工前後の組を読む。
+
+    組が1つだけのときは before_image / after_image という短い書き方も
+    受け付ける (毎回 [[pair]] を書かせるほどではないため)。
+    """
+    pairs = [
+        BeforeAfter(
+            label=entry.get("label", ""),
+            before=entry.get("before", ""),
+            after=entry.get("after", ""),
+        )
+        for entry in front.get("pair", [])
+        if entry.get("before") or entry.get("after")
+    ]
+    if pairs:
+        return pairs
+
+    before, after = front.get("before_image", ""), front.get("after_image", "")
+    if before or after:
+        return [BeforeAfter(label="", before=before, after=after)]
+    return []
 
 
 def _as_date(value: Any, path: Path) -> date:

@@ -200,3 +200,43 @@ def test_placeholder_testimonials_are_reported(tmp_path):
         encoding="utf-8",
     )
     assert any("testimonials.toml" in item for item in c.find_placeholders(c.load(root)))
+
+
+def test_multiple_before_after_pairs(tmp_path):
+    """屋根と外壁で1組ずつ、のような複数組を扱えること。"""
+    root = write_site(tmp_path)
+    (root / "works" / "2026-07-c.md").write_text(
+        '+++\ntitle = "C様邸"\ndate = 2026-07-01\narea = "秋田市"\n'
+        'service = "外壁塗装"\n'
+        '[[pair]]\nlabel = "屋根"\nbefore = "works/c-y-b.jpg"\nafter = "works/c-y-a.jpg"\n'
+        '[[pair]]\nlabel = "外壁"\nbefore = "works/c-g-b.jpg"\nafter = "works/c-g-a.jpg"\n'
+        "+++\n\n施工しました。\n",
+        encoding="utf-8",
+    )
+    work = next(w for w in c.load(root).works if w.slug == "2026-07-c")
+
+    assert [pair.label for pair in work.pairs] == ["屋根", "外壁"]
+    assert work.cover_image == "works/c-y-a.jpg"
+    assert len(work.all_images) == 4
+
+
+def test_single_pair_short_form_still_works(tmp_path):
+    """組が1つだけなら before_image / after_image の短い書き方も使える。"""
+    root = write_site(tmp_path)
+    (root / "works" / "2026-07-d.md").write_text(
+        '+++\ntitle = "D様邸"\ndate = 2026-07-02\narea = "秋田市"\n'
+        'service = "外壁塗装"\nbefore_image = "works/d-b.jpg"\nafter_image = "works/d-a.jpg"\n'
+        "+++\n\n施工しました。\n",
+        encoding="utf-8",
+    )
+    work = next(w for w in c.load(root).works if w.slug == "2026-07-d")
+
+    assert len(work.pairs) == 1
+    assert work.pairs[0].label == ""
+    assert work.cover_image == "works/d-a.jpg"
+
+
+def test_work_without_photos_has_no_cover(tmp_path):
+    work = c.load(write_site(tmp_path)).works[0]
+    assert work.pairs == []
+    assert work.cover_image == ""

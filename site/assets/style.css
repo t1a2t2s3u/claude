@@ -205,7 +205,12 @@ a { color: var(--navy-light); }
 .work-summary { margin: 0 0 .6rem; font-size: .85rem; color: var(--ink-muted); }
 .work-price { margin: 0; font-size: .82rem; font-weight: 600; color: var(--accent); }
 
-.ba-pair { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; margin: 1.5rem 0; }
+.ba-block { margin: 1.75rem 0; }
+.ba-label {
+  margin: 0 0 .6rem; font-size: 1.05rem; color: var(--navy);
+  padding-left: .6rem; border-left: 3px solid var(--accent); line-height: 1.4;
+}
+.ba-pair { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; }
 .ba-pair figure { margin: 0; }
 .ba-pair img { border-radius: var(--radius); border: 1px solid var(--line); width: 100%; }
 .ba-pair figcaption {

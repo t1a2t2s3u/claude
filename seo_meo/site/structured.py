@@ -133,9 +133,7 @@ def service_offer(settings: SiteSettings, company: Company, service: Service) ->
 def work_article(settings: SiteSettings, work: Work) -> dict:
     """施工事例。工事の記録なので Article として出す。"""
     images = [
-        _absolute(settings, f"/assets/{path}")
-        for path in (work.before_image, work.after_image, *work.images)
-        if path
+        _absolute(settings, f"/assets/{path}") for path in work.all_images
     ]
     return _clean(
         {
