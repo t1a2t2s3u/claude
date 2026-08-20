@@ -451,3 +451,23 @@ table.price-table thead th {
 @media (min-width: 900px) {
   .price-grid { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ---------- お客様の声 ---------- */
+
+.voice-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+.voice {
+  margin: 0; background: var(--bg); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 1.25rem;
+  border-top: 3px solid var(--navy-light);
+}
+.voice-headline {
+  margin: 0 0 .6rem; font-weight: 700; color: var(--navy); line-height: 1.55;
+}
+.voice-body { margin: 0; font-size: .9rem; color: var(--ink); }
+.voice-from {
+  margin-top: .75rem; font-size: .8rem; color: var(--ink-muted); font-style: normal;
+}
+.voice-note { margin: 1.25rem 0 0; font-size: .82rem; color: var(--ink-muted); }
+
+@media (min-width: 700px) { .voice-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 900px) { .voice-grid { grid-template-columns: repeat(3, 1fr); } }

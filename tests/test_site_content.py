@@ -176,3 +176,27 @@ def test_unfilled_trust_points_are_reported(tmp_path):
     )
     found = c.find_placeholders(c.load(root))
     assert any("trust_points[0]" in item for item in found)
+
+
+def test_testimonials_are_loaded_from_the_repository(tmp_path):
+    root = write_site(tmp_path)
+    (root / "testimonials.toml").write_text(
+        '[[testimonial]]\nheadline = "丁寧でした"\nbody = "満足しています。"\n',
+        encoding="utf-8",
+    )
+    voices = c.load(root).testimonials
+    assert len(voices) == 1
+    assert voices[0].headline == "丁寧でした"
+
+
+def test_testimonials_are_optional(tmp_path):
+    assert c.load(write_site(tmp_path)).testimonials == []
+
+
+def test_placeholder_testimonials_are_reported(tmp_path):
+    root = write_site(tmp_path)
+    (root / "testimonials.toml").write_text(
+        f'[[testimonial]]\nheadline = "{c.PLACEHOLDER}見出し"\nbody = "本文"\n',
+        encoding="utf-8",
+    )
+    assert any("testimonials.toml" in item for item in c.find_placeholders(c.load(root)))

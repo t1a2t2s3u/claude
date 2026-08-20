@@ -53,6 +53,7 @@ CONTENT = Content(
     ],
     packages=[Package(name="シリコン塗料", durability="約7年", price="84万円")],
     plan=None,
+    testimonials=[],
     works=[],
     posts=[],
     pages=[],

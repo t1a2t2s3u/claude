@@ -138,6 +138,20 @@ class PackagePlan:
 
 
 @dataclass
+class Testimonial:
+    """実際にいただいたお客様の声。
+
+    創作は絶対にしない (景品表示法上の問題になり得る)。また、自社サイトに
+    載せた自社への評価に Review 構造化データを付けることは Google の
+    ガイドラインで認められていないため、表示のみで扱う。
+    """
+
+    headline: str
+    body: str
+    attribution: str = ""
+
+
+@dataclass
 class Work:
     """施工事例。塗装業では最も問い合わせに繋がるコンテンツ。"""
 
@@ -196,6 +210,7 @@ class Content:
     services: list[Service]
     packages: list[Package]
     plan: PackagePlan | None
+    testimonials: list[Testimonial]
     works: list[Work]
     posts: list[Post]
     pages: list[StaticPage]
@@ -341,6 +356,23 @@ def load_plan(root: Path) -> PackagePlan | None:
     )
 
 
+def load_testimonials(root: Path) -> list[Testimonial]:
+    """お客様の声を読み込む。ファイルが無ければ空で返す。"""
+    path = root / "testimonials.toml"
+    if not path.exists():
+        return []
+    with path.open("rb") as fh:
+        raw = tomllib.load(fh)
+    return [
+        Testimonial(
+            headline=entry.get("headline", ""),
+            body=entry.get("body", ""),
+            attribution=entry.get("attribution", ""),
+        )
+        for entry in raw.get("testimonial", [])
+    ]
+
+
 def load_works(root: Path) -> list[Work]:
     """施工事例を新しい順に読み込む。"""
     works: list[Work] = []
@@ -421,6 +453,7 @@ def load(root: Path) -> Content:
         services=load_services(root),
         packages=load_packages(root),
         plan=load_plan(root),
+        testimonials=load_testimonials(root),
         works=load_works(root),
         posts=load_posts(root),
         pages=load_pages(root),
@@ -465,6 +498,10 @@ def find_placeholders(content: Content) -> list[str]:
                     for i, item in enumerate(value)
                     if is_placeholder(item)
                 ]
+
+    for index, testimonial in enumerate(content.testimonials):
+        if is_placeholder(testimonial.headline) or is_placeholder(testimonial.body):
+            found.append(f"testimonials.toml の {index + 1}件目")
 
     for work in content.works:
         if is_placeholder(work.title) or PLACEHOLDER in work.body_html:

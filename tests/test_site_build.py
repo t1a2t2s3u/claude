@@ -209,3 +209,45 @@ def test_license_is_never_shown_when_not_held(built):
         if "blog" in path.parts:
             continue
         assert "建設業許可" not in path.read_text(encoding="utf-8"), path
+
+
+def test_testimonials_are_shown_on_the_home_page(built):
+    _, out = built
+    html = read(out, "index.html")
+    assert "お客様の声" in html
+    assert "新築みたいに綺麗になって感動しました" in html
+
+
+def test_testimonials_are_never_marked_up_as_reviews(built):
+    """自社サイトに載せた自社への評価に Review 構造化データは付けられない。
+
+    Google のガイドラインで認められていないため、表示のみで扱う。
+    """
+    _, out = built
+    for path in out.rglob("index.html"):
+        payload = jsonld(path.read_text(encoding="utf-8"))
+        types = {node.get("@type") for node in payload["@graph"]}
+        assert "Review" not in types, path
+        assert "AggregateRating" not in types, path
+        assert "aggregateRating" not in json.dumps(payload), path
+
+
+def test_discontinued_bonus_is_not_advertised(built):
+    """終了した特典を出したままにすると、景品表示法上の問題になり得る。"""
+    _, out = built
+    from seo_meo.site.content import load_plan
+
+    plan = load_plan(SITE_ROOT)
+    if plan and plan.bonus_options:
+        pytest.skip("特典が設定されているため対象外")
+
+    for path in out.rglob("*.html"):
+        text = path.read_text(encoding="utf-8")
+        assert "レンジフード清掃" not in text, path
+        assert "契約者特典" not in text, path
+
+
+def test_prices_are_labelled_tax_inclusive(built):
+    """消費者向けの価格表示は税込である必要がある (消費税法第63条)。"""
+    _, out = built
+    assert "税込" in read(out, "services/index.html")

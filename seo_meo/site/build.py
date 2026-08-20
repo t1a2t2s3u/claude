@@ -85,6 +85,7 @@ class _Builder:
             services=self.content.services,
             packages=self.content.packages,
             plan=self.content.plan,
+            testimonials=self.content.testimonials,
             works=self.content.works,
             posts=self.content.posts,
             page_title=page_title,

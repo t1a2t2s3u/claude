@@ -82,7 +82,25 @@
 </section>
 {% endif %}
 
+{% if testimonials %}
 <section class="section">
+  <div class="wrap">
+    <h2 class="section-title">お客様の声</h2>
+    <div class="voice-grid">
+      {% for voice in testimonials %}
+      <blockquote class="voice">
+        <p class="voice-headline">{{ voice.headline }}</p>
+        <p class="voice-body">{{ voice.body }}</p>
+        {% if voice.attribution %}<footer class="voice-from">{{ voice.attribution }}</footer>{% endif %}
+      </blockquote>
+      {% endfor %}
+    </div>
+    <p class="voice-note">工事をご依頼いただいたお客様からいただいた、実際のご感想です。</p>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section-alt">
   <div class="wrap">
     <h2 class="section-title">工事の流れ</h2>
     <ol class="flow">
