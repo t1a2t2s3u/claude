@@ -68,6 +68,9 @@
     <div>
       <p class="footer-heading">対応エリア</p>
       <p class="footer-areas">{{ company.areas|join(' / ') }}</p>
+      {% if company.instagram_url %}
+      <p class="footer-sns"><a href="{{ company.instagram_url }}" rel="noopener">Instagram で施工の様子を見る</a></p>
+      {% endif %}
     </div>
     <div>
       <p class="footer-heading">メニュー</p>

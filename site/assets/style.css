@@ -306,6 +306,7 @@ a { color: var(--navy-light); }
 .contact-label { display: block; font-size: .78rem; font-weight: 700; color: var(--ink-muted); }
 .contact-value { display: block; font-size: 1.5rem; font-weight: 700; color: var(--navy); letter-spacing: .02em; }
 .contact-call .contact-value { color: var(--accent); }
+.contact-value.contact-sns { font-size: 1rem; line-height: 1.5; }
 .contact-note { display: block; font-size: .78rem; color: var(--ink-muted); }
 
 .map-wrap { padding-bottom: 3rem; }
@@ -331,6 +332,7 @@ a { color: var(--navy-light); }
 .footer-license { font-size: .8rem; opacity: .8; }
 .footer-heading { font-weight: 700; color: #fff; margin: 0 0 .5rem !important; }
 .footer-areas { opacity: .85; }
+.footer-sns { margin-top: .5rem !important; }
 .footer-links { list-style: none; margin: 0; padding: 0; }
 .footer-links li { margin-bottom: .35rem; }
 .footer-bottom { border-top: 1px solid rgba(255,255,255,.13); padding: 1rem 0; font-size: .78rem; opacity: .7; }

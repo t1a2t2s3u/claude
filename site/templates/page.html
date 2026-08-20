@@ -33,6 +33,13 @@
       <span class="contact-value">{{ company.phone }}</span>
       <span class="contact-note">{{ company.business_hours }}／{{ company.holidays }}</span>
     </a>
+    {% if company.instagram_url %}
+    <a class="contact-card" href="{{ company.instagram_url }}" rel="noopener">
+      <span class="contact-label">Instagram</span>
+      <span class="contact-value contact-sns">施工の様子を公開しています</span>
+      <span class="contact-note">DM でのご相談も承ります</span>
+    </a>
+    {% endif %}
     {% if company.email %}
     <div class="contact-card">
       <span class="contact-label">メール</span>

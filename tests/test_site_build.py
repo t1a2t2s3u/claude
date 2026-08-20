@@ -131,14 +131,19 @@ def test_robots_points_at_the_sitemap(built):
     assert f"Sitemap: {BASE_URL}/sitemap.xml" in read(out, "robots.txt")
 
 
-def test_no_external_requests_in_the_markup(built):
-    """外部CDN/フォントを読むと表示が遅くなる。自己完結を保つ。"""
+def test_no_external_resources_are_loaded(built):
+    """外部CDN/フォント/画像を読むと表示が遅くなる。自己完結を保つ。
+
+    対象は読み込みを伴うものだけ。<a> の外部リンク (Instagram など) は
+    リクエストを発生させないので数えない。
+    """
     _, out = built
-    html = read(out, "index.html")
-    urls = re.findall(r'(?:src|href)="(https?://[^"]+)"', html)
-    # canonical と og:url は自サイトを指す絶対URLなので対象外
-    third_party = [url for url in urls if not url.startswith(BASE_URL)]
-    assert third_party == [], third_party
+    for path in out.rglob("index.html"):
+        html = path.read_text(encoding="utf-8")
+        loaded = re.findall(r'<(?:script|img|iframe)[^>]+src="(https?://[^"]+)"', html)
+        loaded += re.findall(r'<link[^>]+href="(https?://[^"]+)"', html)
+        external = [url for url in loaded if not url.startswith(BASE_URL)]
+        assert external == [], (path.name, external)
 
 
 def test_build_warns_about_unfilled_placeholders(tmp_path):
