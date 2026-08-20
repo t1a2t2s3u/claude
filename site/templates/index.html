@@ -18,7 +18,7 @@
     <ul class="hero-trust">
       {% if company.license_number %}<li>建設業許可 {{ company.license_number }}</li>{% endif %}
       {% if company.established %}<li>{{ company.established }} 創業</li>{% endif %}
-      <li>お見積り無料</li>
+      {% for point in company.trust_points %}<li>{{ point }}</li>{% endfor %}
     </ul>
   </div>
 </section>

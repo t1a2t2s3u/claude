@@ -189,3 +189,23 @@ def test_clean_removes_files_from_a_previous_build(tmp_path):
 def test_missing_base_url_is_reported(tmp_path):
     result = site_build.build(SITE_ROOT, tmp_path / "d", base_url="")
     assert any("base_url" in warning for warning in result.warnings)
+
+
+def test_license_is_never_shown_when_not_held(built):
+    """建設業許可を持っていないのに、あるように見せてはならない。
+
+    持っていない許可を掲げるのは法令違反にあたる。license_number が空の
+    ときは、どのページにも「建設業許可」の文字が出ないことを固定する。
+    """
+    _, out = built
+    from seo_meo.site.content import load_company
+
+    if load_company(SITE_ROOT).license_number:
+        pytest.skip("許可番号が記入されているため、この不変条件は対象外")
+
+    # ブログ記事は業界の一般論として許可制度に触れるため対象外。
+    # ここで防ぎたいのは、自社の紹介として許可を掲げてしまうこと。
+    for path in out.rglob("*.html"):
+        if "blog" in path.parts:
+            continue
+        assert "建設業許可" not in path.read_text(encoding="utf-8"), path

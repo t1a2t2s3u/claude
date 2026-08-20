@@ -57,6 +57,8 @@ class Company:
     # 表示用の創業年 (established) とは別に、構造化データ用の ISO 形式の日付
     founded_on: str = ""
     areas: list[str] = field(default_factory=list)
+    # トップページに並べる信頼材料。建設業許可や創業年で足りない分をここで補う
+    trust_points: list[str] = field(default_factory=list)
     # 表示用の営業時間は自由文だが、構造化データには機械可読な形が要る。
     # 例: ["Mo-Fr 08:00-18:00", "Sa 08:00-17:00"]
     opening_hours_spec: list[str] = field(default_factory=list)
@@ -245,6 +247,7 @@ def load_company(root: Path) -> Company:
         business_hours=company.get("business_hours", ""),
         holidays=company.get("holidays", ""),
         areas=list(company.get("areas", [])),
+        trust_points=list(company.get("trust_points", [])),
         opening_hours_spec=list(company.get("opening_hours_spec", [])),
         price_range=company.get("price_range", ""),
         gbp_url=company.get("gbp_url", ""),

@@ -163,3 +163,16 @@ def test_missing_date_is_a_clear_error(tmp_path):
 def test_missing_file_is_a_clear_error(tmp_path):
     with pytest.raises(c.ContentError, match="見つかりません"):
         c.load(tmp_path)
+
+
+def test_trust_points_are_loaded(tmp_path):
+    root = write_site(tmp_path, company_extra='trust_points = ["お見積り無料", "地域密着"]\n')
+    assert c.load(root).company.trust_points == ["お見積り無料", "地域密着"]
+
+
+def test_unfilled_trust_points_are_reported(tmp_path):
+    root = write_site(
+        tmp_path, company_extra=f'trust_points = ["{c.PLACEHOLDER}実績"]\n'
+    )
+    found = c.find_placeholders(c.load(root))
+    assert any("trust_points[0]" in item for item in found)
