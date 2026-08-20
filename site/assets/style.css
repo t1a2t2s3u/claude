@@ -303,6 +303,7 @@ a { color: var(--navy-light); }
   padding: 1.25rem; text-decoration: none; color: inherit; display: block;
 }
 .contact-call { border-color: var(--accent); }
+.contact-line { border-color: #06c755; }
 .contact-label { display: block; font-size: .78rem; font-weight: 700; color: var(--ink-muted); }
 .contact-value { display: block; font-size: 1.5rem; font-weight: 700; color: var(--navy); letter-spacing: .02em; }
 .contact-call .contact-value { color: var(--accent); }
@@ -377,4 +378,76 @@ a { color: var(--navy-light); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { transition: none !important; }
+}
+
+/* ---------- パック料金 ---------- */
+
+.price-wrap { padding: 2.5rem 0 0; max-width: 780px; }
+.price-block { margin-bottom: 1rem; }
+.price-heading {
+  margin: 0 0 .4rem; font-size: clamp(1.3rem, 4vw, 1.6rem); color: var(--navy);
+  padding-left: .7rem; border-left: 4px solid var(--accent); line-height: 1.4;
+}
+.price-basis { margin: 0 0 1.25rem; font-size: .88rem; color: var(--ink-muted); }
+
+table.price-table {
+  width: 100%; min-width: 22rem; border-collapse: collapse; margin-bottom: .75rem;
+}
+table.price-table th, table.price-table td {
+  border-bottom: 1px solid var(--line); padding: .8rem .6rem; text-align: left;
+}
+table.price-table thead th {
+  background: var(--bg-alt); font-size: .8rem; color: var(--ink-muted);
+  border-bottom: 2px solid var(--line);
+}
+.pt-name { font-weight: 700; color: var(--navy); }
+.pt-note { display: block; font-size: .78rem; font-weight: 500; color: var(--ink-muted); }
+.pt-durability { font-size: .9rem; color: var(--ink-muted); white-space: nowrap; }
+.pt-price {
+  font-weight: 700; color: var(--accent); font-size: 1.15rem;
+  text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.price-tax { margin: 0 0 1.5rem; font-size: .8rem; color: var(--ink-muted); }
+
+.includes, .bonus {
+  background: var(--bg-alt); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem;
+}
+.includes h3, .bonus h3 { margin: 0 0 .75rem; font-size: 1rem; color: var(--navy); }
+.include-list, .bonus-list {
+  list-style: none; margin: 0 0 .75rem; padding: 0;
+  display: flex; flex-wrap: wrap; gap: .5rem;
+}
+.include-list li, .bonus-list li {
+  background: var(--bg); border: 1px solid var(--line);
+  padding: .3rem .8rem; border-radius: 999px; font-size: .85rem; font-weight: 600;
+}
+.includes-note, .bonus p { margin: 0; font-size: .88rem; color: var(--ink-muted); }
+.bonus p { margin-bottom: .75rem; }
+
+/* トップページのパック料金カード */
+.price-grid { display: grid; gap: .75rem; grid-template-columns: 1fr; }
+.price-card {
+  background: var(--bg); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 1rem 1.1rem;
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: .75rem; flex-wrap: wrap;
+}
+.price-name { margin: 0; font-weight: 700; color: var(--navy); flex: 1 1 8rem; }
+.price-durability { margin: 0; font-size: .8rem; color: var(--ink-muted); white-space: nowrap; }
+.price-amount {
+  margin: 0; font-weight: 700; font-size: 1.25rem; color: var(--accent);
+  white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+
+.service-tag {
+  margin: 0; font-size: .82rem; font-weight: 700; color: var(--navy-light);
+}
+.service-tag-alt { color: var(--accent); }
+
+@media (min-width: 700px) {
+  .price-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 900px) {
+  .price-grid { grid-template-columns: repeat(3, 1fr); }
 }

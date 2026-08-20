@@ -5,6 +5,7 @@ from seo_meo.site import structured
 from seo_meo.site.content import (
     Company,
     Content,
+    Package,
     Post,
     Service,
     SiteSettings,
@@ -46,11 +47,12 @@ CONTENT = Content(
             slug="gaiheki",
             name="外壁塗装",
             summary="足場から3回塗りまで",
-            price_from="80万円〜",
-            price_note="30坪",
             duration="12日",
+            in_package=True,
         )
     ],
+    packages=[Package(name="シリコン塗料", durability="約7年", price="84万円")],
+    plan=None,
     works=[],
     posts=[],
     pages=[],

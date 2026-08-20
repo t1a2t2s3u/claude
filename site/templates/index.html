@@ -31,15 +31,43 @@
       <a class="service-card" href="/services/#{{ service.slug }}">
         <h3>{{ service.name }}</h3>
         <p class="service-summary">{{ service.summary }}</p>
-        <p class="service-price">{{ service.price_from }}<span>{{ service.price_note }}</span></p>
+        {% if service.in_package %}
+        <p class="service-tag">パック料金に含まれます</p>
+        {% else %}
+        <p class="service-tag service-tag-alt">{{ service.price_from }}</p>
+        {% endif %}
       </a>
       {% endfor %}
     </div>
   </div>
 </section>
 
-{% if works %}
+{% if packages %}
 <section class="section section-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 class="section-title">パック料金</h2>
+      <a class="section-more" href="/services/">詳しく見る</a>
+    </div>
+    {% if plan %}
+    <p class="price-basis">{{ plan.basis }}／足場・高圧洗浄・外壁・屋根・付帯部まですべて込み{% if plan.warranty %}／保証{{ plan.warranty }}{% endif %}</p>
+    {% endif %}
+    <div class="price-grid">
+      {% for package in packages %}
+      <div class="price-card">
+        <p class="price-name">{{ package.name }}</p>
+        <p class="price-durability">耐久年数 {{ package.durability }}</p>
+        <p class="price-amount">{{ package.price }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% if plan and plan.tax_note %}<p class="price-tax">{{ plan.tax_note }}</p>{% endif %}
+  </div>
+</section>
+{% endif %}
+
+{% if works %}
+<section class="section">
   <div class="wrap">
     <div class="section-head">
       <h2 class="section-title">施工事例</h2>

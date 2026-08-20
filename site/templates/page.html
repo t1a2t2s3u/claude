@@ -21,6 +21,9 @@
     {% if company.license_number %}<div><dt>建設業許可</dt><dd>{{ company.license_number }}</dd></div>{% endif %}
     <div><dt>営業時間</dt><dd>{{ company.business_hours }}</dd></div>
     <div><dt>定休日</dt><dd>{{ company.holidays }}</dd></div>
+    {% if company.qualifications %}
+    <div><dt>保有資格</dt><dd>{{ company.qualifications|join('、') }}</dd></div>
+    {% endif %}
     <div><dt>事業内容</dt><dd>{{ services|map(attribute='name')|join('、') }}</dd></div>
     <div><dt>対応エリア</dt><dd>{{ company.areas|join('、') }}</dd></div>
   </dl>
@@ -33,6 +36,13 @@
       <span class="contact-value">{{ company.phone }}</span>
       <span class="contact-note">{{ company.business_hours }}／{{ company.holidays }}</span>
     </a>
+    {% if company.line_url %}
+    <a class="contact-card contact-line" href="{{ company.line_url }}" rel="noopener">
+      <span class="contact-label">LINE</span>
+      <span class="contact-value contact-sns">写真を送るだけで概算をお出しします</span>
+      <span class="contact-note">お家の写真と、建物の縦横の長さをお送りください</span>
+    </a>
+    {% endif %}
     {% if company.instagram_url %}
     <a class="contact-card" href="{{ company.instagram_url }}" rel="noopener">
       <span class="contact-label">Instagram</span>

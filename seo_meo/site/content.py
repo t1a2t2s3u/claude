@@ -59,12 +59,15 @@ class Company:
     areas: list[str] = field(default_factory=list)
     # トップページに並べる信頼材料。建設業許可や創業年で足りない分をここで補う
     trust_points: list[str] = field(default_factory=list)
+    # 保有資格。建設業許可がない分、ここが技術力の裏づけになる
+    qualifications: list[str] = field(default_factory=list)
     # 表示用の営業時間は自由文だが、構造化データには機械可読な形が要る。
     # 例: ["Mo-Fr 08:00-18:00", "Sa 08:00-17:00"]
     opening_hours_spec: list[str] = field(default_factory=list)
     price_range: str = ""
     gbp_url: str = ""
     instagram_url: str = ""
+    line_url: str = ""
     map_embed_url: str = ""
 
     @property
@@ -94,14 +97,44 @@ class SiteSettings:
 
 @dataclass
 class Service:
+    """対応する工事の種類。
+
+    料金は工事ごとではなく塗料グレード別のパック料金で決まるため、
+    価格は Package 側に持たせ、ここでは任意にしている。
+    """
+
     slug: str
     name: str
     summary: str
-    price_from: str
-    price_note: str
     duration: str
+    price_from: str = ""
+    price_note: str = ""
     body_html: str = ""
     features: list[str] = field(default_factory=list)
+    in_package: bool = False
+    """パック料金に含まれる工事か。含まれないものは別途見積もり。"""
+
+
+@dataclass
+class Package:
+    """塗料グレード別のパック料金。"""
+
+    name: str
+    durability: str
+    price: str
+    note: str = ""
+
+
+@dataclass
+class PackagePlan:
+    """パック料金の前提条件。金額だけを出すと誤解を招くため必ず添える。"""
+
+    basis: str
+    warranty: str
+    tax_note: str
+    includes: list[str] = field(default_factory=list)
+    bonus: str = ""
+    bonus_options: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -161,6 +194,8 @@ class Content:
     settings: SiteSettings
     company: Company
     services: list[Service]
+    packages: list[Package]
+    plan: PackagePlan | None
     works: list[Work]
     posts: list[Post]
     pages: list[StaticPage]
@@ -248,10 +283,12 @@ def load_company(root: Path) -> Company:
         holidays=company.get("holidays", ""),
         areas=list(company.get("areas", [])),
         trust_points=list(company.get("trust_points", [])),
+        qualifications=list(company.get("qualifications", [])),
         opening_hours_spec=list(company.get("opening_hours_spec", [])),
         price_range=company.get("price_range", ""),
         gbp_url=company.get("gbp_url", ""),
         instagram_url=company.get("instagram_url", ""),
+        line_url=company.get("line_url", ""),
         map_embed_url=company.get("map_embed_url", ""),
     )
 
@@ -265,14 +302,43 @@ def load_services(root: Path) -> list[Service]:
                 slug=entry["slug"],
                 name=entry.get("name", ""),
                 summary=entry.get("summary", ""),
+                duration=entry.get("duration", ""),
                 price_from=entry.get("price_from", ""),
                 price_note=entry.get("price_note", ""),
-                duration=entry.get("duration", ""),
                 features=list(entry.get("features", [])),
                 body_html=_render_markdown(entry.get("body", "")),
+                in_package=bool(entry.get("in_package", False)),
             )
         )
     return services
+
+
+def load_packages(root: Path) -> list[Package]:
+    raw = _load_toml(root / "services.toml")
+    return [
+        Package(
+            name=entry.get("name", ""),
+            durability=entry.get("durability", ""),
+            price=entry.get("price", ""),
+            note=entry.get("note", ""),
+        )
+        for entry in raw.get("package", [])
+    ]
+
+
+def load_plan(root: Path) -> PackagePlan | None:
+    raw = _load_toml(root / "services.toml")
+    plan = raw.get("package_plan")
+    if not plan:
+        return None
+    return PackagePlan(
+        basis=plan.get("basis", ""),
+        warranty=plan.get("warranty", ""),
+        tax_note=plan.get("tax_note", ""),
+        includes=list(plan.get("includes", [])),
+        bonus=plan.get("bonus", ""),
+        bonus_options=list(plan.get("bonus_options", [])),
+    )
 
 
 def load_works(root: Path) -> list[Work]:
@@ -353,6 +419,8 @@ def load(root: Path) -> Content:
         settings=load_settings(root),
         company=load_company(root),
         services=load_services(root),
+        packages=load_packages(root),
+        plan=load_plan(root),
         works=load_works(root),
         posts=load_posts(root),
         pages=load_pages(root),
@@ -381,6 +449,22 @@ def find_placeholders(content: Content) -> list[str]:
         for field_name, value in vars(service).items():
             if is_placeholder(value):
                 found.append(f"services.toml の {service.slug}.{field_name}")
+
+    for package in content.packages:
+        for field_name, value in vars(package).items():
+            if is_placeholder(value):
+                found.append(f"services.toml の {package.name}.{field_name}")
+
+    if content.plan:
+        for field_name, value in vars(content.plan).items():
+            if is_placeholder(value):
+                found.append(f"services.toml の package_plan.{field_name}")
+            elif isinstance(value, list):
+                found += [
+                    f"services.toml の package_plan.{field_name}[{i}]"
+                    for i, item in enumerate(value)
+                    if is_placeholder(item)
+                ]
 
     for work in content.works:
         if is_placeholder(work.title) or PLACEHOLDER in work.body_html:

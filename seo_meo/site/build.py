@@ -83,6 +83,8 @@ class _Builder:
             settings=self.settings,
             company=self.content.company,
             services=self.content.services,
+            packages=self.content.packages,
+            plan=self.content.plan,
             works=self.content.works,
             posts=self.content.posts,
             page_title=page_title,
