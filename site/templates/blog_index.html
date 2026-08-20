@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block breadcrumb %}{{ breadcrumb(trail) }}{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div class="wrap">
+    <h1>ブログ</h1>
+    <p>塗り替えの時期の見分け方、費用の考え方、業者選びで確認すべきことなど、判断の材料になる情報をまとめています。</p>
+  </div>
+</div>
+
+<div class="wrap prose-wrap">
+  {% if posts %}
+  <ul class="entry-list">
+    {% for post in posts %}
+    <li>
+      <a href="{{ post.url }}">
+        <time datetime="{{ post.date.isoformat() }}">{{ post.date.strftime('%Y年%m月%d日') }}</time>
+        <h2>{{ post.title }}</h2>
+        <p>{{ post.description }}</p>
+        {% if post.tags %}<p class="tags">{% for tag in post.tags %}<span>{{ tag }}</span>{% endfor %}</p>{% endif %}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">記事はまだ登録されていません。</p>
+  {% endif %}
+</div>
+
+{% endblock %}

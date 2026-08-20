@@ -1,0 +1,12 @@
+# サイト全体の設定。
+
+[site]
+name = "辰弥塗装工業"
+
+# 公開先のURL。ドメイン取得後にここを書き換えてください。
+# canonical タグと sitemap.xml の URL に使われます。末尾スラッシュ不要。
+base_url = "https://【要記入】.example.jp"
+
+description = "外壁塗装・屋根塗装の専門店。現地調査とお見積りは無料です。"
+locale = "ja_JP"
+contact_note = "現地調査・お見積りは無料です。ご相談だけでもお気軽にどうぞ。"

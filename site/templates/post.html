@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block breadcrumb %}{{ breadcrumb(trail) }}{% endblock %}
+{% block content %}
+
+<article class="wrap prose-wrap">
+  <header class="entry-head">
+    <time class="entry-date" datetime="{{ post.date.isoformat() }}">{{ post.date.strftime('%Y年%m月%d日') }}</time>
+    <h1>{{ post.title }}</h1>
+    {% if post.tags %}<p class="tags">{% for tag in post.tags %}<span>{{ tag }}</span>{% endfor %}</p>{% endif %}
+  </header>
+
+  <div class="prose">{{ post.body_html|safe }}</div>
+
+  <footer class="entry-foot">
+    <p>{{ company.name }}（{{ company.areas|join('・') }}）では、外壁・屋根塗装のご相談を承っています。
+    お見積りは無料です。</p>
+    <a class="btn btn-form" href="/contact/">相談してみる</a>
+  </footer>
+</article>
+
+{% if related %}
+<section class="section section-alt">
+  <div class="wrap">
+    <h2 class="section-title">ほかの記事</h2>
+    <ul class="post-list">
+      {% for other in related %}
+      <li><a href="{{ other.url }}"><time datetime="{{ other.date.isoformat() }}">{{ other.date.strftime('%Y年%m月%d日') }}</time><span class="post-title">{{ other.title }}</span></a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

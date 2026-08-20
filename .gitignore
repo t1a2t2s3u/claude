@@ -7,6 +7,7 @@ secrets/
 # 生成物
 data/
 reports/
+dist/
 
 # Python
 __pycache__/

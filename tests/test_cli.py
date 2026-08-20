@@ -79,3 +79,27 @@ def test_status_lists_ingestion_history(config_path, capsys):
 def test_missing_config_reports_error(tmp_path, capsys):
     assert main(["--config", str(tmp_path / "nope.toml"), "status"]) == 1
     assert "設定ファイルが見つかりません" in capsys.readouterr().err
+
+
+def test_site_build_writes_pages(tmp_path, capsys):
+    """サイト生成は config.toml (API認証情報) に依存しない。"""
+    out = tmp_path / "dist"
+    assert main(["site-build", "--out", str(out), "--base-url", "https://example.jp"]) == 0
+
+    assert (out / "index.html").exists()
+    assert (out / "sitemap.xml").exists()
+    assert "サイトを生成しました" in capsys.readouterr().out
+
+
+def test_site_build_strict_fails_while_placeholders_remain(tmp_path):
+    out = tmp_path / "dist"
+    code = main(
+        ["site-build", "--out", str(out), "--base-url", "https://example.jp", "--strict"]
+    )
+    assert code == 1
+
+
+def test_site_build_reports_content_errors(tmp_path, capsys):
+    code = main(["site-build", "--site", str(tmp_path), "--out", str(tmp_path / "d")])
+    assert code == 1
+    assert "見つかりません" in capsys.readouterr().err

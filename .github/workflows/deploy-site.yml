@@ -1,0 +1,49 @@
+# 自社サイトのビルド。
+#
+# 既定では手動実行のみです。Cloudflare Pages 側でビルドする場合、この
+# ワークフローは不要（成果物の確認用として使えます）。
+#
+# GitHub Pages で公開する場合は、下の push トリガーのコメントを外し、
+# リポジトリの Settings → Pages で Source を "GitHub Actions" にしてください。
+
+name: サイトのビルド
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - "site/**"
+  #     - "seo_meo/site/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 依存をインストール
+        run: pip install -e ".[dev]"
+
+      - name: テスト
+        run: python -m pytest -q
+
+      - name: サイトを生成
+        run: seo-meo site-build --out dist
+
+      - name: 成果物をアップロード
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: dist/
+
+      # GitHub Pages で公開する場合は、以下のコメントを外してください。
+      # - uses: actions/configure-pages@v5
+      # - uses: actions/upload-pages-artifact@v3
+      #   with:
+      #     path: dist/
+      # - uses: actions/deploy-pages@v4

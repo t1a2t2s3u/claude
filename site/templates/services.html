@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block breadcrumb %}{{ breadcrumb(trail) }}{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div class="wrap">
+    <h1>サービス・料金目安</h1>
+    <p>建物の状態や面積によって金額は変わります。下記は目安で、正確な金額は現地調査のうえお出しします（お見積りは無料です）。</p>
+  </div>
+</div>
+
+<div class="wrap prose-wrap">
+  {% for service in services %}
+  <section class="service-detail" id="{{ service.slug }}">
+    <h2>{{ service.name }}</h2>
+    <p class="service-summary">{{ service.summary }}</p>
+    <dl class="spec">
+      <div><dt>費用の目安</dt><dd>{{ service.price_from }} <span class="spec-note">{{ service.price_note }}</span></dd></div>
+      <div><dt>工期の目安</dt><dd>{{ service.duration }}</dd></div>
+    </dl>
+    {% if service.features %}
+    <ul class="feature-list">
+      {% for feature in service.features %}<li>{{ feature }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+    {% if service.body_html %}<div class="prose">{{ service.body_html|safe }}</div>{% endif %}
+  </section>
+  {% endfor %}
+
+  <section class="note-box">
+    <h2>料金について</h2>
+    <p>塗装の費用は「塗る面積」と「建物の傷み具合」で決まります。同じ坪数でも、
+    足場の掛けやすさ、下地の補修量、選ぶ塗料のグレードで金額は変わります。</p>
+    <p>相見積りをとる場合は、<strong>金額だけでなく「塗料のメーカー名と製品名」「塗る回数」「足場代が含まれているか」</strong>
+    を揃えて比べてください。この3点が書かれていない見積書は、後から追加費用が出ることがあります。</p>
+  </section>
+</div>
+
+{% endblock %}

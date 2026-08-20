@@ -17,12 +17,17 @@ from pathlib import Path
 
 from . import auth, config as config_mod, metrics
 from .report import weekly
+from .site import build as site_build, content as site_content
 from .sources import fixture, gbp_locations, gbp_performance
 from .sources.base import ApiError
 from .storage import connect, log_fetch, save_daily, save_keywords
 
 SAMPLE = "sample"
 GBP = "gbp"
+
+# サイトのコンテンツと出力先。リポジトリ直下からの相対パス。
+DEFAULT_SITE_DIR = "site"
+DEFAULT_OUT_DIR = "dist"
 
 
 def _parse_date(value: str) -> date:
@@ -181,6 +186,46 @@ def cmd_status(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_site_build(args: argparse.Namespace) -> int:
+    result = site_build.build(
+        Path(args.site), Path(args.out), base_url=args.base_url
+    )
+    print(f"サイトを生成しました: {result.out_dir} / {result.page_count}ページ")
+
+    if result.warnings:
+        print(f"\n公開前に直すべき点が {len(result.warnings)} 件あります:")
+        for warning in result.warnings:
+            print(f"  - {warning}")
+        if args.strict:
+            print("\n--strict が指定されているため失敗として扱います。")
+            return 1
+    return 0
+
+
+def cmd_site_serve(args: argparse.Namespace) -> int:
+    """ビルドしてローカルで確認する。公開用ではない。"""
+    import functools
+    import http.server
+    import socketserver
+
+    out = Path(args.out)
+    result = site_build.build(Path(args.site), out, base_url=args.base_url)
+    print(f"サイトを生成しました: {out} / {result.page_count}ページ")
+    for warning in result.warnings:
+        print(f"  - {warning}")
+
+    handler = functools.partial(
+        http.server.SimpleHTTPRequestHandler, directory=str(out)
+    )
+    with socketserver.TCPServer(("127.0.0.1", args.port), handler) as httpd:
+        print(f"\nhttp://127.0.0.1:{args.port}/ で確認できます (Ctrl+C で終了)")
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            print("\n終了しました。")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="seo-meo", description="辰弥塗装工業 SEO/MEO データ収集・レポート基盤"
@@ -218,6 +263,23 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p_report.set_defaults(func=cmd_report)
 
+    p_site = sub.add_parser("site-build", help="自社サイトを生成する")
+    p_site.add_argument("--site", default=DEFAULT_SITE_DIR, help="コンテンツのディレクトリ")
+    p_site.add_argument("--out", default=DEFAULT_OUT_DIR, help="出力先ディレクトリ")
+    p_site.add_argument("--base-url", help="site.toml の base_url を上書きする")
+    p_site.add_argument(
+        "--strict", action="store_true",
+        help="未記入項目などの警告があれば失敗にする (公開前の確認用)",
+    )
+    p_site.set_defaults(func=cmd_site_build)
+
+    p_serve = sub.add_parser("site-serve", help="生成したサイトをローカルで確認する")
+    p_serve.add_argument("--site", default=DEFAULT_SITE_DIR)
+    p_serve.add_argument("--out", default=DEFAULT_OUT_DIR)
+    p_serve.add_argument("--base-url", help="site.toml の base_url を上書きする")
+    p_serve.add_argument("--port", type=int, default=8000)
+    p_serve.set_defaults(func=cmd_site_serve)
+
     p_status = sub.add_parser("status", help="DB の中身と取り込み履歴を表示する")
     p_status.set_defaults(func=cmd_status)
 
@@ -228,7 +290,12 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         return int(args.func(args))
-    except (config_mod.ConfigError, auth.AuthError, ApiError) as exc:
+    except (
+        config_mod.ConfigError,
+        auth.AuthError,
+        ApiError,
+        site_content.ContentError,
+    ) as exc:
         print(f"エラー: {exc}", file=sys.stderr)
         return 1
 

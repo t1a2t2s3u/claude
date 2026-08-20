@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block breadcrumb %}{{ breadcrumb(trail) }}{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div class="wrap"><h1>{{ page.title }}</h1></div>
+</div>
+
+<div class="wrap prose-wrap">
+  <div class="prose">{{ page.body_html|safe }}</div>
+
+  {% if section == 'about' %}
+  <dl class="spec spec-grid company-spec">
+    <div><dt>会社名</dt><dd>{{ company.legal_name }}</dd></div>
+    <div><dt>代表者</dt><dd>{{ company.representative }}</dd></div>
+    <div><dt>所在地</dt><dd>{{ company.full_address }}</dd></div>
+    <div><dt>電話番号</dt><dd><a href="tel:{{ company.tel_link }}">{{ company.phone }}</a></dd></div>
+    {% if company.email %}<div><dt>メール</dt><dd>{{ company.email }}</dd></div>{% endif %}
+    <div><dt>創業</dt><dd>{{ company.established }}</dd></div>
+    {% if company.license_number %}<div><dt>建設業許可</dt><dd>{{ company.license_number }}</dd></div>{% endif %}
+    <div><dt>営業時間</dt><dd>{{ company.business_hours }}</dd></div>
+    <div><dt>定休日</dt><dd>{{ company.holidays }}</dd></div>
+    <div><dt>事業内容</dt><dd>{{ services|map(attribute='name')|join('、') }}</dd></div>
+    <div><dt>対応エリア</dt><dd>{{ company.areas|join('、') }}</dd></div>
+  </dl>
+  {% endif %}
+
+  {% if section == 'contact' %}
+  <div class="contact-methods">
+    <a class="contact-card contact-call" href="tel:{{ company.tel_link }}">
+      <span class="contact-label">お電話</span>
+      <span class="contact-value">{{ company.phone }}</span>
+      <span class="contact-note">{{ company.business_hours }}／{{ company.holidays }}</span>
+    </a>
+    {% if company.email %}
+    <div class="contact-card">
+      <span class="contact-label">メール</span>
+      <span class="contact-value">{{ company.email }}</span>
+      <span class="contact-note">2営業日以内にご返信します</span>
+    </div>
+    {% endif %}
+  </div>
+
+  <section class="note-box">
+    <h2>お伝えいただけるとスムーズなこと</h2>
+    <ul class="feature-list">
+      <li>お住まいの地域（市区町村まで）</li>
+      <li>建物の種類と築年数（例：戸建て2階建て・築15年）</li>
+      <li>気になっている症状（色あせ、ひび割れ、雨漏りなど）</li>
+      <li>ご希望の時期</li>
+    </ul>
+    <p>分からない項目は空欄で構いません。現地調査のときに一緒に確認します。</p>
+  </section>
+  {% endif %}
+</div>
+
+{% if section == 'contact' and company.map_embed_url %}
+<div class="wrap map-wrap">
+  <iframe src="{{ company.map_embed_url }}" title="{{ company.name }} の所在地" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "_macros.html" import work_card, breadcrumb %}
+{% block breadcrumb %}{{ breadcrumb(trail) }}{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div class="wrap">
+    <h1>施工事例</h1>
+    <p>実際にお引き受けした工事の記録です。ご自宅と似た条件の事例があれば、仕上がりと費用感の参考にしてください。</p>
+  </div>
+</div>
+
+<div class="wrap">
+  {% if works %}
+  <div class="work-grid work-grid-full">
+    {% for work in works %}{{ work_card(work) }}{% endfor %}
+  </div>
+  {% else %}
+  <p class="empty">施工事例はまだ登録されていません。</p>
+  {% endif %}
+</div>
+
+{% endblock %}

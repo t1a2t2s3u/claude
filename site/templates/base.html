@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ page_title }}</title>
+<meta name="description" content="{{ page_description }}">
+<link rel="canonical" href="{{ canonical }}">
+<meta property="og:type" content="{{ og_type|default('website') }}">
+<meta property="og:title" content="{{ page_title }}">
+<meta property="og:description" content="{{ page_description }}">
+<meta property="og:url" content="{{ canonical }}">
+<meta property="og:site_name" content="{{ settings.site_name }}">
+<meta property="og:locale" content="{{ settings.locale }}">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/assets/style.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<script type="application/ld+json">{{ jsonld|safe }}</script>
+</head>
+<body>
+<a class="skip" href="#main">本文へスキップ</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/">
+      <span class="brand-name">{{ company.name }}</span>
+      <span class="brand-tagline">{{ company.tagline }}</span>
+    </a>
+    <nav class="site-nav" aria-label="メインナビゲーション">
+      <a href="/services/"{% if section == 'services' %} aria-current="page"{% endif %}>サービス・料金</a>
+      <a href="/works/"{% if section == 'works' %} aria-current="page"{% endif %}>施工事例</a>
+      <a href="/blog/"{% if section == 'blog' %} aria-current="page"{% endif %}>ブログ</a>
+      <a href="/about/"{% if section == 'about' %} aria-current="page"{% endif %}>会社概要</a>
+      <a class="nav-cta" href="/contact/"{% if section == 'contact' %} aria-current="page"{% endif %}>お問い合わせ</a>
+    </nav>
+  </div>
+</header>
+
+{% block breadcrumb %}{% endblock %}
+
+<main id="main">
+{% block content %}{% endblock %}
+</main>
+
+<section class="cta-band">
+  <div class="wrap">
+    <h2>お見積り・ご相談は無料です</h2>
+    <p>{{ settings.contact_note }}</p>
+    <div class="cta-actions">
+      <a class="btn btn-call" href="tel:{{ company.tel_link }}">
+        <span class="btn-label">お電話でのご相談</span>
+        <span class="btn-number">{{ company.phone }}</span>
+        <span class="btn-note">{{ company.business_hours }}</span>
+      </a>
+      <a class="btn btn-form" href="/contact/">フォームで問い合わせる</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <p class="footer-name">{{ company.legal_name }}</p>
+      <p class="footer-address">{{ company.full_address }}</p>
+      <p>TEL <a href="tel:{{ company.tel_link }}">{{ company.phone }}</a></p>
+      {% if company.license_number %}<p class="footer-license">建設業許可 {{ company.license_number }}</p>{% endif %}
+    </div>
+    <div>
+      <p class="footer-heading">対応エリア</p>
+      <p class="footer-areas">{{ company.areas|join(' / ') }}</p>
+    </div>
+    <div>
+      <p class="footer-heading">メニュー</p>
+      <ul class="footer-links">
+        <li><a href="/services/">サービス・料金</a></li>
+        <li><a href="/works/">施工事例</a></li>
+        <li><a href="/blog/">ブログ</a></li>
+        <li><a href="/about/">会社概要</a></li>
+        <li><a href="/contact/">お問い合わせ</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <p>&copy; {{ current_year }} {{ company.legal_name }}</p>
+  </div>
+</footer>
+
+<div class="mobile-bar">
+  <a class="mobile-call" href="tel:{{ company.tel_link }}">電話する</a>
+  <a class="mobile-form" href="/contact/">見積り依頼</a>
+</div>
+</body>
+</html>

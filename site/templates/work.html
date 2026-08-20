@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block breadcrumb %}{{ breadcrumb(trail) }}{% endblock %}
+{% block content %}
+
+<article class="wrap prose-wrap">
+  <header class="entry-head">
+    <p class="work-meta"><span class="work-service">{{ work.service }}</span> {{ work.area }}</p>
+    <h1>{{ work.title }}</h1>
+    <time class="entry-date" datetime="{{ work.date.isoformat() }}">{{ work.date.strftime('%Y年%m月') }} 施工</time>
+  </header>
+
+  {% if work.before_image and work.after_image %}
+  <div class="ba-pair">
+    <figure>
+      <img src="/assets/{{ work.before_image }}" alt="{{ work.title }} の施工前" width="800" height="600">
+      <figcaption>施工前</figcaption>
+    </figure>
+    <figure>
+      <img src="/assets/{{ work.after_image }}" alt="{{ work.title }} の施工後" width="800" height="600">
+      <figcaption>施工後</figcaption>
+    </figure>
+  </div>
+  {% endif %}
+
+  <dl class="spec spec-grid">
+    {% if work.building %}<div><dt>建物</dt><dd>{{ work.building }}</dd></div>{% endif %}
+    {% if work.service %}<div><dt>工事内容</dt><dd>{{ work.service }}</dd></div>{% endif %}
+    {% if work.paint %}<div><dt>使用塗料</dt><dd>{{ work.paint }}</dd></div>{% endif %}
+    {% if work.duration %}<div><dt>工期</dt><dd>{{ work.duration }}</dd></div>{% endif %}
+    {% if work.price_range %}<div><dt>費用</dt><dd>{{ work.price_range }}</dd></div>{% endif %}
+    {% if work.area %}<div><dt>エリア</dt><dd>{{ work.area }}</dd></div>{% endif %}
+  </dl>
+
+  <div class="prose">{{ work.body_html|safe }}</div>
+
+  {% if work.images %}
+  <div class="gallery">
+    {% for image in work.images %}
+    <img src="/assets/{{ image }}" alt="{{ work.title }} の施工の様子" loading="lazy" width="800" height="600">
+    {% endfor %}
+  </div>
+  {% endif %}
+</article>
+
+{% if related %}
+<section class="section section-alt">
+  <div class="wrap">
+    <h2 class="section-title">ほかの施工事例</h2>
+    <div class="work-grid">
+      {% from "_macros.html" import work_card %}
+      {% for other in related %}{{ work_card(other) }}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% macro work_card(work) %}
+<article class="work-card">
+  <a href="{{ work.url }}">
+    {% if work.after_image %}
+    <div class="work-thumb">
+      <img src="/assets/{{ work.after_image }}" alt="{{ work.title }} の施工後" loading="lazy" width="640" height="480">
+    </div>
+    {% endif %}
+    <div class="work-body">
+      <p class="work-meta"><span class="work-service">{{ work.service }}</span> {{ work.area }}</p>
+      <h3>{{ work.title }}</h3>
+      <p class="work-summary">{{ work.summary }}</p>
+      {% if work.price_range %}<p class="work-price">工事費用の目安 {{ work.price_range }}</p>{% endif %}
+    </div>
+  </a>
+</article>
+{% endmacro %}
+
+{% macro breadcrumb(trail) %}
+<nav class="breadcrumb" aria-label="パンくずリスト">
+  <div class="wrap">
+    <ol>
+      {% for name, path in trail %}
+      <li>{% if not loop.last %}<a href="{{ path }}">{{ name }}</a>{% else %}<span aria-current="page">{{ name }}</span>{% endif %}</li>
+      {% endfor %}
+    </ol>
+  </div>
+</nav>
+{% endmacro %}

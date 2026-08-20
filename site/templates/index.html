@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% from "_macros.html" import work_card %}
+{% block content %}
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <p class="hero-eyebrow">{{ company.areas|join(' ・ ') }} の外壁・屋根塗装</p>
+    <h1>{{ company.tagline }}</h1>
+    <p class="hero-lead">{{ company.description }}</p>
+    <div class="hero-actions">
+      <a class="btn btn-call" href="tel:{{ company.tel_link }}">
+        <span class="btn-label">無料相談・お見積り</span>
+        <span class="btn-number">{{ company.phone }}</span>
+        <span class="btn-note">{{ company.business_hours }}</span>
+      </a>
+      <a class="btn btn-form" href="/contact/">フォームで相談する</a>
+    </div>
+    <ul class="hero-trust">
+      {% if company.license_number %}<li>建設業許可 {{ company.license_number }}</li>{% endif %}
+      {% if company.established %}<li>{{ company.established }} 創業</li>{% endif %}
+      <li>お見積り無料</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-title">対応する工事</h2>
+    <div class="service-grid">
+      {% for service in services %}
+      <a class="service-card" href="/services/#{{ service.slug }}">
+        <h3>{{ service.name }}</h3>
+        <p class="service-summary">{{ service.summary }}</p>
+        <p class="service-price">{{ service.price_from }}<span>{{ service.price_note }}</span></p>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if works %}
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 class="section-title">施工事例</h2>
+      <a class="section-more" href="/works/">すべて見る</a>
+    </div>
+    <div class="work-grid">
+      {% for work in works[:3] %}
+      {{ work_card(work) }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-title">工事の流れ</h2>
+    <ol class="flow">
+      <li><span class="flow-step">1</span><h3>お問い合わせ</h3><p>お電話またはフォームからご連絡ください。ご相談だけでも構いません。</p></li>
+      <li><span class="flow-step">2</span><h3>現地調査・お見積り</h3><p>建物の状態を確認し、必要な工事内容と金額をお出しします。無料です。</p></li>
+      <li><span class="flow-step">3</span><h3>ご契約・着工</h3><p>内容にご納得いただいてからの契約です。日程を調整して着工します。</p></li>
+      <li><span class="flow-step">4</span><h3>完工・お引き渡し</h3><p>仕上がりをご確認いただき、保証内容をご説明してお引き渡しします。</p></li>
+    </ol>
+  </div>
+</section>
+
+{% if posts %}
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 class="section-title">塗装のお役立ち情報</h2>
+      <a class="section-more" href="/blog/">すべて見る</a>
+    </div>
+    <ul class="post-list">
+      {% for post in posts[:4] %}
+      <li>
+        <a href="{{ post.url }}">
+          <time datetime="{{ post.date.isoformat() }}">{{ post.date.strftime('%Y年%m月%d日') }}</time>
+          <span class="post-title">{{ post.title }}</span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-title">対応エリア</h2>
+    <p class="area-lead">下記のエリアを中心に対応しています。記載のない地域もお気軽にご相談ください。</p>
+    <ul class="area-list">
+      {% for area in company.areas %}<li>{{ area }}</li>{% endfor %}
+    </ul>
+  </div>
+</section>
+
+{% endblock %}

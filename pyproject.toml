@@ -5,12 +5,16 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "seo-meo"
 version = "0.1.0"
-description = "辰弥塗装工業のSEO/MEOデータ収集・レポート基盤"
+description = "辰弥塗装工業のSEO/MEOツール群（データ収集・レポート・自社サイト生成）"
 requires-python = ">=3.10"
 dependencies = [
+    # MEO データ収集
     "requests>=2.31",
     "google-auth>=2.28",
     "google-auth-oauthlib>=1.2",
+    # 自社サイト生成
+    "jinja2>=3.1",
+    "markdown>=3.5",
 ]
 
 [project.optional-dependencies]
