@@ -176,6 +176,8 @@ class Work:
     summary: str
     body_html: str
     building: str = ""
+    roof_material: str = ""
+    wall_material: str = ""
     duration: str = ""
     paint: str = ""
     price_range: str = ""
@@ -411,6 +413,8 @@ def load_works(root: Path) -> list[Work]:
                 summary=front.get("summary") or _summarise(body_html),
                 body_html=body_html,
                 building=front.get("building", ""),
+                roof_material=front.get("roof_material", ""),
+                wall_material=front.get("wall_material", ""),
                 duration=front.get("duration", ""),
                 paint=front.get("paint", ""),
                 price_range=front.get("price_range", ""),

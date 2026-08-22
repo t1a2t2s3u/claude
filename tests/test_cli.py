@@ -1,5 +1,7 @@
 """CLI の疎通確認。サンプルデータ経路なら API 認証なしで通しで動く。"""
 
+from pathlib import Path
+
 import pytest
 
 from seo_meo import config as config_mod
@@ -91,12 +93,43 @@ def test_site_build_writes_pages(tmp_path, capsys):
     assert "サイトを生成しました" in capsys.readouterr().out
 
 
-def test_site_build_strict_fails_while_placeholders_remain(tmp_path):
-    out = tmp_path / "dist"
+SITE_ROOT = Path(__file__).resolve().parents[1] / "site"
+
+
+def test_site_build_strict_fails_when_something_is_unfilled(tmp_path):
+    """記入が進むと実際のサイトの未記入は無くなるので、コピーに印を入れて試す。"""
+    import shutil
+
+    from seo_meo.site.content import PLACEHOLDER
+
+    site = tmp_path / "site"
+    shutil.copytree(SITE_ROOT, site)
+    company = site / "company.toml"
+    company.write_text(
+        company.read_text(encoding="utf-8").replace(
+            'phone = "', f'phone = "{PLACEHOLDER}', 1
+        ),
+        encoding="utf-8",
+    )
+
     code = main(
-        ["site-build", "--out", str(out), "--base-url", "https://example.jp", "--strict"]
+        [
+            "site-build", "--site", str(site), "--out", str(tmp_path / "dist"),
+            "--base-url", "https://example.jp", "--strict",
+        ]
     )
     assert code == 1
+
+
+def test_site_build_strict_passes_when_everything_is_filled(tmp_path):
+    """公開できる状態かどうかの判定。ここが 0 になれば公開してよい。"""
+    code = main(
+        [
+            "site-build", "--out", str(tmp_path / "dist"),
+            "--base-url", "https://example.jp", "--strict",
+        ]
+    )
+    assert code == 0
 
 
 def test_site_build_reports_content_errors(tmp_path, capsys):

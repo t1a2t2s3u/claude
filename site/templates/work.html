@@ -32,6 +32,8 @@
 
   <dl class="spec spec-grid">
     {% if work.building %}<div><dt>建物</dt><dd>{{ work.building }}</dd></div>{% endif %}
+    {% if work.roof_material %}<div><dt>屋根材</dt><dd>{{ work.roof_material }}</dd></div>{% endif %}
+    {% if work.wall_material %}<div><dt>外壁材</dt><dd>{{ work.wall_material }}</dd></div>{% endif %}
     {% if work.service %}<div><dt>工事内容</dt><dd>{{ work.service }}</dd></div>{% endif %}
     {% if work.paint %}<div><dt>使用塗料</dt><dd>{{ work.paint }}</dd></div>{% endif %}
     {% if work.duration %}<div><dt>工期</dt><dd>{{ work.duration }}</dd></div>{% endif %}
