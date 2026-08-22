@@ -55,8 +55,22 @@ def test_urls_end_in_a_slash_not_an_extension(built):
 
 def test_assets_are_copied(built):
     _, out = built
-    assert (out / "assets" / "works" / "example-yane-before.svg").exists()
     assert (out / "assets" / "favicon.svg").exists()
+    assert (out / "assets" / "style.css").exists()
+
+
+def test_every_referenced_photo_exists(built):
+    """施工事例が指している画像が実在すること。
+
+    ファイル名の打ち間違いは、公開してから画像が出ないことで気づく類の
+    ミスなので、ビルド時に落とす。
+    """
+    _, out = built
+    from seo_meo.site.content import load_works
+
+    for work in load_works(SITE_ROOT):
+        for path in work.all_images:
+            assert (out / "assets" / path).exists(), f"{work.slug}: {path}"
 
 
 def test_base_url_override_reaches_canonical_and_sitemap(built):
@@ -92,8 +106,13 @@ def test_article_pages_carry_breadcrumbs_and_article_markup(built):
 
 def test_work_pages_carry_article_markup(built):
     _, out = built
-    payload = jsonld(read(out, "works/2026-04-example/index.html"))
-    assert "Article" in [node["@type"] for node in payload["@graph"]]
+    from seo_meo.site.content import load_works
+
+    works = load_works(SITE_ROOT)
+    assert works, "施工事例が1件も無い"
+    for work in works:
+        payload = jsonld(read(out, f"{work.url.strip('/')}/index.html"))
+        assert "Article" in [node["@type"] for node in payload["@graph"]], work.slug
 
 
 def test_markdown_body_is_not_escaped(built):
