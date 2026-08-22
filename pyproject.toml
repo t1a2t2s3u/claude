@@ -15,6 +15,8 @@ dependencies = [
     # 自社サイト生成
     "jinja2>=3.1",
     "markdown>=3.5",
+    # 施工事例の写真の縮小と EXIF (位置情報) 除去に使う
+    "pillow>=10.0",
 ]
 
 [project.optional-dependencies]

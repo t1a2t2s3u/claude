@@ -17,7 +17,7 @@ from pathlib import Path
 
 from . import auth, config as config_mod, metrics
 from .report import weekly
-from .site import build as site_build, content as site_content
+from .site import build as site_build, content as site_content, photos as site_photos
 from .sources import fixture, gbp_locations, gbp_performance
 from .sources.base import ApiError
 from .storage import connect, log_fetch, save_daily, save_keywords
@@ -226,6 +226,50 @@ def cmd_site_serve(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_photo_prep(args: argparse.Namespace) -> int:
+    """施工事例の写真を、公開できる形に整える。"""
+    sources = [Path(path) for path in args.files]
+    missing = [path for path in sources if not path.exists()]
+    if missing:
+        for path in missing:
+            print(f"見つかりません: {path}", file=sys.stderr)
+        return 1
+
+    out_dir = Path(args.out)
+    results = site_photos.prepare_all(sources, out_dir)
+    if not results:
+        print("処理できる画像がありませんでした。", file=sys.stderr)
+        return 1
+
+    total_before = sum(r.before_bytes for r in results)
+    total_after = sum(r.after_bytes for r in results)
+    for result in results:
+        gps = " ← 位置情報を削除しました" if result.had_gps else ""
+        print(
+            f"{result.destination.name}  {result.width}x{result.height}  "
+            f"{result.before_bytes / 1024:.0f}KB → {result.after_bytes / 1024:.0f}KB{gps}"
+        )
+    print(
+        f"\n{len(results)}枚を {out_dir} に出力しました "
+        f"({total_before / 1024 / 1024:.1f}MB → {total_after / 1024 / 1024:.1f}MB)"
+    )
+    return 0
+
+
+def cmd_photo_check(args: argparse.Namespace) -> int:
+    """公開予定の画像に位置情報が残っていないか調べる。"""
+    root = Path(args.site)
+    found = site_photos.find_photos_with_gps(root)
+    if found:
+        print(f"位置情報が残っている画像が {len(found)}件 あります:", file=sys.stderr)
+        for path in found:
+            print(f"  {path}", file=sys.stderr)
+        print("\n`seo-meo photo-prep` で処理し直してください。", file=sys.stderr)
+        return 1
+    print(f"{root} の画像に位置情報は残っていません。")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="seo-meo", description="辰弥塗装工業 SEO/MEO データ収集・レポート基盤"
@@ -279,6 +323,22 @@ def build_parser() -> argparse.ArgumentParser:
     p_serve.add_argument("--base-url", help="site.toml の base_url を上書きする")
     p_serve.add_argument("--port", type=int, default=8000)
     p_serve.set_defaults(func=cmd_site_serve)
+
+    p_photo = sub.add_parser(
+        "photo-prep",
+        help="施工事例の写真を縮小し、位置情報 (EXIF) を消して保存する",
+    )
+    p_photo.add_argument("files", nargs="+", help="元の写真のパス")
+    p_photo.add_argument(
+        "--out", default="site/assets/works", help="出力先ディレクトリ"
+    )
+    p_photo.set_defaults(func=cmd_photo_prep)
+
+    p_check = sub.add_parser(
+        "photo-check", help="公開予定の画像に位置情報が残っていないか調べる"
+    )
+    p_check.add_argument("--site", default=DEFAULT_SITE_DIR)
+    p_check.set_defaults(func=cmd_photo_check)
 
     p_status = sub.add_parser("status", help="DB の中身と取り込み履歴を表示する")
     p_status.set_defaults(func=cmd_status)

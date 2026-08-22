@@ -1,6 +1,6 @@
 +++
 title = "秋田市土崎 戸建て 外壁・屋根塗装"
-date = 2026-08-01
+date = 2026-06-01
 area = "秋田市土崎"
 service = "外壁塗装・屋根塗装"
 building = "戸建て 2階建て・築25年（塗装歴あり）"
@@ -10,19 +10,21 @@ price_range = "90万円（税込）"
 
 [[pair]]
 label = "屋根"
-before = "works/tsuchizaki-yane-before.svg"
-after = "works/tsuchizaki-yane-after.svg"
+before = "works/tsuchizaki-yane-before.jpg"
+after = "works/tsuchizaki-yane-after.jpg"
 
 [[pair]]
 label = "外壁"
-before = "works/tsuchizaki-gaiheki-before.svg"
-after = "works/tsuchizaki-gaiheki-after.svg"
+before = "works/tsuchizaki-gaiheki-before.jpg"
+after = "works/tsuchizaki-gaiheki-after.jpg"
 
 images = []
 +++
 
-<!-- 【要記入】施工時期を教えてください。いまは仮に 2026年8月 が入っています。
-     ページには「2026年08月 施工」と表示されます。 -->
+<!-- 【要記入】写真の撮影日と、申告された施工時期が食い違っている。
+     本人の申告は 2026年6月。写真の EXIF の撮影日時は 2022年6月21日〜7月16日。
+     どちらが正しいか、またこの写真がこの工事のものかを確認すること。
+     確認できたらこのコメントを削除する。 -->
 
 ## ご相談の内容
 
