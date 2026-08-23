@@ -49,8 +49,13 @@ def test_expected_pages_are_generated(built):
 def test_urls_end_in_a_slash_not_an_extension(built):
     """URL は後から変えると評価を失うので、最初から拡張子を出さない形にする。"""
     _, out = built
-    assert (out / "blog" / "2026-06-mitsumori-no-mikata" / "index.html").exists()
-    assert not (out / "blog" / "2026-06-mitsumori-no-mikata.html").exists()
+    from seo_meo.site.content import load_posts
+
+    posts = load_posts(SITE_ROOT)
+    assert posts, "記事が1本も無い"
+    for post in posts:
+        assert (out / "blog" / post.slug / "index.html").exists(), post.slug
+        assert not (out / "blog" / f"{post.slug}.html").exists(), post.slug
 
 
 def test_assets_are_copied(built):
@@ -101,10 +106,15 @@ def test_home_page_json_ld_is_valid(built):
 
 def test_article_pages_carry_breadcrumbs_and_article_markup(built):
     _, out = built
-    payload = jsonld(read(out, "blog/2026-06-mitsumori-no-mikata/index.html"))
-    types = [node["@type"] for node in payload["@graph"]]
-    assert "BreadcrumbList" in types
-    assert "BlogPosting" in types
+    from seo_meo.site.content import load_posts
+
+    posts = load_posts(SITE_ROOT)
+    assert posts, "記事が1本も無い"
+    for post in posts:
+        payload = jsonld(read(out, f"blog/{post.slug}/index.html"))
+        types = [node["@type"] for node in payload["@graph"]]
+        assert "BreadcrumbList" in types, post.slug
+        assert "BlogPosting" in types, post.slug
 
 
 def test_work_pages_carry_article_markup(built):
@@ -119,8 +129,12 @@ def test_work_pages_carry_article_markup(built):
 
 
 def test_markdown_body_is_not_escaped(built):
+    """Markdown の書式が、そのまま文字として出てしまわないこと。"""
     _, out = built
-    html = read(out, "blog/2026-06-mitsumori-no-mikata/index.html")
+    from seo_meo.site.content import load_posts
+
+    slug = load_posts(SITE_ROOT)[0].slug
+    html = read(out, f"blog/{slug}/index.html")
     assert "<strong>" in html
     assert "&lt;strong&gt;" not in html
 
@@ -144,8 +158,13 @@ def test_sitemap_lists_every_generated_page(built):
 
 
 def test_sitemap_carries_lastmod_for_dated_content(built):
+    """日付のあるページには更新日を出す。検索エンジンが新しさを判断できる。"""
     _, out = built
-    assert "<lastmod>2026-06-09</lastmod>" in read(out, "sitemap.xml")
+    from seo_meo.site.content import load_posts, load_works
+
+    sitemap = read(out, "sitemap.xml")
+    for item in load_posts(SITE_ROOT) + load_works(SITE_ROOT):
+        assert f"<lastmod>{item.date.isoformat()}</lastmod>" in sitemap, item.slug
 
 
 def test_robots_points_at_the_sitemap(built):
