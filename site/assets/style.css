@@ -58,7 +58,7 @@ a { color: var(--navy-light); }
   display: flex; align-items: center; justify-content: space-between;
   gap: 1rem; padding: .75rem 0; flex-wrap: wrap;
 }
-.brand { text-decoration: none; color: inherit; display: block; }
+.brand { text-decoration: none; color: inherit; }
 .brand-name { display: block; font-size: 1.15rem; font-weight: 700; color: var(--navy); letter-spacing: .02em; }
 .brand-tagline { display: block; font-size: .72rem; color: var(--ink-muted); line-height: 1.4; }
 
@@ -476,3 +476,26 @@ table.price-table thead th {
 
 @media (min-width: 700px) { .voice-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 900px) { .voice-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* ---------- ロゴ ---------- */
+
+.brand { display: flex; align-items: center; gap: .6rem; }
+.brand-logo { height: 38px; width: auto; flex: none; }
+.brand-text { display: block; }
+
+.footer-logo {
+  height: 42px; width: auto; margin-bottom: .6rem;
+  /* 濃紺のフッター上では、ロゴを白抜きにして馴染ませる */
+  filter: brightness(0) invert(1); opacity: .85;
+}
+
+/* ---------- 写真を敷いた見出し ---------- */
+
+.hero-photo {
+  position: relative;
+  background-image:
+    linear-gradient(165deg, rgba(18,49,79,.80) 0%, rgba(11,33,56,.88) 55%, rgba(11,33,56,.94) 100%),
+    var(--hero-image);
+  background-size: cover;
+  background-position: center;
+}

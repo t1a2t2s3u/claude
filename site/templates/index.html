@@ -2,7 +2,7 @@
 {% from "_macros.html" import work_card %}
 {% block content %}
 
-<section class="hero">
+<section class="hero{% if settings.hero_image %} hero-photo{% endif %}"{% if settings.hero_image %} style="--hero-image: url('/assets/{{ settings.hero_image }}')"{% endif %}>
   <div class="wrap hero-inner">
     <p class="hero-eyebrow">{{ company.areas|join(' ・ ') }} の外壁・屋根塗装</p>
     <h1>{{ company.tagline }}</h1>

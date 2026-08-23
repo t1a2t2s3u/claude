@@ -89,6 +89,10 @@ class SiteSettings:
     description: str
     locale: str = "ja_JP"
     contact_note: str = ""
+    # ヘッダーに出すロゴ。assets/ からの相対パス
+    logo: str = ""
+    # トップの見出し背景に敷く写真。文字が乗るので、暗く重ねて使う
+    hero_image: str = ""
 
     @property
     def canonical_base(self) -> str:
@@ -297,6 +301,8 @@ def load_settings(root: Path) -> SiteSettings:
         description=site.get("description", ""),
         locale=site.get("locale", "ja_JP"),
         contact_note=site.get("contact_note", ""),
+        logo=site.get("logo", ""),
+        hero_image=site.get("hero_image", ""),
     )
 
 

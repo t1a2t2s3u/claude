@@ -13,3 +13,10 @@ base_url = "https://tatsumi-tosou.com"
 description = "外壁塗装・屋根塗装の専門店。現地調査とお見積りは無料です。"
 locale = "ja_JP"
 contact_note = "現地調査・お見積りは無料です。ご相談だけでもお気軽にどうぞ。"
+
+# ヘッダーのロゴ。チラシのロゴをそのまま使っている。
+logo = "logo.png"
+
+# トップの見出しの背景に敷く写真。上に文字が乗るため、暗く重ねて表示する。
+# 差し替えるときは、寄りすぎず・明暗差の少ない写真を選ぶこと。
+hero_image = "works/tsuchizaki-yane-after.jpg"
