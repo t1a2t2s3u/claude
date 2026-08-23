@@ -102,8 +102,32 @@
 </section>
 {% endif %}
 
+{% if settings.crew_image %}
+<section class="section crew">
+  <div class="wrap crew-inner">
+    <div class="crew-photo">
+      <img src="/assets/{{ settings.crew_image }}" alt="{{ company.name }}の職人が外壁を塗装している様子" loading="lazy" width="1600" height="2133">
+    </div>
+    <div class="crew-body">
+      <h2 class="section-title">塗るのは、うちの職人です</h2>
+      <p>
+        営業だけを行い、実際の工事は下請けに回す会社もあります。当社は
+        <strong>完全自社施工</strong>です。お見積りをした人間と、実際に塗る人間が同じなので、
+        「聞いていた話と現場が違う」ということが起きません。
+      </p>
+      <p>
+        塗装技能士は国家資格です。<strong>一級塗装技能士が在籍し、実際に現場へ入っています。</strong>
+        塗り終わってしまえば、何回塗ったか、塗料を規定どおりに扱ったかは外から見えません。
+        だからこそ工程管理を徹底し、お見積りには塗料のメーカー名と製品名を明記しています。
+      </p>
+      <a class="crew-link" href="/about/">辰弥塗装工業について</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
 {% if testimonials %}
-<section class="section">
+<section class="section section-alt">
   <div class="wrap">
     <h2 class="section-title">お客様の声</h2>
     <div class="voice-grid">

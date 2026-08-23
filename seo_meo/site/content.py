@@ -100,6 +100,8 @@ class SiteSettings:
     mark: str = ""
     # トップの見出し背景に敷く写真。文字が乗るので、暗く重ねて使う
     hero_image: str = ""
+    # 「誰が施工するのか」を見せる、職人の作業写真
+    crew_image: str = ""
 
     @property
     def canonical_base(self) -> str:
@@ -316,6 +318,7 @@ def load_settings(root: Path) -> SiteSettings:
         logo=site.get("logo", ""),
         mark=site.get("mark", ""),
         hero_image=site.get("hero_image", ""),
+        crew_image=site.get("crew_image", ""),
     )
 
 

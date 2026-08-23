@@ -24,3 +24,7 @@ mark = "mark.png"
 # トップの見出しの背景に敷く写真。上に文字が乗るため、暗く重ねて表示する。
 # 差し替えるときは、寄りすぎず・明暗差の少ない写真を選ぶこと。
 hero_image = "works/tsuchizaki-yane-after.jpg"
+
+# 「誰が施工するのか」を見せる写真。職人が作業している姿を使う。
+# 塗装は人に任せる仕事なので、顔が見える写真があると伝わり方が変わる。
+crew_image = "works/shokunin-gaiheki.jpg"
