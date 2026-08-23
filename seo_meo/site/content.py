@@ -91,6 +91,8 @@ class SiteSettings:
     contact_note: str = ""
     # ヘッダーに出すロゴ。assets/ からの相対パス
     logo: str = ""
+    # ホーム画面アイコン用の正方形マーク
+    mark: str = ""
     # トップの見出し背景に敷く写真。文字が乗るので、暗く重ねて使う
     hero_image: str = ""
 
@@ -302,6 +304,7 @@ def load_settings(root: Path) -> SiteSettings:
         locale=site.get("locale", "ja_JP"),
         contact_note=site.get("contact_note", ""),
         logo=site.get("logo", ""),
+        mark=site.get("mark", ""),
         hero_image=site.get("hero_image", ""),
     )
 

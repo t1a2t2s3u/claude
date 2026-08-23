@@ -479,14 +479,19 @@ table.price-table thead th {
 
 /* ---------- ロゴ ---------- */
 
-.brand { display: flex; align-items: center; gap: .6rem; }
-.brand-logo { height: 38px; width: auto; flex: none; }
+.brand { display: flex; align-items: center; }
+/* 社名まで入ったロゴなので、下の「辰弥塗装工業」が読める高さを確保する */
+.brand-logo { height: 64px; width: auto; flex: none; display: block; }
 .brand-text { display: block; }
 
 .footer-logo {
-  height: 42px; width: auto; margin-bottom: .6rem;
+  height: 60px; width: auto; margin-bottom: .8rem; display: block;
   /* 濃紺のフッター上では、ロゴを白抜きにして馴染ませる */
-  filter: brightness(0) invert(1); opacity: .85;
+  filter: brightness(0) invert(1); opacity: .9;
+}
+
+@media (max-width: 560px) {
+  .brand-logo { height: 52px; }
 }
 
 /* ---------- 写真を敷いた見出し ---------- */
