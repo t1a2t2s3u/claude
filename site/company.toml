@@ -77,6 +77,10 @@ gbp_url = ""
 
 instagram_url = "https://www.instagram.com/tatsumi_tosou_kougyou/"
 
+# 同じアカウントのQRコード。パソコンで見ている人がスマホで読み取れるよう、
+# 問い合わせページに出す。
+instagram_qr = "instagram-qr.png"
+
 # LINE公式アカウントの友だち追加URL。
 line_url = "https://lin.ee/WxoWd1J"
 

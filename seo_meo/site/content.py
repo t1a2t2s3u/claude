@@ -72,6 +72,7 @@ class Company:
     review_count: int = 0
     gbp_url: str = ""
     instagram_url: str = ""
+    instagram_qr: str = ""
     line_url: str = ""
     line_qr: str = ""
     map_embed_url: str = ""
@@ -355,6 +356,7 @@ def load_company(root: Path) -> Company:
         review_count=int(company.get("review_count", 0) or 0),
         gbp_url=company.get("gbp_url", ""),
         instagram_url=company.get("instagram_url", ""),
+        instagram_qr=company.get("instagram_qr", ""),
         line_url=company.get("line_url", ""),
         line_qr=company.get("line_qr", ""),
         map_embed_url=company.get("map_embed_url", ""),

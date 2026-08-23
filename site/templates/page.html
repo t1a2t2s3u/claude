@@ -47,10 +47,13 @@
     </a>
     {% endif %}
     {% if company.instagram_url %}
-    <a class="contact-card" href="{{ company.instagram_url }}" rel="noopener">
+    <a class="contact-card contact-instagram" href="{{ company.instagram_url }}" rel="noopener">
       <span class="contact-label">Instagram</span>
       <span class="contact-value contact-sns">施工の様子を公開しています</span>
       <span class="contact-note">DM でのご相談も承ります</span>
+      {% if company.instagram_qr %}
+      <img class="line-qr" src="/assets/{{ company.instagram_qr }}" alt="Instagram のQRコード" loading="lazy" width="540" height="541">
+      {% endif %}
     </a>
     {% endif %}
     {% if company.email %}
