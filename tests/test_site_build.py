@@ -88,12 +88,15 @@ def test_every_page_has_a_canonical_and_a_description(built):
 
 
 def test_home_page_json_ld_is_valid(built):
+    """トップには、事業者・サイト・全サービスが出ていること。"""
     _, out = built
+    from seo_meo.site.content import load_services
+
     payload = jsonld(read(out, "index.html"))
     types = [node["@type"] for node in payload["@graph"]]
     assert types[0] == "HousePainter"
     assert "WebSite" in types
-    assert types.count("Service") == 4
+    assert types.count("Service") == len(load_services(SITE_ROOT))
 
 
 def test_article_pages_carry_breadcrumbs_and_article_markup(built):
