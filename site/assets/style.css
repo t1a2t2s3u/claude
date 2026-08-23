@@ -30,14 +30,30 @@ html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Hiragino Kaku Gothic ProN",
-               "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
-  font-size: 16px;
-  line-height: 1.85;
+  /* Webフォントは読み込まない (日本語は容量が大きく、表示が遅くなる)。
+     端末に入っている書体のうち、読みやすいものから順に指定する。
+     Mac/iPhone は ヒラギノ、Windows は BIZ UDPGothic (ユニバーサル
+     デザイン書体) → 遊ゴシック Medium。遊ゴシックは Regular だと線が
+     細く読みにくいため、Medium を先に指定している。 */
+  font-family:
+    "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+    "BIZ UDPGothic",
+    "Yu Gothic Medium", "YuGothic", "Yu Gothic",
+    "Noto Sans JP", Meiryo, system-ui, sans-serif;
+  /* 日本語は英字より画数が多いぶん、少し大きくしないと潰れて見える */
+  font-size: 17px;
+  line-height: 1.9;
+  letter-spacing: .02em;
   color: var(--ink);
   background: var(--bg);
   /* スマホ下部の固定バーに本文が隠れないよう余白を確保する */
   padding-bottom: 64px;
+  text-size-adjust: 100%;
+}
+
+/* 画面が狭いときは、1行の文字数が減りすぎないよう少しだけ小さくする */
+@media (max-width: 420px) {
+  body { font-size: 16px; }
 }
 
 img { max-width: 100%; height: auto; display: block; }
@@ -97,8 +113,9 @@ a { color: var(--brand-text); }
   color: #8fd6ea; letter-spacing: .04em;
 }
 .hero h1 {
-  margin: 0 0 1rem; font-size: clamp(1.6rem, 5.5vw, 2.6rem);
-  line-height: 1.4; letter-spacing: .01em;
+  margin: 0 0 1.1rem; font-size: clamp(1.7rem, 5.6vw, 2.8rem);
+  font-weight: 700; line-height: 1.45; letter-spacing: .01em;
+  text-wrap: balance;
 }
 .hero-lead { margin: 0 0 1.75rem; color: #d3e9f1; max-width: 42rem; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
@@ -135,15 +152,19 @@ a { color: var(--brand-text); }
 .section { padding: 3rem 0; }
 .section-alt { background: var(--bg-alt); }
 .section-title {
-  margin: 0 0 1.5rem; font-size: clamp(1.25rem, 3.5vw, 1.6rem); color: var(--brand-deep);
-  padding-left: .7rem; border-left: 4px solid var(--brand); line-height: 1.4;
+  margin: 0 0 1.5rem; font-size: clamp(1.35rem, 3.8vw, 1.75rem); color: var(--brand-deep);
+  font-weight: 700; padding-left: .8rem; border-left: 5px solid var(--brand);
+  line-height: 1.45; letter-spacing: .03em;
 }
 .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .section-head .section-title { margin-bottom: 1.5rem; }
 .section-more { font-size: .85rem; font-weight: 600; white-space: nowrap; }
 
 .page-head { background: var(--bg-tint); padding: 2.25rem 0; border-bottom: 1px solid var(--line); }
-.page-head h1 { margin: 0 0 .5rem; font-size: clamp(1.5rem, 4.5vw, 2rem); color: var(--brand-deep); }
+.page-head h1 {
+  margin: 0 0 .6rem; font-size: clamp(1.6rem, 4.8vw, 2.2rem);
+  color: var(--brand-deep); font-weight: 700; line-height: 1.45; letter-spacing: .03em;
+}
 .page-head p { margin: 0; color: var(--ink-muted); max-width: 48rem; }
 
 .prose-wrap { padding: 2.5rem 0 3rem; max-width: 780px; }
@@ -227,7 +248,11 @@ a { color: var(--brand-text); }
 /* ---------- 記事 ---------- */
 
 .entry-head { margin-bottom: 1.5rem; }
-.entry-head h1 { margin: .35rem 0 .5rem; font-size: clamp(1.4rem, 4.5vw, 1.9rem); color: var(--brand-deep); line-height: 1.5; }
+.entry-head h1 {
+  margin: .4rem 0 .6rem; font-size: clamp(1.5rem, 4.8vw, 2.05rem);
+  color: var(--brand-deep); font-weight: 700; line-height: 1.5; letter-spacing: .02em;
+  text-wrap: balance;
+}
 .entry-date { font-size: .8rem; color: var(--ink-muted); font-weight: 600; }
 .tags { margin: .5rem 0 0; display: flex; flex-wrap: wrap; gap: .4rem; }
 .tags span {
@@ -261,11 +286,14 @@ a { color: var(--brand-text); }
 /* ---------- 本文（Markdown 出力） ---------- */
 
 .prose h2 {
-  margin: 2.25rem 0 .9rem; font-size: 1.3rem; color: var(--brand-deep);
-  padding-bottom: .4rem; border-bottom: 2px solid var(--bg-tint); line-height: 1.5;
+  margin: 2.5rem 0 1rem; font-size: 1.4rem; color: var(--brand-deep);
+  font-weight: 700; line-height: 1.5; letter-spacing: .02em;
 }
-.prose h3 { margin: 1.75rem 0 .6rem; font-size: 1.1rem; color: var(--brand-deep); line-height: 1.55; }
-.prose p { margin: 0 0 1.1rem; }
+.prose h3 {
+  margin: 2rem 0 .7rem; font-size: 1.15rem; color: var(--brand-deep);
+  font-weight: 700; line-height: 1.55; letter-spacing: .02em;
+}
+.prose p { margin: 0 0 1.3rem; }
 .prose ul, .prose ol { margin: 0 0 1.1rem; padding-left: 1.4rem; }
 .prose li { margin-bottom: .4rem; }
 .prose img { border-radius: var(--radius); border: 1px solid var(--line); margin: 1.25rem 0; }
@@ -661,8 +689,13 @@ table.price-table thead th {
   padding: 0 .1em;
 }
 
-/* 注意を促すもの（金額・法令・やってはいけないこと） */
-.alert {
+/* 注意を促すもの（金額・法令・やってはいけないこと）
+   .prose strong の色指定より優先させる必要があるため、
+   同じ強さのセレクタを並べている */
+.alert,
+.prose .alert,
+.note-box .alert,
+.crew-body .alert {
   color: var(--accent-dark);
   font-weight: 700;
   background: linear-gradient(transparent 58%, #ffdcc7 58%);
