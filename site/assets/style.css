@@ -306,7 +306,7 @@ a { color: var(--brand-text); }
 
 /* ---------- 問い合わせ ---------- */
 
-.contact-methods { display: grid; gap: 1rem; margin: 1.5rem 0; }
+.contact-methods { display: grid; gap: 1rem; margin: 1.5rem 0; align-items: start; }
 .contact-card {
   border: 2px solid var(--line); border-radius: var(--radius);
   padding: 1.25rem; text-decoration: none; color: inherit; display: block;
@@ -591,4 +591,13 @@ table.price-table thead th {
 }
 .service-figure figcaption {
   margin-top: .5rem; font-size: .82rem; color: var(--ink-muted);
+}
+
+/* LINEのQRコード。パソコンで見ている人がスマホで読み取るためのもの */
+.line-qr {
+  display: none; width: 120px; height: 120px; margin-top: .75rem;
+  border: 1px solid var(--line); border-radius: 6px; background: #fff;
+}
+@media (min-width: 700px) and (hover: hover) {
+  .line-qr { display: block; }
 }

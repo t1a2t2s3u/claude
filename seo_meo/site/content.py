@@ -73,6 +73,7 @@ class Company:
     gbp_url: str = ""
     instagram_url: str = ""
     line_url: str = ""
+    line_qr: str = ""
     map_embed_url: str = ""
 
     @property
@@ -355,6 +356,7 @@ def load_company(root: Path) -> Company:
         gbp_url=company.get("gbp_url", ""),
         instagram_url=company.get("instagram_url", ""),
         line_url=company.get("line_url", ""),
+        line_qr=company.get("line_qr", ""),
         map_embed_url=company.get("map_embed_url", ""),
     )
 

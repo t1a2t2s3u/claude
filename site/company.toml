@@ -77,9 +77,12 @@ gbp_url = ""
 
 instagram_url = "https://www.instagram.com/tatsumi_tosou_kougyou/"
 
-# LINE公式アカウントのURL。チラシのQRコードと同じ宛先を入れてください。
-# LINE Official Account Manager の「友だち追加」から取得できます。
-line_url = ""
+# LINE公式アカウントの友だち追加URL。
+line_url = "https://lin.ee/WxoWd1J"
+
+# 同じ宛先のQRコード。パソコンで見ている人がスマホで読み取れるよう、
+# 問い合わせページに出す。URLを変えたらQRも差し替えること。
+line_qr = "line-qr.png"
 
 # Googleマップの埋め込みURL (マップの「共有」→「地図を埋め込む」の src の値)。
 # 空にすると問い合わせページに地図が出ません。

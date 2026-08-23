@@ -34,13 +34,16 @@
     <a class="contact-card contact-call" href="tel:{{ company.tel_link }}">
       <span class="contact-label">お電話</span>
       <span class="contact-value">{{ company.phone }}</span>
-      <span class="contact-note">{{ company.business_hours }}／{{ company.holidays }}</span>
+      <span class="contact-note">{{ company.business_hours }}<br>{{ company.holidays }}定休</span>
     </a>
     {% if company.line_url %}
     <a class="contact-card contact-line" href="{{ company.line_url }}" rel="noopener">
       <span class="contact-label">LINE</span>
       <span class="contact-value contact-sns">写真を送るだけで概算をお出しします</span>
       <span class="contact-note">お家の写真と、建物の縦横の長さをお送りください</span>
+      {% if company.line_qr %}
+      <img class="line-qr" src="/assets/{{ company.line_qr }}" alt="LINE友だち追加のQRコード" loading="lazy" width="540" height="540">
+      {% endif %}
     </a>
     {% endif %}
     {% if company.instagram_url %}
