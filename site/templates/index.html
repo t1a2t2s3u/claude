@@ -180,7 +180,7 @@
       {% for post in posts[:4] %}
       <li>
         <a href="{{ post.url }}">
-          {% if post.cover %}<img class="post-thumb" src="/assets/{{ post.cover }}" alt="" loading="lazy" width="160" height="120">{% endif %}
+          {% if post_thumbs_ready %}<img class="post-thumb" src="/assets/{{ post.cover }}" alt="" loading="lazy" width="160" height="120">{% endif %}
           <time datetime="{{ post.date.isoformat() }}">{{ post.date.strftime('%Y年%m月%d日') }}</time>
           <span class="post-title">{{ post.title }}</span>
         </a>

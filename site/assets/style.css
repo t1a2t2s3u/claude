@@ -733,3 +733,15 @@ table.price-table thead th {
 }
 .prose ol { padding-left: 1.5rem; }
 .prose ol > li::marker { color: var(--brand-text); font-weight: 700; }
+
+/* ブログ一覧のサムネイル */
+.entry-list a { display: grid; gap: .9rem; grid-template-columns: 1fr; }
+.entry-thumb {
+  width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
+  border-radius: var(--radius); border: 1px solid var(--line);
+}
+.entry-text { display: grid; gap: .1rem; align-content: start; }
+
+@media (min-width: 620px) {
+  .entry-list a { grid-template-columns: 13rem 1fr; align-items: start; }
+}

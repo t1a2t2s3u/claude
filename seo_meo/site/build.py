@@ -92,6 +92,8 @@ class _Builder:
                 for service in self.content.services
                 if service.in_package
             ),
+            # 記事も同じ。1本だけ写真があると一覧の行が不揃いになる
+            post_thumbs_ready=all(post.cover for post in self.content.posts),
             plan=self.content.plan,
             testimonials=self.content.testimonials,
             works=self.content.works,

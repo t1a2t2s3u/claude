@@ -325,3 +325,28 @@ def test_generated_html_tags_are_balanced(built):
         checker.feed(path.read_text(encoding="utf-8"))
         assert not checker.errors, f"{path.name}: {checker.errors}"
         assert not checker.stack, f"{path.name}: 閉じられていないタグ {checker.stack}"
+
+
+def test_internal_links_all_resolve(built):
+    """サイト内のリンクが、実在するページを指していること。
+
+    記事が増えるほどリンク切れは起きやすい。訪問者を行き止まりに
+    追い込むうえ、検索評価の面でも損をするので、ビルド時に落とす。
+    """
+    _, out = built
+    broken: list[str] = []
+
+    for path in sorted(out.rglob("*.html")):
+        html = path.read_text(encoding="utf-8")
+        for href in set(re.findall(r'href="(/[^"]*)"', html)):
+            href = href.split("#")[0]
+            if not href:
+                continue
+            if href.endswith("/"):
+                target = out / href.strip("/") / "index.html"
+            else:
+                target = out / href.lstrip("/")
+            if not target.exists():
+                broken.append(f"{path.name} → {href}")
+
+    assert not broken, f"リンク切れ: {broken}"
