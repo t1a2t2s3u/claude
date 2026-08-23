@@ -6,7 +6,8 @@ build-backend = "setuptools.build_meta"
 name = "seo-meo"
 version = "0.1.0"
 description = "辰弥塗装工業のSEO/MEOツール群（データ収集・レポート・自社サイト生成）"
-requires-python = ">=3.10"
+# tomllib (設定ファイルの読み込み) が標準ライブラリに入ったのが 3.11。
+requires-python = ">=3.11"
 dependencies = [
     # MEO データ収集
     "requests>=2.31",

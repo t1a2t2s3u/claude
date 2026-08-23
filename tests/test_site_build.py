@@ -206,7 +206,18 @@ def test_clean_removes_files_from_a_previous_build(tmp_path):
 
 
 def test_missing_base_url_is_reported(tmp_path):
-    result = site_build.build(SITE_ROOT, tmp_path / "d", base_url="")
+    """公開URLが空だと canonical と sitemap が正しく出ない。"""
+    import shutil
+
+    site = tmp_path / "site"
+    shutil.copytree(SITE_ROOT, site)
+    config = site / "site.toml"
+    config.write_text(
+        re.sub(r'base_url = ".*"', 'base_url = ""', config.read_text(encoding="utf-8")),
+        encoding="utf-8",
+    )
+
+    result = site_build.build(site, tmp_path / "d")
     assert any("base_url" in warning for warning in result.warnings)
 
 

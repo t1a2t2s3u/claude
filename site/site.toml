@@ -3,9 +3,12 @@
 [site]
 name = "辰弥塗装工業"
 
-# 公開先のURL。ドメイン取得後にここを書き換えてください。
-# canonical タグと sitemap.xml の URL に使われます。末尾スラッシュ不要。
-base_url = "https://【要記入】.example.jp"
+# 公開先のURL。canonical タグと sitemap.xml に使われます。末尾スラッシュ不要。
+#
+# www あり・なしの両方でサイトが見えると、Google からは別々のサイトに
+# 見えて評価が分散します。ここに書いたほうを正とし、もう一方は
+# 公開先の設定でこちらへ転送します。
+base_url = "https://tatsumi-tosou.com"
 
 description = "外壁塗装・屋根塗装の専門店。現地調査とお見積りは無料です。"
 locale = "ja_JP"
