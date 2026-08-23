@@ -281,3 +281,44 @@ def test_prices_are_labelled_tax_inclusive(built):
     """消費者向けの価格表示は税込である必要がある (消費税法第63条)。"""
     _, out = built
     assert "税込" in read(out, "services/index.html")
+
+
+def test_generated_html_tags_are_balanced(built):
+    """開いたタグが必ず閉じていること。
+
+    テンプレートを編集したときに閉じタグを入れ忘れると、表示が崩れる。
+    ブラウザは黙って補正するので気づきにくい。
+    """
+    from html.parser import HTMLParser
+
+    VOID = {
+        "area", "base", "br", "col", "embed", "hr", "img", "input",
+        "link", "meta", "source", "track", "wbr",
+    }
+
+    class Checker(HTMLParser):
+        def __init__(self):
+            super().__init__(convert_charrefs=True)
+            self.stack: list[str] = []
+            self.errors: list[str] = []
+
+        def handle_starttag(self, tag, attrs):
+            if tag not in VOID:
+                self.stack.append(tag)
+
+        def handle_endtag(self, tag):
+            if tag in VOID:
+                return
+            if not self.stack:
+                self.errors.append(f"余分な </{tag}>")
+            elif self.stack[-1] != tag:
+                self.errors.append(f"</{tag}> が来たが、開いているのは <{self.stack[-1]}>")
+            else:
+                self.stack.pop()
+
+    _, out = built
+    for path in sorted(out.rglob("*.html")):
+        checker = Checker()
+        checker.feed(path.read_text(encoding="utf-8"))
+        assert not checker.errors, f"{path.name}: {checker.errors}"
+        assert not checker.stack, f"{path.name}: 閉じられていないタグ {checker.stack}"
