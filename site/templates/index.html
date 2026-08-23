@@ -41,24 +41,34 @@
 <section class="section">
   <div class="wrap">
     <h2 class="section-title">対応する工事</h2>
+    <p class="service-lead">下の3つは、ひとつのパック料金にまとめて含まれています。</p>
     <div class="service-grid">
-      {% for service in services %}
+      {% for service in package_services %}
       <a class="service-card{% if service_photos_ready %} service-card-photo{% endif %}" href="/services/#{{ service.slug }}">
         {% if service_photos_ready %}
         <div class="service-thumb">
-          <img src="/assets/{{ service.image }}" alt="{{ service.image_caption or service.name ~ "の作業の様子" }}" loading="lazy" width="640" height="420">
+          <img src="/assets/{{ service.image }}" alt="{{ service.image_caption or service.name ~ 'の作業の様子' }}" loading="lazy" width="640" height="420">
         </div>
         {% endif %}
         <h3>{{ service.name }}</h3>
         <p class="service-summary">{{ service.summary }}</p>
-        {% if service.in_package %}
         <p class="service-tag">パック料金に含まれます</p>
-        {% else %}
-        <p class="service-tag service-tag-alt">{{ service.price_from }}</p>
-        {% endif %}
       </a>
       {% endfor %}
     </div>
+
+    {% if other_services %}
+    <h3 class="service-subhead">そのほかの工事</h3>
+    <div class="service-rows">
+      {% for service in other_services %}
+      <a class="service-row" href="/services/#{{ service.slug }}">
+        <span class="service-row-name">{{ service.name }}</span>
+        <span class="service-row-summary">{{ service.summary }}</span>
+        <span class="service-tag service-tag-alt">{{ service.price_from }}</span>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
   </div>
 </section>
 

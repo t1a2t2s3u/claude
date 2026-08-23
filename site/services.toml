@@ -90,6 +90,8 @@ name = "屋根塗装"
 summary = "スレート・トタン・セメント瓦の塗り替えに対応。パック料金には屋根塗装も含まれます。"
 duration = "7〜10日"
 in_package = true
+image = "works/shokunin-yane.jpg"
+image_caption = "屋根の塗装作業（下塗りの上に色を重ねているところ）"
 features = [
   "外壁と同じ足場を使うため、パック料金に含めています",
   "スレート屋根は縁切りを行い、雨水の逃げ道を確保します",
@@ -109,6 +111,8 @@ name = "コーキング（シーリング）工事"
 summary = "サイディングの目地やサッシまわりの充填材の打ち替え。パック料金に含まれます。"
 duration = "2〜4日"
 in_package = true
+image = "works/shokunin-coking.jpg"
+image_caption = "コーキングの打ち替え作業"
 features = [
   "古いコーキングを撤去してから充填する「打ち替え」が基本です",
   "状態が良い箇所に限り「増し打ち」で対応します",

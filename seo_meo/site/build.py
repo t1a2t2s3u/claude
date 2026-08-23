@@ -84,9 +84,13 @@ class _Builder:
             company=self.content.company,
             services=self.content.services,
             packages=self.content.packages,
-            # 一部だけ写真があるとカードが不揃いになる。全部揃って初めて出す
+            package_services=[s for s in self.content.services if s.in_package],
+            other_services=[s for s in self.content.services if not s.in_package],
+            # 一部だけ写真があるとカードが不揃いになる。揃って初めて出す
             service_photos_ready=all(
-                service.image for service in self.content.services
+                service.image
+                for service in self.content.services
+                if service.in_package
             ),
             plan=self.content.plan,
             testimonials=self.content.testimonials,
