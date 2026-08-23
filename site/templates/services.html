@@ -66,6 +66,12 @@
   {% for service in services %}
   <section class="service-detail" id="{{ service.slug }}">
     <h2>{{ service.name }}</h2>
+    {% if service.image %}
+    <figure class="service-figure">
+      <img src="/assets/{{ service.image }}" alt="{{ service.image_caption or service.name ~ 'の作業の様子' }}" loading="lazy" width="1600" height="2133">
+      {% if service.image_caption %}<figcaption>{{ service.image_caption }}</figcaption>{% endif %}
+    </figure>
+    {% endif %}
     <p class="service-summary">{{ service.summary }}</p>
     <dl class="spec">
       <div>

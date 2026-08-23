@@ -84,6 +84,10 @@ class _Builder:
             company=self.content.company,
             services=self.content.services,
             packages=self.content.packages,
+            # 一部だけ写真があるとカードが不揃いになる。全部揃って初めて出す
+            service_photos_ready=all(
+                service.image for service in self.content.services
+            ),
             plan=self.content.plan,
             testimonials=self.content.testimonials,
             works=self.content.works,

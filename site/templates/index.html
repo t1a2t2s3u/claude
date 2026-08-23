@@ -43,10 +43,10 @@
     <h2 class="section-title">対応する工事</h2>
     <div class="service-grid">
       {% for service in services %}
-      <a class="service-card{% if service.image %} service-card-photo{% endif %}" href="/services/#{{ service.slug }}">
-        {% if service.image %}
+      <a class="service-card{% if service_photos_ready %} service-card-photo{% endif %}" href="/services/#{{ service.slug }}">
+        {% if service_photos_ready %}
         <div class="service-thumb">
-          <img src="/assets/{{ service.image }}" alt="{{ service.name }}の作業の様子" loading="lazy" width="640" height="420">
+          <img src="/assets/{{ service.image }}" alt="{{ service.image_caption or service.name ~ "の作業の様子" }}" loading="lazy" width="640" height="420">
         </div>
         {% endif %}
         <h3>{{ service.name }}</h3>
@@ -103,20 +103,23 @@
 {% endif %}
 
 {% if settings.crew_image %}
-<section class="section crew">
+<section class="section section-alt crew">
   <div class="wrap crew-inner">
-    <div class="crew-photo">
-      <img src="/assets/{{ settings.crew_image }}" alt="{{ company.name }}の職人が外壁を塗装している様子" loading="lazy" width="1600" height="2133">
-    </div>
+    <figure class="crew-photo">
+      <img src="/assets/{{ settings.crew_image }}" alt="{{ company.representative }}が外壁を塗装している様子" loading="lazy" width="1600" height="2133">
+      <figcaption>外壁の塗装作業（代表・{{ company.representative }}）</figcaption>
+    </figure>
     <div class="crew-body">
-      <h2 class="section-title">塗るのは、うちの職人です</h2>
+      <h2 class="section-title">代表も、現場に立ちます</h2>
       <p>
         営業だけを行い、実際の工事は下請けに回す会社もあります。当社は
-        <strong>完全自社施工</strong>です。お見積りをした人間と、実際に塗る人間が同じなので、
-        「聞いていた話と現場が違う」ということが起きません。
+        <strong>完全自社施工</strong>です。写真で外壁を塗っているのは、代表の{{ company.representative }}本人です。
       </p>
       <p>
-        塗装技能士は国家資格です。<strong>一級塗装技能士が在籍し、実際に現場へ入っています。</strong>
+        お見積りをした人間と、実際に塗る人間が同じなので、「聞いていた話と現場が違う」
+        ということが起きません。<strong>一級塗装技能士も在籍し、実際に現場へ入っています。</strong>
+      </p>
+      <p>
         塗り終わってしまえば、何回塗ったか、塗料を規定どおりに扱ったかは外から見えません。
         だからこそ工程管理を徹底し、お見積りには塗料のメーカー名と製品名を明記しています。
       </p>
@@ -127,7 +130,7 @@
 {% endif %}
 
 {% if testimonials %}
-<section class="section section-alt">
+<section class="section">
   <div class="wrap">
     <h2 class="section-title">お客様の声</h2>
     <div class="voice-grid">

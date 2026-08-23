@@ -130,6 +130,9 @@ class Service:
     image: str = ""
     """カードに出す写真。作業中の写真があるとその工事が伝わる。"""
 
+    image_caption: str = ""
+    """写真の説明。誰が写っているかを伝えると信頼材料になる。"""
+
 
 @dataclass
 class Package:
@@ -372,6 +375,7 @@ def load_services(root: Path) -> list[Service]:
                 body_html=_render_markdown(entry.get("body", "")),
                 in_package=bool(entry.get("in_package", False)),
                 image=entry.get("image", ""),
+                image_caption=entry.get("image_caption", ""),
             )
         )
     return services
