@@ -499,36 +499,29 @@ table.price-table thead th {
   .brand-logo { height: 52px; }
 }
 
-/* ---------- 写真つきの見出し ---------- */
+/* ---------- 写真を敷いた見出し ---------- */
 
-/* 狭い画面：文字の下に写真を帯として置く。
-   写真の上に文字を重ねると、読ませるために暗くする必要があり、
-   家だと分かる要素 (窓・シャッター) が見えなくなる。 */
-.hero-figure {
-  display: block;
-  aspect-ratio: 16 / 10;
-  background-image: var(--hero-image);
+.hero-photo {
+  /* 文字が乗る左側を濃く落とし、右側は写真を見せる */
+  background-image:
+    linear-gradient(100deg,
+      rgba(6,51,63,.93) 0%,
+      rgba(8,60,74,.88) 38%,
+      rgba(11,74,95,.55) 68%,
+      rgba(11,74,95,.32) 100%),
+    var(--hero-image);
   background-size: cover;
-  background-position: center;
+  background-position: center right;
 }
 
-/* 広い画面：文字と写真を左右に分ける。
-   重ねる形だと、家だと分かる要素 (窓・シャッター) が文字の下に隠れてしまう。 */
-@media (min-width: 900px) {
+@media (max-width: 760px) {
+  /* 幅が狭いと文字が写真の全面に重なるため、全体を濃くする */
   .hero-photo {
-    display: grid;
-    grid-template-columns: 1fr minmax(19rem, .78fr);
-    align-items: stretch;
-    background-image: linear-gradient(160deg, #0d6b85 0%, var(--brand-deepest) 100%);
-    padding: 0;
+    background-image:
+      linear-gradient(165deg, rgba(6,51,63,.90) 0%, rgba(11,74,95,.86) 100%),
+      var(--hero-image);
+    background-position: center;
   }
-  .hero-photo .hero-main { display: flex; align-items: center; padding: 4.5rem 0; }
-  .hero-photo .hero-inner {
-    width: auto; margin: 0;
-    padding-left: max(1.25rem, calc((100vw - var(--wrap)) / 2));
-    padding-right: 2.5rem;
-  }
-  .hero-figure { aspect-ratio: auto; background-position: center left; }
 }
 
 /* ---------- Googleのクチコミ帯 ---------- */

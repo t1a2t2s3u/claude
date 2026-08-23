@@ -3,7 +3,6 @@
 {% block content %}
 
 <section class="hero{% if settings.hero_image %} hero-photo{% endif %}"{% if settings.hero_image %} style="--hero-image: url('/assets/{{ settings.hero_image }}')"{% endif %}>
-  <div class="hero-main">
   <div class="wrap hero-inner">
     <p class="hero-eyebrow">{{ company.areas|join(' ・ ') }} の外壁・屋根塗装</p>
     <h1>{{ company.tagline }}</h1>
@@ -22,10 +21,6 @@
       {% for point in company.trust_points %}<li>{{ point }}</li>{% endfor %}
     </ul>
   </div>
-  </div>
-  {% if settings.hero_image %}
-  <div class="hero-figure" role="img" aria-label="{{ company.name }}が施工した外壁"></div>
-  {% endif %}
 </section>
 
 {% if company.review_count %}
