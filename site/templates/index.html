@@ -23,12 +23,32 @@
   </div>
 </section>
 
+{% if company.review_count %}
+<aside class="review-band">
+  <div class="wrap review-inner">
+    <p class="review-stars" aria-hidden="true">★★★★★</p>
+    <p class="review-text">
+      Googleのクチコミ評価 <strong>{{ company.review_rating }}</strong>
+      <span class="review-count">（{{ company.review_count }}件）</span>
+    </p>
+    {% if company.gbp_url %}
+    <a class="review-link" href="{{ company.gbp_url }}" rel="noopener">クチコミを見る</a>
+    {% endif %}
+  </div>
+</aside>
+{% endif %}
+
 <section class="section">
   <div class="wrap">
     <h2 class="section-title">対応する工事</h2>
     <div class="service-grid">
       {% for service in services %}
-      <a class="service-card" href="/services/#{{ service.slug }}">
+      <a class="service-card{% if service.image %} service-card-photo{% endif %}" href="/services/#{{ service.slug }}">
+        {% if service.image %}
+        <div class="service-thumb">
+          <img src="/assets/{{ service.image }}" alt="{{ service.name }}の作業の様子" loading="lazy" width="640" height="420">
+        </div>
+        {% endif %}
         <h3>{{ service.name }}</h3>
         <p class="service-summary">{{ service.summary }}</p>
         {% if service.in_package %}
@@ -123,6 +143,7 @@
       {% for post in posts[:4] %}
       <li>
         <a href="{{ post.url }}">
+          {% if post.cover %}<img class="post-thumb" src="/assets/{{ post.cover }}" alt="" loading="lazy" width="160" height="120">{% endif %}
           <time datetime="{{ post.date.isoformat() }}">{{ post.date.strftime('%Y年%m月%d日') }}</time>
           <span class="post-title">{{ post.title }}</span>
         </a>

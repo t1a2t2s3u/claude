@@ -96,8 +96,11 @@
   </div>
 </footer>
 
-<div class="mobile-bar">
+<div class="mobile-bar{% if company.line_url %} mobile-bar-3{% endif %}">
   <a class="mobile-call" href="tel:{{ company.tel_link }}">電話する</a>
+  {% if company.line_url %}
+  <a class="mobile-line" href="{{ company.line_url }}" rel="noopener">LINEで相談</a>
+  {% endif %}
   <a class="mobile-form" href="/contact/">見積り依頼</a>
 </div>
 </body>

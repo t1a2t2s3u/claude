@@ -65,6 +65,11 @@ class Company:
     # 例: ["Mo-Fr 08:00-18:00", "Sa 08:00-17:00"]
     opening_hours_spec: list[str] = field(default_factory=list)
     price_range: str = ""
+    # Google のクチコミ評価。GBP の画面の数値を転記する。件数は増えるので
+    # 定期的に更新すること。自社サイトに載せる自社への評価なので、構造化
+    # データ (Review) には出さない (Google のガイドラインで認められていない)。
+    review_rating: str = ""
+    review_count: int = 0
     gbp_url: str = ""
     instagram_url: str = ""
     line_url: str = ""
@@ -119,6 +124,9 @@ class Service:
     features: list[str] = field(default_factory=list)
     in_package: bool = False
     """パック料金に含まれる工事か。含まれないものは別途見積もり。"""
+
+    image: str = ""
+    """カードに出す写真。作業中の写真があるとその工事が伝わる。"""
 
 
 @dataclass
@@ -213,6 +221,8 @@ class Post:
     description: str
     body_html: str
     tags: list[str] = field(default_factory=list)
+    cover: str = ""
+    """一覧に出すサムネイル。無ければ文字だけで並ぶ。"""
 
     @property
     def url(self) -> str:
@@ -334,6 +344,8 @@ def load_company(root: Path) -> Company:
         qualifications=list(company.get("qualifications", [])),
         opening_hours_spec=list(company.get("opening_hours_spec", [])),
         price_range=company.get("price_range", ""),
+        review_rating=company.get("review_rating", ""),
+        review_count=int(company.get("review_count", 0) or 0),
         gbp_url=company.get("gbp_url", ""),
         instagram_url=company.get("instagram_url", ""),
         line_url=company.get("line_url", ""),
@@ -356,6 +368,7 @@ def load_services(root: Path) -> list[Service]:
                 features=list(entry.get("features", [])),
                 body_html=_render_markdown(entry.get("body", "")),
                 in_package=bool(entry.get("in_package", False)),
+                image=entry.get("image", ""),
             )
         )
     return services
@@ -449,6 +462,7 @@ def load_posts(root: Path) -> list[Post]:
                 description=front.get("description") or _summarise(body_html),
                 body_html=body_html,
                 tags=list(front.get("tags", [])),
+                cover=front.get("cover", ""),
             )
         )
     posts.sort(key=lambda p: p.date, reverse=True)
