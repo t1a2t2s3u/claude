@@ -292,7 +292,10 @@ def split_front_matter(text: str) -> tuple[dict, str]:
 def _render_markdown(body: str) -> str:
     import markdown as markdown_lib
 
-    return markdown_lib.markdown(body, extensions=["extra", "sane_lists"])
+    # attr_list は本文中で {.marker} のように装飾を指定するために使う
+    return markdown_lib.markdown(
+        body, extensions=["extra", "sane_lists", "attr_list"]
+    )
 
 
 def _summarise(body_html: str, limit: int = 110) -> str:

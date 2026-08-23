@@ -640,3 +640,63 @@ table.price-table thead th {
 @media (min-width: 700px) {
   .service-row { grid-template-columns: 10rem 1fr auto; }
 }
+
+/* ---------- 本文の強弱 ---------- */
+/* 読み飛ばしても要点が目に入るようにする。
+   使いすぎると全部が目立って何も目立たなくなるので、
+   マーカーは1つの節に1〜2箇所までにとどめる。 */
+
+.prose strong,
+.note-box strong,
+.crew-body strong,
+.includes-note strong {
+  color: var(--brand-deep);
+  font-weight: 700;
+}
+
+/* 蛍光ペンで引いたような下線。いちばん読ませたい一文に使う */
+.marker {
+  background: linear-gradient(transparent 58%, #ffe6a3 58%);
+  font-weight: 700;
+  padding: 0 .1em;
+}
+
+/* 注意を促すもの（金額・法令・やってはいけないこと） */
+.alert {
+  color: var(--accent-dark);
+  font-weight: 700;
+  background: linear-gradient(transparent 58%, #ffdcc7 58%);
+  padding: 0 .1em;
+}
+
+/* 本文中のリンクは、押せると分かるように下線を残す */
+.prose a {
+  color: var(--brand-text);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: .2em;
+  text-decoration-color: var(--brand);
+}
+.prose a:hover { background: var(--bg-tint); }
+
+/* 見出しの下の余白と区切りを強めて、段落の切れ目を分かりやすくする */
+.prose h2 {
+  border-bottom: 2px solid var(--brand);
+  padding-bottom: .45rem;
+}
+.prose h3 {
+  padding-left: .6rem;
+  border-left: 3px solid var(--line);
+}
+
+/* 箇条書きの点を水色にして、本文と区別する */
+.prose ul { list-style: none; padding-left: 0; }
+.prose ul > li {
+  position: relative; padding-left: 1.4rem;
+}
+.prose ul > li::before {
+  content: ""; position: absolute; left: .3rem; top: .78em;
+  width: .45rem; height: .45rem; background: var(--brand); border-radius: 50%;
+}
+.prose ol { padding-left: 1.5rem; }
+.prose ol > li::marker { color: var(--brand-text); font-weight: 700; }
