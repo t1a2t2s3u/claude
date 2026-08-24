@@ -6,11 +6,12 @@
 ## 全体の流れ
 
 ```
-1. ドメインを取得する          ✅ 完了（tatsumi-tosou.com）
-2. Cloudflare Pages に接続する （無料）      ← いまここ
-3. 独自ドメインを割り当てる
-4. Search Console に登録する
-5. 会社情報を記入する          ✅ 完了
+1. ドメインを取得する            ✅ 完了（tatsumi-tosou.com）
+2. Cloudflare Workers で公開する ✅ 完了（orange-boat-b4db）
+3. 独自ドメインを割り当てる      ✅ 完了
+4. GitHub と連携して更新を自動化 ← いまここ
+5. Search Console に登録する
+6. 会社情報を記入する            ✅ 完了
 ```
 
 サーバー代はかかりません。かかるのはドメイン代だけです。
@@ -36,57 +37,99 @@
 
 ---
 
-## 2. Cloudflare Pages に接続する
+## 2. Cloudflare Workers で公開する ✅ 完了
 
-[Cloudflare](https://dash.cloudflare.com/) の無料アカウントを作成します。
+[Cloudflare](https://dash.cloudflare.com/) の無料アカウントで、`dist/` を
+そのままアップロードして作った Worker (`orange-boat-b4db`) で公開している。
 
-1. ダッシュボードで **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
-2. このリポジトリを選択
-3. ビルド設定を次のようにする
-
-| 項目 | 値 |
-|---|---|
-| Framework preset | None |
-| Build command | `pip install -e . && seo-meo site-build --out dist --strict` |
-| Build output directory | `dist` |
-| Environment variables | `PYTHON_VERSION` = `3.11` |
-
-`--strict` を付けているのは、**未記入の項目が残ったまま公開されるのを防ぐ**
-ためです。`【要記入】` が1つでも残っているとビルドが失敗し、公開されません。
-
-`PYTHON_VERSION` は必ず `3.11` 以上にしてください。設定ファイルの読み込みに
-使っている `tomllib` が、それより古い Python には入っていません。
-
-4. **Save and Deploy**
-
-数分で `〇〇.pages.dev` のURLで公開されます。この時点では仮のURLです。
-
-> ビルドがPythonで動かない場合は、代わりに GitHub Actions
-> (`.github/workflows/deploy-site.yml`) でビルドしたものを配信する方法に
-> 切り替えられます。同ファイルのコメントを参照してください。
+> **Pages ではなく Workers を使っている。** 当初は Pages + Git 連携を
+> 想定していたが、実際には Workers の直接アップロードで立ち上げた。
+> ダッシュボードから zip を再アップロードする機能は Workers には無いため、
+> 更新は手順4の GitHub 連携で行う。
 
 ---
 
-## 3. 独自ドメインを割り当てる
+## 3. 独自ドメインを割り当てる ✅ 完了
 
-1. Cloudflare Pages のプロジェクト → **Custom domains** → **Set up a domain**
-2. 取得したドメインを入力
-3. 表示された **ネームサーバー**を、ドメインを取得したサービスの管理画面で設定する
+ネームサーバーを Cloudflare (`andy` / `emerie.ns.cloudflare.com`) に向け、
+Worker の **Domains** に `tatsumi-tosou.com` を登録してある。
 
-反映には数時間〜1日かかることがあります。HTTPS の証明書は Cloudflare が
-自動で用意するので、設定は不要です。
+### つまずいた点（同じことが起きたとき用）
+
+**お名前.com から引き継がれた A レコードが残っていると、そちらが優先される。**
+Cloudflare 移管時に既存レコードが取り込まれるため、`@` と `www` の A レコード
+(`157.120.209.207`) が残り、Worker ではなく旧サーバーの nginx が応答していた。
+症状は「Forbidden」→ 削除後は Cloudflare の「Error 1016」。
+
+DNS から次の2件を削除して解決した。
+
+| 種別 | 名前 | 内容 |
+|---|---|---|
+| A | `@` | `157.120.209.207` |
+| A | `www` | `157.120.209.207` |
+
+**MX・TXT（SPF / DKIM）は消さないこと。** メールが届かなくなる。
+
+さらに、競合したまま登録した Custom Domain は壊れた状態
+（A/AAAA を一切返さない）になっていた。**一度削除して登録し直すと直る。**
+
+> 切り分けの順番として、まず `dig` などで権威サーバーに直接 A レコードを
+> 引くこと。ネームサーバーが切り替わっているかどうかは数秒で分かるので、
+> 「まだ反映されていないだけ」と待ち続けずに済む。
 
 ### www ありを、www なしへ転送する
 
-Cloudflare の **Rules** → **Redirect Rules** で、`www.tatsumi-tosou.com` への
-アクセスを `https://tatsumi-tosou.com` へ転送する設定を1つ作ります
-（種別は「301 Permanent Redirect」）。
+`www` の A レコードを削除したため、`www.tatsumi-tosou.com` は現在どこにも
+つながらない。Cloudflare の **Rules** → **Redirect Rules** で
+`https://tatsumi-tosou.com` へ 301 転送する設定を1つ作ること。
 
-両方でサイトが見えると Google からは別々のサイトに見え、評価が分散します。
+両方でサイトが見えると Google からは別々のサイトに見え、評価が分散する。
 
 ---
 
-## 4. Search Console に登録する
+## 4. GitHub と連携して更新を自動化する
+
+Workers のダッシュボードには「zip を上げ直す」機能が無い（あるのは
+`Edit code` と `Visit` だけ）。そのため、GitHub のブランチを Cloudflare に
+つないで、push したら自動で公開される形にする。
+
+### リポジトリ側（設定済み）
+
+| ファイル | 役割 |
+|---|---|
+| `wrangler.toml` | 更新先の Worker 名と、公開するディレクトリ |
+| `dist/` | ビルド済みの成果物。`.gitignore` から外してある |
+
+`wrangler.toml` の `name` は Cloudflare 上の Worker 名と一致していなければ
+ならない。ずれると既存サイトが更新されず、別の Worker が黙って新規作成される。
+`tests/test_deploy_config.py` で固定してある。
+
+**Cloudflare 側ではビルドしない。** Python が使える保証がないため、
+ビルド済みの `dist/` をリポジトリに含める方式にしている。
+
+### Cloudflare 側の設定（初回だけ）
+
+1. Worker → **Settings** → **Build** → **Git repository** → **GitHub**
+2. リポジトリ `t1a2t2s3u/claude` を選ぶ
+3. 本番ブランチに `claude/seo-meo-automation-mvntxp` を指定
+4. Build command は**空のまま**、Deploy command は `npx wrangler deploy`
+
+### 以後の更新手順
+
+```bash
+seo-meo site-build --strict   # dist/ を作り直す
+git add dist && git commit && git push
+```
+
+push すると Cloudflare が自動で公開する。`--strict` を付けているので、
+`【要記入】` が1つでも残っていればビルドが失敗し、公開されない。
+
+**`dist/` の commit を忘れると、サイトは変わらない。** `site/` を編集した
+ときは必ずビルドし直してから commit すること。
+
+---
+
+## 5. Search Console に登録する
 
 サイトが表示されるようになったら登録します。ここで初めて
 「どんな語で検索されているか」のデータが手に入ります。
@@ -101,7 +144,7 @@ Cloudflare の **Rules** → **Redirect Rules** で、`www.tatsumi-tosou.com` �
 
 ---
 
-## 5. 会社情報を記入する
+## 6. 会社情報を記入する
 
 公開前に、`【要記入】` が残っていないか確認してください。
 

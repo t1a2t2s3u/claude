@@ -1,0 +1,11 @@
+# Cloudflare Workers の設定。GitHub と連携してサイトを公開するために置いている。
+#
+# name は Cloudflare 上の Worker 名と一致していなければならない。ここがずれると
+# 既存のサイトを更新せず、別の Worker が新しく作られてしまう。
+name = "orange-boat-b4db"
+compatibility_date = "2026-08-23"
+
+# dist/ は seo-meo site-build の出力。ビルド済みのものをリポジトリに含めて
+# あるため、Cloudflare 側でのビルドは不要。
+[assets]
+directory = "./dist"

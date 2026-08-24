@@ -59,6 +59,8 @@ site/
   pages/*.md           会社概要・お問い合わせ
   templates/*.html     Jinja2 テンプレート
   assets/              CSS と画像。dist/assets/ にそのままコピーされる
+dist/                  site/ から生成した公開物。commit する（下記）
+wrangler.toml          Cloudflare の更新先 Worker と、公開ディレクトリ
 docs/deploy.md         ドメイン取得から Search Console 登録までの手順
 tests/                 pytest。外部 API は叩かない
 ```
@@ -70,6 +72,22 @@ tests/                 pytest。外部 API は叩かない
 サイトにページ種別を足すときは、`site/templates/` にテンプレートを置き、
 `site/build.py` の `_Builder` にビルドメソッドを足して `build()` から呼ぶ。
 URL を `write()` に渡した時点で sitemap にも載る。
+
+## Deployment
+
+サイトは `tatsumi-tosou.com` で公開中。Cloudflare Workers (`orange-boat-b4db`)
+が、GitHub 上の **commit された `dist/` をそのまま配信している。**
+
+- **`site/` を変更したら、必ず `seo-meo site-build --strict` を実行して
+  `dist/` も一緒に commit する。** 忘れるとサイトは変わらない。
+  `tests/test_deploy_config.py` が、古い `dist/` を commit しようとすると
+  失敗するようにしてある。
+- **Cloudflare 側ではビルドしない。** Python が使える保証がないため、
+  ビルド済みを配る方式にしている。Build command は空。
+- `wrangler.toml` の `name` は Cloudflare 上の Worker 名と一致させること。
+  ずれると既存サイトが更新されず、別の Worker が黙って新規作成される。
+
+DNS でつまずいたときの切り分けは `docs/deploy.md` の手順3を読むこと。
 
 ## Development workflow
 

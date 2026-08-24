@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tatsumi-tosou.com/sitemap.xml

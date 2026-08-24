@@ -1,9 +1,10 @@
-# 自社サイトのビルド。
+# 自社サイトのビルド。手動実行のみ。
 #
-# 既定では手動実行のみです。Cloudflare Pages 側でビルドする場合、この
-# ワークフローは不要（成果物の確認用として使えます）。
+# 公開そのものには使っていません。Cloudflare は commit 済みの dist/ を
+# そのまま配信します（docs/deploy.md の手順4）。このワークフローは、
+# 手元以外でもビルドが通るかを確かめるための保険です。
 #
-# GitHub Pages で公開する場合は、下の push トリガーのコメントを外し、
+# GitHub Pages へ移す場合は、下の push トリガーのコメントを外し、
 # リポジトリの Settings → Pages で Source を "GitHub Actions" にしてください。
 
 name: サイトのビルド
