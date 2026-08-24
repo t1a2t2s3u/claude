@@ -4,7 +4,7 @@
 
 <section class="hero{% if settings.hero_image %} hero-photo{% endif %}"{% if settings.hero_image %} style="--hero-image: url('/assets/{{ settings.hero_image }}')"{% endif %}>
   <div class="wrap hero-inner">
-    <p class="hero-eyebrow">{{ company.areas|join(' ・ ') }} の外壁・屋根塗装</p>
+    <p class="hero-eyebrow">{{ company.areas|join('・') }}の外壁・屋根塗装</p>
     <h1>{{ company.tagline }}</h1>
     <p class="hero-lead">{{ company.description }}</p>
     <div class="hero-actions">
