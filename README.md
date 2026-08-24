@@ -192,7 +192,7 @@ seo-meo site-build --strict   # 未記入があれば一覧を出して失敗す
 | ファイル | 内容 |
 |---|---|
 | `site/site.toml` | 公開URL (`base_url`) |
-| `site/company.toml` | 住所・電話番号・営業時間・対応エリア・建設業許可番号 |
+| `site/company.toml` | 住所・電話番号・営業時間・対応エリア・保有資格 |
 | `site/services.toml` | 各工事の内容と料金 |
 | `site/pages/about.md` | 会社紹介の本文 |
 
@@ -279,13 +279,28 @@ images = ["works/k-sagyou.jpg"]
 `site/posts/` に同じ形式の Markdown を置きます。`date` と `title` が必須です。
 
 記事は「まだ業者を決めていない段階」の検索を拾う枠です。GBP では取れない層に
-届きます。初期状態で3本入っているので、書き方の参考にしてください。
+届きます。書き方の参考として、秋田の塗り替え時期をテーマにした記事が1本
+入っています。
 
 ### 公開する
 
-ドメイン取得から Search Console 登録までの手順は
-**[docs/deploy.md](docs/deploy.md)** にまとめてあります。サーバー代はかからず、
-かかるのはドメイン代（年1,000〜2,000円程度）だけです。
+**公開済みです： https://tatsumi-tosou.com**
+
+Cloudflare Workers で配信しています。サーバー代はかからず、かかるのは
+ドメイン代（年1,000〜2,000円程度）だけです。
+
+更新は GitHub 経由で自動化してあります。`site/` を直したら、
+
+```bash
+seo-meo site-build --strict   # dist/ を作り直す
+git add dist && git commit && git push
+```
+
+push すると Cloudflare が自動で公開します。**`dist/` の commit を忘れると
+サイトは変わりません**（忘れるとテストが失敗します）。
+
+経緯と、DNS でつまずいたときの切り分けは
+**[docs/deploy.md](docs/deploy.md)** にまとめてあります。
 
 ### SEO 面で入れてあるもの
 
