@@ -62,6 +62,8 @@ site/
 dist/                  site/ から生成した公開物。commit する（下記）
 wrangler.toml          Cloudflare の更新先 Worker と、公開ディレクトリ
 docs/deploy.md         ドメイン取得から Search Console 登録までの手順
+docs/line.md           公式LINE の設定。サイトの案内文と揃える必要がある
+docs/line/             リッチメニューの画像と、その生成スクリプト
 tests/                 pytest。外部 API は叩かない
 ```
 
