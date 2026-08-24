@@ -86,6 +86,10 @@ URL を `write()` に渡した時点で sitemap にも載る。
   ビルド済みを配る方式にしている。Build command は空。
 - `wrangler.toml` の `name` は Cloudflare 上の Worker 名と一致させること。
   ずれると既存サイトが更新されず、別の Worker が黙って新規作成される。
+- **Cloudflare が見ているのは `claude/seo-meo-automation-mvntxp` ブランチ。**
+  ここ以外に push してもサイトは変わらない。別のブランチで作業する場合は、
+  Cloudflare 側の Production branch も変えること（Worker → Settings →
+  Build → Branch control）。
 
 DNS でつまずいたときの切り分けは `docs/deploy.md` の手順3を読むこと。
 
