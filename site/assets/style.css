@@ -428,8 +428,11 @@ a { color: var(--brand-text); }
 }
 .price-basis { margin: 0 0 1.25rem; font-size: .88rem; color: var(--ink-muted); }
 
+/* 表が狭い画面に収まらないときは、ページ全体ではなく表の中だけを横に
+   スクロールさせる。ページ本体が横に動くと、読んでいる場所を見失う。 */
+.sheet { overflow-x: auto; }
 table.price-table {
-  width: 100%; min-width: 22rem; border-collapse: collapse; margin-bottom: .75rem;
+  width: 100%; min-width: 20rem; border-collapse: collapse; margin-bottom: .75rem;
 }
 table.price-table th, table.price-table td {
   border-bottom: 1px solid var(--line); padding: .8rem .6rem; text-align: left;
@@ -441,11 +444,24 @@ table.price-table thead th {
 .pt-name { font-weight: 700; color: var(--brand-deep); }
 .pt-note { display: block; font-size: .78rem; font-weight: 500; color: var(--ink-muted); }
 .pt-durability { font-size: .9rem; color: var(--ink-muted); white-space: nowrap; }
+.pt-warranty {
+  font-size: .9rem; font-weight: 700; color: var(--brand-text);
+  white-space: nowrap;
+}
 .pt-price {
   font-weight: 700; color: var(--accent); font-size: 1.15rem;
   text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums;
 }
 .price-tax { margin: 0 0 1.5rem; font-size: .8rem; color: var(--ink-muted); }
+
+/* 狭い画面では余白と文字を詰める。料金の列が画面外に出ると、いちばん
+   知りたい数字が見えないまま終わってしまう。 */
+@media (max-width: 26rem) {
+  table.price-table th, table.price-table td { padding: .7rem .3rem; }
+  .pt-name { font-size: .95rem; }
+  .pt-durability, .pt-warranty { font-size: .82rem; }
+  .pt-price { font-size: 1rem; }
+}
 
 .includes, .bonus {
   background: var(--bg-alt); border: 1px solid var(--line);

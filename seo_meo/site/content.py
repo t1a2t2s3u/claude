@@ -143,6 +143,8 @@ class Package:
     name: str
     durability: str
     price: str
+    # 保証年数は塗料のグレードごとに変わる。パック共通ではない。
+    warranty: str = ""
     note: str = ""
 
 
@@ -395,6 +397,7 @@ def load_packages(root: Path) -> list[Package]:
             name=entry.get("name", ""),
             durability=entry.get("durability", ""),
             price=entry.get("price", ""),
+            warranty=entry.get("warranty", ""),
             note=entry.get("note", ""),
         )
         for entry in raw.get("package", [])

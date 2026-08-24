@@ -21,13 +21,14 @@
     <div class="sheet">
       <table class="price-table">
         <thead>
-          <tr><th>塗料</th><th>耐久年数の目安</th><th>料金</th></tr>
+          <tr><th>塗料</th><th>耐久年数</th><th>保証</th><th>料金</th></tr>
         </thead>
         <tbody>
           {% for package in packages %}
           <tr>
             <td class="pt-name">{{ package.name }}{% if package.note %}<span class="pt-note">{{ package.note }}</span>{% endif %}</td>
             <td class="pt-durability">{{ package.durability }}</td>
+            <td class="pt-warranty">{{ package.warranty }}</td>
             <td class="pt-price">{{ package.price }}</td>
           </tr>
           {% endfor %}

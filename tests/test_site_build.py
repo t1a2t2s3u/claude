@@ -305,6 +305,19 @@ def test_prices_are_labelled_tax_inclusive(built):
     assert "税込" in read(out, "services/index.html")
 
 
+def test_every_package_shows_its_warranty(built):
+    """保証年数は塗料ごとに違う。表から落ちると「最大5年」しか伝わらない。"""
+    from seo_meo.site import content as content_mod
+
+    _, out = built
+    html = read(out, "services/index.html")
+    packages = content_mod.load_packages(SITE_ROOT)
+    assert packages
+    for package in packages:
+        assert package.warranty, f"{package.name} に warranty が無い"
+        assert f'<td class="pt-warranty">{package.warranty}</td>' in html
+
+
 def test_generated_html_tags_are_balanced(built):
     """開いたタグが必ず閉じていること。
 
