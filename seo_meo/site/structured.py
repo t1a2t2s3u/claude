@@ -28,6 +28,18 @@ from .content import (
 ORGANIZATION_ID = "#organization"
 
 
+def _areas(company) -> list[dict]:
+    """対応エリアを schema.org の型に落とす。
+
+    「南秋田郡」のような郡は市町村ではないので City にしない。
+    AdministrativeArea は City の親にあたる型で、郡や広域を指せる。
+    """
+    return [
+        {"@type": "AdministrativeArea" if area.endswith("郡") else "City", "name": area}
+        for area in company.areas
+    ]
+
+
 def _absolute(settings: SiteSettings, path: str) -> str:
     return f"{settings.canonical_base}{path}"
 
@@ -85,9 +97,7 @@ def organization(settings: SiteSettings, company: Company) -> dict:
                     "addressCountry": "JP",
                 }
             ),
-            "areaServed": [
-                {"@type": "City", "name": area} for area in company.areas
-            ],
+            "areaServed": _areas(company),
             "openingHours": company.opening_hours_spec,
             "founder": (
                 {"@type": "Person", "name": company.representative}
@@ -125,7 +135,7 @@ def service_offer(settings: SiteSettings, company: Company, service: Service) ->
             "description": service.summary,
             "serviceType": service.name,
             "provider": {"@id": _absolute(settings, f"/{ORGANIZATION_ID}")},
-            "areaServed": [{"@type": "City", "name": area} for area in company.areas],
+            "areaServed": _areas(company),
         }
     )
 
