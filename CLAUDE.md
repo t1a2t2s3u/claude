@@ -2,51 +2,35 @@
 
 Guidance for Claude Code and other AI assistants working in this repository.
 
-## Current repository state
-
-**This repository is empty.** As of the creation of this file it contains no
-source code, no build configuration, no tests, and no commit history — this
-file is the initial commit.
-
-Everything below is therefore a scaffold. Do not treat any section as
-describing real, existing behaviour until it has been filled in against
-actual code. If you are the first assistant to work here after code has been
-added, replace the placeholder sections with what you find in the tree, and
-delete this notice.
-
 ## Project overview
 
-_To be filled in._ Record here: what the project does, who it is for, and the
-one or two design decisions a newcomer would otherwise get wrong.
+This repository is the owner's personal **AI-employee workspace**: Claude Code
+sessions act as staff members with defined roles, driven by skills in
+`.claude/skills/` and scheduled Routines. There is no application code to
+build or run.
+
+The first employee is the **task-management secretary** — see
+`.claude/skills/secretary/SKILL.md` for its full job description. Any
+task-related request from the user (adding, checking, or reorganizing tasks)
+goes through that skill.
 
 ## Repository structure
 
-_To be filled in._ Once directories exist, describe the top-level layout and
-what belongs in each part — enough that an assistant can guess correctly
-where a new file should go.
-
-## Development workflow
-
-### Setup
-
-_To be filled in._ The exact commands to get from a fresh clone to a working
-environment.
-
-### Build, test, lint
-
-_To be filled in._ Record the canonical commands, not approximations — an
-assistant will run these verbatim. Note which are fast enough to run on every
-change and which are slow.
-
-### Running the application
-
-_To be filled in._
+- `TASKS.md` — the task board the secretary maintains. Its format and section
+  meanings are defined in the secretary skill; do not restructure it ad hoc.
+- `reports/` — daily morning briefings written by the secretary, one file per
+  day (`YYYY-MM-DD.md`).
+- `.claude/skills/` — one directory per AI employee. New employees get a new
+  skill directory here, not more sections in existing skills.
 
 ## Conventions
 
-_To be filled in._ Language and formatting rules, naming patterns, error
-handling style, testing approach, and anything that is enforced in review but
-not by tooling.
+- User-facing content (task board, reports, skill instructions) is written in
+  Japanese; this file stays in English.
+- Commits by an employee are prefixed with its role, e.g.
+  `secretary: add two tasks to inbox`.
+- Employees manage and report; they do not execute the user's tasks for them
+  unless the user explicitly asks.
 
 ## Git workflow
 
