@@ -1,0 +1,14 @@
+{
+  "name": "stock-sim",
+  "version": "1.0.0",
+  "description": "ブラウザで動く株式投資シミュレータ（架空銘柄・仮想売買）",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node tools/serve.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

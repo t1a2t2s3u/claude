@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>株式投資シミュレータ</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📈</text></svg>" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">📈</span>
+        <div>
+          <h1>株式投資シミュレータ</h1>
+          <p class="sub">架空の市場・架空の銘柄で売買を練習する</p>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><span class="kpi-label">営業日</span><strong id="kpi-date">-</strong></div>
+        <div class="kpi"><span class="kpi-label">総資産</span><strong id="kpi-equity">-</strong></div>
+        <div class="kpi"><span class="kpi-label">現金</span><strong id="kpi-cash">-</strong></div>
+        <div class="kpi"><span class="kpi-label">評価損益</span><strong id="kpi-unrealized">-</strong></div>
+        <div class="kpi"><span class="kpi-label">累計損益</span><strong id="kpi-total">-</strong></div>
+      </div>
+
+      <div class="controls">
+        <button id="btn-step1" class="btn">1日 ▶</button>
+        <button id="btn-step5" class="btn">5日 ▶▶</button>
+        <button id="btn-step20" class="btn">20日 ▶▶▶</button>
+        <button id="btn-auto" class="btn btn-accent">自動再生</button>
+        <button id="btn-reset" class="btn btn-ghost">リセット</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel watchlist">
+        <div class="panel-head">
+          <h2>銘柄一覧</h2>
+          <span class="muted" id="index-value">指数 -</span>
+        </div>
+        <div class="table-wrap">
+          <table class="grid">
+            <thead>
+              <tr>
+                <th>コード / 銘柄</th>
+                <th class="num">現在値</th>
+                <th class="num">前日比</th>
+                <th class="num">保有</th>
+              </tr>
+            </thead>
+            <tbody id="watchlist-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel chart-panel">
+        <div class="panel-head">
+          <div class="chart-title">
+            <h2 id="chart-name">-</h2>
+            <span id="chart-meta" class="muted">-</span>
+          </div>
+          <div class="head-actions">
+            <div class="tabs" id="chart-tabs">
+              <button class="tab is-active" data-chart="candles">チャート</button>
+              <button class="tab" data-chart="equity">資産推移</button>
+            </div>
+            <div class="tabs" id="range-tabs">
+              <button class="tab" data-range="40">40日</button>
+              <button class="tab is-active" data-range="90">90日</button>
+              <button class="tab" data-range="0">全期間</button>
+            </div>
+          </div>
+        </div>
+        <div class="chart-body">
+          <canvas id="chart-canvas"></canvas>
+          <div id="chart-tip" class="chart-tip" hidden></div>
+          <div class="legend" id="chart-legend">
+            <span class="dot" style="--c: #f2b544"></span>5日移動平均
+            <span class="dot" style="--c: #7c5cff"></span>25日移動平均
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel side">
+        <div class="order">
+          <div class="panel-head">
+            <h2>注文</h2>
+            <span class="muted" id="order-symbol">-</span>
+          </div>
+
+          <div class="seg" id="side-seg">
+            <button class="seg-btn is-active" data-side="buy">買い</button>
+            <button class="seg-btn" data-side="sell">売り</button>
+          </div>
+
+          <div class="seg" id="type-seg">
+            <button class="seg-btn is-active" data-type="market">成行</button>
+            <button class="seg-btn" data-type="limit">指値</button>
+          </div>
+
+          <label class="field" id="limit-field" hidden>
+            <span>指値価格</span>
+            <input id="limit-input" type="number" min="1" step="0.1" inputmode="decimal" />
+          </label>
+
+          <label class="field">
+            <span>数量（株）</span>
+            <input id="qty-input" type="number" min="100" step="100" value="100" inputmode="numeric" />
+          </label>
+
+          <div class="qty-quick">
+            <button class="chip" data-qty="100">100</button>
+            <button class="chip" data-qty="500">500</button>
+            <button class="chip" data-qty="1000">1,000</button>
+            <button class="chip" data-qty="max">上限</button>
+          </div>
+
+          <dl class="estimate">
+            <div><dt id="avail-label">買付余力</dt><dd id="avail-value">¥0</dd></div>
+            <div><dt>概算約定代金</dt><dd id="est-notional">¥0</dd></div>
+            <div><dt>手数料</dt><dd id="est-fee">¥0</dd></div>
+            <div><dt>受渡金額</dt><dd id="est-total">¥0</dd></div>
+          </dl>
+
+          <button id="btn-submit" class="btn btn-primary wide">買い注文を出す</button>
+          <p id="order-msg" class="order-msg"></p>
+        </div>
+
+        <div class="logs">
+          <div class="tabs" id="log-tabs">
+            <button class="tab is-active" data-log="positions">保有</button>
+            <button class="tab" data-log="orders">注文</button>
+            <button class="tab" data-log="trades">履歴</button>
+            <button class="tab" data-log="news">ニュース</button>
+            <button class="tab" data-log="stats">成績</button>
+          </div>
+          <div class="log-body" id="log-body"></div>
+        </div>
+      </aside>
+    </main>
+
+    <div id="toast" class="toast" hidden></div>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
