@@ -234,6 +234,7 @@ table.grid {
 }
 
 table.grid th {
+  white-space: nowrap;
   position: sticky;
   top: 0;
   background: var(--panel);
@@ -241,7 +242,7 @@ table.grid th {
   color: var(--muted);
   font-weight: 500;
   text-align: left;
-  padding: 7px 10px;
+  padding: 7px 8px;
   border-bottom: 1px solid var(--line);
   z-index: 1;
 }
@@ -251,7 +252,7 @@ table.grid th.num {
 }
 
 table.grid td {
-  padding: 8px 10px;
+  padding: 8px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   font-variant-numeric: tabular-nums;
 }
@@ -273,6 +274,19 @@ table.grid tbody tr.is-selected {
   display: flex;
   flex-direction: column;
   gap: 1px;
+  min-width: 0;
+}
+
+.sym b,
+.sym span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+table.grid td:first-child {
+  /* 銘柄名が長くても 4 列が横スクロールなしで収まる幅に抑える */
+  max-width: 118px;
 }
 
 .sym b {
@@ -696,4 +710,79 @@ table.grid tbody tr.is-selected {
   .log-body {
     max-height: 360px;
   }
+}
+
+/* ------------------------------------------------------------- source bar */
+
+.source-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+  flex-wrap: wrap;
+}
+
+.source-bar select {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-family: inherit;
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(62, 207, 142, 0.16);
+  color: var(--accent);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 10px;
+  margin-right: 6px;
+}
+
+/* ------------------------------------------------------------- data help */
+
+.data-help {
+  position: absolute;
+  inset: 12px;
+  background: rgba(14, 18, 25, 0.96);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px;
+  z-index: 6;
+  overflow: auto;
+}
+
+.data-help h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.data-help p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.data-help pre {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  margin: 0 0 12px;
+}
+
+.data-help code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: #cfe0ff;
+  line-height: 1.8;
 }

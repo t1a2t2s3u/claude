@@ -20,7 +20,3 @@ export const INSTRUMENTS = [
   { symbol: '1868', name: '蒼空モビリティ',     sector: '自動車', start: 1642, beta: 1.30, drift: 0.05,  vol: 0.30, yield_: 0.028, lot: 100 },
   { symbol: '1972', name: '常磐地所',           sector: '不動産', start:  932, beta: 0.95, drift: 0.03,  vol: 0.26, yield_: 0.031, lot: 100 },
 ];
-
-export function findInstrument(symbol) {
-  return INSTRUMENTS.find((i) => i.symbol === symbol) ?? null;
-}

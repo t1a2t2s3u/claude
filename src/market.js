@@ -42,9 +42,9 @@ const NEWS_TEMPLATES = {
 };
 
 /** 初期状態を作る。bars は空で、最初の 1 本は engine 側の step で生まれる */
-export function createMarketState() {
+export function createMarketState(specs = INSTRUMENTS) {
   const instruments = {};
-  for (const spec of INSTRUMENTS) {
+  for (const spec of specs) {
     instruments[spec.symbol] = {
       symbol: spec.symbol,
       last: spec.start,
@@ -63,7 +63,7 @@ function sample(rng, [lo, hi]) {
  * 1 営業日分のイベント（ニュース）を抽選する。
  * 返り値は { marketShock, sectorShocks, symbolShocks, news[] }。
  */
-export function rollEvents(rng, date) {
+export function rollEvents(rng, date, specs = INSTRUMENTS) {
   const news = [];
   let marketShock = 0;
   const sectorShocks = {};
@@ -76,7 +76,7 @@ export function rollEvents(rng, date) {
   }
 
   if (rng.chance(0.14)) {
-    const inst = rng.pick(INSTRUMENTS);
+    const inst = rng.pick(specs);
     const t = rng.pick(NEWS_TEMPLATES.sector);
     const shock = sample(rng, t.impact);
     sectorShocks[inst.sector] = (sectorShocks[inst.sector] ?? 0) + shock;
@@ -89,7 +89,7 @@ export function rollEvents(rng, date) {
     });
   }
 
-  for (const inst of INSTRUMENTS) {
+  for (const inst of specs) {
     if (!rng.chance(0.018)) continue;
     const good = rng.chance(0.5);
     const t = rng.pick(good ? NEWS_TEMPLATES.good : NEWS_TEMPLATES.bad);
@@ -111,8 +111,8 @@ export function rollEvents(rng, date) {
  * 1 営業日進めて、全銘柄の新しい足を確定させる。
  * market は破壊的に更新し、生成したニュースを返す。
  */
-export function stepMarket(market, rng, date) {
-  const events = rollEvents(rng, date);
+export function stepMarket(market, rng, date, specs = INSTRUMENTS) {
+  const events = rollEvents(rng, date, specs);
 
   const marketReturn =
     MARKET_DRIFT / TRADING_DAYS +
@@ -120,14 +120,14 @@ export function stepMarket(market, rng, date) {
     events.marketShock;
 
   const sectorReturns = {};
-  for (const sector of new Set(INSTRUMENTS.map((i) => i.sector))) {
+  for (const sector of new Set(specs.map((i) => i.sector))) {
     sectorReturns[sector] =
       (SECTOR_VOL / Math.sqrt(TRADING_DAYS)) * rng.normal() + (events.sectorShocks[sector] ?? 0);
   }
 
   let indexReturnSum = 0;
 
-  for (const spec of INSTRUMENTS) {
+  for (const spec of specs) {
     const state = market.instruments[spec.symbol];
     const prev = state.last;
 
@@ -163,7 +163,7 @@ export function stepMarket(market, rng, date) {
     indexReturnSum += ret;
   }
 
-  market.index = round1(market.index * Math.exp(indexReturnSum / INSTRUMENTS.length));
+  market.index = round1(market.index * Math.exp(indexReturnSum / specs.length));
   return events.news;
 }
 

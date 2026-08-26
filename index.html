@@ -26,6 +26,10 @@
       </div>
 
       <div class="controls">
+        <div class="tabs" id="mode-tabs">
+          <button class="tab is-active" data-mode="sim">架空市場</button>
+          <button class="tab" data-mode="real">実データ</button>
+        </div>
         <button id="btn-step1" class="btn">1日 ▶</button>
         <button id="btn-step5" class="btn">5日 ▶▶</button>
         <button id="btn-step20" class="btn">20日 ▶▶▶</button>
@@ -39,6 +43,18 @@
         <div class="panel-head">
           <h2>銘柄一覧</h2>
           <span class="muted" id="index-value">指数 -</span>
+        </div>
+        <div class="source-bar">
+          <span class="muted" id="source-info">架空の相場を乱数で生成中</span>
+          <label class="muted" id="start-field" hidden>
+            開始
+            <select id="start-select">
+              <option value="250">1年前から</option>
+              <option value="750" selected>3年前から</option>
+              <option value="1250">5年前から</option>
+              <option value="0">データの最初から</option>
+            </select>
+          </label>
         </div>
         <div class="table-wrap">
           <table class="grid">
@@ -76,6 +92,15 @@
         <div class="chart-body">
           <canvas id="chart-canvas"></canvas>
           <div id="chart-tip" class="chart-tip" hidden></div>
+          <div class="data-help" id="data-help" hidden>
+            <h3>実データがまだ取り込まれていません</h3>
+            <p>次のコマンドで実際の株価（日足）を取得すると、このモードで再生できます。</p>
+            <pre><code>npm run fetch                 # 日本の主要40銘柄・過去10年
+npm run fetch -- --preset all # 日米60銘柄
+npm run fetch -- --symbols 7203,6758,AAPL</code></pre>
+            <p class="muted" id="data-help-detail"></p>
+            <button class="btn" id="data-help-close">閉じる</button>
+          </div>
           <div class="legend" id="chart-legend">
             <span class="dot" style="--c: #f2b544"></span>5日移動平均
             <span class="dot" style="--c: #7c5cff"></span>25日移動平均

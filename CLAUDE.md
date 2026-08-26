@@ -4,11 +4,17 @@ Guidance for Claude Code and other AI assistants working in this repository.
 
 ## Project overview
 
-ブラウザだけで動く株式投資シミュレータ。架空の 10 銘柄からなる市場を日次で生成し、
-成行・指値の売買、配当、手数料、成績集計までを扱う。利用者向けの説明は `README.md`
-にある（相場モデルの式もそこ）。
+ブラウザだけで動く株式投資シミュレータ。成行・指値の売買、配当、手数料、成績集計を扱う。
+相場には 2 モードあり、`state.mode` で分岐する。
 
-newcomer が取り違えやすい設計判断は次の 3 つ。
+- `'sim'` … `market.js` が乱数で生成する架空の 10 銘柄
+- `'real'` … `npm run fetch` で `data/` に取り込んだ実在銘柄の日足を 1 日ずつ再生する
+
+どちらのモードでも `state` の形は同じで、注文・配当・集計・描画のコードは共通。
+新しい相場の種類を足すときも、`step()` に分岐を 1 つ増やして `state.instruments` と
+`state.market.instruments[].bars` を埋める形に揃えること。利用者向けの説明は `README.md`。
+
+newcomer が取り違えやすい設計判断は次の 4 つ。
 
 - **依存パッケージを持たない。** ビルドもトランスパイルもしない素の ES モジュールで、
   `npm start` は `tools/serve.js` の静的サーバを起動するだけ。ライブラリを足す前に、
@@ -18,7 +24,11 @@ newcomer が取り違えやすい設計判断は次の 3 つ。
   そのままセーブデータになるため。日付は `YYYY-MM-DD` の文字列で持つ。
 - **乱数は必ず `state.rngState` 経由。** `Math.random()` をシミュレーション中に呼ぶと
   リプレイ再現性が壊れる。`engine.js` の `rngFor(state)` で取り出し、進めたあとに
-  `state.rngState` を書き戻すこと。
+  `state.rngState` を書き戻すこと（架空市場モードのみ）。
+- **実データ本体は `state` に入れない。** 数 MB になるため、`dataset` は実行時だけ持ち、
+  state には `cursor`（カレンダー上の位置）と取得メタ情報だけを置く。復元時は
+  `rebindDataset(state, dataset)` が日付から `cursor` を引き直す。取り込み直して
+  営業日が増えていても続きから再生できるのはこのため。
 
 ## Repository structure
 
@@ -27,15 +37,19 @@ index.html / styles.css   画面の骨格とスタイル（UI 文言は日本語
 src/main.js               エントリポイント
 src/ui.js                 DOM 組み立てとイベント配線（DOM を触るのはここだけ）
 src/engine.js             日付進行・注文・配当・資産推移。state の生成もここ
-src/market.js             価格生成とニュース抽選
+src/market.js             架空市場の価格生成とニュース抽選
 src/instruments.js        架空銘柄マスタ
+src/dataset.js            data/ に取り込んだ実データの読み込み
 src/portfolio.js          現金・ポジション・取得単価・実現損益
 src/stats.js              成績指標
 src/chart.js              Canvas 描画
-src/calendar.js           営業日カレンダー
+src/calendar.js           営業日カレンダー（架空市場モード用）
 src/rng.js src/format.js src/storage.js
 test/                     node:test のユニットテスト
 tools/serve.js            開発用の静的サーバ
+tools/fetch-prices.js     実データ取得 CLI（npm run fetch）
+tools/tickers.js          取得対象の銘柄プリセット
+data/                     取り込んだ株価。生成物なので Git 管理外
 ```
 
 `src/ui.js` 以外は DOM に触らない。ロジックを追加するときは、UI ではなく
@@ -46,9 +60,15 @@ tools/serve.js            開発用の静的サーバ
 ```bash
 npm start   # http://localhost:5173 で起動。file:// で開くと ES モジュールが読めない
 npm test    # node --test。数秒で終わるので変更ごとに回してよい
+npm run fetch -- --limit 2 --years 1   # 実データ取得の動作確認（軽い）
 ```
 
 lint / formatter は入れていない。周囲のコードのスタイルに合わせる。
+
+取得元にアクセスできない環境でも取得系のテストは通る。`fetchSeries` は `fetcher` を
+引数で差し替えられ、`tools/fetch-prices.js` のベース URL は環境変数
+`STOCKSIM_YAHOO_BASE` / `STOCKSIM_STOOQ_BASE` で差し替えられる。ネットワークに
+出られない状態でパイプラインを確認したいときは、この 2 つでモックに向ける。
 
 ## Conventions
 
@@ -60,6 +80,9 @@ lint / formatter は入れていない。周囲のコードのスタイルに合
   注文系（`placeMarketOrder` など）はこの形で統一されている。
 - 金額は円単位の数値、株価は小数第 1 位まで（`round1`）。表示整形は `format.js` に集約。
 - テストは `test/<module>.test.js`。テスト名も日本語で、性質（不変条件）を書く。
+  ネットワークに出るテストは書かない（取得系は解析関数と `fetcher` 差し替えで検証する）。
+- `state` の形を変えたら `engine.js` の `SAVE_VERSION` を上げる。古い保存データは
+  `storage.js` が捨てて新規開始に落とす（マイグレーションは書かない）。
 
 ## Git workflow
 

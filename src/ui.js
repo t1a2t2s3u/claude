@@ -1,17 +1,17 @@
 // DOM の組み立てとイベント配線。状態は engine の state ひとつに集約されている。
 
 import {
-  step,
   stepDays,
   quotes,
   snapshot,
-  currentPrices,
   placeMarketOrder,
   placeLimitOrder,
   cancelOrder,
   createEngine,
+  createRealEngine,
   DEFAULT_CASH,
 } from './engine.js';
+import { loadDataset, DATA_BASE } from './dataset.js';
 import { commission, buyCost, heldQty } from './portfolio.js';
 import { sma } from './market.js';
 import { summarize } from './stats.js';
@@ -27,8 +27,9 @@ function esc(value) {
   return String(value).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 }
 
-export function createApp(initialState) {
+export function createApp({ state: initialState, dataset: initialDataset = null }) {
   let state = initialState;
+  let dataset = initialDataset;
 
   const ui = {
     symbol: quotes(state)[0].symbol,
@@ -84,6 +85,22 @@ export function createApp(initialState) {
     $('index-value').textContent = `指数 ${number(Math.round(state.market.index))}`;
   }
 
+  function renderSource() {
+    const info = $('source-info');
+    $('start-field').hidden = state.mode !== 'real';
+
+    if (state.mode !== 'real') {
+      info.textContent = '架空の相場を乱数で生成中';
+      return;
+    }
+
+    const d = state.dataset;
+    const range = dataset ? `${dataset.calendar[0]} 〜 ${dataset.lastDate}` : '';
+    info.innerHTML =
+      `<span class="badge">実データ</span>${esc(d.source)} · ${d.symbols}銘柄 · ${range}` +
+      ` · ${d.generatedAt.slice(0, 10)}取込`;
+  }
+
   function renderWatchlist() {
     const rows = quotes(state)
       .map((q) => {
@@ -122,9 +139,13 @@ export function createApp(initialState) {
     const offset = allBars.length - bars.length;
 
     $('chart-name').textContent = `${inst.name}（${inst.symbol}）`;
+    const tail =
+      state.mode === 'real'
+        ? `${esc(inst.market ?? '')} · 単元${number(inst.lot)}株`
+        : `配当利回り ${(inst.yield_ * 100).toFixed(1)}%`;
     $('chart-meta').innerHTML = `${fmtPrice(inst.last)} <span class="${pnlClass(inst.change)}">${percent(
       inst.change
-    )}</span> · ${esc(inst.sector)} · 配当利回り ${(inst.yield_ * 100).toFixed(1)}%`;
+    )}</span> · ${esc(inst.sector)} · ${tail}`;
 
     const overlays = [
       { values: sma(allBars, 5).slice(offset), color: THEME.sma5 },
@@ -206,7 +227,11 @@ export function createApp(initialState) {
 
   function renderNews() {
     const news = [...state.news].reverse().slice(0, 60);
-    if (news.length === 0) return '<p class="empty">まだニュースはありません</p>';
+    if (news.length === 0) {
+      return state.mode === 'real'
+        ? '<p class="empty">日を進めると、大きく動いた銘柄がここに出ます</p>'
+        : '<p class="empty">まだニュースはありません</p>';
+    }
 
     return news
       .map(
@@ -262,8 +287,33 @@ export function createApp(initialState) {
     body.innerHTML = renderers[ui.logTab]();
   }
 
+  function renderModeUi() {
+    syncTabs('mode-tabs', 'mode', state.mode);
+    $('log-tabs').querySelector('[data-log="news"]').textContent =
+      state.mode === 'real' ? '値動き' : 'ニュース';
+  }
+
+  /** 単元株数に応じて数量入力とクイックボタンを組み替える */
+  function syncQtyControls(lot) {
+    const input = $('qty-input');
+    if (Number(input.step) !== lot) {
+      input.step = String(lot);
+      input.min = String(lot);
+      const current = Number(input.value) || 0;
+      input.value = String(Math.max(lot, Math.round(current / lot) * lot));
+    }
+
+    const presets = lot === 1 ? [1, 10, 100] : [lot, lot * 5, lot * 10];
+    const chips = document.querySelectorAll('.qty-quick .chip:not([data-qty="max"])');
+    chips.forEach((chip, i) => {
+      chip.dataset.qty = String(presets[i]);
+      chip.textContent = number(presets[i]);
+    });
+  }
+
   function renderOrderPanel() {
     const inst = selected();
+    syncQtyControls(inst.lot);
     $('order-symbol').textContent = `${inst.name}（${inst.symbol}）`;
     $('limit-field').hidden = ui.orderType !== 'limit';
 
@@ -293,6 +343,8 @@ export function createApp(initialState) {
 
   function render() {
     renderKpis();
+    renderSource();
+    renderModeUi();
     renderWatchlist();
     renderChart();
     renderOrderPanel();
@@ -302,7 +354,12 @@ export function createApp(initialState) {
   /* ------------------------------------------------------------ 操作 */
 
   function advance(days) {
-    const results = stepDays(state, days);
+    const results = stepDays(state, days, dataset);
+    if (results.length === 0) {
+      stopAuto();
+      toast('取り込んだデータの最終日です（npm run fetch で更新できます）');
+      return;
+    }
     const fills = results.flatMap((r) => r.fills);
     const dividends = results.flatMap((r) => r.dividends);
 
@@ -326,18 +383,73 @@ export function createApp(initialState) {
     render();
   }
 
-  function toggleAuto() {
+  function stopAuto() {
+    if (!ui.autoTimer) return;
+    clearInterval(ui.autoTimer);
+    ui.autoTimer = null;
     const btn = $('btn-auto');
+    btn.textContent = '自動再生';
+    btn.classList.remove('is-on');
+  }
+
+  function toggleAuto() {
     if (ui.autoTimer) {
-      clearInterval(ui.autoTimer);
-      ui.autoTimer = null;
-      btn.textContent = '自動再生';
-      btn.classList.remove('is-on');
+      stopAuto();
       return;
     }
     ui.autoTimer = setInterval(() => advance(1), AUTO_INTERVAL_MS);
+    const btn = $('btn-auto');
     btn.textContent = '停止 ■';
     btn.classList.add('is-on');
+  }
+
+  /* ------------------------------------------------------------ モード切替 */
+
+  function startIndex() {
+    const back = Number($('start-select').value);
+    if (!dataset) return undefined;
+    return back === 0 ? 1 : Math.max(1, dataset.calendar.length - back);
+  }
+
+  function showDataHelp(visible, detail = '') {
+    $('data-help').hidden = !visible;
+    $('data-help-detail').textContent = detail;
+  }
+
+  async function switchMode(mode) {
+    if (mode === state.mode) {
+      showDataHelp(false); // 取り込み案内を出したまま元のモードに戻ってきたとき
+      return;
+    }
+    stopAuto();
+
+    if (mode === 'sim') {
+      state = createEngine({ cash: DEFAULT_CASH });
+      showDataHelp(false);
+    } else {
+      try {
+        toast('実データを読み込んでいます…');
+        dataset =
+          dataset ??
+          (await loadDataset(DATA_BASE, {
+            onProgress: (done, total) => toast(`実データ読み込み中… ${done}/${total} 銘柄`),
+          }));
+        state = createRealEngine(dataset, { cash: DEFAULT_CASH, startIndex: startIndex() });
+        showDataHelp(false);
+        toast(`${state.dataset.symbols}銘柄の実データを読み込みました`);
+      } catch (e) {
+        showDataHelp(true, `読み込みに失敗しました: ${e.message}`);
+        syncTabs('mode-tabs', 'mode', state.mode);
+        return;
+      }
+    }
+
+    ui.symbol = quotes(state)[0].symbol;
+    $('limit-input').value = '';
+    message('');
+    syncTabs('mode-tabs', 'mode', state.mode);
+    persist();
+    render();
   }
 
   function submitOrder() {
@@ -392,14 +504,17 @@ export function createApp(initialState) {
 
   function reset() {
     if (!confirm('シミュレーションを最初からやり直します。よろしいですか？')) return;
-    if (ui.autoTimer) toggleAuto();
+    stopAuto();
     storage.clear();
-    state = createEngine({ cash: DEFAULT_CASH });
+    state =
+      state.mode === 'real' && dataset
+        ? createRealEngine(dataset, { cash: DEFAULT_CASH, startIndex: startIndex() })
+        : createEngine({ cash: DEFAULT_CASH });
     ui.symbol = quotes(state)[0].symbol;
     message('');
     persist();
     render();
-    toast('新しい相場で最初からスタートします');
+    toast(state.mode === 'real' ? '実データを最初から再生します' : '新しい相場で最初からスタートします');
   }
 
   /* ------------------------------------------------------------ 配線 */
@@ -411,6 +526,26 @@ export function createApp(initialState) {
     $('btn-auto').onclick = toggleAuto;
     $('btn-reset').onclick = reset;
     $('btn-submit').onclick = submitOrder;
+
+    $('mode-tabs').onclick = (e) => {
+      const tab = e.target.closest('[data-mode]');
+      if (tab) switchMode(tab.dataset.mode);
+    };
+
+    $('data-help-close').onclick = () => showDataHelp(false);
+
+    $('start-select').onchange = () => {
+      if (state.mode !== 'real' || !dataset) return;
+      if (!confirm('開始時点を変えると、いまの取引はリセットされます。よろしいですか？')) {
+        renderSource();
+        return;
+      }
+      stopAuto();
+      state = createRealEngine(dataset, { cash: DEFAULT_CASH, startIndex: startIndex() });
+      ui.symbol = quotes(state)[0].symbol;
+      persist();
+      render();
+    };
 
     $('watchlist-body').onclick = (e) => {
       const tr = e.target.closest('tr[data-symbol]');

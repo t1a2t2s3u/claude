@@ -2,7 +2,7 @@
 
 import { SAVE_VERSION } from './engine.js';
 
-const KEY = 'stock-sim:v1';
+const KEY = 'stock-sim:v2';
 
 export function save(state) {
   try {

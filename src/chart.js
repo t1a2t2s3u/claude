@@ -46,9 +46,10 @@ function niceTicks(min, max, count = 5) {
 }
 
 function formatAxis(v) {
-  if (Math.abs(v) >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
-  if (Math.abs(v) >= 10_000) return `${Math.round(v / 1000)}k`;
-  return v >= 1000 ? Math.round(v).toLocaleString('ja-JP') : v.toFixed(0);
+  // k / M に丸めると隣り合う目盛りが同じ表示になることがあるため、
+  // 100 万未満はそのまま桁区切りで出す
+  if (Math.abs(v) >= 1_000_000) return `${(v / 1_000_000).toFixed(2)}M`;
+  return Math.round(v).toLocaleString('ja-JP');
 }
 
 /**

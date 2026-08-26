@@ -23,8 +23,10 @@ export function price(value) {
 /** +1.23% 形式 */
 export function percent(ratio, digits = 2) {
   const pct = ratio * 100;
-  const sign = pct > 0 ? '+' : pct < 0 ? '' : '';
-  return `${sign}${pct.toFixed(digits)}%`;
+  const rounded = Number(pct.toFixed(digits));
+  // 丸めて 0 になる値に符号を付けると -0.00% のような表示になってしまう
+  if (rounded === 0) return `${(0).toFixed(digits)}%`;
+  return `${rounded > 0 ? '+' : ''}${pct.toFixed(digits)}%`;
 }
 
 export function number(value) {
