@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block breadcrumb %}{{ breadcrumb(trail) }}{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div class="wrap"><h1>よくある質問</h1></div>
+</div>
+
+<div class="wrap prose-wrap">
+  <p class="faq-lead">
+    お問い合わせの前によくいただくご質問をまとめました。
+    ここに無いことは、<a href="/contact/">お問い合わせ</a>からお気軽にどうぞ。
+    どんな段階のご質問でも構いません。
+  </p>
+
+  <div class="faq-list">
+    {% for item in faq %}
+    <details class="faq-item"{% if loop.first %} open{% endif %}>
+      <summary>{{ item.question }}</summary>
+      <div class="faq-answer">
+        {% for para in item.paragraphs %}<p>{{ para }}</p>{% endfor %}
+      </div>
+    </details>
+    {% endfor %}
+  </div>
+
+  <ul class="faq-links">
+    <li><a href="/services/">パック料金と工事の内容を見る</a></li>
+    <li><a href="/blog/2026-08-akita-nurikae-jiki/">塗り替えの時期について詳しく読む</a></li>
+  </ul>
+</div>
+
+{% endblock %}

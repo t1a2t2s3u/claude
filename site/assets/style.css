@@ -761,3 +761,22 @@ table.price-table thead th {
 @media (min-width: 620px) {
   .entry-list a { grid-template-columns: 13rem 1fr; align-items: start; }
 }
+
+/* --- よくある質問 --- */
+.faq-lead { color: var(--ink-muted); margin: 0 0 1.75rem; }
+.faq-list { display: grid; gap: .75rem; }
+.faq-item {
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--bg); box-shadow: var(--shadow); overflow: hidden;
+}
+.faq-item summary {
+  cursor: pointer; list-style: none; display: flex; gap: .6rem; align-items: baseline;
+  padding: 1rem 1.1rem; font-weight: 700; color: var(--brand-deep);
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::before { content: "Q."; color: var(--accent); flex: none; }
+.faq-item[open] summary { border-bottom: 1px solid var(--line); background: var(--bg-alt); }
+.faq-answer { padding: 1rem 1.1rem .4rem 2.5rem; }
+.faq-answer p { margin: 0 0 .8rem; }
+.faq-links { margin: 2rem 0 0; padding-left: 1.2rem; }
+.faq-links li { margin-bottom: .4rem; }

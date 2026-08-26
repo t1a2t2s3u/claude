@@ -243,6 +243,31 @@ class _Builder:
             )
             self.write(page.url, html)
 
+    def build_faq(self) -> None:
+        if not self.content.faq:
+            return
+        trail = [("ホーム", "/"), ("よくある質問", "/faq/")]
+        jsonld = structured.graph(
+            self.content,
+            structured.breadcrumbs(self.settings, trail),
+            structured.faq_page(self.content.faq),
+        )
+        html = self.render(
+            "faq.html",
+            "/faq/",
+            title="よくある質問",
+            description=(
+                "外壁塗装・屋根塗装についてよくいただくご質問をまとめました。"
+                "お見積りは無料か、費用と工期の目安、保証、対応エリアなど、"
+                "お問い合わせの前の疑問にお答えします。"
+            ),
+            section="faq",
+            faq=self.content.faq,
+            trail=trail,
+            jsonld=jsonld,
+        )
+        self.write("/faq/", html)
+
     def build_404(self) -> None:
         html = self.render(
             "404.html",
@@ -307,6 +332,7 @@ def build(
     builder.build_works()
     builder.build_blog()
     builder.build_pages()
+    builder.build_faq()
     builder.build_404()
     builder.build_sitemap()
     builder.build_robots()

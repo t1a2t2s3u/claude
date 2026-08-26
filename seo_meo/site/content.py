@@ -251,6 +251,18 @@ class StaticPage:
 
 
 @dataclass
+class FaqItem:
+    """よくある質問の1問。answer は空行区切りの段落からなるプレーンテキスト。"""
+
+    question: str
+    answer: str
+
+    @property
+    def paragraphs(self) -> list[str]:
+        return [p.strip() for p in self.answer.split("\n\n") if p.strip()]
+
+
+@dataclass
 class Content:
     """サイト生成に必要なもの一式。"""
 
@@ -260,6 +272,7 @@ class Content:
     packages: list[Package]
     plan: PackagePlan | None
     testimonials: list[Testimonial]
+    faq: list[FaqItem]
     works: list[Work]
     posts: list[Post]
     pages: list[StaticPage]
@@ -436,6 +449,22 @@ def load_testimonials(root: Path) -> list[Testimonial]:
     ]
 
 
+def load_faq(root: Path) -> list[FaqItem]:
+    """よくある質問を読み込む。ファイルが無ければ空で返す。"""
+    path = root / "faq.toml"
+    if not path.exists():
+        return []
+    with path.open("rb") as fh:
+        raw = tomllib.load(fh)
+    return [
+        FaqItem(
+            question=entry.get("question", ""),
+            answer=entry.get("answer", ""),
+        )
+        for entry in raw.get("faq", [])
+    ]
+
+
 def load_works(root: Path) -> list[Work]:
     """施工事例を新しい順に読み込む。"""
     works: list[Work] = []
@@ -543,6 +572,7 @@ def load(root: Path) -> Content:
         packages=load_packages(root),
         plan=load_plan(root),
         testimonials=load_testimonials(root),
+        faq=load_faq(root),
         works=load_works(root),
         posts=load_posts(root),
         pages=load_pages(root),
@@ -591,6 +621,10 @@ def find_placeholders(content: Content) -> list[str]:
     for index, testimonial in enumerate(content.testimonials):
         if is_placeholder(testimonial.headline) or is_placeholder(testimonial.body):
             found.append(f"testimonials.toml の {index + 1}件目")
+
+    for index, item in enumerate(content.faq):
+        if is_placeholder(item.question) or is_placeholder(item.answer):
+            found.append(f"faq.toml の {index + 1}件目")
 
     for work in content.works:
         if is_placeholder(work.title) or PLACEHOLDER in work.body_html:

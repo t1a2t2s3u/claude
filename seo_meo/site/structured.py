@@ -16,6 +16,7 @@ from typing import Any
 from .content import (
     Company,
     Content,
+    FaqItem,
     Post,
     Service,
     SiteSettings,
@@ -172,6 +173,28 @@ def blog_posting(settings: SiteSettings, post: Post) -> dict:
             "mainEntityOfPage": _absolute(settings, post.url),
         }
     )
+
+
+def faq_page(faq: list[FaqItem]) -> dict | None:
+    """よくある質問。Question と Answer の対で出す。
+
+    自社サイトの FAQ に FAQPage を付けること自体はガイドライン上問題ないが、
+    リッチリザルトとしての表示は現在ほぼ行政・医療サイトに限定されている。
+    表示枠を狙うためではなく、ページの内容を正しく伝えるために出す。
+    """
+    if not faq:
+        return None
+    return {
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": item.question,
+                "acceptedAnswer": {"@type": "Answer", "text": item.answer},
+            }
+            for item in faq
+        ],
+    }
 
 
 def breadcrumbs(settings: SiteSettings, trail: list[tuple[str, str]]) -> dict:

@@ -38,12 +38,31 @@ def test_expected_pages_are_generated(built):
         "blog/index.html",
         "about/index.html",
         "contact/index.html",
+        "faq/index.html",
         "404.html",
         "sitemap.xml",
         "robots.txt",
         "assets/style.css",
     ]:
         assert (out / path).exists(), path
+
+
+def test_faq_page_has_faqpage_jsonld_matching_the_toml(built):
+    _, out = built
+    from seo_meo.site.content import load_faq
+
+    faq = load_faq(SITE_ROOT)
+    assert faq, "faq.toml が空"
+    data = jsonld(read(out, "faq/index.html"))
+    node = next(n for n in data["@graph"] if n.get("@type") == "FAQPage")
+    assert len(node["mainEntity"]) == len(faq)
+    assert node["mainEntity"][0]["name"] == faq[0].question
+
+
+def test_faq_is_linked_from_navigation_and_sitemap(built):
+    _, out = built
+    assert 'href="/faq/"' in read(out, "index.html")
+    assert f"{BASE_URL}/faq/" in read(out, "sitemap.xml")
 
 
 def test_urls_end_in_a_slash_not_an_extension(built):

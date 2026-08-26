@@ -55,6 +55,7 @@ CONTENT = Content(
     packages=[Package(name="シリコン塗料", durability="約7年", price="84万円")],
     plan=None,
     testimonials=[],
+    faq=[],
     works=[],
     posts=[],
     pages=[],
@@ -144,6 +145,23 @@ def test_blog_posting():
     assert node["@type"] == "BlogPosting"
     assert node["datePublished"] == "2026-05-12"
     assert node["keywords"] == ["費用"]
+
+
+def test_faq_page_pairs_questions_with_answers():
+    from seo_meo.site.content import FaqItem
+
+    node = structured.faq_page(
+        [FaqItem(question="無料ですか？", answer="無料です。")]
+    )
+    assert node["@type"] == "FAQPage"
+    entity = node["mainEntity"]
+    assert entity[0]["@type"] == "Question"
+    assert entity[0]["name"] == "無料ですか？"
+    assert entity[0]["acceptedAnswer"] == {"@type": "Answer", "text": "無料です。"}
+
+
+def test_faq_page_is_omitted_when_empty():
+    assert structured.faq_page([]) is None
 
 
 def test_breadcrumbs_are_numbered_from_one():

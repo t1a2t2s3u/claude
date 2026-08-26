@@ -202,6 +202,31 @@ def test_placeholder_testimonials_are_reported(tmp_path):
     assert any("testimonials.toml" in item for item in c.find_placeholders(c.load(root)))
 
 
+def test_faq_is_loaded_from_the_repository(tmp_path):
+    root = write_site(tmp_path)
+    (root / "faq.toml").write_text(
+        '[[faq]]\nquestion = "無料ですか？"\nanswer = """\n無料です。\n\n断っても構いません。\n"""\n',
+        encoding="utf-8",
+    )
+    faq = c.load(root).faq
+    assert len(faq) == 1
+    assert faq[0].question == "無料ですか？"
+    assert faq[0].paragraphs == ["無料です。", "断っても構いません。"]
+
+
+def test_faq_is_optional(tmp_path):
+    assert c.load(write_site(tmp_path)).faq == []
+
+
+def test_placeholder_faq_is_reported(tmp_path):
+    root = write_site(tmp_path)
+    (root / "faq.toml").write_text(
+        f'[[faq]]\nquestion = "{c.PLACEHOLDER}質問"\nanswer = "答え"\n',
+        encoding="utf-8",
+    )
+    assert any("faq.toml" in item for item in c.find_placeholders(c.load(root)))
+
+
 def test_multiple_before_after_pairs(tmp_path):
     """屋根と外壁で1組ずつ、のような複数組を扱えること。"""
     root = write_site(tmp_path)
