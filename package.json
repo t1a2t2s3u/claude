@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node tools/serve.js",
     "test": "node --test",
-    "fetch": "node tools/fetch-prices.js"
+    "fetch": "node tools/fetch-prices.js",
+    "import": "node tools/import-sp500.js"
   },
   "engines": {
     "node": ">=20"

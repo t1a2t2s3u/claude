@@ -41,8 +41,11 @@
     <main class="layout">
       <section class="panel watchlist">
         <div class="panel-head">
-          <h2>銘柄一覧</h2>
+          <h2>銘柄一覧 <span class="muted" id="watchlist-count"></span></h2>
           <span class="muted" id="index-value">指数 -</span>
+        </div>
+        <div class="filter-bar">
+          <input id="filter-input" type="search" placeholder="銘柄名・コードで絞り込み" />
         </div>
         <div class="source-bar">
           <span class="muted" id="source-info">架空の相場を乱数で生成中</span>

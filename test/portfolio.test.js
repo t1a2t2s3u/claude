@@ -11,8 +11,7 @@ import {
   applyDividend,
   evaluate,
   heldQty,
-  FEE_MIN,
-  FEE_MAX,
+  FEES,
 } from '../src/portfolio.js';
 
 const args = (over = {}) => ({
@@ -25,9 +24,23 @@ const args = (over = {}) => ({
 });
 
 test('手数料は下限と上限で頭打ちになる', () => {
-  assert.equal(commission(1000), FEE_MIN);
+  assert.equal(commission(1000), FEES.JPY.min);
   assert.equal(commission(500_000), 500);
-  assert.equal(commission(100_000_000), FEE_MAX);
+  assert.equal(commission(100_000_000), FEES.JPY.max);
+});
+
+test('ドル建ての手数料はセント単位で、下限・上限もドルの値になる', () => {
+  assert.equal(commission(100, 'USD'), FEES.USD.min);
+  assert.equal(commission(5000, 'USD'), 5);
+  assert.equal(commission(1_000_000, 'USD'), FEES.USD.max);
+  assert.equal(commission(3333, 'USD'), 3.33); // セント未満は丸める
+});
+
+test('価格が付いていない銘柄は買えない', () => {
+  const p = createPortfolio(100_000);
+  const check = validateBuy(p, { price: 0, qty: 100 });
+  assert.equal(check.ok, false);
+  assert.match(check.reason, /取引できません/);
 });
 
 test('買付で現金が約定代金＋手数料ぶん減る', () => {

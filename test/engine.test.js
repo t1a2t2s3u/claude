@@ -19,7 +19,7 @@ import { isTradingDay, parseIso } from '../src/calendar.js';
 test('初期化するとウォームアップぶんの足と初期資金が用意される', () => {
   const s = createEngine({ seed: 1 });
   assert.equal(s.date, '2024-01-04');
-  assert.equal(s.portfolio.cash, DEFAULT_CASH);
+  assert.equal(s.portfolio.cash, DEFAULT_CASH.JPY);
   for (const inst of INSTRUMENTS) {
     assert.equal(s.market.instruments[inst.symbol].bars.length, 60);
   }
@@ -198,5 +198,5 @@ test('長期間まわしても価格・現金が破綻しない', () => {
     assert.ok(Number.isFinite(s.market.instruments[inst.symbol].last));
     assert.ok(s.market.instruments[inst.symbol].last > 0);
   }
-  assert.equal(s.portfolio.cash, DEFAULT_CASH);
+  assert.equal(s.portfolio.cash, DEFAULT_CASH.JPY);
 });

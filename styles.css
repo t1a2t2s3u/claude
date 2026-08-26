@@ -712,6 +712,26 @@ table.grid td:first-child {
   }
 }
 
+.filter-bar {
+  padding: 8px 12px 0;
+}
+
+.filter-bar input {
+  width: 100%;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 7px 10px;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.filter-bar input:focus {
+  outline: none;
+  border-color: #2f6bd8;
+}
+
 /* ------------------------------------------------------------- source bar */
 
 .source-bar {

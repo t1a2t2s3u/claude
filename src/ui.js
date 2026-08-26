@@ -9,14 +9,21 @@ import {
   cancelOrder,
   createEngine,
   createRealEngine,
-  DEFAULT_CASH,
 } from './engine.js';
 import { loadDataset, DATA_BASE } from './dataset.js';
 import { commission, buyCost, heldQty } from './portfolio.js';
 import { sma } from './market.js';
 import { summarize } from './stats.js';
 import { drawCandles, drawLine, THEME } from './chart.js';
-import { yen, signedYen, price as fmtPrice, percent, number, jpDate, pnlClass } from './format.js';
+import {
+  money as fmtMoney,
+  signedMoney as fmtSignedMoney,
+  price as fmtPriceRaw,
+  percent,
+  number,
+  jpDate,
+  pnlClass,
+} from './format.js';
 import * as storage from './storage.js';
 
 const AUTO_INTERVAL_MS = 650;
@@ -33,6 +40,7 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
 
   const ui = {
     symbol: quotes(state)[0].symbol,
+    filter: '',
     chart: 'candles',
     range: 90,
     side: 'buy',
@@ -43,6 +51,12 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
   };
 
   /* ------------------------------------------------------------ helpers */
+
+  // 表示通貨は state から引く（架空市場は円、実データは取り込み時の基準通貨）
+  const cur = () => state.currency ?? 'JPY';
+  const money = (v) => fmtMoney(v, cur());
+  const signedMoney = (v) => fmtSignedMoney(v, cur());
+  const priceFmt = (v) => fmtPriceRaw(v, cur());
 
   const selected = () => quotes(state).find((q) => q.symbol === ui.symbol);
 
@@ -71,15 +85,15 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
   function renderKpis() {
     const snap = snapshot(state);
     $('kpi-date').textContent = jpDate(state.date);
-    $('kpi-equity').textContent = yen(snap.equity);
-    $('kpi-cash').textContent = yen(state.portfolio.cash);
+    $('kpi-equity').textContent = money(snap.equity);
+    $('kpi-cash').textContent = money(state.portfolio.cash);
 
     const unrealized = $('kpi-unrealized');
-    unrealized.textContent = signedYen(snap.unrealized);
+    unrealized.textContent = signedMoney(snap.unrealized);
     unrealized.className = pnlClass(snap.unrealized);
 
     const total = $('kpi-total');
-    total.textContent = `${signedYen(snap.totalPnl)} (${percent(snap.totalReturn)})`;
+    total.textContent = `${signedMoney(snap.totalPnl)} (${percent(snap.totalReturn)})`;
     total.className = pnlClass(snap.totalPnl);
 
     $('index-value').textContent = `指数 ${number(Math.round(state.market.index))}`;
@@ -102,18 +116,29 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
   }
 
   function renderWatchlist() {
-    const rows = quotes(state)
+    const keyword = ui.filter.trim().toLowerCase();
+    const all = quotes(state);
+    const list = keyword
+      ? all.filter(
+          (q) => q.symbol.toLowerCase().includes(keyword) || q.name.toLowerCase().includes(keyword)
+        )
+      : all;
+
+    const rows = list
       .map((q) => {
+        const listed = q.last > 0;
         const cls = pnlClass(q.change);
         return `<tr data-symbol="${q.symbol}" class="${q.symbol === ui.symbol ? 'is-selected' : ''}">
           <td><div class="sym"><b>${esc(q.name)}</b><span>${q.symbol} · ${esc(q.sector)}</span></div></td>
-          <td class="num">${fmtPrice(q.last)}</td>
-          <td class="num ${cls}">${percent(q.change)}</td>
+          <td class="num">${listed ? priceFmt(q.last) : '<span class="flat">—</span>'}</td>
+          <td class="num ${cls}">${listed && q.bars.length > 1 ? percent(q.change) : '<span class="flat">—</span>'}</td>
           <td class="num">${q.qty ? number(q.qty) : '<span class="flat">-</span>'}</td>
         </tr>`;
       })
       .join('');
-    $('watchlist-body').innerHTML = rows;
+    $('watchlist-body').innerHTML =
+      rows || '<tr><td colspan="4" class="empty">該当する銘柄がありません</td></tr>';
+    $('watchlist-count').textContent = keyword ? `${list.length}/${all.length}銘柄` : `${all.length}銘柄`;
   }
 
   function renderChart() {
@@ -123,7 +148,7 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
     if (ui.chart === 'equity') {
       $('chart-name').textContent = '資産推移';
       const snap = snapshot(state);
-      $('chart-meta').innerHTML = `<span class="${pnlClass(snap.totalPnl)}">${signedYen(
+      $('chart-meta').innerHTML = `<span class="${pnlClass(snap.totalPnl)}">${signedMoney(
         snap.totalPnl
       )} (${percent(snap.totalReturn)})</span> · ${state.equity.length - 1}営業日`;
       $('chart-legend').hidden = true;
@@ -135,6 +160,13 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
 
     $('chart-legend').hidden = false;
     const allBars = inst.bars;
+    if (allBars.length === 0) {
+      $('chart-name').textContent = `${inst.name}（${inst.symbol}）`;
+      $('chart-meta').textContent = 'この時点ではまだ上場していません（日を進めるとデータが始まります）';
+      drawCandles(canvas, []);
+      canvas._hitTest = null;
+      return;
+    }
     const bars = ui.range > 0 ? allBars.slice(-ui.range) : allBars;
     const offset = allBars.length - bars.length;
 
@@ -143,7 +175,7 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
       state.mode === 'real'
         ? `${esc(inst.market ?? '')} · 単元${number(inst.lot)}株`
         : `配当利回り ${(inst.yield_ * 100).toFixed(1)}%`;
-    $('chart-meta').innerHTML = `${fmtPrice(inst.last)} <span class="${pnlClass(inst.change)}">${percent(
+    $('chart-meta').innerHTML = `${priceFmt(inst.last)} <span class="${pnlClass(inst.change)}">${percent(
       inst.change
     )}</span> · ${esc(inst.sector)} · ${tail}`;
 
@@ -169,11 +201,11 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
         return `<div class="row" data-symbol="${row.symbol}">
           <div class="left">
             <span class="name">${esc(q.name)}</span>
-            <span class="meta">${number(row.qty)}株 · 取得 ${fmtPrice(row.avgCost)} → ${fmtPrice(row.last)}</span>
+            <span class="meta">${number(row.qty)}株 · 取得 ${priceFmt(row.avgCost)} → ${priceFmt(row.last)}</span>
           </div>
           <div class="right">
-            <div>${yen(row.value)}</div>
-            <div class="${pnlClass(row.unrealized)}">${signedYen(row.unrealized)} (${percent(
+            <div>${money(row.value)}</div>
+            <div class="${pnlClass(row.unrealized)}">${signedMoney(row.unrealized)} (${percent(
               row.unrealizedRatio
             )})</div>
           </div>
@@ -191,7 +223,7 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
         (o) => `<div class="row">
           <div class="left">
             <span class="name"><span class="tag ${o.side}">${o.side === 'buy' ? '買' : '売'}</span>${esc(o.name)}</span>
-            <span class="meta">${number(o.qty)}株 · 指値 ${fmtPrice(o.limit)} · ${o.placedAt}発注</span>
+            <span class="meta">${number(o.qty)}株 · 指値 ${priceFmt(o.limit)} · ${o.placedAt}発注</span>
           </div>
           <div class="right"><button class="link" data-cancel="${o.id}">取消</button></div>
         </div>`
@@ -208,18 +240,18 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
         const label = t.type === 'buy' ? '買' : t.type === 'sell' ? '売' : '配';
         const detail =
           t.type === 'dividend'
-            ? `${number(t.qty)}株 · 1株 ${fmtPrice(t.price)}`
-            : `${number(t.qty)}株 × ${fmtPrice(t.price)} · 手数料 ${yen(t.fee)}`;
+            ? `${number(t.qty)}株 · 1株 ${priceFmt(t.price)}`
+            : `${number(t.qty)}株 × ${priceFmt(t.price)} · 手数料 ${money(t.fee)}`;
         const pnl =
           t.type === 'sell'
-            ? `<div class="${pnlClass(t.pnl)}">${signedYen(t.pnl)}</div>`
+            ? `<div class="${pnlClass(t.pnl)}">${signedMoney(t.pnl)}</div>`
             : '';
         return `<div class="row">
           <div class="left">
             <span class="name"><span class="tag ${t.type}">${label}</span>${esc(t.name)}</span>
             <span class="meta">${t.date} · ${detail}</span>
           </div>
-          <div class="right"><div>${signedYen(t.amount)}</div>${pnl}</div>
+          <div class="right"><div>${signedMoney(t.amount)}</div>${pnl}</div>
         </div>`;
       })
       .join('');
@@ -250,20 +282,20 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
     const s = summarize(state, snapshot(state));
     const pf = s.trades.profitFactor;
     const cells = [
-      ['総資産', yen(s.equity), ''],
-      ['累計損益', signedYen(s.totalPnl), pnlClass(s.totalPnl)],
+      ['総資産', money(s.equity), ''],
+      ['累計損益', signedMoney(s.totalPnl), pnlClass(s.totalPnl)],
       ['トータルリターン', percent(s.totalReturn), pnlClass(s.totalReturn)],
       ['経過営業日', `${number(s.days)}日`, ''],
-      ['実現損益', signedYen(s.realized), pnlClass(s.realized)],
-      ['評価損益', signedYen(s.unrealized), pnlClass(s.unrealized)],
-      ['受取配当', yen(s.dividends), ''],
-      ['支払手数料', yen(s.fees), ''],
+      ['実現損益', signedMoney(s.realized), pnlClass(s.realized)],
+      ['評価損益', signedMoney(s.unrealized), pnlClass(s.unrealized)],
+      ['受取配当', money(s.dividends), ''],
+      ['支払手数料', money(s.fees), ''],
       ['最大ドローダウン', percent(s.maxDrawdown.ratio), s.maxDrawdown.ratio < 0 ? 'down' : ''],
       ['年率ボラティリティ', `${(s.volatility * 100).toFixed(1)}%`, ''],
       ['シャープレシオ', s.sharpe.toFixed(2), pnlClass(s.sharpe)],
       ['勝率', `${(s.trades.winRate * 100).toFixed(0)}% (${s.trades.wins}/${s.trades.count})`, ''],
-      ['平均利益', yen(s.trades.avgWin), 'up'],
-      ['平均損失', yen(s.trades.avgLoss), 'down'],
+      ['平均利益', money(s.trades.avgWin), 'up'],
+      ['平均損失', money(s.trades.avgLoss), 'down'],
       ['プロフィットファクター', Number.isFinite(pf) ? pf.toFixed(2) : '—', ''],
     ];
 
@@ -322,17 +354,18 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
       limitInput.value = String(Math.round(inst.last));
     }
 
+    limitInput.step = cur() === 'JPY' ? '0.1' : '0.01';
     const qty = Number($('qty-input').value) || 0;
     const px = ui.orderType === 'limit' ? Number(limitInput.value) || inst.last : inst.last;
     const notional = px * qty;
-    const fee = qty > 0 ? commission(notional) : 0;
+    const fee = qty > 0 && notional > 0 ? commission(notional, cur()) : 0;
 
     $('avail-label').textContent = ui.side === 'buy' ? '買付余力' : '保有株数';
     $('avail-value').textContent =
-      ui.side === 'buy' ? yen(state.portfolio.cash) : `${number(heldQty(state.portfolio, inst.symbol))}株`;
-    $('est-notional').textContent = yen(notional);
-    $('est-fee').textContent = yen(fee);
-    $('est-total').textContent = signedYen(ui.side === 'buy' ? -(notional + fee) : notional - fee);
+      ui.side === 'buy' ? money(state.portfolio.cash) : `${number(heldQty(state.portfolio, inst.symbol))}株`;
+    $('est-notional').textContent = money(notional);
+    $('est-fee').textContent = money(fee);
+    $('est-total').textContent = signedMoney(ui.side === 'buy' ? -(notional + fee) : notional - fee);
 
     const submit = $('btn-submit');
     submit.textContent = `${ui.side === 'buy' ? '買い' : '売り'}${
@@ -370,13 +403,13 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
         toast(
           `約定：${fill.order.name} ${fill.order.side === 'buy' ? '買' : '売'} ${number(
             fill.order.qty
-          )}株 @ ${fmtPrice(fill.trade.price)}`
+          )}株 @ ${priceFmt(fill.trade.price)}`
         );
       }
     }
     if (fills.length === 0 && dividends.length > 0) {
       const total = dividends.reduce((a, d) => a + d.amount, 0);
-      toast(`配当入金：${yen(total)}`);
+      toast(`配当入金：${money(total)}`);
     }
 
     persist();
@@ -424,7 +457,7 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
     stopAuto();
 
     if (mode === 'sim') {
-      state = createEngine({ cash: DEFAULT_CASH });
+      state = createEngine();
       showDataHelp(false);
     } else {
       try {
@@ -434,7 +467,7 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
           (await loadDataset(DATA_BASE, {
             onProgress: (done, total) => toast(`実データ読み込み中… ${done}/${total} 銘柄`),
           }));
-        state = createRealEngine(dataset, { cash: DEFAULT_CASH, startIndex: startIndex() });
+        state = createRealEngine(dataset, { startIndex: startIndex() });
         showDataHelp(false);
         toast(`${state.dataset.symbols}銘柄の実データを読み込みました`);
       } catch (e) {
@@ -472,11 +505,11 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
 
     if (result.trade) {
       message(
-        `${ui.side === 'buy' ? '買付' : '売却'}完了：${number(qty)}株 @ ${fmtPrice(result.trade.price)}`,
+        `${ui.side === 'buy' ? '買付' : '売却'}完了：${number(qty)}株 @ ${priceFmt(result.trade.price)}`,
         true
       );
     } else {
-      message(`指値注文を受け付けました（${fmtPrice(result.order.limit)}）`, true);
+      message(`指値注文を受け付けました（${priceFmt(result.order.limit)}）`, true);
       ui.logTab = 'orders';
       syncTabs('log-tabs', 'log', ui.logTab);
     }
@@ -491,8 +524,9 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
 
     const px =
       ui.orderType === 'limit' ? Number($('limit-input').value) || inst.last : inst.last * 1.0005;
+    if (!(px > 0)) return 0;
     let lots = Math.floor(state.portfolio.cash / (px * inst.lot));
-    while (lots > 0 && buyCost(px, lots * inst.lot) > state.portfolio.cash) lots--;
+    while (lots > 0 && buyCost(px, lots * inst.lot, cur()) > state.portfolio.cash) lots--;
     return lots * inst.lot;
   }
 
@@ -508,8 +542,8 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
     storage.clear();
     state =
       state.mode === 'real' && dataset
-        ? createRealEngine(dataset, { cash: DEFAULT_CASH, startIndex: startIndex() })
-        : createEngine({ cash: DEFAULT_CASH });
+        ? createRealEngine(dataset, { startIndex: startIndex() })
+        : createEngine();
     ui.symbol = quotes(state)[0].symbol;
     message('');
     persist();
@@ -541,7 +575,7 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
         return;
       }
       stopAuto();
-      state = createRealEngine(dataset, { cash: DEFAULT_CASH, startIndex: startIndex() });
+      state = createRealEngine(dataset, { startIndex: startIndex() });
       ui.symbol = quotes(state)[0].symbol;
       persist();
       render();
@@ -622,6 +656,11 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
       };
     }
 
+    $('filter-input').oninput = (e) => {
+      ui.filter = e.target.value;
+      renderWatchlist();
+    };
+
     $('qty-input').oninput = renderOrderPanel;
     $('limit-input').oninput = renderOrderPanel;
 
@@ -641,8 +680,8 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
       }
       const diff = bar.close - bar.open;
       tip.innerHTML = `<b>${jpDate(bar.date)}</b>
-        始値 ${fmtPrice(bar.open)}　高値 ${fmtPrice(bar.high)}<br />
-        安値 ${fmtPrice(bar.low)}　終値 <span class="${pnlClass(diff)}">${fmtPrice(bar.close)}</span><br />
+        始値 ${priceFmt(bar.open)}　高値 ${priceFmt(bar.high)}<br />
+        安値 ${priceFmt(bar.low)}　終値 <span class="${pnlClass(diff)}">${priceFmt(bar.close)}</span><br />
         出来高 ${number(bar.volume)}`;
       tip.hidden = false;
       const x = Math.min(e.clientX - rect.left + 14, rect.width - tip.offsetWidth - 8);

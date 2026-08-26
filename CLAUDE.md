@@ -8,7 +8,8 @@ Guidance for Claude Code and other AI assistants working in this repository.
 相場には 2 モードあり、`state.mode` で分岐する。
 
 - `'sim'` … `market.js` が乱数で生成する架空の 10 銘柄
-- `'real'` … `npm run fetch` で `data/` に取り込んだ実在銘柄の日足を 1 日ずつ再生する
+- `'real'` … `data/` に取り込んだ実在銘柄の日足を 1 日ずつ再生する。取り込みは
+  `npm run import`（GitHub 上の S&P 500 データセット）か `npm run fetch`（Yahoo/Stooq）
 
 どちらのモードでも `state` の形は同じで、注文・配当・集計・描画のコードは共通。
 新しい相場の種類を足すときも、`step()` に分岐を 1 つ増やして `state.instruments` と
@@ -26,9 +27,13 @@ newcomer が取り違えやすい設計判断は次の 4 つ。
   リプレイ再現性が壊れる。`engine.js` の `rngFor(state)` で取り出し、進めたあとに
   `state.rngState` を書き戻すこと（架空市場モードのみ）。
 - **実データ本体は `state` に入れない。** 数 MB になるため、`dataset` は実行時だけ持ち、
-  state には `cursor`（カレンダー上の位置）と取得メタ情報だけを置く。復元時は
-  `rebindDataset(state, dataset)` が日付から `cursor` を引き直す。取り込み直して
-  営業日が増えていても続きから再生できるのはこのため。
+  state には `cursor`（カレンダー上の位置）と取得メタ情報だけを置く。実データモードの
+  `state.market`（チャートの足の窓）も (dataset, cursor) からの導出値なので保存せず、
+  `storage.js` が落とし、復元時に `rebindDataset` → `rebuildMarket` で組み立て直す。
+  500 銘柄では market を保存すると localStorage の容量を超える。
+- **金額・株価は `state.currency` の通貨で持つ。** 表示（`format.js`）・手数料
+  （`portfolio.js` の `FEES`）・価格刻み・初期資金は通貨で切り替わる。フォーマッタは
+  通貨を引数で受け取り、モジュールに状態を置かない。
 
 ## Repository structure
 
@@ -48,6 +53,7 @@ src/rng.js src/format.js src/storage.js
 test/                     node:test のユニットテスト
 tools/serve.js            開発用の静的サーバ
 tools/fetch-prices.js     実データ取得 CLI（npm run fetch）
+tools/import-sp500.js     S&P 500 データセット取り込み CLI（npm run import）
 tools/tickers.js          取得対象の銘柄プリセット
 data/                     取り込んだ株価。生成物なので Git 管理外
 ```
@@ -61,6 +67,7 @@ data/                     取り込んだ株価。生成物なので Git 管理�
 npm start   # http://localhost:5173 で起動。file:// で開くと ES モジュールが読めない
 npm test    # node --test。数秒で終わるので変更ごとに回してよい
 npm run fetch -- --limit 2 --years 1   # 実データ取得の動作確認（軽い）
+npm run import -- --limit 5            # S&P 500 取り込みの動作確認（約 30MB DL）
 ```
 
 lint / formatter は入れていない。周囲のコードのスタイルに合わせる。

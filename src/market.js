@@ -47,9 +47,9 @@ export function createMarketState(specs = INSTRUMENTS) {
   for (const spec of specs) {
     instruments[spec.symbol] = {
       symbol: spec.symbol,
-      last: spec.start,
+      last: spec.start ?? 0, // 実データモードでは最初の足が入るまで 0（上場前）
       bars: [], // { date, open, high, low, close, volume }
-      baseVolume: 180_000 + Math.round((3000 / spec.start) * 90_000),
+      baseVolume: spec.start ? 180_000 + Math.round((3000 / spec.start) * 90_000) : 0,
     };
   }
   return { instruments, index: 1000 };

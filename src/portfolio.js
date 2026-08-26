@@ -1,11 +1,15 @@
 // 保有ポジションと現金の管理。取得単価は移動平均法で更新する。
 
-export const FEE_RATE = 0.001; // 約定代金に対する手数料率
-export const FEE_MIN = 55;
-export const FEE_MAX = 1100;
+// 手数料は通貨ごとに下限・上限が違う（円は 55〜1,100 円、ドルは 0.5〜8 ドル）
+export const FEES = {
+  JPY: { rate: 0.001, min: 55, max: 1100, unit: 1 },
+  USD: { rate: 0.001, min: 0.5, max: 8, unit: 0.01 },
+};
 
-export function commission(notional) {
-  return Math.round(Math.min(FEE_MAX, Math.max(FEE_MIN, notional * FEE_RATE)));
+export function commission(notional, currency = 'JPY') {
+  const fee = FEES[currency] ?? FEES.JPY;
+  const raw = Math.min(fee.max, Math.max(fee.min, notional * fee.rate));
+  return Math.round(raw / fee.unit) * fee.unit;
 }
 
 export function createPortfolio(cash) {
@@ -29,16 +33,17 @@ export function heldQty(portfolio, symbol) {
 }
 
 /** 買付に必要な総額（約定代金＋手数料） */
-export function buyCost(price, qty) {
+export function buyCost(price, qty, currency = 'JPY') {
   const notional = price * qty;
-  return notional + commission(notional);
+  return notional + commission(notional, currency);
 }
 
 /** 買えるか検証する。ok:false のときは reason に日本語の理由が入る */
-export function validateBuy(portfolio, { price, qty, lot = 100 }) {
+export function validateBuy(portfolio, { price, qty, lot = 100, currency = 'JPY' }) {
   if (!Number.isFinite(qty) || qty <= 0) return { ok: false, reason: '数量を入力してください' };
   if (qty % lot !== 0) return { ok: false, reason: `売買単位は${lot}株です` };
-  const cost = buyCost(price, qty);
+  if (!(price > 0)) return { ok: false, reason: 'この日はまだ取引できません' };
+  const cost = buyCost(price, qty, currency);
   if (cost > portfolio.cash) return { ok: false, reason: '現金が不足しています' };
   return { ok: true };
 }
@@ -51,9 +56,9 @@ export function validateSell(portfolio, { symbol, qty, lot = 100 }) {
 }
 
 /** 買い約定を反映する。呼ぶ前に validateBuy を通すこと */
-export function applyBuy(portfolio, { date, symbol, name, qty, price }) {
+export function applyBuy(portfolio, { date, symbol, name, qty, price, currency = 'JPY' }) {
   const notional = price * qty;
-  const fee = commission(notional);
+  const fee = commission(notional, currency);
 
   portfolio.cash -= notional + fee;
   portfolio.fees += fee;
@@ -72,9 +77,9 @@ export function applyBuy(portfolio, { date, symbol, name, qty, price }) {
 }
 
 /** 売り約定を反映する。呼ぶ前に validateSell を通すこと */
-export function applySell(portfolio, { date, symbol, name, qty, price }) {
+export function applySell(portfolio, { date, symbol, name, qty, price, currency = 'JPY' }) {
   const notional = price * qty;
-  const fee = commission(notional);
+  const fee = commission(notional, currency);
   const pos = portfolio.positions[symbol];
   const pnl = (price - pos.avgCost) * qty;
 
@@ -91,8 +96,9 @@ export function applySell(portfolio, { date, symbol, name, qty, price }) {
 }
 
 /** 配当の入金 */
-export function applyDividend(portfolio, { date, symbol, name, qty, perShare }) {
-  const amount = Math.round(perShare * qty);
+export function applyDividend(portfolio, { date, symbol, name, qty, perShare, currency = 'JPY' }) {
+  const unit = (FEES[currency] ?? FEES.JPY).unit;
+  const amount = Math.round((perShare * qty) / unit) * unit;
   portfolio.cash += amount;
   portfolio.dividends += amount;
   const trade = { date, type: 'dividend', symbol, name, qty, price: perShare, amount, fee: 0, pnl: 0 };

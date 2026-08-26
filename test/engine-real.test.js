@@ -10,12 +10,14 @@ import {
   quotes,
   isAtEnd,
   rebindDataset,
+  rebuildMarket,
+  DEFAULT_CASH,
 } from '../src/engine.js';
 import { toInstruments } from '../src/dataset.js';
 import { heldQty } from '../src/portfolio.js';
 
 /** loadDataset と同じ形の、テスト用データセットを組み立てる */
-function fakeDataset({ days = 120, symbols, dividends = {} } = {}) {
+function fakeDataset({ days = 120, symbols, dividends = {}, baseCurrency = 'JPY' } = {}) {
   const specs = symbols ?? [
     { symbol: '7203', name: 'トヨタ自動車', sector: '輸送用機器', market: 'JP', sourceCurrency: 'JPY', lot: 100, base: 2500 },
     { symbol: 'AAPL', name: 'アップル', sector: 'テクノロジー', market: 'US', sourceCurrency: 'USD', lot: 1, base: 30000 },
@@ -56,7 +58,7 @@ function fakeDataset({ days = 120, symbols, dividends = {} } = {}) {
       version: 1,
       generatedAt: '2026-08-26T00:00:00.000Z',
       source: 'yahoo',
-      baseCurrency: 'JPY',
+      baseCurrency,
       calendar,
       symbols: specs.map(({ base, ...rest }) => rest),
     },
@@ -239,4 +241,64 @@ test('休場でその日の足がない銘柄は価格を据え置く', () => {
   assert.equal(state.market.instruments['AAPL'].last, before);
   assert.equal(state.market.instruments['AAPL'].bars.length, bars);
   assert.equal(state.market.instruments['7203'].bars.at(-1).date, holiday);
+});
+
+test('USD 建てのデータでは初期資金・手数料・価格刻みがドルになる', () => {
+  const dataset = fakeDataset({
+    days: 120,
+    baseCurrency: 'USD',
+    symbols: [
+      { symbol: 'AAPL', name: 'Apple Inc.', sector: '情報技術', market: 'US', sourceCurrency: 'USD', lot: 1, base: 100 },
+    ],
+  });
+  const state = createRealEngine(dataset, { startIndex: 60 });
+  assert.equal(state.currency, 'USD');
+  assert.equal(state.portfolio.cash, DEFAULT_CASH.USD);
+
+  const res = placeMarketOrder(state, { symbol: 'AAPL', side: 'buy', qty: 3 });
+  assert.equal(res.ok, true);
+  assert.equal(res.trade.price, Math.round(res.trade.price * 100) / 100); // セント刻み
+  assert.equal(res.trade.fee, 0.5); // ドルの最低手数料
+});
+
+test('まだ上場していない銘柄は買えず、上場した日から取引できる', () => {
+  const dataset = fakeDataset({ days: 200 });
+  // 7203 を後半にしか存在しない銘柄に加工する
+  const series = dataset.series.get('7203');
+  for (const date of dataset.calendar.slice(0, 100)) series.byDate.delete(date);
+  series.bars = [...series.byDate.values()];
+
+  const state = createRealEngine(dataset, { startIndex: 60 });
+  assert.equal(state.market.instruments['7203'].last, 0);
+  const res = placeMarketOrder(state, { symbol: '7203', side: 'buy', qty: 100 });
+  assert.equal(res.ok, false);
+  assert.match(res.reason, /上場前/);
+
+  stepDays(state, 45, dataset); // 上場日を跨ぐ
+  assert.ok(state.market.instruments['7203'].last > 0);
+  assert.equal(placeMarketOrder(state, { symbol: '7203', side: 'buy', qty: 100 }).ok, true);
+});
+
+test('market を捨てて再構築しても、足の窓と現在値が一致する', () => {
+  const dataset = fakeDataset({ days: 200 });
+  const state = createRealEngine(dataset, { startIndex: 80 });
+  placeMarketOrder(state, { symbol: '7203', side: 'buy', qty: 100 });
+  stepDays(state, 30, dataset);
+
+  // storage.save と同じく market を落として往復させる
+  const revived = JSON.parse(JSON.stringify({ ...state, market: null }));
+  rebuildMarket(revived, dataset);
+
+  assert.deepEqual(
+    revived.market.instruments['7203'].bars,
+    state.market.instruments['7203'].bars
+  );
+  assert.equal(revived.market.instruments['AAPL'].last, state.market.instruments['AAPL'].last);
+  assert.equal(snapshot(revived).equity, snapshot(state).equity);
+
+  // 再構築後も同じように進められる
+  assert.deepEqual(
+    stepDays(state, 5, dataset).map((r) => r.date),
+    stepDays(revived, 5, dataset).map((r) => r.date)
+  );
 });

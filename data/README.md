@@ -1,7 +1,7 @@
 # data/
 
-`npm run fetch` が実際の株価（日足）を書き出す場所です。中身は生成物なので
-Git では追跡していません（提供元の利用条件もあるため再配布しません）。
+`npm run import`（S&P 500 データセット）または `npm run fetch`（Yahoo/Stooq）が
+実際の株価（日足）を書き出す場所です。中身は生成物なので Git では追跡していません。
 
 ```
 data/
@@ -12,6 +12,7 @@ data/
 取得コマンドの例:
 
 ```bash
+npm run import                                 # S&P 500 全 505 銘柄・5 年（GitHub から取得）
 npm run fetch                                  # 日本の主要 40 銘柄・過去 10 年
 npm run fetch -- --preset all --years 5        # 日米 60 銘柄・過去 5 年
 npm run fetch -- --symbols 7203,6758,AAPL      # 銘柄を指定

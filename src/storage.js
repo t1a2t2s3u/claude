@@ -2,11 +2,14 @@
 
 import { SAVE_VERSION } from './engine.js';
 
-const KEY = 'stock-sim:v2';
+const KEY = 'stock-sim:v3';
 
 export function save(state) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(state));
+    // 実データモードの market は dataset から作り直せる導出値で、
+    // 500 銘柄ぶん保存すると localStorage の容量を超えるため落とす
+    const payload = state.mode === 'real' ? { ...state, market: null } : state;
+    localStorage.setItem(KEY, JSON.stringify(payload));
     return true;
   } catch {
     return false; // 容量超過やプライベートモードでは黙って諦める

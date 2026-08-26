@@ -6,6 +6,7 @@
 // どちらのモードでも state の形は同じなので、注文・配当・集計・描画は共通のまま動く。
 
 import { createRng } from './rng.js';
+import { roundPrice } from './format.js';
 import { createMarketState, stepMarket, changeRatio } from './market.js';
 import { INSTRUMENTS } from './instruments.js';
 import { nextTradingDay, isLastTradingDayOfMonth, parseIso } from './calendar.js';
@@ -21,8 +22,9 @@ import {
   heldQty,
 } from './portfolio.js';
 
-export const SAVE_VERSION = 2;
-export const DEFAULT_CASH = 3_000_000;
+export const SAVE_VERSION = 3;
+// 初期資金は通貨ごとに桁が違う
+export const DEFAULT_CASH = { JPY: 3_000_000, USD: 30_000 };
 // ウォームアップ 60 営業日ぶんの足を作ると、ちょうど 2024-01-04 が取引開始日になる
 export const HISTORY_START = '2023-10-05';
 const WARMUP_DAYS = 60; // 開始前に用意しておく過去の足の本数
@@ -37,7 +39,7 @@ let orderSeq = 0;
 
 export function createEngine({
   seed = Math.floor(Math.random() * 1e9),
-  cash = DEFAULT_CASH,
+  cash = DEFAULT_CASH.JPY,
   startDate = HISTORY_START,
 } = {}) {
   const rng = createRng(seed);
@@ -52,6 +54,7 @@ export function createEngine({
   return {
     version: SAVE_VERSION,
     mode: 'sim',
+    currency: 'JPY',
     instruments: INSTRUMENTS,
     seed,
     rngState: rng.getState(),
@@ -71,22 +74,18 @@ export function createEngine({
  * 実データを再生するエンジンを作る。
  * startIndex はカレンダー上の取引開始位置で、そこまでの足は履歴として先に流し込む。
  */
-export function createRealEngine(dataset, { cash = DEFAULT_CASH, startIndex } = {}) {
+export function createRealEngine(dataset, { cash, startIndex } = {}) {
   const instruments = toInstruments(dataset.universe);
   const calendar = dataset.calendar;
   const cursor = clamp(startIndex ?? Math.max(0, calendar.length - 750), 1, calendar.length - 1);
-
-  const market = createMarketState(instruments);
-  // ウォームアップぶんの足を流し込む（チャートの初期表示に使う）
-  const warmupFrom = Math.max(0, cursor - WARMUP_DAYS);
-  for (let i = warmupFrom; i <= cursor; i++) {
-    appendRealBars(market, instruments, dataset, calendar[i]);
-  }
+  const currency = dataset.universe.baseCurrency ?? 'JPY';
+  const initialCash = cash ?? DEFAULT_CASH[currency] ?? DEFAULT_CASH.JPY;
 
   const date = calendar[cursor];
-  return {
+  const state = {
     version: SAVE_VERSION,
     mode: 'real',
+    currency,
     instruments,
     dataset: {
       source: dataset.universe.source,
@@ -97,12 +96,30 @@ export function createRealEngine(dataset, { cash = DEFAULT_CASH, startIndex } = 
     cursor,
     date,
     startDate: date,
-    market,
-    portfolio: createPortfolio(cash),
+    market: null,
+    portfolio: createPortfolio(initialCash),
     orders: [],
     news: [],
-    equity: [{ date, value: cash }],
+    equity: [{ date, value: initialCash }],
   };
+  rebuildMarket(state, dataset);
+  return state;
+}
+
+/**
+ * 実データモードの market（各銘柄の足の窓）を dataset から組み立て直す。
+ * market は (dataset, cursor) から決まる純粋な導出値なので、保存せずに
+ * 復元時にこれで作り直す。ここを保存すると 500 銘柄では localStorage に収まらない。
+ */
+export function rebuildMarket(state, dataset) {
+  const market = createMarketState(state.instruments);
+  const startIdx = Math.max(0, dataset.calendar.indexOf(state.startDate));
+  // プレイ中に持っていたはずの履歴（ウォームアップ + 経過日数、上限 MAX_BARS）を再現する
+  const from = Math.max(0, startIdx - WARMUP_DAYS, state.cursor - (MAX_BARS - 1));
+  for (let i = from; i <= state.cursor; i++) {
+    appendRealBars(market, state.instruments, dataset, dataset.calendar[i]);
+  }
+  state.market = market;
 }
 
 function clamp(v, lo, hi) {
@@ -194,15 +211,16 @@ export function placeMarketOrder(state, { symbol, side, qty }) {
   if (!inst) return { ok: false, reason: '銘柄が見つかりません' };
 
   const base = state.market.instruments[symbol].last;
-  const price = Math.round(base * (1 + (side === 'buy' ? SLIPPAGE : -SLIPPAGE)) * 10) / 10;
+  if (!(base > 0)) return { ok: false, reason: 'この日はまだ取引できません（上場前）' };
+  const price = roundPrice(base * (1 + (side === 'buy' ? SLIPPAGE : -SLIPPAGE)), state.currency);
 
   const check =
     side === 'buy'
-      ? validateBuy(state.portfolio, { price, qty, lot: inst.lot })
+      ? validateBuy(state.portfolio, { price, qty, lot: inst.lot, currency: state.currency })
       : validateSell(state.portfolio, { symbol, qty, lot: inst.lot });
   if (!check.ok) return check;
 
-  const args = { date: state.date, symbol, name: inst.name, qty, price };
+  const args = { date: state.date, symbol, name: inst.name, qty, price, currency: state.currency };
   const trade = side === 'buy' ? applyBuy(state.portfolio, args) : applySell(state.portfolio, args);
   refreshEquity(state);
   return { ok: true, trade };
@@ -225,7 +243,7 @@ export function placeLimitOrder(state, { symbol, side, qty, limit }) {
     name: inst.name,
     side,
     qty,
-    limit: Math.round(limit * 10) / 10,
+    limit: roundPrice(limit, state.currency),
     placedAt: state.date,
   };
   state.orders.push(order);
@@ -265,7 +283,7 @@ function fillOrders(state, date) {
 
     const check =
       order.side === 'buy'
-        ? validateBuy(state.portfolio, { price, qty: order.qty, lot: inst.lot })
+        ? validateBuy(state.portfolio, { price, qty: order.qty, lot: inst.lot, currency: state.currency })
         : validateSell(state.portfolio, { symbol: order.symbol, qty: order.qty, lot: inst.lot });
 
     if (!check.ok) {
@@ -274,7 +292,14 @@ function fillOrders(state, date) {
       continue;
     }
 
-    const args = { date, symbol: order.symbol, name: order.name, qty: order.qty, price };
+    const args = {
+      date,
+      symbol: order.symbol,
+      name: order.name,
+      qty: order.qty,
+      price,
+      currency: state.currency,
+    };
     const trade =
       order.side === 'buy' ? applyBuy(state.portfolio, args) : applySell(state.portfolio, args);
     fills.push({ order, trade, date });
@@ -319,7 +344,14 @@ function payDividendsReal(state, dataset, date) {
     const perShare = dataset.dividendAt(inst.symbol, date);
     if (!perShare) continue;
     paid.push(
-      applyDividend(state.portfolio, { date, symbol: inst.symbol, name: inst.name, qty, perShare })
+      applyDividend(state.portfolio, {
+        date,
+        symbol: inst.symbol,
+        name: inst.name,
+        qty,
+        perShare,
+        currency: state.currency,
+      })
     );
   }
   return paid;
