@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>カベカルテ 診断（β版）</title>
+<title>カベカルテ 診断・見積り（β版）</title>
 <style>
   :root {
     --deep: #0b4a5f; --deepest: #06333f; --brand: #00a3c9; --brand-text: #00758f;
@@ -78,6 +78,13 @@
     box-shadow: 0 -4px 14px rgba(6,51,63,.08);
   }
   .hint { font-size: .75rem; color: var(--muted); margin: .3rem 0 0; }
+  .est-item { border: 1.5px solid var(--line); border-radius: 8px; padding: .5rem .6rem; margin-bottom: .5rem; background: #fdfefe; }
+  .est-name-row { display: flex; gap: .4rem; align-items: center; }
+  .est-name-row input { flex: 1; }
+  .est-num-row { display: grid; grid-template-columns: 1fr 4.5rem 1fr 6.5rem; gap: .4rem; margin-top: .35rem; align-items: center; }
+  .est-num-row .amt { text-align: right; font-weight: 700; color: var(--deep); white-space: nowrap; overflow: hidden; }
+  .est-total { text-align: right; font-size: .95rem; color: var(--deep); margin: .3rem .2rem .6rem; }
+  .est-total b { font-size: 1.15rem; color: var(--accent-dark); }
   dialog {
     border: none; border-radius: 12px; max-width: 560px; width: calc(100% - 2rem);
     padding: 1.2rem; box-shadow: 0 10px 40px rgba(0,0,0,.25);
@@ -136,12 +143,28 @@
   #report .rp-disclaimer { font-size: 8pt; color: var(--muted); margin: 12px 0 8px; }
   #report .rp-footer { background: var(--tint); padding: 10px 14px; font-size: 9pt; }
   #report .rp-footer .name { font-weight: 700; color: var(--deep); font-size: 10.5pt; }
+  #report table.rp-est { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  #report table.rp-est th, #report table.rp-est td { border: 1px solid var(--line); padding: 5px 8px; font-size: 9.5pt; }
+  #report table.rp-est th { background: var(--deep); color: #fff; font-weight: 700; text-align: left; }
+  #report table.rp-est td.num { text-align: right; white-space: nowrap; }
+  #report .rp-grand {
+    display: flex; justify-content: flex-end; margin: 10px 0 14px;
+  }
+  #report .rp-grand .box {
+    border: 2.5px solid var(--accent); padding: 8px 18px; text-align: right;
+  }
+  #report .rp-grand .lbl { font-size: 9pt; color: var(--muted); }
+  #report .rp-grand .yen { font-size: 17pt; font-weight: 700; color: var(--deep); }
+  #report table.rp-cond { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  #report table.rp-cond th, #report table.rp-cond td { border: 1px solid var(--line); padding: 5px 8px; font-size: 9pt; text-align: left; }
+  #report table.rp-cond th { background: var(--tint); color: var(--deep); width: 22%; font-weight: 700; }
+  #report .rp-break { page-break-before: always; }
 </style>
 </head>
 <body>
 
 <header class="app-head">
-  <h1>カベカルテ <span style="font-weight:400; font-size:.85em;">診断</span></h1><span class="beta">β版</span>
+  <h1>カベカルテ <span style="font-weight:400; font-size:.85em;">診断・見積り</span></h1><span class="beta">β版</span>
   <button class="btn small ghost" style="margin-left:auto; background:#fff;" onclick="openSettings()">⚙ 会社設定</button>
   <div class="head-note">入力した内容と写真はこの端末の中だけに保存されます。外部には送信されません。</div>
 </header>
@@ -180,15 +203,52 @@
     <label>全体の所見（空行で段落を分けられます）</label>
     <textarea id="summary" oninput="save()" placeholder="全体を見ての所感を書きます"></textarea>
   </section>
+
+  <section class="card">
+    <h2>お見積り（見積書を出すときだけ記入）</h2>
+    <div id="estItems"></div>
+    <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;">
+      <button class="btn accent small" onclick="addEstItem()">＋ 行を追加</button>
+      <select id="estPreset" onchange="addPresetItem(this)" style="max-width:14rem;">
+        <option value="">よく使う項目から追加…</option>
+        <option>仮設足場</option><option>高圧洗浄</option><option>養生</option>
+        <option>下地補修</option><option>コーキング打ち替え</option>
+        <option>外壁塗装（下塗り・中塗り・上塗り）</option><option>屋根塗装</option>
+        <option>付帯部塗装（雨樋・破風など）</option><option>廃材処分費</option><option>諸経費</option>
+        <option>お値引き</option>
+      </select>
+    </div>
+    <div class="row" style="margin-top:.6rem;">
+      <div><label>消費税率（%）</label><input type="text" id="taxRate" value="10" inputmode="numeric" oninput="renderEstItems(); save()"></div>
+      <div><label>見積りの有効期限</label><input type="text" id="estValid" placeholder="発行日より3か月" oninput="save()"></div>
+      <div><label>お支払い条件</label><input type="text" id="estTerms" placeholder="工事完了後 現金またはお振込み" oninput="save()"></div>
+      <div><label>工期の目安</label><input type="text" id="estPeriod" placeholder="約10日間（天候による）" oninput="save()"></div>
+    </div>
+    <label>備考（保証・使用塗料など）</label>
+    <textarea id="estNote" oninput="save()" placeholder="例：使用塗料や保証年数、足場を利用した追加工事のご案内など"></textarea>
+    <p class="hint">合計はその場で自動計算されます。金額を空欄にした行は「別途」扱いで印字されます。</p>
+  </section>
 </main>
 
 <div class="toolbar">
-  <button class="btn" onclick="preview()">📄 報告書を作る（印刷 / PDF保存）</button>
+  <button class="btn" onclick="docDialog.showModal()">📄 書類を作る（印刷 / PDF保存）</button>
   <button class="btn ghost" onclick="exportJson()">保存（ファイルに書き出し）</button>
   <button class="btn ghost" onclick="document.getElementById('importFile').click()">読み込み</button>
   <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJson(event)">
   <button class="btn danger" onclick="clearAll()">新規作成</button>
 </div>
+
+<dialog id="docDialog">
+  <h2 style="margin-top:0; color:var(--deep); font-size:1.05rem;">どの書類を作りますか？</h2>
+  <div style="display:grid; gap:.6rem;">
+    <button class="btn" onclick="docDialog.close(); preview('shindan')">🏠 診断報告書<br><span style="font-weight:400; font-size:.78rem;">写真つきで建物の状態を報告する書類</span></button>
+    <button class="btn" onclick="docDialog.close(); preview('mitsumori')">💴 見積書<br><span style="font-weight:400; font-size:.78rem;">金額だけをまとめた1枚もの</span></button>
+    <button class="btn accent" onclick="docDialog.close(); preview('full')">📘 診断＋見積り 統合版<br><span style="font-weight:400; font-size:.78rem;">状態の報告と金額を1冊にまとめた提案書</span></button>
+  </div>
+  <div style="margin-top:1rem; text-align:right;">
+    <button class="btn ghost" onclick="docDialog.close()">閉じる</button>
+  </div>
+</dialog>
 
 <dialog id="settingsDialog">
   <h2 style="margin-top:0; color:var(--deep); font-size:1.05rem;">会社設定（報告書の下部に印字されます）</h2>
@@ -391,13 +451,84 @@ function setPhoto(i, ev) {
   img.src = URL.createObjectURL(file);
 }
 
+// ---- お見積りの行 ----
+let estItems = [];
+function yen(n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); }
+function estTotals() {
+  const sub = estItems.reduce((s, it) => s + (amountOf(it) ?? 0), 0);
+  const rate = Number(String(taxRate.value).replace(/[^0-9.]/g, "")) || 0;
+  const tax = Math.floor(sub * rate / 100);
+  return { sub, rate, tax, total: sub + tax };
+}
+function amountOf(it) {
+  const q = parseFloat(it.qty), u = parseFloat(String(it.price).replace(/[,¥]/g, ""));
+  if (isNaN(q) || isNaN(u)) return null;   // 未記入の行は「別途」
+  return q * u;
+}
+function addEstItem(data) {
+  estItems.push(data || { name: "", qty: "1", unit: "式", price: "" });
+  renderEstItems(); save();
+}
+function addPresetItem(sel) {
+  if (!sel.value) return;
+  const units = { "仮設足場": "㎡", "高圧洗浄": "㎡", "外壁塗装（下塗り・中塗り・上塗り）": "㎡", "屋根塗装": "㎡", "コーキング打ち替え": "m" };
+  addEstItem({ name: sel.value, qty: "1", unit: units[sel.value] || "式", price: "" });
+  sel.value = "";
+}
+function removeEstItem(i) { estItems.splice(i, 1); renderEstItems(); save(); }
+function moveEstItem(i, d) {
+  const j = i + d; if (j < 0 || j >= estItems.length) return;
+  [estItems[i], estItems[j]] = [estItems[j], estItems[i]]; renderEstItems(); save();
+}
+function renderEstItems() {
+  const box = document.getElementById("estItems");
+  box.innerHTML = "";
+  estItems.forEach((it, i) => {
+    const amt = amountOf(it);
+    const el = document.createElement("div");
+    el.className = "est-item";
+    el.innerHTML = `
+      <div class="est-name-row">
+        <input type="text" value="${esc(it.name)}" placeholder="工事の内容" oninput="estItems[${i}].name=this.value; save()">
+        <button class="btn small ghost" onclick="moveEstItem(${i},-1)">↑</button>
+        <button class="btn small ghost" onclick="moveEstItem(${i},1)">↓</button>
+        <button class="btn small danger" onclick="removeEstItem(${i})">×</button>
+      </div>
+      <div class="est-num-row">
+        <input type="text" inputmode="decimal" value="${esc(it.qty)}" placeholder="数量" oninput="estItems[${i}].qty=this.value; renderEstAmounts(); save()">
+        <input type="text" value="${esc(it.unit)}" placeholder="単位" oninput="estItems[${i}].unit=this.value; save()">
+        <input type="text" inputmode="numeric" value="${esc(it.price)}" placeholder="単価（円）" oninput="estItems[${i}].price=this.value; renderEstAmounts(); save()">
+        <div class="amt" id="amt-${i}">${amt === null ? "別途" : yen(amt)}</div>
+      </div>`;
+    box.appendChild(el);
+  });
+  const t = estTotals();
+  const totalEl = document.createElement("div");
+  totalEl.className = "est-total"; totalEl.id = "estTotalLine";
+  totalEl.innerHTML = estTotalText(t);
+  box.appendChild(totalEl);
+}
+function estTotalText(t) {
+  return `小計 ${yen(t.sub)} ＋ 消費税 ${yen(t.tax)} ＝ 税込合計 <b>${yen(t.total)}</b>`;
+}
+function renderEstAmounts() {
+  estItems.forEach((it, i) => {
+    const el = document.getElementById("amt-" + i);
+    if (el) { const a = amountOf(it); el.textContent = a === null ? "別途" : yen(a); }
+  });
+  const line = document.getElementById("estTotalLine");
+  if (line) line.innerHTML = estTotalText(estTotals());
+}
+
 // ---- 保存・読み込み ----
 function collect() {
   return {
     customer: customer.value, date: date.value, address: address.value, inspector: inspector.value,
     built: built.value, lastPaint: lastPaint.value,
     verdict: verdict.value, verdictNote: verdictNote.value, summary: summary.value,
-    findings
+    findings,
+    estItems, taxRate: taxRate.value, estValid: estValid.value,
+    estTerms: estTerms.value, estPeriod: estPeriod.value, estNote: estNote.value
   };
 }
 function fill(d) {
@@ -405,7 +536,11 @@ function fill(d) {
   inspector.value = d.inspector || ""; built.value = d.built || ""; lastPaint.value = d.lastPaint || "";
   verdict.value = d.verdict || "watch"; verdictNote.value = d.verdictNote || ""; summary.value = d.summary || "";
   findings = d.findings || [];
+  estItems = d.estItems || [];
+  taxRate.value = d.taxRate || "10"; estValid.value = d.estValid || "";
+  estTerms.value = d.estTerms || ""; estPeriod.value = d.estPeriod || ""; estNote.value = d.estNote || "";
   renderFindings();
+  renderEstItems();
 }
 function save() {
   try { localStorage.setItem("shindan.draft", JSON.stringify(collect())); }
@@ -418,6 +553,7 @@ function loadDraft() {
   } catch (e) {}
   date.value = new Date().toISOString().slice(0, 10);
   addFinding();
+  renderEstItems();
 }
 function clearAll() {
   if (!confirm("入力内容を消して新規作成します。よろしいですか？\n（必要なら先に「保存」でファイルに残せます）")) return;
@@ -463,10 +599,14 @@ function fmtDate(v) {
 function paras(text) {
   return (text || "").split(/\n\s*\n/).filter(Boolean).map(t => `<p>${esc(t)}</p>`).join("");
 }
-function preview() {
+function preview(kind) {
+  kind = kind || "shindan";
   let co = {};
   try { co = JSON.parse(localStorage.getItem("shindan.company") || "{}"); } catch (e) {}
-  if (!co.name) { alert("最初に右上の「⚙ 会社設定」で会社名などを入れてください（報告書に印字されます）"); openSettings(); return; }
+  if (!co.name) { alert("最初に右上の「⚙ 会社設定」で会社名などを入れてください（書類に印字されます）"); openSettings(); return; }
+  if (kind !== "shindan" && estItems.filter(it => it.name).length === 0) {
+    alert("お見積りの行が空です。「お見積り」の欄に工事の内容を入れてください"); return;
+  }
   const d = collect();
   const findingHtml = d.findings.filter(f => f.state || f.photo).map((f, i) => {
     const [lname, lcolor] = LEVELS[f.level] || LEVELS.watch;
@@ -481,36 +621,91 @@ function preview() {
     </div>`;
   }).join("");
 
-  document.getElementById("report").innerHTML = `
+  // --- 共通パーツ ---
+  const TITLES = {
+    shindan: ["建物診断結果のご報告", "現地にて拝見した状態を、写真とあわせてご報告します"],
+    mitsumori: ["御 見 積 書", "下記のとおり、お見積りを申し上げます"],
+    full: ["診断結果とお見積りのご報告", "拝見した状態と、工事のお見積りを1冊にまとめました"],
+  };
+  const headline = `
     <div class="rp-headline">
       <div class="rp-co">${esc(co.name)}</div>
       <div>
-        <div class="rp-title">建物診断結果のご報告</div>
-        <div class="rp-sub">現地にて拝見した状態を、写真とあわせてご報告します</div>
+        <div class="rp-title">${TITLES[kind][0]}</div>
+        <div class="rp-sub">${TITLES[kind][1]}</div>
       </div>
-    </div>
+    </div>`;
+  const dateLabel = kind === "mitsumori" ? "見積り日" : "診断日";
+  const staffLabel = kind === "mitsumori" ? "担当" : "診断者";
+  const infoTable = `
     <table class="rp-info">
-      <tr><th>お客様名</th><td>${esc(d.customer)}　様</td><th>診断日</th><td>${fmtDate(d.date)}</td></tr>
-      <tr><th>建物ご住所</th><td>${esc(d.address)}</td><th>診断者</th><td>${esc(d.inspector)}</td></tr>
-      <tr><th>築年数</th><td>${esc(d.built)}</td><th>前回の塗装</th><td>${esc(d.lastPaint)}</td></tr>
-    </table>
+      <tr><th>お客様名</th><td>${esc(d.customer)}　様</td><th>${dateLabel}</th><td>${fmtDate(d.date)}</td></tr>
+      <tr><th>建物ご住所</th><td>${esc(d.address)}</td><th>${staffLabel}</th><td>${esc(d.inspector)}</td></tr>
+      ${kind === "mitsumori" ? "" : `<tr><th>築年数</th><td>${esc(d.built)}</td><th>前回の塗装</th><td>${esc(d.lastPaint)}</td></tr>`}
+    </table>`;
+  const verdictBox = `
     <div class="rp-verdict">
       <div class="v-label">総合判定</div>
       <div class="v-body">
         <div class="v-main">${VERDICTS[d.verdict]}</div>
         ${d.verdictNote ? `<div class="v-note">${esc(d.verdictNote)}</div>` : ""}
       </div>
-    </div>
+    </div>`;
+  const shindanBody = `
+    ${verdictBox}
     ${d.summary ? `<h3 class="rp-h">全体の所見</h3><div class="rp-summary">${paras(d.summary)}</div>` : ""}
     <h3 class="rp-h">拝見した箇所のご報告</h3>
     ${findingHtml || "<p>（箇所の記載はありません）</p>"}
-    <div class="rp-disclaimer">本診断は塗装業者としての目視点検です。診断の結果にかかわらず、工事をご契約いただく義務はありません。ご不明な点は、どんな小さなことでもお気軽にお尋ねください。</div>
+    <div class="rp-disclaimer">本診断は塗装業者としての目視点検です。診断の結果にかかわらず、工事をご契約いただく義務はありません。ご不明な点は、どんな小さなことでもお気軽にお尋ねください。</div>`;
+
+  // --- 見積りパーツ ---
+  const t = estTotals();
+  const rows = d.estItems.filter(it => it.name).map(it => {
+    const a = amountOf(it);
+    return `<tr>
+      <td>${esc(it.name)}</td>
+      <td class="num">${esc(it.qty)}</td>
+      <td>${esc(it.unit)}</td>
+      <td class="num">${it.price ? yen(parseFloat(String(it.price).replace(/[,¥]/g, ""))) : "—"}</td>
+      <td class="num">${a === null ? "別途" : yen(a)}</td>
+    </tr>`;
+  }).join("");
+  const conds = [
+    ["お見積りの有効期限", d.estValid], ["お支払い条件", d.estTerms], ["工期の目安", d.estPeriod],
+  ].filter(([, v]) => v).map(([k, v]) => `<tr><th>${k}</th><td>${esc(v)}</td></tr>`).join("");
+  const estBody = `
+    <div class="rp-grand"><div class="box">
+      <div class="lbl">御見積金額（税込）</div>
+      <div class="yen">${yen(t.total)}</div>
+    </div></div>
+    <table class="rp-est">
+      <tr><th style="width:40%">工事の内容</th><th style="width:10%">数量</th><th style="width:10%">単位</th><th style="width:18%">単価</th><th style="width:22%">金額</th></tr>
+      ${rows}
+      <tr><td colspan="4" class="num" style="font-weight:700;">小計</td><td class="num">${yen(t.sub)}</td></tr>
+      <tr><td colspan="4" class="num">消費税（${t.rate}%）</td><td class="num">${yen(t.tax)}</td></tr>
+      <tr><td colspan="4" class="num" style="font-weight:700; background:#eaf4f7;">税込合計</td><td class="num" style="font-weight:700; background:#eaf4f7;">${yen(t.total)}</td></tr>
+    </table>
+    ${conds ? `<table class="rp-cond">${conds}</table>` : ""}
+    ${d.estNote ? `<h3 class="rp-h">備考</h3><div class="rp-summary">${paras(d.estNote)}</div>` : ""}`;
+
+  const footer = `
     <div class="rp-footer">
       <div class="name">${esc(co.name)}${co.rep ? `（${esc(co.rep)}）` : ""}</div>
       ${co.addr ? esc(co.addr) + "<br>" : ""}
       ${co.tel ? "☎ " + esc(co.tel) : ""}${co.web ? "　｜　" + esc(co.web) : ""}
     </div>
     <div style="text-align:right; font-size:6.5pt; color:#8aa2ac; margin-top:4px;">この書類は「カベカルテ」で作成されました</div>`;
+
+  let body;
+  if (kind === "shindan") {
+    body = shindanBody;
+  } else if (kind === "mitsumori") {
+    body = estBody;
+  } else {
+    body = shindanBody +
+      `<div class="rp-break"></div><h3 class="rp-h" style="font-size:14pt; margin-top:0;">お見積り</h3>` + estBody;
+  }
+  document.getElementById("report").innerHTML = headline + infoTable + body + footer;
   window.print();
 }
 
