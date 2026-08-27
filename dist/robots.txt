@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /kabekarute/
 
 Sitemap: https://tatsumi-tosou.com/sitemap.xml

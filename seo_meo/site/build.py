@@ -296,11 +296,24 @@ class _Builder:
         self.write_file("sitemap.xml", "\n".join(lines) + "\n")
 
     def build_robots(self) -> None:
+        # /kabekarute/ は自社ツールの配布場所であって、サイトのコンテンツでは
+        # ないので検索対象から外す（サイトの評価とも混ざらないように）。
         self.write_file(
             "robots.txt",
-            "User-agent: *\nAllow: /\n\n"
+            "User-agent: *\nAllow: /\nDisallow: /kabekarute/\n\n"
             f"Sitemap: {self.settings.canonical_base}/sitemap.xml\n",
         )
+
+    def copy_apps(self, site_root: Path) -> None:
+        """自社ツール「カベカルテ」をサイトのドメインに同梱する。
+
+        HTMLファイルを直接開くとスマホではJSが動かない（プレビュー表示に
+        なる）ため、URLで開ける場所が必要。sitemap には載せず、robots で
+        検索からも外している。
+        """
+        source = site_root.parent / "app" / "kabekarute"
+        if source.exists():
+            shutil.copytree(source, self.out_dir / "kabekarute", dirs_exist_ok=True)
 
     def copy_assets(self, site_root: Path) -> None:
         source = site_root / "assets"
@@ -337,6 +350,7 @@ def build(
     builder.build_sitemap()
     builder.build_robots()
     builder.copy_assets(site_root)
+    builder.copy_apps(site_root)
 
     builder.result.warnings = _warnings(content)
     return builder.result

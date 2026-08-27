@@ -23,6 +23,12 @@ def read(out: Path, path: str) -> str:
     return (out / path).read_text(encoding="utf-8")
 
 
+def site_pages(out: Path):
+    """サイトとして生成したページ。同梱ツール (/kabekarute/) は
+    サイトのコンテンツではないので、SEO 系の検査からは外す。"""
+    return (p for p in out.rglob("index.html") if "kabekarute" not in p.parts)
+
+
 def jsonld(html: str) -> dict:
     match = re.search(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
     assert match, "JSON-LD が出力されていません"
@@ -105,7 +111,7 @@ def test_base_url_override_reaches_canonical_and_sitemap(built):
 
 def test_every_page_has_a_canonical_and_a_description(built):
     _, out = built
-    for path in out.rglob("index.html"):
+    for path in site_pages(out):
         html = path.read_text(encoding="utf-8")
         assert '<link rel="canonical"' in html, path
         assert re.search(r'<meta name="description" content=".+?">', html), path
@@ -169,7 +175,7 @@ def test_sitemap_lists_every_generated_page(built):
     sitemap = read(out, "sitemap.xml")
     generated = {
         "/" + str(path.parent.relative_to(out)).replace(".", "") + "/"
-        for path in out.rglob("index.html")
+        for path in site_pages(out)
     }
     generated = {"/" if url == "//" else url for url in generated}
     for url in generated:
@@ -189,6 +195,18 @@ def test_sitemap_carries_lastmod_for_dated_content(built):
 def test_robots_points_at_the_sitemap(built):
     _, out = built
     assert f"Sitemap: {BASE_URL}/sitemap.xml" in read(out, "robots.txt")
+
+
+def test_kabekarute_apps_are_bundled_but_not_indexed(built):
+    """カベカルテはURLで配る（ファイル直開きはスマホでJSが動かない）。
+    ただしサイトのコンテンツではないので、検索対象からは外す。"""
+    _, out = built
+    for page in ["kabekarute/index.html", "kabekarute/shindan/index.html",
+                 "kabekarute/color/index.html", "kabekarute/kanko/index.html"]:
+        assert (out / page).exists(), page
+        assert 'name="robots" content="noindex"' in read(out, page), page
+    assert "Disallow: /kabekarute/" in read(out, "robots.txt")
+    assert "kabekarute" not in read(out, "sitemap.xml")
 
 
 def test_no_external_resources_are_loaded(built):
@@ -295,7 +313,7 @@ def test_testimonials_are_never_marked_up_as_reviews(built):
     Google のガイドラインで認められていないため、表示のみで扱う。
     """
     _, out = built
-    for path in out.rglob("index.html"):
+    for path in site_pages(out):
         payload = jsonld(path.read_text(encoding="utf-8"))
         types = {node.get("@type") for node in payload["@graph"]}
         assert "Review" not in types, path
