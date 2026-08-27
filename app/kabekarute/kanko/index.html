@@ -204,9 +204,9 @@
 
 <div class="toolbar">
   <button class="btn" onclick="preview()">📄 完工報告書を作る（印刷 / PDF保存）</button>
-  <button class="btn ghost" onclick="exportJson()">保存</button>
+  <button class="btn ghost" onclick="exportCase()">案件を保存</button>
   <button class="btn ghost" onclick="document.getElementById('importFile').click()">読み込み</button>
-  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJson(event)">
+  <input type="file" id="importFile" accept=".html,.json,text/html,application/json" style="display:none" onchange="importJson(event)">
   <button class="btn danger" onclick="clearAll()">新規作成</button>
 </div>
 
@@ -387,22 +387,71 @@ function loadDraft() {
   addPair(); addPaint({ part: "外壁", product: "" });
 }
 function clearAll() {
-  if (!confirm("入力内容を消して新規作成します。よろしいですか？\n（必要なら先に「保存」でファイルに残せます）")) return;
+  if (!confirm("入力内容を消して新規作成します。よろしいですか？\n（必要なら先に「案件を保存」でファイルに残せます）")) return;
   try { localStorage.removeItem("kanko.draft"); } catch (e) {}
   fill({}); addPair(); addPaint({ part: "外壁", product: "" });
 }
-function exportJson() {
-  const name = (customer.value || "mudai").replace(/\s+/g, "") + "_kanko.json";
-  const blob = new Blob([JSON.stringify(collect(), null, 1)], { type: "application/json" });
+// ---- 案件ファイル（開けば控えとして読め、読み込めば続きから編集できる） ----
+function caseFileHtml(title, bodyHtml, data) {
+  const json = JSON.stringify(data).replace(/</g, "\\u003c");
+  return `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${title}｜カベカルテ 案件の控え</title>
+<style>body{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;margin:0;background:#f2f7fa;color:#1b2a31;line-height:1.6}
+.wrap{max-width:720px;margin:0 auto;padding:1rem}
+.head{background:#0b4a5f;color:#fff;padding:1rem;font-weight:700}
+.head small{display:block;font-weight:400;font-size:.75rem;opacity:.85}
+table{width:100%;border-collapse:collapse;background:#fff;margin:.8rem 0}
+th,td{border:1px solid #d3e4ec;padding:6px 9px;font-size:.85rem;text-align:left}
+th{background:#eaf4f7;color:#0b4a5f;width:28%}
+h2{font-size:1rem;color:#0b4a5f;border-left:4px solid #e2661f;padding-left:.5rem;margin:1.4rem 0 .5rem}
+.item{background:#fff;border:1px solid #d3e4ec;border-radius:8px;padding:.7rem .9rem;margin-bottom:.7rem}
+.item img{max-width:260px;width:100%;border-radius:6px;display:block;margin-bottom:.4rem}
+p{margin:.2rem 0;font-size:.88rem}
+.notice{background:#fff6e8;border-radius:8px;padding:.7rem .9rem;font-size:.8rem;color:#6b5b45;margin:1rem 0}
+.foot{font-size:.72rem;color:#566871;text-align:center;padding:1rem 0 2rem}</style></head><body>
+<div class="head">カベカルテ 案件の控え<small>${title}</small></div>
+<div class="wrap">
+<div class="notice">📂 このファイルは「カベカルテ」の案件データです。<b>アプリ（kabekarute.com）の「読み込み」からこのファイルを選ぶと、続きから編集・書類作成ができます。</b>このページ自体は、内容を確認するための控えです。</div>
+${bodyHtml}
+</div>
+<div class="foot">カベカルテ ｜ https://kabekarute.com</div>
+<script type="application/json" id="kabekarute-data">${json}</scr` + `ipt>
+</body></html>`;
+}
+function downloadCase(name, html) {
+  const blob = new Blob([html], { type: "text/html" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob); a.download = name; a.click();
   URL.revokeObjectURL(a.href);
 }
+function readCaseFile(text) {
+  const t = text.trim();
+  if (t.startsWith("{")) return JSON.parse(t); // 以前のJSON形式も読める
+  const m = text.match(/<script type="application\/json" id="kabekarute-data">([\s\S]*?)<\/script>/);
+  if (!m) throw new Error("no data");
+  return JSON.parse(m[1]);
+}
 function importJson(ev) {
   const file = ev.target.files[0]; if (!file) return;
   const r = new FileReader();
-  r.onload = () => { try { fill(JSON.parse(r.result)); save(); } catch (e) { alert("ファイルを読み込めませんでした"); } };
+  r.onload = () => { try { fill(readCaseFile(r.result)); save(); } catch (e) { alert("ファイルを読み込めませんでした。カベカルテで保存した案件ファイルを選んでください"); } };
   r.readAsText(file); ev.target.value = "";
+}
+function exportCase() {
+  const d = collect();
+  const pairsHtml = d.pairs.filter(p2 => p2.before || p2.after).map(p2 => `<div class="item"><p><b>${esc(p2.label || "ビフォー・アフター")}</b></p>${p2.before ? `<p>施工前</p><img src="${p2.before}">` : ""}${p2.after ? `<p>施工後</p><img src="${p2.after}">` : ""}</div>`).join("");
+  const stepsHtml = d.steps.filter(s2 => s2.title).map((s2, i) => `<div class="item"><p><b>${i + 1}. ${esc(s2.title)}</b>${s2.date ? `（${esc(s2.date)}）` : ""}</p>${s2.photos.map(ph => `<img src="${ph}">`).join("")}${s2.note ? `<p>${esc(s2.note)}</p>` : ""}</div>`).join("");
+  const paintsHtml = d.paints.filter(p2 => p2.part || p2.product).map(p2 => `<tr><th>${esc(p2.part)}</th><td>${esc(p2.product)}</td></tr>`).join("");
+  const body = `
+    <h2>基本情報</h2>
+    <table><tr><th>お客様名</th><td>${esc((d.customer || "").replace(/\s*様\s*$/, ""))}　様</td></tr><tr><th>工事名</th><td>${esc(d.workName)}</td></tr><tr><th>工期</th><td>${esc(d.startDate)} 〜 ${esc(d.endDate)}</td></tr></table>
+    ${pairsHtml ? `<h2>仕上がり</h2>${pairsHtml}` : ""}
+    ${stepsHtml ? `<h2>作業の記録</h2>${stepsHtml}` : ""}
+    ${(paintsHtml || d.warranty) ? `<h2>使用塗料と保証</h2><table>${paintsHtml}${d.warranty ? `<tr><th>保証</th><td>${esc(d.warranty)}</td></tr>` : ""}</table>` : ""}`;
+  const title = `${d.customer || "無題"} 完工報告（${d.endDate || ""}）`;
+  const name = (d.customer || "mudai").replace(/\s+/g, "") + "_kanko.html";
+  downloadCase(name, caseFileHtml(title, body, d));
 }
 
 // ---- 会社設定（診断アプリと同じ保存場所を使う） ----
@@ -478,7 +527,7 @@ function preview() {
       </div>
     </div>
     <table class="rp-info">
-      <tr><th>お客様名</th><td>${esc(d.customer)}　様</td><th>完工日</th><td>${fmtDate(d.endDate)}</td></tr>
+      <tr><th>お客様名</th><td>${esc((d.customer || "").replace(/\s*様\s*$/, ""))}　様</td><th>完工日</th><td>${fmtDate(d.endDate)}</td></tr>
       <tr><th>工事名</th><td>${esc(d.workName)}</td><th>工期</th><td>${period}</td></tr>
       <tr><th>建物ご住所</th><td>${esc(d.address)}</td><th>担当</th><td>${esc(d.inspector)}</td></tr>
     </table>
