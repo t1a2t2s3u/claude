@@ -39,7 +39,18 @@
   .btn.small { padding: .3rem .6rem; font-size: .78rem; }
   .btn:disabled { opacity: .4; cursor: default; }
   #stage { position: relative; }
-  #canvas { width: 100%; display: block; border-radius: 8px; touch-action: none; cursor: crosshair; }
+  #wrap { position: relative; overflow: hidden; border-radius: 8px; touch-action: none; }
+  #canvas { width: 100%; display: block; cursor: crosshair; transform-origin: 0 0; }
+  #zoomHud { position: absolute; right: .5rem; top: .5rem; display: flex; flex-direction: column; gap: .3rem; }
+  #zoomHud button {
+    width: 2.2rem; height: 2.2rem; border: 0; border-radius: 8px; cursor: pointer;
+    background: rgba(6,51,63,.72); color: #fff; font-size: .95rem; font-weight: 700;
+  }
+  #zoomHud button:last-child { font-size: .68rem; }
+  #zoomBadge {
+    position: absolute; left: .5rem; top: .5rem; background: rgba(6,51,63,.72); color: #fff;
+    font-size: .7rem; font-weight: 700; padding: .15rem .5rem; border-radius: 99px; pointer-events: none;
+  }
   #dropzone {
     border: 2px dashed var(--line); border-radius: 8px; background: var(--tint);
     padding: 3rem 1rem; text-align: center; color: var(--muted); cursor: pointer;
@@ -59,6 +70,8 @@
   .swatch span { background: rgba(0,0,0,.25); width: 100%; text-align: center; padding: 1px 0; }
   .swatch.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
   .custom-color { display: flex; align-items: center; gap: .5rem; margin-top: .5rem; font-size: .8rem; color: var(--muted); }
+  .roof-group { border: 1px solid var(--line); border-radius: 8px; padding: .45rem .6rem; margin-top: .45rem; }
+  .roof-group summary { cursor: pointer; font-size: .82rem; font-weight: 700; color: var(--deep); }
   .hint { font-size: .74rem; color: var(--muted); margin: .5rem 0 0; }
   .disclaimer {
     font-size: .74rem; color: var(--muted); background: var(--tint);
@@ -82,7 +95,16 @@
     </div>
     <input type="file" id="file" accept="image/*" style="display:none">
     <div id="stage" style="display:none">
-      <canvas id="canvas"></canvas>
+      <div id="wrap">
+        <canvas id="canvas"></canvas>
+        <div id="zoomHud">
+          <button onclick="zoomStep(1.5)" title="拡大">＋</button>
+          <button onclick="zoomStep(1/1.5)" title="縮小">−</button>
+          <button onclick="resetView()" title="全体表示">全体</button>
+        </div>
+        <span id="zoomBadge" style="display:none"></span>
+      </div>
+      <p class="hint" style="margin:.35rem 0 0">拡大すると細かい部分を選べます。スマホは<b>2本指で広げてズーム・2本指でずらして移動</b>（🪄モード中は1本指でも移動できます）。</p>
       <div class="tools">
         <button class="mode on" id="mode-wand" onclick="setMode('wand')">🪄 タップで選択</button>
         <button class="mode" id="mode-brush" onclick="setMode('brush')">🖌 ブラシで追加</button>
@@ -118,15 +140,31 @@
       <div id="jpmaMsg" class="hint"></div>
       <div class="palette" id="jpmaRecent" style="margin-top:.4rem;"></div>
     </div>
+    <div style="margin-top:.8rem; border-top:1px solid var(--line); padding-top:.7rem;">
+      <p class="steps" style="margin-bottom:.3rem;"><b>屋根の色を選ぶ</b>（屋根用塗料の標準色から）</p>
+      <p class="hint" style="margin:.1rem 0 .4rem;">屋根は屋根専用の塗料になるため、実際に使う製品の標準色を収録しています。画面の色は近似です。</p>
+      <details class="roof-group">
+        <summary>日本ペイント　シリコンルーフII</summary>
+        <div class="palette" id="roofNippon" style="margin-top:.45rem;"></div>
+        <p class="hint">常備色のうち、色名が確認できた20色を収録しています。</p>
+      </details>
+      <details class="roof-group">
+        <summary>関西ペイント　スーパーシリコンルーフペイント</summary>
+        <div class="palette" id="roofKansai" style="margin-top:.45rem;"></div>
+        <p class="hint">標準色21色を収録しています。</p>
+      </details>
+      <div id="roofMsg" class="hint"></div>
+    </div>
     <div class="tools" style="margin-top:.8rem">
       <button class="btn accent" id="bakeBtn" onclick="bake()" disabled>✓ この色で確定（次の色へ）</button>
       <button class="btn" onclick="saveImage()">💾 画像を保存</button>
     </div>
     <p class="hint">確定すると選択が解除され、続けて別の場所（1階・屋根など）に次の色を試せます。</p>
     <div class="disclaimer">
-      ⚠ 画面の色は、実際の塗料の色と完全には一致しません。日塗工番号の色も、番号の体系
-      （色相・明度・彩度）から計算した近似色です。配色のバランスを見るための参考として
-      お使いいただき、最終決定は必ず実物の色見本帳で行ってください。
+      ⚠ 画面の色は、実際の塗料の色と完全には一致しません。日塗工番号の色は番号の体系
+      （色相・明度・彩度）から計算した近似色、屋根用塗料の標準色も色名に基づく近似色です。
+      配色のバランスを見るための参考としてお使いいただき、最終決定は必ず実物の
+      色見本帳で行ってください。
     </div>
   </section>
 </main>
@@ -171,6 +209,7 @@ document.getElementById("file").addEventListener("change", (ev) => {
     document.getElementById("dropzone").style.display = "none";
     document.getElementById("stage").style.display = "";
     document.getElementById("colorCard").style.display = "";
+    resetView();
     render();
   };
   img.src = URL.createObjectURL(f);
@@ -311,20 +350,128 @@ function pushHistory(kind) {
   updateUndo();
 }
 
-let dragging = false;
+// ---- ズームと操作の振り分け ----
+// 表示は CSS transform で拡大し、canvas の中身（解像度）はそのまま。
+// pos() は getBoundingClientRect() 基準なので、拡大中でも座標変換の式は
+// 変わらない。2本指はピンチズーム/移動、1本指は選択ツール。
+const wrap = document.getElementById("wrap");
+let view = { s: 1, tx: 0, ty: 0 };
+const ZOOM_MAX = 8;
+
+function applyView() {
+  // クランプ: 画像の端より外側を見せない
+  const baseW = wrap.clientWidth, baseH = baseW * (canvas.height / canvas.width || 1);
+  view.s = Math.min(ZOOM_MAX, Math.max(1, view.s));
+  view.tx = Math.min(0, Math.max(baseW - baseW * view.s, view.tx));
+  view.ty = Math.min(0, Math.max(baseH - baseH * view.s, view.ty));
+  canvas.style.transform = `translate(${view.tx}px, ${view.ty}px) scale(${view.s})`;
+  const badge = document.getElementById("zoomBadge");
+  badge.style.display = view.s > 1.01 ? "" : "none";
+  badge.textContent = "×" + (Math.round(view.s * 10) / 10);
+}
+function resetView() { view = { s: 1, tx: 0, ty: 0 }; applyView(); }
+function zoomAt(px, py, f) {
+  // (px, py) は wrap 内の座標。その点が動かないように拡大縮小する
+  const s0 = view.s;
+  let s1 = Math.min(ZOOM_MAX, Math.max(1, s0 * f));
+  view.tx = px - (px - view.tx) * (s1 / s0);
+  view.ty = py - (py - view.ty) * (s1 / s0);
+  view.s = s1;
+  applyView();
+}
+function zoomStep(f) { zoomAt(wrap.clientWidth / 2, wrap.getBoundingClientRect().height / 2, f); }
+wrap.addEventListener("wheel", (ev) => {
+  if (!orig) return;
+  ev.preventDefault();
+  const r = wrap.getBoundingClientRect();
+  zoomAt(ev.clientX - r.left, ev.clientY - r.top, ev.deltaY < 0 ? 1.25 : 0.8);
+}, { passive: false });
+
+const pointers = new Map(); // 触れている指
+let dragging = false;       // ブラシのひと筆の途中か
+let pinch = null;           // 2本指操作の開始状態
+let panning = false;        // 🪄モードの1本指移動
+let tapStart = null;        // タップ判定（🪄はここで確定する）
+let suppressTap = false;    // ピンチした指が残っている間は選択しない
+
+function cancelStroke() {
+  // ブラシの途中で2本目の指が来たら、そのひと筆をなかったことにする
+  if (dragging && history.length) {
+    mask = history.pop().mask;
+    updateUndo(); render();
+  }
+  dragging = false;
+}
+
 canvas.addEventListener("pointerdown", (ev) => {
   if (!orig || showingOrig) return;
-  const { x, y } = pos(ev);
-  pushHistory("sel"); // ブラシはひと筆（押してから離すまで）で1操作
-  if (mode === "wand") { wand(x, y); render(); }
-  else { dragging = true; paint(x, y, mode === "erase"); render(); }
+  pointers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+  if (pointers.size === 2) {
+    cancelStroke();
+    suppressTap = true; panning = false; tapStart = null;
+    const [a, b] = [...pointers.values()];
+    const r = wrap.getBoundingClientRect();
+    pinch = {
+      d: Math.hypot(a.x - b.x, a.y - b.y),
+      cx: (a.x + b.x) / 2 - r.left, cy: (a.y + b.y) / 2 - r.top,
+      s: view.s, tx: view.tx, ty: view.ty,
+    };
+    return;
+  }
+  if (pointers.size > 2 || suppressTap) return;
+  if (mode === "wand") {
+    // 選択はタップ（指を離した時）で確定。押したまま動かすと移動になる
+    tapStart = { x: ev.clientX, y: ev.clientY, moved: false };
+    panning = true;
+  } else {
+    pushHistory("sel"); // ブラシはひと筆（押してから離すまで）で1操作
+    dragging = true;
+    const { x, y } = pos(ev);
+    paint(x, y, mode === "erase"); render();
+  }
 });
 canvas.addEventListener("pointermove", (ev) => {
-  if (!dragging) return;
-  const { x, y } = pos(ev);
-  paint(x, y, mode === "erase"); render();
+  if (!pointers.has(ev.pointerId)) return;
+  const prev = pointers.get(ev.pointerId);
+  pointers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+  if (pinch && pointers.size >= 2) {
+    const [a, b] = [...pointers.values()];
+    const r = wrap.getBoundingClientRect();
+    const d = Math.hypot(a.x - b.x, a.y - b.y);
+    const cx = (a.x + b.x) / 2 - r.left, cy = (a.y + b.y) / 2 - r.top;
+    const s1 = Math.min(ZOOM_MAX, Math.max(1, pinch.s * (d / (pinch.d || 1))));
+    view.s = s1;
+    view.tx = cx - (pinch.cx - pinch.tx) * (s1 / pinch.s);
+    view.ty = cy - (pinch.cy - pinch.ty) * (s1 / pinch.s);
+    applyView();
+    return;
+  }
+  if (dragging) {
+    const { x, y } = pos(ev);
+    paint(x, y, mode === "erase"); render();
+    return;
+  }
+  if (panning && tapStart) {
+    const dx = ev.clientX - prev.x, dy = ev.clientY - prev.y;
+    if (Math.abs(ev.clientX - tapStart.x) + Math.abs(ev.clientY - tapStart.y) > 8) tapStart.moved = true;
+    if (tapStart.moved && view.s > 1) { view.tx += dx; view.ty += dy; applyView(); }
+  }
 });
-window.addEventListener("pointerup", () => dragging = false);
+function endPointer(ev) {
+  const wasTap = tapStart && !tapStart.moved && !suppressTap && pointers.size === 1;
+  pointers.delete(ev.pointerId);
+  if (pointers.size < 2) pinch = null;
+  if (pointers.size === 0) { suppressTap = false; panning = false; }
+  if (ev.type === "pointerup" && wasTap && mode === "wand" && orig && !showingOrig) {
+    pushHistory("sel");
+    const { x, y } = pos(ev);
+    wand(x, y); render();
+  }
+  if (pointers.size === 0) { tapStart = null; dragging = false; }
+}
+canvas.addEventListener("pointerup", endPointer);
+canvas.addEventListener("pointercancel", endPointer);
+window.addEventListener("pointerup", () => { if (pointers.size === 0) dragging = false; });
 
 function clearMask() {
   if (!mask) return;
@@ -404,7 +551,8 @@ function pickColor(hex, el) {
   bakeBtn.disabled = false;
   render();
 }
-function pickCustom(hex) { pickColor(hex, null); setJpmaMsg(""); }
+function setRoofMsg(html) { document.getElementById("roofMsg").innerHTML = html; }
+function pickCustom(hex) { pickColor(hex, null); setJpmaMsg(""); setRoofMsg(""); }
 
 // ---- 日塗工番号 → 近似色 ----
 // 番号の体系: 色相2桁（10色相 × 2.5刻み）- 明度2桁（マンセル明度×10）+ 彩度記号。
@@ -473,6 +621,7 @@ function pickJpma(numArg) {
   }
   pickColor(hex, null);
   setJpmaMsg(`選択中: <b>${num}</b> の近似色 <span style="display:inline-block; width:1em; height:1em; background:${hex}; border:1px solid #ccc; vertical-align:-2px; border-radius:3px;"></span>`);
+  setRoofMsg("");
   rememberJpma(num);
 }
 function jpmaRecentList() {
@@ -505,6 +654,55 @@ for (const [name, hex] of COLORS) {
   b.innerHTML = `<span>${name}</span>`;
   b.onclick = () => pickColor(hex, b);
   pal.appendChild(b);
+}
+
+// ---- 屋根用塗料の標準色 ----
+// 色名はメーカー・販売店の公開情報で確認できたもののみ。hex は画面表示用の
+// 近似（実物の色見本帳の代わりにはならない。画面上の免責に明記済み）。
+// シリコンルーフII は常備25色のうち色名を確認できた20色。
+const ROOF_PAINTS = [
+  {
+    id: "roofNippon", product: "シリコンルーフII", maker: "日本ペイント",
+    colors: [
+      ["ホワイト", "#f2f2ee"], ["シルバー", "#b7babc"], ["サーフグレー", "#9aa3a6"],
+      ["オレンジエロー", "#d78e2e"], ["サニーレッド", "#b8422c"], ["マーズレッド", "#953f2e"],
+      ["ビーバーレッド", "#8a4736"], ["マルーン", "#6b3733"], ["ニューワイン", "#642f38"],
+      ["コーヒーブラウン", "#63493a"], ["チョコレート（N）", "#46362c"],
+      ["スカイブルー", "#6fa2c8"], ["ナイスブルー", "#3e6da4"], ["セルリアンブルー", "#2f6d9d"],
+      ["エンペラーブルー", "#273c60"], ["グリーン", "#3f6b4e"], ["モスグリーンS", "#4d5f43"],
+      ["アイビー", "#3c5949"], ["ノアール", "#2b2b2b"], ["ブラック", "#1e1e1e"],
+    ],
+  },
+  {
+    id: "roofKansai", product: "スーパーシリコンルーフペイント", maker: "関西ペイント",
+    colors: [
+      ["ホワイト", "#f2f2ee"], ["クリーム", "#e7d8ac"], ["グレー（銀鼠）", "#8b9093"],
+      ["カーボングレー", "#4b5054"], ["ローヤルレッド", "#a33127"], ["ビーバーレッド", "#8a4736"],
+      ["マルーン", "#6b3733"], ["新ブラウン", "#7a5540"], ["コーヒーブラウン", "#63493a"],
+      ["ビスタブラウン", "#5a3c30"], ["セピア", "#4f4239"], ["チョコレート（こげ茶）", "#47352a"],
+      ["ブルー", "#2e5c8c"], ["ナイスブルー", "#3e6da4"],
+      ["ナスコン", "#3a4660"], ["ミストグリーン", "#8fa38f"], ["フレッシュグリーン", "#4f7c4b"],
+      ["モスグリーン", "#4a5c40"], ["ネオモスグリーン", "#3e5038"],
+      ["ネオブラック（ぎん黒）", "#24292c"], ["ブラック", "#1e1e1e"],
+    ],
+  },
+];
+for (const paint of ROOF_PAINTS) {
+  const box = document.getElementById(paint.id);
+  for (const [name, hex] of paint.colors) {
+    if (!hex) continue;
+    const b = document.createElement("button");
+    b.className = "swatch"; b.style.background = hex;
+    b.innerHTML = `<span>${name}</span>`;
+    b.onclick = () => {
+      pickColor(hex, b);
+      document.getElementById("roofMsg").innerHTML =
+        `選択中: ${paint.maker} ${paint.product}「<b>${name}</b>」の近似色 ` +
+        `<span style="display:inline-block; width:1em; height:1em; background:${hex}; border:1px solid #ccc; vertical-align:-2px; border-radius:3px;"></span>`;
+      setJpmaMsg("");
+    };
+    box.appendChild(b);
+  }
 }
 
 // ---- 描画（選択部分に色を乗せたプレビュー） ----
