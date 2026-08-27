@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>外壁診断レポートメーカー（β版）</title>
+<title>カベカルテ 診断（β版）</title>
 <style>
   :root {
     --deep: #0b4a5f; --deepest: #06333f; --brand: #00a3c9; --brand-text: #00758f;
@@ -141,7 +141,7 @@
 <body>
 
 <header class="app-head">
-  <h1>外壁診断レポートメーカー</h1><span class="beta">β版</span>
+  <h1>カベカルテ <span style="font-weight:400; font-size:.85em;">診断</span></h1><span class="beta">β版</span>
   <button class="btn small ghost" style="margin-left:auto; background:#fff;" onclick="openSettings()">⚙ 会社設定</button>
   <div class="head-note">入力した内容と写真はこの端末の中だけに保存されます。外部には送信されません。</div>
 </header>
@@ -509,7 +509,8 @@ function preview() {
       <div class="name">${esc(co.name)}${co.rep ? `（${esc(co.rep)}）` : ""}</div>
       ${co.addr ? esc(co.addr) + "<br>" : ""}
       ${co.tel ? "☎ " + esc(co.tel) : ""}${co.web ? "　｜　" + esc(co.web) : ""}
-    </div>`;
+    </div>
+    <div style="text-align:right; font-size:6.5pt; color:#8aa2ac; margin-top:4px;">この書類は「カベカルテ」で作成されました</div>`;
   window.print();
 }
 
