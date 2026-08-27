@@ -99,14 +99,25 @@
     <p class="steps"><b>色を選ぶ</b>（選択した部分に、その場で色が乗ります）</p>
     <div class="palette" id="palette"></div>
     <div class="custom-color">自由な色: <input type="color" id="customColor" value="#c8b89a" onchange="pickCustom(this.value)"></div>
+    <div style="margin-top:.8rem; border-top:1px solid var(--line); padding-top:.7rem;">
+      <p class="steps" style="margin-bottom:.3rem;"><b>日塗工番号で選ぶ</b>（番号の体系から計算した近似色です）</p>
+      <div style="display:flex; gap:.4rem;">
+        <input type="text" id="jpmaInput" placeholder="例：19-75A ／ N-85" style="flex:1; padding:.45rem .6rem; border:1px solid var(--line); border-radius:6px; font:inherit;"
+               onkeydown="if(event.key==='Enter')pickJpma()">
+        <button class="btn small" onclick="pickJpma()">この色にする</button>
+      </div>
+      <div id="jpmaMsg" class="hint"></div>
+      <div class="palette" id="jpmaRecent" style="margin-top:.4rem;"></div>
+    </div>
     <div class="tools" style="margin-top:.8rem">
       <button class="btn accent" id="bakeBtn" onclick="bake()" disabled>✓ この色で確定（次の色へ）</button>
       <button class="btn" onclick="saveImage()">💾 画像を保存</button>
     </div>
     <p class="hint">確定すると選択が解除され、続けて別の場所（1階・屋根など）に次の色を試せます。</p>
     <div class="disclaimer">
-      ⚠ 画面の色は、実際の塗料の色と完全には一致しません。配色のバランスを見るための参考として
-      お使いいただき、最終決定は必ず実物の色見本で行ってください。
+      ⚠ 画面の色は、実際の塗料の色と完全には一致しません。日塗工番号の色も、番号の体系
+      （色相・明度・彩度）から計算した近似色です。配色のバランスを見るための参考として
+      お使いいただき、最終決定は必ず実物の色見本帳で行ってください。
     </div>
   </section>
 </main>
@@ -266,7 +277,99 @@ function pickColor(hex, el) {
   bakeBtn.disabled = false;
   render();
 }
-function pickCustom(hex) { pickColor(hex, null); }
+function pickCustom(hex) { pickColor(hex, null); setJpmaMsg(""); }
+
+// ---- 日塗工番号 → 近似色 ----
+// 番号の体系: 色相2桁（10色相 × 2.5刻み）- 明度2桁（マンセル明度×10）+ 彩度記号。
+// 無彩色は N-90 のような形。画面表示用の近似計算であり、実物の色見本の代わりには
+// ならない（画面上の免責に明記）。
+const JPMA_CHROMA = { A: 0.5, B: 1, C: 1.5, D: 2, F: 3, H: 4, L: 6, P: 8, T: 10, V: 12, X: 14 };
+// マンセル10色相の中心を CIELAB の色相角(度)に対応させる（近似）
+const JPMA_HUE_ANGLE = [30, 60, 90, 120, 160, 200, 230, 270, 310, 350]; // R,YR,Y,GY,G,BG,B,PB,P,RP
+
+function labToRgb(L, a, bb) {
+  const fy = (L + 16) / 116, fx = fy + a / 500, fz = fy - bb / 200;
+  const f3 = (t) => t ** 3 > 0.008856 ? t ** 3 : (t - 16 / 116) / 7.787;
+  const X = 0.95047 * f3(fx), Y = 1.0 * f3(fy), Z = 1.08883 * f3(fz);
+  let r = X * 3.2406 - Y * 1.5372 - Z * 0.4986;
+  let g = -X * 0.9689 + Y * 1.8758 + Z * 0.0415;
+  let b = X * 0.0557 - Y * 0.2040 + Z * 1.0570;
+  const gam = (c) => c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055;
+  return [gam(r), gam(g), gam(b)].map(c => Math.round(c * 255));
+}
+function jpmaToHex(input) {
+  const s = String(input).trim().toUpperCase().replace(/\s/g, "");
+  let m = s.match(/^N-?(\d{1,2}(?:\.\d)?)$/);
+  let L, C = 0, hueAngle = 0;
+  if (m) {
+    const v = parseFloat(m[1]);
+    L = v <= 10 ? v * 10 : v; // N-9 / N-8.5 / N-85 のどの書き方も受ける
+    if (L > 100) return null;
+  } else {
+    m = s.match(/^(\d{2})-(\d{2})([A-Z])$/);
+    if (!m) return null;
+    const hueCode = m[1], family = Math.floor(Number(hueCode) / 10), step = Number(hueCode) % 10;
+    const stepPos = { 2: 2.5, 5: 5, 7: 7.5, 9: 10 }[step];
+    if (family > 9 || stepPos === undefined) return null;
+    C = JPMA_CHROMA[m[3]];
+    if (C === undefined) return null;
+    L = Number(m[2]);
+    // 色相環上の位置: 前の色相族の10側と補間する
+    const prev = JPMA_HUE_ANGLE[(family + 9) % 10];
+    let cur = JPMA_HUE_ANGLE[family];
+    if (cur < prev) cur += 360;
+    hueAngle = (prev + (cur - prev) * (stepPos / 10)) % 360;
+  }
+  const Lstar = Math.min(100, Math.max(0, L)); // マンセル明度×10 ≒ L*
+  let c = C * 5.5;               // マンセル彩度 → C* の近似係数
+  for (let i = 0; i < 60; i++) { // 画面で出せない鮮やかさは少しずつ落とす
+    const a = c * Math.cos(hueAngle * Math.PI / 180);
+    const b = c * Math.sin(hueAngle * Math.PI / 180);
+    const rgb = labToRgb(Lstar, a, b);
+    if (rgb.every(v => v >= 0 && v <= 255)) {
+      return "#" + rgb.map(v => v.toString(16).padStart(2, "0")).join("");
+    }
+    c *= 0.93;
+  }
+  const rgb = labToRgb(Lstar, 0, 0);
+  return "#" + rgb.map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2, "0")).join("");
+}
+function setJpmaMsg(html) { document.getElementById("jpmaMsg").innerHTML = html; }
+function pickJpma(numArg) {
+  const raw = numArg || document.getElementById("jpmaInput").value;
+  const num = String(raw).trim().toUpperCase().replace(/\s/g, "");
+  if (!num) return;
+  const hex = jpmaToHex(num);
+  if (!hex) {
+    setJpmaMsg("番号の形式を読み取れませんでした。例：<b>19-75A</b>（色相-明度＋彩度記号）、<b>N-85</b>（無彩色）");
+    return;
+  }
+  pickColor(hex, null);
+  setJpmaMsg(`選択中: <b>${num}</b> の近似色 <span style="display:inline-block; width:1em; height:1em; background:${hex}; border:1px solid #ccc; vertical-align:-2px; border-radius:3px;"></span>`);
+  rememberJpma(num);
+}
+function jpmaRecentList() {
+  try { return JSON.parse(localStorage.getItem("kabekarute.jpmaRecent") || "[]"); } catch (e) { return []; }
+}
+function rememberJpma(num) {
+  let list = jpmaRecentList().filter(n => n !== num);
+  list.unshift(num); list = list.slice(0, 8);
+  try { localStorage.setItem("kabekarute.jpmaRecent", JSON.stringify(list)); } catch (e) {}
+  renderJpmaRecent();
+}
+function renderJpmaRecent() {
+  const box = document.getElementById("jpmaRecent");
+  box.innerHTML = "";
+  for (const num of jpmaRecentList()) {
+    const hex = jpmaToHex(num); if (!hex) continue;
+    const b = document.createElement("button");
+    b.className = "swatch"; b.style.background = hex;
+    b.innerHTML = `<span>${num}</span>`;
+    b.onclick = () => { document.getElementById("jpmaInput").value = num; pickJpma(num); };
+    box.appendChild(b);
+  }
+}
+renderJpmaRecent();
 
 const pal = document.getElementById("palette");
 for (const [name, hex] of COLORS) {

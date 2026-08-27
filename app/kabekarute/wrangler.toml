@@ -1,0 +1,8 @@
+# kabekarute.com 用の Worker。Cloudflare 側は「Git リポジトリから作成」で
+# ルートディレクトリに app/kabekarute を指定する（手順: docs/kabekarute/deploy.md）。
+# name は Cloudflare 上の Worker 名と一致させること（サイト本体と同じ注意点）。
+name = "kabekarute"
+compatibility_date = "2026-08-01"
+
+[assets]
+directory = "./"

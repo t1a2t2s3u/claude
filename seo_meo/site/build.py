@@ -313,7 +313,13 @@ class _Builder:
         """
         source = site_root.parent / "app" / "kabekarute"
         if source.exists():
-            shutil.copytree(source, self.out_dir / "kabekarute", dirs_exist_ok=True)
+            shutil.copytree(
+                source,
+                self.out_dir / "kabekarute",
+                dirs_exist_ok=True,
+                # 配信設定は kabekarute.com 側の Worker 用。配布物には含めない
+                ignore=shutil.ignore_patterns("wrangler.toml", ".assetsignore"),
+            )
 
     def copy_assets(self, site_root: Path) -> None:
         source = site_root / "assets"
