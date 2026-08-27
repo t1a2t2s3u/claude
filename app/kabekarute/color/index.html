@@ -94,6 +94,11 @@
       </div>
       <div class="slider-row">選択の広がり <input type="range" id="tol" min="8" max="70" value="32"> <span id="tolv">32</span></div>
       <div class="slider-row">ブラシの太さ <input type="range" id="brush" min="8" max="80" value="30"> <span id="brushv">30</span></div>
+      <div class="slider-row"><label style="display:flex; align-items:center; gap:.4rem; cursor:pointer;">
+        <input type="checkbox" id="edgeStop" checked>
+        はっきりした輪郭（屋根と空の境目など）で選択を止める
+      </label></div>
+      <p class="hint" style="margin-top:.2rem">壁と空が似た色でも、輪郭の線で選択が止まります。壁の途中で止まってしまうときはチェックを外すか、「ブラシで追加」で足してください。</p>
     </div>
   </section>
 
@@ -141,6 +146,7 @@ let ctx = canvas.getContext("2d", { willReadFrequently: true });
 let orig = null;      // 元画像 ImageData
 let baked = null;     // 確定済み ImageData
 let mask = null;      // Uint8Array 選択マスク
+let edges = null;     // Uint8Array 輪郭マップ（1=はっきりした輪郭）
 let history = [];     // 確定の取り消し用（最大3）
 let mode = "wand";
 let color = null;     // [h, s]（選択中の色）
@@ -159,6 +165,7 @@ document.getElementById("file").addEventListener("change", (ev) => {
     orig = ctx.getImageData(0, 0, canvas.width, canvas.height);
     baked = ctx.getImageData(0, 0, canvas.width, canvas.height);
     mask = new Uint8Array(canvas.width * canvas.height);
+    buildEdges();
     history = []; updateUndo();
     URL.revokeObjectURL(img.src);
     document.getElementById("dropzone").style.display = "none";
@@ -187,6 +194,62 @@ function pos(ev) {
   };
 }
 
+// ---- 輪郭マップ（ぼかし→Sobel勾配） ----
+// 壁と空のように「色は近いが境目の線ははっきりしている」場所で選択が漏れる
+// のを防ぐため、読み込み時に一度だけ輪郭を検出しておく。元画像から計算する
+// （確定後の塗り色に左右されないように）。
+// 先に軽くぼかすのが要点: サイディングの目地や砂壁の細かい模様の勾配は
+// ぼかしで大きく下がるが、屋根と空の境目のような長い構造的な輪郭は残る。
+// ぼかさないと、どのしきい値でも「目地で止まらず・空への漏れも防ぐ」を
+// 両立できない（実写真2枚で確認済み）。
+function buildEdges() {
+  const { width: w, height: h } = canvas;
+  const d = orig.data;
+  let gray = new Float32Array(w * h);
+  for (let p = 0; p < w * h; p++) {
+    const i = p * 4;
+    gray[p] = d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114;
+  }
+  const RAD = 2; // 5×5 の分離ボックスブラー（横→縦）
+  const tmp = new Float32Array(w * h);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      let s = 0, n = 0;
+      for (let k = -RAD; k <= RAD; k++) {
+        const xx = x + k; if (xx < 0 || xx >= w) continue;
+        s += gray[y * w + xx]; n++;
+      }
+      tmp[y * w + x] = s / n;
+    }
+  }
+  const blur = new Float32Array(w * h);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      let s = 0, n = 0;
+      for (let k = -RAD; k <= RAD; k++) {
+        const yy = y + k; if (yy < 0 || yy >= h) continue;
+        s += tmp[yy * w + x]; n++;
+      }
+      blur[y * w + x] = s / n;
+    }
+  }
+  gray = blur;
+  edges = new Uint8Array(w * h);
+  // しきい値 90: 実写真で「屋根と空の境目では止まり、外壁材の目地では
+  // 止まらない」範囲（80〜100が安全圏）の中央を取った値
+  const TH2 = 90 * 90;
+  for (let y = 1; y < h - 1; y++) {
+    for (let x = 1; x < w - 1; x++) {
+      const p = y * w + x;
+      const gx = -gray[p - w - 1] - 2 * gray[p - 1] - gray[p + w - 1]
+               + gray[p - w + 1] + 2 * gray[p + 1] + gray[p + w + 1];
+      const gy = -gray[p - w - 1] - 2 * gray[p - w] - gray[p - w + 1]
+               + gray[p + w - 1] + 2 * gray[p + w] + gray[p + w + 1];
+      if (gx * gx + gy * gy > TH2) edges[p] = 1;
+    }
+  }
+}
+
 // ---- タップ選択（同じ色がつながっている範囲を選ぶ） ----
 function wand(x, y) {
   const { width: w, height: h } = canvas;
@@ -194,8 +257,10 @@ function wand(x, y) {
   const i0 = (y * w + x) * 4;
   const r0 = d[i0], g0 = d[i0 + 1], b0 = d[i0 + 2];
   const t = Number(tol.value); const t2 = t * t * 3;
+  const stopAtEdges = document.getElementById("edgeStop").checked && edges;
   const stack = [y * w + x];
   const seen = new Uint8Array(w * h);
+  let first = true;
   while (stack.length) {
     const p = stack.pop();
     if (seen[p]) continue; seen[p] = 1;
@@ -203,6 +268,11 @@ function wand(x, y) {
     const dr = d[i] - r0, dg = d[i + 1] - g0, db = d[i + 2] - b0;
     if (dr * dr + dg * dg + db * db > t2) continue;
     mask[p] = 1;
+    // 輪郭上の画素は選択には含める（塗り残しの線を出さない）が、
+    // そこから先へは広げない＝輪郭で選択が止まる。タップ地点だけは
+    // 輪郭の上でも広げる（細かい模様の上をタップしても反応するように）
+    if (stopAtEdges && edges[p] && !first) continue;
+    first = false;
     const px = p % w, py = (p / w) | 0;
     if (px > 0) stack.push(p - 1);
     if (px < w - 1) stack.push(p + 1);
