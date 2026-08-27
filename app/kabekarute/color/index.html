@@ -147,7 +147,7 @@ let orig = null;      // 元画像 ImageData
 let baked = null;     // 確定済み ImageData
 let mask = null;      // Uint8Array 選択マスク
 let edges = null;     // Uint8Array 輪郭マップ（1=はっきりした輪郭）
-let history = [];     // 確定の取り消し用（最大3）
+let history = [];     // 操作の取り消し用スタック（選択・ブラシ・確定を区別せず1本で持つ）
 let mode = "wand";
 let color = null;     // [h, s]（選択中の色）
 let colorRgb = null;
@@ -295,10 +295,27 @@ function paint(x, y, erase) {
   }
 }
 
+// ---- 操作履歴（1つ戻す） ----
+// タップ選択・ブラシひと筆・すき間うめ・選択解除・確定を、それぞれ1操作
+// として積む。確定だけは画像自体が変わるので baked も一緒に控える
+// （毎回控えるとメモリを食い過ぎるため、選択系は mask のみ）。
+const HISTORY_MAX = 8;
+function pushHistory(kind) {
+  if (history.length >= HISTORY_MAX) history.shift();
+  history.push({
+    kind,
+    mask: new Uint8Array(mask),
+    baked: kind === "bake" ? new ImageData(new Uint8ClampedArray(baked.data), baked.width, baked.height) : null,
+    color, colorRgb,
+  });
+  updateUndo();
+}
+
 let dragging = false;
 canvas.addEventListener("pointerdown", (ev) => {
   if (!orig || showingOrig) return;
   const { x, y } = pos(ev);
+  pushHistory("sel"); // ブラシはひと筆（押してから離すまで）で1操作
   if (mode === "wand") { wand(x, y); render(); }
   else { dragging = true; paint(x, y, mode === "erase"); render(); }
 });
@@ -309,7 +326,11 @@ canvas.addEventListener("pointermove", (ev) => {
 });
 window.addEventListener("pointerup", () => dragging = false);
 
-function clearMask() { if (mask) { mask.fill(0); render(); } }
+function clearMask() {
+  if (!mask) return;
+  if (mask.includes(1)) pushHistory("sel"); // 誤タップの解除も戻せるように
+  mask.fill(0); render();
+}
 
 function dilateErode(src, w, h, dilate) {
   const dst = new Uint8Array(src.length);
@@ -333,6 +354,7 @@ function dilateErode(src, w, h, dilate) {
 }
 function closeGaps() {
   if (!mask) return;
+  pushHistory("sel");
   // 膨張2回→収縮2回。目地の中や境目に残った細かい塗り残しが埋まる
   let m = mask;
   m = dilateErode(m, canvas.width, canvas.height, true);
@@ -527,8 +549,7 @@ function showOrig(v) { showingOrig = v; render(); }
 // ---- 確定・取り消し・保存 ----
 function bake() {
   if (!color) return;
-  if (history.length >= 3) history.shift();
-  history.push(new ImageData(new Uint8ClampedArray(baked.data), baked.width, baked.height));
+  pushHistory("bake");
   render();
   baked = ctx.getImageData(0, 0, canvas.width, canvas.height);
   mask.fill(0); color = null; colorRgb = null;
@@ -538,10 +559,16 @@ function bake() {
 }
 function undoBake() {
   if (!history.length) return;
-  baked = history.pop();
-  mask.fill(0); color = null;
-  document.querySelectorAll(".swatch").forEach(x => x.classList.remove("on"));
-  bakeBtn.disabled = true;
+  const h = history.pop();
+  mask = h.mask;
+  if (h.kind === "bake") {
+    // 確定の取り消し: 画像と、確定直前の選択・色まで戻す（プレビューが復活する）
+    baked = h.baked;
+    color = h.color; colorRgb = h.colorRgb;
+    document.querySelectorAll(".swatch").forEach(x => x.classList.remove("on"));
+  }
+  // 選択系の取り消しでは、いま選んでいる色はそのまま（色まで戻ると混乱する）
+  bakeBtn.disabled = !color;
   updateUndo(); render();
 }
 function updateUndo() { undoBtn.disabled = history.length === 0; }
