@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>カベカルテ 完工報告（β版）</title>
+<style>
+  :root {
+    --deep: #0b4a5f; --deepest: #06333f; --brand: #00a3c9; --brand-text: #00758f;
+    --accent: #e2661f; --accent-dark: #bd4f12;
+    --ink: #1b2a31; --muted: #566871; --line: #d3e4ec;
+    --bg: #f2f7fa; --card: #ffffff; --tint: #eaf4f7; --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    background: var(--bg); color: var(--ink); font-size: 15px; line-height: 1.6;
+  }
+  header.app-head {
+    background: var(--deep); color: #fff; padding: .7rem 1rem;
+    display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  }
+  header.app-head h1 { font-size: 1.05rem; margin: 0; font-weight: 700; }
+  .beta { background: var(--accent); font-size: .7rem; padding: .1rem .45rem; border-radius: 99px; font-weight: 700; }
+  main { max-width: 860px; margin: 0 auto; padding: 1rem 1rem 6rem; }
+  section.card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 1rem 1.1rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(6,51,63,.07);
+  }
+  section.card h2 {
+    margin: 0 0 .7rem; font-size: 1rem; color: var(--deep);
+    border-left: 4px solid var(--accent); padding-left: .5rem;
+  }
+  label { display: block; font-size: .8rem; font-weight: 700; color: var(--deep); margin: .5rem 0 .15rem; }
+  input[type="text"], input[type="date"], textarea, select {
+    width: 100%; padding: .5rem .6rem; border: 1px solid var(--line); border-radius: 6px;
+    font: inherit; background: #fff; color: var(--ink);
+  }
+  textarea { min-height: 3.6em; resize: vertical; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 .8rem; }
+  @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+  .btn {
+    display: inline-block; border: 0; border-radius: 8px; padding: .6rem 1.1rem;
+    font: inherit; font-weight: 700; cursor: pointer; color: #fff; background: var(--deep);
+  }
+  .btn.accent { background: var(--accent); }
+  .btn.ghost { background: #fff; color: var(--deep); border: 1.5px solid var(--deep); }
+  .btn.small { padding: .3rem .7rem; font-size: .8rem; }
+  .btn.danger { background: #fff; color: #b00000; border: 1.5px solid #d99; }
+  .step, .pair {
+    border: 1.5px solid var(--line); border-radius: var(--radius); padding: .8rem; margin-bottom: .9rem;
+    background: #fdfefe;
+  }
+  .step-head { display: flex; align-items: center; gap: .5rem; }
+  .step-head .no {
+    background: var(--deep); color: #fff; font-weight: 700; border-radius: 50%;
+    width: 1.7rem; height: 1.7rem; flex: none; display: flex; align-items: center; justify-content: center; font-size: .85rem;
+  }
+  .step-head input { flex: 1; }
+  .thumbs { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .5rem; }
+  .thumb { position: relative; width: 84px; height: 63px; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb button {
+    position: absolute; top: 2px; right: 2px; border: 0; background: rgba(0,0,0,.55); color: #fff;
+    border-radius: 50%; width: 20px; height: 20px; font-size: 12px; line-height: 1; cursor: pointer;
+  }
+  .add-photo {
+    width: 84px; height: 63px; border: 2px dashed var(--line); border-radius: 6px; background: var(--tint);
+    color: var(--muted); font-size: .65rem; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; text-align: center;
+  }
+  .pair-photos { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-top: .4rem; }
+  .pair-drop {
+    border: 2px dashed var(--line); border-radius: 6px; background: var(--tint); min-height: 90px;
+    color: var(--muted); font-size: .72rem; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; text-align: center; overflow: hidden;
+  }
+  .pair-drop img { width: 100%; display: block; }
+  .toolbar {
+    position: fixed; bottom: 0; left: 0; right: 0; background: #fff;
+    border-top: 1px solid var(--line); padding: .6rem 1rem;
+    display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; z-index: 50;
+    box-shadow: 0 -4px 14px rgba(6,51,63,.08);
+  }
+  .hint { font-size: .75rem; color: var(--muted); margin: .3rem 0 0; }
+  dialog {
+    border: none; border-radius: 12px; max-width: 560px; width: calc(100% - 2rem);
+    padding: 1.2rem; box-shadow: 0 10px 40px rgba(0,0,0,.25);
+  }
+  dialog::backdrop { background: rgba(6,51,63,.5); }
+
+  /* ---------- 印刷レイアウト ---------- */
+  #report { display: none; }
+  #report, #report * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @media print {
+    body > *:not(#report) { display: none !important; }
+    body { background: #fff; }
+    #report { display: block; font-size: 10.5pt; }
+    .rp-step, .rp-pair { page-break-inside: avoid; }
+    @page { size: A4; margin: 14mm 13mm; }
+  }
+  #report .rp-headline {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    border-bottom: 3px solid var(--accent); padding-bottom: 8px; margin-bottom: 14px;
+  }
+  #report .rp-co { font-weight: 700; color: var(--deep); font-size: 13pt; }
+  #report .rp-title { font-size: 19pt; font-weight: 700; color: var(--deep); margin: 0; }
+  #report .rp-sub { font-size: 8pt; color: var(--muted); text-align: right; }
+  #report table.rp-info { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+  #report table.rp-info th, #report table.rp-info td {
+    border: 1px solid var(--line); padding: 5px 8px; font-size: 9.5pt; text-align: left;
+  }
+  #report table.rp-info th { background: var(--tint); color: var(--deep); width: 16%; font-weight: 700; }
+  #report h3.rp-h { font-size: 11.5pt; color: var(--deep); margin: 14px 0 6px; }
+  #report .rp-greeting p { margin: 0 0 6px; font-size: 10pt; }
+  #report .rp-pair { border: 1px solid var(--line); padding: 8px; margin-bottom: 10px; }
+  #report .rp-pair .cols { display: flex; gap: 10px; }
+  #report .rp-pair .col { flex: 1; }
+  #report .rp-pair .tag {
+    display: inline-block; font-size: 8.5pt; font-weight: 700; color: #fff; padding: 1px 10px;
+    border-radius: 99px; margin-bottom: 4px;
+  }
+  #report .rp-pair img { width: 100%; display: block; }
+  #report .rp-pair .lbl { font-size: 9pt; color: var(--muted); margin-top: 3px; }
+  #report .rp-step { border: 1px solid var(--line); margin-bottom: 10px; }
+  #report .rp-step .head {
+    background: var(--tint); padding: 5px 10px; display: flex; align-items: baseline; gap: 8px;
+  }
+  #report .rp-step .head .n {
+    background: var(--deep); color: #fff; font-weight: 700; border-radius: 50%;
+    width: 16pt; height: 16pt; text-align: center; line-height: 16pt; font-size: 9pt; flex: none;
+  }
+  #report .rp-step .head .t { font-weight: 700; color: var(--deep); font-size: 10.5pt; }
+  #report .rp-step .head .d { font-size: 8.5pt; color: var(--muted); margin-left: auto; }
+  #report .rp-step .body { padding: 8px 10px; }
+  #report .rp-step .photos { display: flex; gap: 8px; flex-wrap: wrap; }
+  #report .rp-step .photos img { width: calc(50% - 4px); display: block; }
+  #report .rp-step .photos.single img { width: 60%; }
+  #report .rp-step .note { font-size: 9pt; margin: 6px 0 0; }
+  #report table.rp-cond { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  #report table.rp-cond th, #report table.rp-cond td { border: 1px solid var(--line); padding: 5px 8px; font-size: 9pt; text-align: left; }
+  #report table.rp-cond th { background: var(--tint); color: var(--deep); width: 22%; font-weight: 700; }
+  #report .rp-footer { background: var(--tint); padding: 10px 14px; font-size: 9pt; }
+  #report .rp-footer .name { font-weight: 700; color: var(--deep); font-size: 10.5pt; }
+</style>
+</head>
+<body>
+
+<header class="app-head">
+  <h1>カベカルテ <span style="font-weight:400; font-size:.85em;">完工報告</span></h1><span class="beta">β版</span>
+  <button class="btn small ghost" style="margin-left:auto; background:#fff;" onclick="openSettings()">⚙ 会社設定</button>
+  <div style="font-size:.72rem; opacity:.85; width:100%;">入力した内容と写真はこの端末の中だけに保存されます。外部には送信されません。</div>
+</header>
+
+<main>
+  <section class="card">
+    <h2>基本情報</h2>
+    <div class="row">
+      <div><label>お客様名</label><input type="text" id="customer" placeholder="山田 太郎" oninput="save()"></div>
+      <div><label>工事名</label><input type="text" id="workName" placeholder="外壁・屋根塗装工事" oninput="save()"></div>
+      <div><label>建物ご住所</label><input type="text" id="address" placeholder="秋田市○○ ○丁目" oninput="save()"></div>
+      <div><label>担当</label><input type="text" id="inspector" placeholder="担当者名" oninput="save()"></div>
+      <div><label>着工日</label><input type="date" id="startDate" oninput="save()"></div>
+      <div><label>完工日</label><input type="date" id="endDate" oninput="save()"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>ビフォー・アフター</h2>
+    <div id="pairs"></div>
+    <button class="btn accent small" onclick="addPair()">＋ 組を追加（施工前と施工後の写真）</button>
+    <p class="hint">同じ場所・同じ角度で撮った2枚を並べると、仕上がりの変化が一目で伝わります。</p>
+  </section>
+
+  <section class="card">
+    <h2>工事の記録（作業した順に並べます）</h2>
+    <div id="steps"></div>
+    <div style="display:flex; gap:.5rem; flex-wrap:wrap;">
+      <button class="btn accent small" onclick="addStep()">＋ 工程を追加</button>
+      <button class="btn ghost small" onclick="addStandardSteps()">標準的な工程をまとめて追加</button>
+    </div>
+    <p class="hint">写真は1つの工程につき4枚まで（横向きの写真がきれいに収まります）。↑↓で順番を入れ替えられます。</p>
+  </section>
+
+  <section class="card">
+    <h2>使用塗料・保証</h2>
+    <div id="paints"></div>
+    <button class="btn accent small" onclick="addPaint()">＋ 塗料を追加</button>
+    <label>保証の内容</label>
+    <input type="text" id="warranty" placeholder="例：外壁 2年（ラジカル制御型）／ 保証書を別途お渡しします" oninput="save()">
+  </section>
+
+  <section class="card">
+    <h2>ごあいさつ文（そのまま使えます）</h2>
+    <label>冒頭のごあいさつ</label>
+    <textarea id="greeting" oninput="save()"></textarea>
+    <label>むすび（アフターフォローのご案内）</label>
+    <textarea id="aftercare" oninput="save()"></textarea>
+  </section>
+</main>
+
+<div class="toolbar">
+  <button class="btn" onclick="preview()">📄 完工報告書を作る（印刷 / PDF保存）</button>
+  <button class="btn ghost" onclick="exportJson()">保存</button>
+  <button class="btn ghost" onclick="document.getElementById('importFile').click()">読み込み</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJson(event)">
+  <button class="btn danger" onclick="clearAll()">新規作成</button>
+</div>
+
+<dialog id="settingsDialog">
+  <h2 style="margin-top:0; color:var(--deep); font-size:1.05rem;">会社設定（報告書の下部に印字されます）</h2>
+  <label>会社名</label><input type="text" id="coName" placeholder="○○塗装">
+  <label>代表者・肩書きなど（任意）</label><input type="text" id="coRep" placeholder="代表 ○○ ○○">
+  <label>住所</label><input type="text" id="coAddr" placeholder="〒000-0000 ○○県○○市…">
+  <label>電話番号・受付時間</label><input type="text" id="coTel" placeholder="000-0000-0000（平日 8:00〜18:00）">
+  <label>ウェブサイト・ひとこと（任意）</label><input type="text" id="coWeb" placeholder="https://…">
+  <div style="margin-top:1rem; display:flex; gap:.6rem; justify-content:flex-end;">
+    <button class="btn ghost" onclick="document.getElementById('settingsDialog').close()">閉じる</button>
+    <button class="btn" onclick="saveSettings()">保存する</button>
+  </div>
+</dialog>
+
+<div id="report"></div>
+
+<script>
+"use strict";
+const STANDARD_STEPS = [
+  "足場の設置・飛散防止シート張り", "高圧洗浄", "養生（窓・植木などの保護)",
+  "下地補修（ひび割れ・傷みの処理）", "コーキング打ち替え",
+  "下塗り", "中塗り", "上塗り", "付帯部塗装（雨樋・破風など）",
+  "完了検査・手直し", "足場の解体・清掃",
+];
+const DEFAULT_GREETING = "このたびは、塗装工事をお任せいただき、誠にありがとうございました。工事が無事に完了いたしましたので、どのような手順で作業を進めたか、写真とあわせてご報告いたします。";
+const DEFAULT_AFTERCARE = "保証の内容は、お渡しする保証書に記載のとおりです。塗装の浮きや剥がれなど、気になる点がありましたら、期間や大小にかかわらず、いつでもご連絡ください。このたびは本当にありがとうございました。";
+
+let pairs = [];   // { before, after, label }
+let steps = [];   // { title, date, note, photos: [] }
+let paints = [];  // { part, product }
+
+function esc(s) { const d = document.createElement("div"); d.textContent = s || ""; return d.innerHTML; }
+
+// ---- 写真の縮小（端末内で完結） ----
+function shrink(file, maxSide, cb) {
+  const img = new Image();
+  img.onload = () => {
+    const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+    const c = document.createElement("canvas");
+    c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    URL.revokeObjectURL(img.src);
+    cb(c.toDataURL("image/jpeg", 0.72));
+  };
+  img.src = URL.createObjectURL(file);
+}
+
+// ---- ビフォー・アフター ----
+function addPair(data) { pairs.push(data || { before: "", after: "", label: "" }); renderPairs(); save(); }
+function removePair(i) { pairs.splice(i, 1); renderPairs(); save(); }
+function setPairPhoto(i, key, ev) {
+  const f = ev.target.files[0]; if (!f) return;
+  shrink(f, 1000, (url) => { pairs[i][key] = url; renderPairs(); save(); });
+}
+function renderPairs() {
+  const box = document.getElementById("pairs");
+  box.innerHTML = "";
+  pairs.forEach((p, i) => {
+    const el = document.createElement("div");
+    el.className = "pair";
+    el.innerHTML = `
+      <div style="display:flex; gap:.5rem; align-items:center;">
+        <input type="text" value="${esc(p.label)}" placeholder="場所（例：外壁 南面）" oninput="pairs[${i}].label=this.value; save()">
+        <button class="btn small danger" onclick="removePair(${i})">×</button>
+      </div>
+      <div class="pair-photos">
+        <div class="pair-drop" onclick="this.querySelector('input').click()">
+          ${p.before ? `<img src="${p.before}">` : "施工前の写真を選ぶ"}
+          <input type="file" accept="image/*" style="display:none" onchange="setPairPhoto(${i},'before',event)">
+        </div>
+        <div class="pair-drop" onclick="this.querySelector('input').click()">
+          ${p.after ? `<img src="${p.after}">` : "施工後の写真を選ぶ"}
+          <input type="file" accept="image/*" style="display:none" onchange="setPairPhoto(${i},'after',event)">
+        </div>
+      </div>`;
+    box.appendChild(el);
+  });
+}
+
+// ---- 工程 ----
+function addStep(data) { steps.push(data || { title: "", date: "", note: "", photos: [] }); renderSteps(); save(); }
+function addStandardSteps() {
+  for (const t of STANDARD_STEPS) steps.push({ title: t, date: "", note: "", photos: [] });
+  renderSteps(); save();
+}
+function removeStep(i) { steps.splice(i, 1); renderSteps(); save(); }
+function moveStep(i, d) {
+  const j = i + d; if (j < 0 || j >= steps.length) return;
+  [steps[i], steps[j]] = [steps[j], steps[i]]; renderSteps(); save();
+}
+function addStepPhoto(i, ev) {
+  const f = ev.target.files[0]; if (!f) return;
+  if (steps[i].photos.length >= 4) { alert("写真は1工程につき4枚までです"); return; }
+  shrink(f, 900, (url) => { steps[i].photos.push(url); renderSteps(); save(); });
+  ev.target.value = "";
+}
+function removeStepPhoto(i, j) { steps[i].photos.splice(j, 1); renderSteps(); save(); }
+function renderSteps() {
+  const box = document.getElementById("steps");
+  box.innerHTML = "";
+  steps.forEach((s, i) => {
+    const el = document.createElement("div");
+    el.className = "step";
+    el.innerHTML = `
+      <div class="step-head">
+        <span class="no">${i + 1}</span>
+        <input type="text" value="${esc(s.title)}" placeholder="工程名（例：高圧洗浄）" oninput="steps[${i}].title=this.value; save()">
+        <button class="btn small ghost" onclick="moveStep(${i},-1)">↑</button>
+        <button class="btn small ghost" onclick="moveStep(${i},1)">↓</button>
+        <button class="btn small danger" onclick="removeStep(${i})">×</button>
+      </div>
+      <div class="row" style="margin-top:.4rem;">
+        <div><label>作業日（任意）</label><input type="text" value="${esc(s.date)}" placeholder="6月3日 など" oninput="steps[${i}].date=this.value; save()"></div>
+      </div>
+      <div class="thumbs">
+        ${s.photos.map((p, j) => `<div class="thumb"><img src="${p}"><button onclick="removeStepPhoto(${i},${j})">×</button></div>`).join("")}
+        ${s.photos.length < 4 ? `<div class="add-photo" onclick="this.querySelector('input').click()">＋写真<input type="file" accept="image/*" style="display:none" onchange="addStepPhoto(${i},event)"></div>` : ""}
+      </div>
+      <label>ひとことメモ（任意・書類に印字されます）</label>
+      <textarea oninput="steps[${i}].note=this.value; save()" placeholder="例：汚れと古い塗膜をしっかり落としてから乾燥させました">${esc(s.note)}</textarea>`;
+    box.appendChild(el);
+  });
+}
+
+// ---- 使用塗料 ----
+function addPaint(data) { paints.push(data || { part: "", product: "" }); renderPaints(); save(); }
+function removePaint(i) { paints.splice(i, 1); renderPaints(); save(); }
+function renderPaints() {
+  const box = document.getElementById("paints");
+  box.innerHTML = "";
+  paints.forEach((p, i) => {
+    const el = document.createElement("div");
+    el.style.cssText = "display:flex; gap:.4rem; margin-bottom:.4rem;";
+    el.innerHTML = `
+      <input type="text" style="max-width:7rem;" value="${esc(p.part)}" placeholder="外壁" oninput="paints[${i}].part=this.value; save()">
+      <input type="text" value="${esc(p.product)}" placeholder="メーカー・製品名・色番号" oninput="paints[${i}].product=this.value; save()">
+      <button class="btn small danger" onclick="removePaint(${i})">×</button>`;
+    box.appendChild(el);
+  });
+}
+
+// ---- 保存・読み込み ----
+function collect() {
+  return {
+    customer: customer.value, workName: workName.value, address: address.value, inspector: inspector.value,
+    startDate: startDate.value, endDate: endDate.value,
+    warranty: warranty.value, greeting: greeting.value, aftercare: aftercare.value,
+    pairs, steps, paints
+  };
+}
+function fill(d) {
+  customer.value = d.customer || ""; workName.value = d.workName || ""; address.value = d.address || "";
+  inspector.value = d.inspector || ""; startDate.value = d.startDate || ""; endDate.value = d.endDate || "";
+  warranty.value = d.warranty || "";
+  greeting.value = d.greeting != null ? d.greeting : DEFAULT_GREETING;
+  aftercare.value = d.aftercare != null ? d.aftercare : DEFAULT_AFTERCARE;
+  pairs = d.pairs || []; steps = d.steps || []; paints = d.paints || [];
+  renderPairs(); renderSteps(); renderPaints();
+}
+let storageWarned = false;
+function save() {
+  try { localStorage.setItem("kanko.draft", JSON.stringify(collect())); }
+  catch (e) {
+    if (!storageWarned) {
+      storageWarned = true;
+      alert("端末内の保存容量がいっぱいのため、自動保存が止まりました。入力は続けられますが、途中で閉じると消えます。「保存」でファイルに書き出してください。");
+    }
+  }
+}
+function loadDraft() {
+  try {
+    const d = JSON.parse(localStorage.getItem("kanko.draft") || "null");
+    if (d) { fill(d); return; }
+  } catch (e) {}
+  fill({});
+  addPair(); addPaint({ part: "外壁", product: "" });
+}
+function clearAll() {
+  if (!confirm("入力内容を消して新規作成します。よろしいですか？\n（必要なら先に「保存」でファイルに残せます）")) return;
+  try { localStorage.removeItem("kanko.draft"); } catch (e) {}
+  fill({}); addPair(); addPaint({ part: "外壁", product: "" });
+}
+function exportJson() {
+  const name = (customer.value || "mudai").replace(/\s+/g, "") + "_kanko.json";
+  const blob = new Blob([JSON.stringify(collect(), null, 1)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importJson(ev) {
+  const file = ev.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = () => { try { fill(JSON.parse(r.result)); save(); } catch (e) { alert("ファイルを読み込めませんでした"); } };
+  r.readAsText(file); ev.target.value = "";
+}
+
+// ---- 会社設定（診断アプリと同じ保存場所を使う） ----
+function openSettings() {
+  let s = {};
+  try { s = JSON.parse(localStorage.getItem("shindan.company") || "{}"); } catch (e) {}
+  coName.value = s.name || ""; coRep.value = s.rep || ""; coAddr.value = s.addr || "";
+  coTel.value = s.tel || ""; coWeb.value = s.web || "";
+  settingsDialog.showModal();
+}
+function saveSettings() {
+  try {
+    localStorage.setItem("shindan.company", JSON.stringify({
+      name: coName.value, rep: coRep.value, addr: coAddr.value, tel: coTel.value, web: coWeb.value
+    }));
+  } catch (e) {}
+  settingsDialog.close();
+}
+
+// ---- 完工報告書の生成 ----
+function fmtDate(v) {
+  if (!v) return "";
+  const [y, m, d] = v.split("-"); return `${y}年${Number(m)}月${Number(d)}日`;
+}
+function paras(text) {
+  return (text || "").split(/\n\s*\n/).filter(Boolean).map(t => `<p>${esc(t)}</p>`).join("");
+}
+function preview() {
+  let co = {};
+  try { co = JSON.parse(localStorage.getItem("shindan.company") || "{}"); } catch (e) {}
+  if (!co.name) { alert("最初に右上の「⚙ 会社設定」で会社名などを入れてください（書類に印字されます）"); openSettings(); return; }
+  const d = collect();
+
+  const pairHtml = d.pairs.filter(p => p.before || p.after).map(p => `
+    <div class="rp-pair">
+      <div class="cols">
+        <div class="col">
+          <span class="tag" style="background:#566871">施工前</span>
+          ${p.before ? `<img src="${p.before}">` : ""}
+        </div>
+        <div class="col">
+          <span class="tag" style="background:#e2661f">施工後</span>
+          ${p.after ? `<img src="${p.after}">` : ""}
+        </div>
+      </div>
+      ${p.label ? `<div class="lbl">${esc(p.label)}</div>` : ""}
+    </div>`).join("");
+
+  const stepHtml = d.steps.filter(s => s.title).map((s, i) => `
+    <div class="rp-step">
+      <div class="head">
+        <span class="n">${i + 1}</span>
+        <span class="t">${esc(s.title)}</span>
+        ${s.date ? `<span class="d">${esc(s.date)}</span>` : ""}
+      </div>
+      ${(s.photos.length || s.note) ? `<div class="body">
+        ${s.photos.length ? `<div class="photos${s.photos.length === 1 ? " single" : ""}">${s.photos.map(p => `<img src="${p}">`).join("")}</div>` : ""}
+        ${s.note ? `<p class="note">${esc(s.note)}</p>` : ""}
+      </div>` : ""}
+    </div>`).join("");
+
+  const paintRows = d.paints.filter(p => p.part || p.product)
+    .map(p => `<tr><th>${esc(p.part)}</th><td>${esc(p.product)}</td></tr>`).join("");
+  const period = (d.startDate || d.endDate)
+    ? `${fmtDate(d.startDate)} 〜 ${fmtDate(d.endDate)}` : "";
+
+  document.getElementById("report").innerHTML = `
+    <div class="rp-headline">
+      <div class="rp-co">${esc(co.name)}</div>
+      <div>
+        <div class="rp-title">工事完了のご報告</div>
+        <div class="rp-sub">どのような手順で作業を進めたか、写真とあわせてご報告します</div>
+      </div>
+    </div>
+    <table class="rp-info">
+      <tr><th>お客様名</th><td>${esc(d.customer)}　様</td><th>完工日</th><td>${fmtDate(d.endDate)}</td></tr>
+      <tr><th>工事名</th><td>${esc(d.workName)}</td><th>工期</th><td>${period}</td></tr>
+      <tr><th>建物ご住所</th><td>${esc(d.address)}</td><th>担当</th><td>${esc(d.inspector)}</td></tr>
+    </table>
+    ${d.greeting ? `<div class="rp-greeting">${paras(d.greeting)}</div>` : ""}
+    ${pairHtml ? `<h3 class="rp-h">仕上がり（ビフォー・アフター）</h3>${pairHtml}` : ""}
+    ${stepHtml ? `<h3 class="rp-h">作業の記録（進めた順）</h3>${stepHtml}` : ""}
+    ${(paintRows || d.warranty) ? `<h3 class="rp-h">使用塗料と保証</h3>
+      <table class="rp-cond">
+        ${paintRows}
+        ${d.warranty ? `<tr><th>保証</th><td>${esc(d.warranty)}</td></tr>` : ""}
+      </table>` : ""}
+    ${d.aftercare ? `<div class="rp-greeting">${paras(d.aftercare)}</div>` : ""}
+    <div class="rp-footer">
+      <div class="name">${esc(co.name)}${co.rep ? `（${esc(co.rep)}）` : ""}</div>
+      ${co.addr ? esc(co.addr) + "<br>" : ""}
+      ${co.tel ? "☎ " + esc(co.tel) : ""}${co.web ? "　｜　" + esc(co.web) : ""}
+    </div>
+    <div style="text-align:right; font-size:6.5pt; color:#8aa2ac; margin-top:4px;">この書類は「カベカルテ」で作成されました</div>`;
+  window.print();
+}
+
+loadDraft();
+</script>
+</body>
+</html>
