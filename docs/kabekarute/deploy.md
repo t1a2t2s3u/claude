@@ -8,11 +8,19 @@
 ## 全体の流れ
 
 ```
-1. kabekarute.com を Cloudflare に追加する
-2. ネームサーバーを Cloudflare に向ける
-3. Worker を Git リポジトリから作る
-4. Worker に kabekarute.com を割り当てる
+1. kabekarute.com を Cloudflare に追加する ✅ 完了（2026-08-27）
+2. ネームサーバーを Cloudflare に向ける    ✅ 完了
+3. Worker を Git リポジトリから作る        ✅ 完了（Worker名: kabekarute）
+4. Worker に kabekarute.com を割り当てる   ✅ 完了・開通確認済み
 ```
+
+**公開済み: https://kabekarute.com**
+
+> 初回構築時のメモ: Worker 作成画面ではブランチを選べず、標準ブランチで
+> ビルドが失敗した。作成後に Settings → Build → Branch control で
+> Production branch を `claude/seo-meo-automation-mvntxp` に変更して解決。
+> 残タスク: www.kabekarute.com → kabekarute.com の301リダイレクト
+> （Rules → Redirect Rules。未設定でも表示には支障なし）
 
 ---
 
