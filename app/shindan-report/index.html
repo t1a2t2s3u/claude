@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>外壁診断レポートメーカー（β版）</title>
+<style>
+  :root {
+    --deep: #0b4a5f; --deepest: #06333f; --brand: #00a3c9; --brand-text: #00758f;
+    --accent: #e2661f; --accent-dark: #bd4f12;
+    --ink: #1b2a31; --muted: #566871; --line: #d3e4ec;
+    --bg: #f2f7fa; --card: #ffffff; --tint: #eaf4f7;
+    --ok: #00758f; --watch: #b07a00; --repair: #bd4f12;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    background: var(--bg); color: var(--ink); font-size: 15px; line-height: 1.6;
+  }
+  header.app-head {
+    background: var(--deep); color: #fff; padding: .7rem 1rem;
+    display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  }
+  header.app-head h1 { font-size: 1.05rem; margin: 0; font-weight: 700; }
+  .beta { background: var(--accent); font-size: .7rem; padding: .1rem .45rem; border-radius: 99px; font-weight: 700; }
+  .head-note { font-size: .72rem; opacity: .85; width: 100%; }
+  main { max-width: 860px; margin: 0 auto; padding: 1rem 1rem 6rem; }
+  section.card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 1rem 1.1rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(6,51,63,.07);
+  }
+  section.card h2 {
+    margin: 0 0 .7rem; font-size: 1rem; color: var(--deep);
+    border-left: 4px solid var(--accent); padding-left: .5rem;
+  }
+  label { display: block; font-size: .8rem; font-weight: 700; color: var(--deep); margin: .5rem 0 .15rem; }
+  input[type="text"], input[type="date"], textarea, select {
+    width: 100%; padding: .5rem .6rem; border: 1px solid var(--line); border-radius: 6px;
+    font: inherit; background: #fff; color: var(--ink);
+  }
+  textarea { min-height: 4.2em; resize: vertical; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 .8rem; }
+  @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+  .btn {
+    display: inline-block; border: 0; border-radius: 8px; padding: .6rem 1.1rem;
+    font: inherit; font-weight: 700; cursor: pointer; color: #fff; background: var(--deep);
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn.accent { background: var(--accent); }
+  .btn.ghost { background: #fff; color: var(--deep); border: 1.5px solid var(--deep); }
+  .btn.small { padding: .3rem .7rem; font-size: .8rem; }
+  .btn.danger { background: #fff; color: #b00000; border: 1.5px solid #d99; }
+  .finding {
+    border: 1.5px solid var(--line); border-radius: var(--radius); padding: .8rem; margin-bottom: .9rem;
+    background: #fdfefe;
+  }
+  .finding-head { display: flex; align-items: center; gap: .5rem; margin-bottom: .3rem; }
+  .finding-head .no { font-weight: 700; color: var(--accent); }
+  .finding-head .spacer { flex: 1; }
+  .photo-drop {
+    border: 2px dashed var(--line); border-radius: 8px; padding: .6rem; text-align: center;
+    color: var(--muted); font-size: .8rem; cursor: pointer; background: var(--tint);
+  }
+  .photo-drop img { max-width: 100%; max-height: 200px; border-radius: 6px; display: block; margin: 0 auto .3rem; }
+  .level-picks { display: flex; gap: .4rem; margin-top: .2rem; }
+  .level-picks button {
+    flex: 1; padding: .4rem .2rem; border-radius: 8px; border: 1.5px solid var(--line);
+    background: #fff; font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; color: var(--muted);
+  }
+  .level-picks button.sel-ok { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .level-picks button.sel-watch { background: var(--watch); border-color: var(--watch); color: #fff; }
+  .level-picks button.sel-repair { background: var(--repair); border-color: var(--repair); color: #fff; }
+  .toolbar {
+    position: fixed; bottom: 0; left: 0; right: 0; background: #fff;
+    border-top: 1px solid var(--line); padding: .6rem 1rem;
+    display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; z-index: 50;
+    box-shadow: 0 -4px 14px rgba(6,51,63,.08);
+  }
+  .hint { font-size: .75rem; color: var(--muted); margin: .3rem 0 0; }
+  dialog {
+    border: none; border-radius: 12px; max-width: 560px; width: calc(100% - 2rem);
+    padding: 1.2rem; box-shadow: 0 10px 40px rgba(0,0,0,.25);
+  }
+  dialog::backdrop { background: rgba(6,51,63,.5); }
+
+  /* ---------- 印刷レイアウト（報告書本体） ---------- */
+  #report { display: none; }
+  #report, #report * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @media print {
+    body > *:not(#report) { display: none !important; }
+    body { background: #fff; }
+    #report { display: block; font-size: 10.5pt; }
+    .rp-page { page-break-after: always; }
+    .rp-finding { page-break-inside: avoid; }
+    @page { size: A4; margin: 14mm 13mm; }
+  }
+  #report .rp-headline {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    border-bottom: 3px solid var(--accent); padding-bottom: 8px; margin-bottom: 14px;
+  }
+  #report .rp-co { font-weight: 700; color: var(--deep); font-size: 13pt; }
+  #report .rp-title { font-size: 19pt; font-weight: 700; color: var(--deep); margin: 0; }
+  #report .rp-sub { font-size: 8pt; color: var(--muted); text-align: right; }
+  #report table.rp-info { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+  #report table.rp-info th, #report table.rp-info td {
+    border: 1px solid var(--line); padding: 5px 8px; font-size: 9.5pt; text-align: left;
+  }
+  #report table.rp-info th { background: var(--tint); color: var(--deep); width: 16%; font-weight: 700; }
+  #report .rp-verdict {
+    display: flex; border: 1px solid var(--line); margin-bottom: 12px;
+  }
+  #report .rp-verdict .v-label {
+    background: var(--deep); color: #fff; font-weight: 700; padding: 10px 16px;
+    display: flex; align-items: center; white-space: nowrap;
+  }
+  #report .rp-verdict .v-body { padding: 8px 12px; }
+  #report .rp-verdict .v-main { font-weight: 700; color: var(--deep); font-size: 12pt; }
+  #report .rp-verdict .v-note { font-size: 9pt; color: var(--muted); }
+  #report h3.rp-h { font-size: 11.5pt; color: var(--deep); margin: 14px 0 6px; }
+  #report .rp-summary p { margin: 0 0 6px; font-size: 10pt; }
+  #report .rp-finding {
+    display: flex; gap: 10px; border: 1px solid var(--line); padding: 8px; margin-bottom: 10px;
+  }
+  #report .rp-finding .f-photo { width: 42%; flex: none; align-self: center; }
+  #report .rp-finding .f-photo img { width: 100%; display: block; }
+  #report .rp-finding .f-photo .cap { font-size: 7.5pt; color: var(--muted); }
+  #report .rp-finding .f-text { flex: 1; }
+  #report .rp-finding .f-title { font-weight: 700; font-size: 11pt; color: var(--deep); margin-bottom: 4px; }
+  #report .rp-finding .f-badge {
+    font-size: 8.5pt; font-weight: 700; padding: 1px 8px; border-radius: 99px; color: #fff; margin-left: 6px;
+  }
+  #report .rp-finding p { margin: 0 0 5px; font-size: 9.5pt; }
+  #report .rp-finding p b { color: var(--deep); }
+  #report .rp-finding p.f-action b { color: var(--accent-dark); }
+  #report .rp-disclaimer { font-size: 8pt; color: var(--muted); margin: 12px 0 8px; }
+  #report .rp-footer { background: var(--tint); padding: 10px 14px; font-size: 9pt; }
+  #report .rp-footer .name { font-weight: 700; color: var(--deep); font-size: 10.5pt; }
+</style>
+</head>
+<body>
+
+<header class="app-head">
+  <h1>外壁診断レポートメーカー</h1><span class="beta">β版</span>
+  <button class="btn small ghost" style="margin-left:auto; background:#fff;" onclick="openSettings()">⚙ 会社設定</button>
+  <div class="head-note">入力した内容と写真はこの端末の中だけに保存されます。外部には送信されません。</div>
+</header>
+
+<main>
+  <section class="card">
+    <h2>基本情報</h2>
+    <div class="row">
+      <div><label>お客様名</label><input type="text" id="customer" placeholder="山田 太郎" oninput="save()"></div>
+      <div><label>診断日</label><input type="date" id="date" oninput="save()"></div>
+      <div><label>建物ご住所</label><input type="text" id="address" placeholder="秋田市○○ ○丁目" oninput="save()"></div>
+      <div><label>診断者</label><input type="text" id="inspector" placeholder="担当者名" oninput="save()"></div>
+      <div><label>築年数</label><input type="text" id="built" placeholder="約20年" oninput="save()"></div>
+      <div><label>前回の塗装</label><input type="text" id="lastPaint" placeholder="約10年前 / 不明" oninput="save()"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>診断した箇所</h2>
+    <div id="findings"></div>
+    <button class="btn accent" onclick="addFinding()">＋ 箇所を追加</button>
+    <p class="hint">症状を選ぶと説明文が自動で入ります。現場に合わせて自由に書き換えてください。</p>
+  </section>
+
+  <section class="card">
+    <h2>まとめ</h2>
+    <label>総合判定</label>
+    <select id="verdict" onchange="save()">
+      <option value="ok">現時点で、塗り替えの必要はありません</option>
+      <option value="watch">1〜2年のうちに、ご検討をおすすめします</option>
+      <option value="repair">早めの補修・塗り替えをおすすめします</option>
+      <option value="partial">部分補修で対応できます</option>
+    </select>
+    <label>総合判定の補足（任意）</label>
+    <input type="text" id="verdictNote" placeholder="例：次の冬を越す前の塗り替えをおすすめします" oninput="save()">
+    <label>全体の所見（空行で段落を分けられます）</label>
+    <textarea id="summary" oninput="save()" placeholder="全体を見ての所感を書きます"></textarea>
+  </section>
+</main>
+
+<div class="toolbar">
+  <button class="btn" onclick="preview()">📄 報告書を作る（印刷 / PDF保存）</button>
+  <button class="btn ghost" onclick="exportJson()">保存（ファイルに書き出し）</button>
+  <button class="btn ghost" onclick="document.getElementById('importFile').click()">読み込み</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJson(event)">
+  <button class="btn danger" onclick="clearAll()">新規作成</button>
+</div>
+
+<dialog id="settingsDialog">
+  <h2 style="margin-top:0; color:var(--deep); font-size:1.05rem;">会社設定（報告書の下部に印字されます）</h2>
+  <label>会社名</label><input type="text" id="coName" placeholder="○○塗装">
+  <label>代表者・肩書きなど（任意）</label><input type="text" id="coRep" placeholder="代表 ○○ ○○">
+  <label>住所</label><input type="text" id="coAddr" placeholder="〒000-0000 ○○県○○市…">
+  <label>電話番号・受付時間</label><input type="text" id="coTel" placeholder="000-0000-0000（平日 8:00〜18:00）">
+  <label>ウェブサイト・ひとこと（任意）</label><input type="text" id="coWeb" placeholder="https://… ｜ 診断・お見積りは無料です">
+  <div style="margin-top:1rem; display:flex; gap:.6rem; justify-content:flex-end;">
+    <button class="btn ghost" onclick="document.getElementById('settingsDialog').close()">閉じる</button>
+    <button class="btn" onclick="saveSettings()">保存する</button>
+  </div>
+</dialog>
+
+<div id="report"></div>
+
+<script>
+"use strict";
+// ---- 症状の定型文ライブラリ（選択後に自由に編集できる下書き） ----
+const PRESETS = {
+  "": { area: "", state: "", risk: "", action: "" },
+  "チョーキング（白い粉）": {
+    area: "外壁",
+    state: "手で触ると白い粉が付着します。塗料の樹脂が紫外線で分解され、塗膜の防水機能が低下している状態です。",
+    risk: "防水が切れた外壁は雨水を吸いやすくなり、ひび割れや剥がれなど次の劣化が進みやすくなります。",
+    action: "高圧洗浄と下地処理のうえ、塗り替えをおすすめします。"
+  },
+  "ひび割れ（ヘアクラック）": {
+    area: "外壁",
+    state: "髪の毛ほどの細いひび割れが見られます。多くは塗膜表面にとどまるひびです。",
+    risk: "ひびに入った雨水が凍結と融解を繰り返すと、少しずつひびが広がっていきます。",
+    action: "塗り替えの際に下地処理で埋められる程度ですが、進行しないか経過を見てください。"
+  },
+  "ひび割れ（構造クラック）": {
+    area: "外壁",
+    state: "はっきりと確認できる幅のひび割れが見られます。下地まで達している可能性があります。",
+    risk: "雨水が壁の内部に入り、下地や構造材を傷める入口になります。",
+    action: "シーリング材等による補修のうえ、塗装で保護することをおすすめします。"
+  },
+  "塗膜の剥がれ・膨れ": {
+    area: "外壁",
+    state: "塗膜の剥がれ（または膨れ）が見られます。塗膜と下地の密着が失われている状態です。",
+    risk: "剥がれた部分から下地が露出し、雨水や紫外線のダメージを直接受けます。",
+    action: "剥がれ部分の除去と下地処理のうえ、塗り替えをおすすめします。"
+  },
+  "色褪せ・ツヤ引け": {
+    area: "外壁",
+    state: "全体に色褪せが進み、新築時のツヤが失われています。塗膜の劣化が進み始めているサインです。",
+    risk: "見た目の問題にとどまらず、防水機能の低下と連動していることが多い症状です。",
+    action: "他の症状と合わせて、塗り替え時期のご検討をおすすめします。"
+  },
+  "藻・カビ・コケ": {
+    area: "外壁（北面など）",
+    state: "日当たりの悪い面に藻・カビ・コケの付着が見られます。塗膜表面の防水性が落ち、湿気が残りやすくなっています。",
+    risk: "根を張ると塗膜を傷め、美観も損ないます。落ちにくい汚れは塗膜劣化のサインです。",
+    action: "高圧洗浄で除去のうえ、防藻・防カビ性のある塗料での塗り替えが有効です。"
+  },
+  "コーキングのひび割れ・痩せ": {
+    area: "目地・サッシまわり",
+    state: "コーキング（シーリング）にひび割れ・痩せが見られます。外壁材より先に寿命が来る部位です。",
+    risk: "切れたコーキングからは、雨水が外壁材の裏側に直接入ります。",
+    action: "打ち替え（既存を撤去して新しく充填）をおすすめします。"
+  },
+  "コーキングの剥離": {
+    area: "目地・サッシまわり",
+    state: "コーキングが外壁材から剥がれ、隙間ができています。",
+    risk: "隙間から雨水が浸入し、下地の腐食や室内への雨漏りにつながる恐れがあります。",
+    action: "早めの打ち替えをおすすめします。"
+  },
+  "屋根の色褪せ・苔": {
+    area: "屋根",
+    state: "屋根表面の色褪せ（または苔の付着）が進んでいます。塗膜の防水機能が低下しています。",
+    risk: "屋根材が水を吸うようになると、割れや反りなど屋根材自体の傷みに進みます。",
+    action: "屋根塗装をおすすめします。外壁と同時なら足場が1回で済み、費用を抑えられます。"
+  },
+  "屋根板金・雪止めのサビ": {
+    area: "屋根",
+    state: "棟板金や雪止め金具にサビが出ています。金属部は塗膜が切れるとサビが早く進みます。",
+    risk: "サビが進むと板金の穴あきや固定の緩みにつながり、雨漏り・落下の原因になります。",
+    action: "ケレン（サビ落とし）のうえ、サビ止め塗装をおすすめします。"
+  },
+  "雨樋の劣化": {
+    area: "雨樋",
+    state: "雨樋に歪み・割れ・金具の緩みが見られます。",
+    risk: "雨水が正しく流れず、外壁を伝って汚れや傷みの原因になります。",
+    action: "部分交換または補修をおすすめします。塗装工事と同時なら足場を活用できます。"
+  },
+  "破風・軒天の傷み": {
+    area: "破風・軒天",
+    state: "破風板（または軒天）に塗膜の剥がれ・傷みが見られます。雨風が当たりやすい部位です。",
+    risk: "放置すると板自体が傷み、交換が必要になって費用が大きくなります。",
+    action: "傷みが浅いうちの塗装をおすすめします。"
+  },
+  "鉄部のサビ": {
+    area: "鉄部",
+    state: "手すり・シャッターボックス等の鉄部にサビが出ています。",
+    risk: "サビは一度出ると広がり、素材自体を痩せさせていきます。",
+    action: "ケレンのうえ、サビ止め＋上塗りをおすすめします。"
+  },
+  "ベランダ防水の劣化": {
+    area: "ベランダ",
+    state: "ベランダ床の防水層にひび・膨れ・摩耗が見られます。",
+    risk: "防水が切れると、下の部屋への雨漏りに直結します。",
+    action: "トップコートの塗り替え、または防水工事をおすすめします。"
+  },
+  "（症状なし・良好な箇所）": {
+    area: "",
+    state: "特に問題は見られませんでした。良好な状態です。",
+    risk: "",
+    action: "現状のまま、次回の点検で変化がないかご確認ください。"
+  }
+};
+const LEVELS = { ok: ["良好", "var(--ok)"], watch: ["経過観察", "var(--watch)"], repair: ["要補修", "var(--repair)"] };
+const VERDICTS = {
+  ok: "現時点で、塗り替えの必要はありません",
+  watch: "1〜2年のうちに、ご検討をおすすめします",
+  repair: "早めの補修・塗り替えをおすすめします",
+  partial: "部分補修で対応できます"
+};
+
+let findings = [];
+
+function esc(s) { const d = document.createElement("div"); d.textContent = s || ""; return d.innerHTML; }
+
+// ---- 箇所の入力欄 ----
+function addFinding(data) {
+  findings.push(data || { photo: "", caption: "", area: "", symptom: "", level: "watch", state: "", risk: "", action: "" });
+  renderFindings(); save();
+}
+function removeFinding(i) { findings.splice(i, 1); renderFindings(); save(); }
+function moveFinding(i, d) {
+  const j = i + d; if (j < 0 || j >= findings.length) return;
+  [findings[i], findings[j]] = [findings[j], findings[i]]; renderFindings(); save();
+}
+function renderFindings() {
+  const box = document.getElementById("findings");
+  box.innerHTML = "";
+  findings.forEach((f, i) => {
+    const el = document.createElement("div");
+    el.className = "finding";
+    el.innerHTML = `
+      <div class="finding-head">
+        <span class="no">${i + 1}.</span>
+        <span class="spacer"></span>
+        <button class="btn small ghost" onclick="moveFinding(${i},-1)">↑</button>
+        <button class="btn small ghost" onclick="moveFinding(${i},1)">↓</button>
+        <button class="btn small danger" onclick="removeFinding(${i})">削除</button>
+      </div>
+      <div class="photo-drop" onclick="this.querySelector('input').click()">
+        ${f.photo ? `<img src="${f.photo}" alt="">` : ""}
+        <div>${f.photo ? "タップで写真を変更" : "📷 タップして写真を選ぶ（撮影もできます）"}</div>
+        <input type="file" accept="image/*" style="display:none" onchange="setPhoto(${i}, event)">
+      </div>
+      <div class="row">
+        <div><label>症状（選ぶと文章が入ります）</label>
+          <select onchange="applyPreset(${i}, this.value)">
+            ${Object.keys(PRESETS).map(k => `<option value="${esc(k)}" ${f.symptom === k ? "selected" : ""}>${k || "— 選択してください —"}</option>`).join("")}
+          </select>
+        </div>
+        <div><label>部位（南面・2階など自由に）</label>
+          <input type="text" value="${esc(f.area)}" placeholder="外壁（南面）" oninput="findings[${i}].area=this.value; save()">
+        </div>
+      </div>
+      <label>判定</label>
+      <div class="level-picks">
+        ${Object.entries(LEVELS).map(([k, [name]]) =>
+          `<button class="${f.level === k ? "sel-" + k : ""}" onclick="findings[${i}].level='${k}'; renderFindings(); save()">${name}</button>`).join("")}
+      </div>
+      <label>現在の状態</label>
+      <textarea oninput="findings[${i}].state=this.value; save()">${esc(f.state)}</textarea>
+      <label>このままにすると（空欄なら印字されません）</label>
+      <textarea oninput="findings[${i}].risk=this.value; save()">${esc(f.risk)}</textarea>
+      <label>おすすめの対処（空欄なら印字されません）</label>
+      <textarea oninput="findings[${i}].action=this.value; save()">${esc(f.action)}</textarea>
+    `;
+    box.appendChild(el);
+  });
+}
+function applyPreset(i, key) {
+  const p = PRESETS[key] || PRESETS[""];
+  findings[i].symptom = key;
+  if (p.area && !findings[i].area) findings[i].area = p.area;
+  findings[i].state = p.state; findings[i].risk = p.risk; findings[i].action = p.action;
+  renderFindings(); save();
+}
+function setPhoto(i, ev) {
+  const file = ev.target.files[0]; if (!file) return;
+  const img = new Image();
+  img.onload = () => {
+    // 端末内で縮小してから保存する（保存容量とPDFサイズの節約）
+    const MAX = 1100;
+    const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+    const c = document.createElement("canvas");
+    c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    findings[i].photo = c.toDataURL("image/jpeg", 0.78);
+    URL.revokeObjectURL(img.src);
+    renderFindings(); save();
+  };
+  img.src = URL.createObjectURL(file);
+}
+
+// ---- 保存・読み込み ----
+function collect() {
+  return {
+    customer: customer.value, date: date.value, address: address.value, inspector: inspector.value,
+    built: built.value, lastPaint: lastPaint.value,
+    verdict: verdict.value, verdictNote: verdictNote.value, summary: summary.value,
+    findings
+  };
+}
+function fill(d) {
+  customer.value = d.customer || ""; date.value = d.date || ""; address.value = d.address || "";
+  inspector.value = d.inspector || ""; built.value = d.built || ""; lastPaint.value = d.lastPaint || "";
+  verdict.value = d.verdict || "watch"; verdictNote.value = d.verdictNote || ""; summary.value = d.summary || "";
+  findings = d.findings || [];
+  renderFindings();
+}
+function save() {
+  try { localStorage.setItem("shindan.draft", JSON.stringify(collect())); }
+  catch (e) { /* 容量超過などでも入力は続けられるようにする */ }
+}
+function loadDraft() {
+  try {
+    const d = JSON.parse(localStorage.getItem("shindan.draft") || "null");
+    if (d) { fill(d); return; }
+  } catch (e) {}
+  date.value = new Date().toISOString().slice(0, 10);
+  addFinding();
+}
+function clearAll() {
+  if (!confirm("入力内容を消して新規作成します。よろしいですか？\n（必要なら先に「保存」でファイルに残せます）")) return;
+  try { localStorage.removeItem("shindan.draft"); } catch (e) {}
+  fill({}); date.value = new Date().toISOString().slice(0, 10); addFinding();
+}
+function exportJson() {
+  const name = (customer.value || "mudai").replace(/\s+/g, "") + "_" + (date.value || "").replaceAll("-", "") + ".json";
+  const blob = new Blob([JSON.stringify(collect(), null, 1)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importJson(ev) {
+  const file = ev.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = () => { try { fill(JSON.parse(r.result)); save(); } catch (e) { alert("ファイルを読み込めませんでした"); } };
+  r.readAsText(file); ev.target.value = "";
+}
+
+// ---- 会社設定 ----
+function openSettings() {
+  let s = {};
+  try { s = JSON.parse(localStorage.getItem("shindan.company") || "{}"); } catch (e) {}
+  coName.value = s.name || ""; coRep.value = s.rep || ""; coAddr.value = s.addr || "";
+  coTel.value = s.tel || ""; coWeb.value = s.web || "";
+  settingsDialog.showModal();
+}
+function saveSettings() {
+  try {
+    localStorage.setItem("shindan.company", JSON.stringify({
+      name: coName.value, rep: coRep.value, addr: coAddr.value, tel: coTel.value, web: coWeb.value
+    }));
+  } catch (e) {}
+  settingsDialog.close();
+}
+
+// ---- 報告書の生成と印刷 ----
+function fmtDate(v) {
+  if (!v) return "";
+  const [y, m, d] = v.split("-"); return `${y}年${Number(m)}月${Number(d)}日`;
+}
+function paras(text) {
+  return (text || "").split(/\n\s*\n/).filter(Boolean).map(t => `<p>${esc(t)}</p>`).join("");
+}
+function preview() {
+  let co = {};
+  try { co = JSON.parse(localStorage.getItem("shindan.company") || "{}"); } catch (e) {}
+  if (!co.name) { alert("最初に右上の「⚙ 会社設定」で会社名などを入れてください（報告書に印字されます）"); openSettings(); return; }
+  const d = collect();
+  const findingHtml = d.findings.filter(f => f.state || f.photo).map((f, i) => {
+    const [lname, lcolor] = LEVELS[f.level] || LEVELS.watch;
+    return `<div class="rp-finding">
+      <div class="f-photo">${f.photo ? `<img src="${f.photo}" alt="">` : ""}${f.caption ? `<div class="cap">${esc(f.caption)}</div>` : ""}</div>
+      <div class="f-text">
+        <div class="f-title">${i + 1}. ${esc(f.area)}　${esc(f.symptom.replace(/（症状なし・良好な箇所）/, "点検箇所"))}<span class="f-badge" style="background:${lcolor}">${lname}</span></div>
+        ${f.state ? `<p><b>現在の状態：</b>${esc(f.state)}</p>` : ""}
+        ${f.risk ? `<p><b>このままにすると：</b>${esc(f.risk)}</p>` : ""}
+        ${f.action ? `<p class="f-action"><b>おすすめの対処：</b>${esc(f.action)}</p>` : ""}
+      </div>
+    </div>`;
+  }).join("");
+
+  document.getElementById("report").innerHTML = `
+    <div class="rp-headline">
+      <div class="rp-co">${esc(co.name)}</div>
+      <div>
+        <div class="rp-title">建物診断結果のご報告</div>
+        <div class="rp-sub">現地にて拝見した状態を、写真とあわせてご報告します</div>
+      </div>
+    </div>
+    <table class="rp-info">
+      <tr><th>お客様名</th><td>${esc(d.customer)}　様</td><th>診断日</th><td>${fmtDate(d.date)}</td></tr>
+      <tr><th>建物ご住所</th><td>${esc(d.address)}</td><th>診断者</th><td>${esc(d.inspector)}</td></tr>
+      <tr><th>築年数</th><td>${esc(d.built)}</td><th>前回の塗装</th><td>${esc(d.lastPaint)}</td></tr>
+    </table>
+    <div class="rp-verdict">
+      <div class="v-label">総合判定</div>
+      <div class="v-body">
+        <div class="v-main">${VERDICTS[d.verdict]}</div>
+        ${d.verdictNote ? `<div class="v-note">${esc(d.verdictNote)}</div>` : ""}
+      </div>
+    </div>
+    ${d.summary ? `<h3 class="rp-h">全体の所見</h3><div class="rp-summary">${paras(d.summary)}</div>` : ""}
+    <h3 class="rp-h">拝見した箇所のご報告</h3>
+    ${findingHtml || "<p>（箇所の記載はありません）</p>"}
+    <div class="rp-disclaimer">本診断は塗装業者としての目視点検です。診断の結果にかかわらず、工事をご契約いただく義務はありません。ご不明な点は、どんな小さなことでもお気軽にお尋ねください。</div>
+    <div class="rp-footer">
+      <div class="name">${esc(co.name)}${co.rep ? `（${esc(co.rep)}）` : ""}</div>
+      ${co.addr ? esc(co.addr) + "<br>" : ""}
+      ${co.tel ? "☎ " + esc(co.tel) : ""}${co.web ? "　｜　" + esc(co.web) : ""}
+    </div>`;
+  window.print();
+}
+
+loadDraft();
+</script>
+</body>
+</html>
