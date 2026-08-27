@@ -87,6 +87,7 @@
         <button class="mode on" id="mode-wand" onclick="setMode('wand')">🪄 タップで選択</button>
         <button class="mode" id="mode-brush" onclick="setMode('brush')">🖌 ブラシで追加</button>
         <button class="mode" id="mode-erase" onclick="setMode('erase')">◻ 消しゴム</button>
+        <button class="btn small ghost" onclick="closeGaps()">すき間をうめる</button>
         <button class="btn small ghost" onclick="clearMask()">選択を解除</button>
         <button class="btn small ghost" id="undoBtn" onclick="undoBake()" disabled>1つ戻す</button>
         <button class="btn small ghost" onpointerdown="showOrig(true)" onpointerup="showOrig(false)" onpointerleave="showOrig(false)">押す間ビフォー</button>
@@ -100,6 +101,8 @@
     <p class="steps"><b>色を選ぶ</b>（選択した部分に、その場で色が乗ります）</p>
     <div class="palette" id="palette"></div>
     <div class="custom-color">自由な色: <input type="color" id="customColor" value="#c8b89a" onchange="pickCustom(this.value)"></div>
+    <div class="slider-row">下地の質感の残り具合 <input type="range" id="tex" min="0" max="100" value="40" oninput="texv.textContent=this.value; render()"> <span id="texv">40</span></div>
+    <p class="hint" style="margin-top:.1rem">0にすると元の壁の模様を消してベタ塗りになります。汚れや色ムラが透けて見えるときは下げてください。</p>
     <div style="margin-top:.8rem; border-top:1px solid var(--line); padding-top:.7rem;">
       <p class="steps" style="margin-bottom:.3rem;"><b>日塗工番号で選ぶ</b>（番号の体系から計算した近似色です）</p>
       <div style="display:flex; gap:.4rem;">
@@ -237,6 +240,37 @@ canvas.addEventListener("pointermove", (ev) => {
 window.addEventListener("pointerup", () => dragging = false);
 
 function clearMask() { if (mask) { mask.fill(0); render(); } }
+
+function dilateErode(src, w, h, dilate) {
+  const dst = new Uint8Array(src.length);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const p = y * w + x;
+      let hit = dilate ? 0 : 1;
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          const yy = y + dy, xx = x + dx;
+          if (yy < 0 || yy >= h || xx < 0 || xx >= w) { if (!dilate) hit = 0; continue; }
+          const v = src[yy * w + xx];
+          if (dilate && v) hit = 1;
+          if (!dilate && !v) hit = 0;
+        }
+      }
+      dst[p] = hit;
+    }
+  }
+  return dst;
+}
+function closeGaps() {
+  if (!mask) return;
+  // 膨張2回→収縮2回。目地の中や境目に残った細かい塗り残しが埋まる
+  let m = mask;
+  m = dilateErode(m, canvas.width, canvas.height, true);
+  m = dilateErode(m, canvas.width, canvas.height, true);
+  m = dilateErode(m, canvas.width, canvas.height, false);
+  m = dilateErode(m, canvas.width, canvas.height, false);
+  mask = m; render();
+}
 
 // ---- 色 ----
 function hexToRgb(hex) {
@@ -388,12 +422,22 @@ function render() {
   const out = new ImageData(new Uint8ClampedArray(baked.data), baked.width, baked.height);
   const d = out.data;
   if (color) {
-    // 選んだ色の明るさを基準に、元の陰影(明るさの差)を保ったまま色を置き換える
+    // 元の壁の「平均の明るさ」を基準にし、そこからの差（目地や影）だけを
+    // 質感として残す。基準を平均にすることで、濃い壁→薄い色でも下地の
+    // 暗さに引きずられず、選んだ色の明るさどおりに仕上がる
+    let sum = 0, n = 0;
+    for (let p = 0; p < mask.length; p++) {
+      if (!mask[p]) continue;
+      const i = p * 4;
+      sum += rgbToHsl(d[i], d[i + 1], d[i + 2])[2]; n++;
+    }
+    const meanL = n ? sum / n : 0.5;
+    const k = Number(document.getElementById("tex").value) / 100 * 1.2;
     for (let p = 0; p < mask.length; p++) {
       if (!mask[p]) continue;
       const i = p * 4;
       const l0 = rgbToHsl(d[i], d[i + 1], d[i + 2])[2];
-      const l = Math.max(0, Math.min(1, color.l + (l0 - 0.5) * 0.9));
+      const l = Math.max(0, Math.min(1, color.l + (l0 - meanL) * k));
       const [r, g, b] = hslToRgb(color.h, color.s, l);
       d[i] = r; d[i + 1] = g; d[i + 2] = b;
     }
