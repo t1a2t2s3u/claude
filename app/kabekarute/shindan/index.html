@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>カベカルテ 診断・見積り（β版）</title>
+<title>カベカルテ 診断・見積り</title>
 <style>
   :root {
     --deep: #0b4a5f; --deepest: #06333f; --brand: #00a3c9; --brand-text: #00758f;
@@ -164,7 +164,8 @@
 <body>
 
 <header class="app-head">
-  <h1>カベカルテ <span style="font-weight:400; font-size:.85em;">診断・見積り</span></h1><span class="beta">β版</span>
+  <a href="../index.html" title="カベカルテのホームへ" style="color:#fff; text-decoration:none; opacity:.85; font-size:1.15rem;">⌂</a>
+  <h1>カベカルテ <span style="font-weight:400; font-size:.85em;">診断・見積り</span></h1><span class="beta">v1.0</span>
   <button class="btn small ghost" style="margin-left:auto; background:#fff;" onclick="openSettings()">⚙ 会社設定</button>
   <div class="head-note">入力した内容と写真はこの端末の中だけに保存されます。外部には送信されません。</div>
 </header>
@@ -542,9 +543,15 @@ function fill(d) {
   renderFindings();
   renderEstItems();
 }
+let storageWarned = false;
 function save() {
   try { localStorage.setItem("shindan.draft", JSON.stringify(collect())); }
-  catch (e) { /* 容量超過などでも入力は続けられるようにする */ }
+  catch (e) {
+    if (!storageWarned) {
+      storageWarned = true;
+      alert("端末内の保存容量がいっぱいのため、自動保存が止まりました。入力は続けられますが、途中で閉じると消えます。「保存」でファイルに書き出してください。");
+    }
+  }
 }
 function loadDraft() {
   try {

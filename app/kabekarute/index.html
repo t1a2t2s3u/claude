@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>カベカルテ v1.0</title>
+<style>
+  :root {
+    --deep: #0b4a5f; --deepest: #06333f; --brand: #00a3c9; --brand-text: #00758f;
+    --accent: #e2661f; --ink: #1b2a31; --muted: #566871; --line: #d3e4ec;
+    --bg: #f2f7fa; --card: #ffffff; --tint: #eaf4f7; --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    background: var(--bg); color: var(--ink); font-size: 15px; line-height: 1.7;
+  }
+  .hero { background: var(--deep); color: #fff; padding: 2.2rem 1rem 2rem; text-align: center; }
+  .hero .mark { font-size: 2rem; font-weight: 700; letter-spacing: .06em; }
+  .hero .mark .karte { color: #7fd4e8; }
+  .hero .tagline { margin: .4rem 0 0; font-size: .95rem; opacity: .9; }
+  .hero .ver { display: inline-block; margin-top: .7rem; font-size: .72rem; background: rgba(255,255,255,.15);
+    padding: .15rem .7rem; border-radius: 99px; }
+  main { max-width: 760px; margin: 0 auto; padding: 1.2rem 1rem 3rem; }
+  h2 { font-size: 1.05rem; color: var(--deep); border-left: 4px solid var(--accent);
+    padding-left: .5rem; margin: 2rem 0 .8rem; }
+  .apps { display: grid; gap: .8rem; }
+  .app-card {
+    display: block; text-decoration: none; color: inherit;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 1rem 1.1rem; box-shadow: 0 2px 8px rgba(6,51,63,.07);
+  }
+  .app-card:active { transform: translateY(1px); }
+  .app-card .t { font-weight: 700; color: var(--deep); font-size: 1.02rem; }
+  .app-card .t small { color: var(--accent); font-weight: 700; margin-right: .4rem; }
+  .app-card .d { font-size: .82rem; color: var(--muted); margin-top: .15rem; }
+  ol, ul { padding-left: 1.3rem; margin: .4rem 0; }
+  li { margin-bottom: .35rem; font-size: .9rem; }
+  .note { background: var(--tint); border-radius: 8px; padding: .7rem .9rem; font-size: .82rem; color: var(--muted); }
+  .terms { font-size: .82rem; color: var(--muted); }
+  .terms li { font-size: .82rem; }
+  footer { text-align: center; font-size: .75rem; color: var(--muted); padding: 1.5rem 1rem 2.5rem; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="mark">カベ<span class="karte">カルテ</span></div>
+  <p class="tagline">1軒の家に、1つのカルテ。<br>塗装店の書類づくりを、現場のスマホで。</p>
+  <span class="ver">Version 1.0.0</span>
+</div>
+
+<main>
+  <h2>アプリを開く</h2>
+  <div class="apps">
+    <a class="app-card" href="shindan/index.html">
+      <div class="t"><small>📋</small>診断・見積り</div>
+      <div class="d">現地調査の結果を写真つきの診断報告書に。見積書単体と、診断＋見積りの統合提案書も同じ入力から作れます。</div>
+    </a>
+    <a class="app-card" href="color/index.html">
+      <div class="t"><small>🎨</small>カラーシミュレーション</div>
+      <div class="d">お客様の家の写真の壁をタップで選び、塗り替え後の色を試せます。ツートンにも対応。</div>
+    </a>
+    <a class="app-card" href="kanko/index.html">
+      <div class="t"><small>🏠</small>完工報告</div>
+      <div class="d">ビフォー・アフターと工程順の作業写真で、「どう工事したか」が伝わる完工報告書を作ります。</div>
+    </a>
+  </div>
+
+  <h2>はじめて使うとき（1分で終わります）</h2>
+  <ol>
+    <li>「診断・見積り」を開き、右上の <b>⚙ 会社設定</b> に自社の情報を入れて保存します（書類の下部に印字されます。同じ端末なら他のアプリにも引き継がれます）</li>
+    <li>あとは画面の順に入力するだけです。書類は <b>「印刷」からPDF保存</b>（スマホは共有→PDF）できます</li>
+    <li>大事な案件は <b>「保存」ボタンでファイルに書き出し</b> ておくと安心です</li>
+  </ol>
+
+  <h2>データの取り扱い</h2>
+  <div class="note">
+    入力した内容と写真は、<b>お使いの端末の中だけ</b>に保存されます。外部のサーバーには一切送信されません。
+    そのぶん、端末の買い替え・ブラウザのデータ削除で消えるため、続き物の案件は「保存」でファイルに
+    書き出して残してください。
+  </div>
+
+  <h2>利用条件</h2>
+  <ul class="terms">
+    <li>本アプリで作成した書類の内容（診断の判断、金額、文言など）についての責任は、書類を作成・交付した利用者にあります。定型文はあくまで下書きです。必ずご自身の現場判断で確認・修正のうえお使いください。</li>
+    <li>本アプリは現状のまま提供され、動作や成果について保証するものではありません。</li>
+    <li>カラーシミュレーションの表示色は実際の塗料の色と一致しません。最終決定は実物の色見本で行ってください。</li>
+    <li>本アプリの著作権は辰弥塗装工業に帰属します。許可のない再配布・改変販売はご遠慮ください。</li>
+  </ul>
+</main>
+
+<footer>
+  カベカルテ v1.0.0<br>
+  &copy; 2026 辰弥塗装工業 ｜ https://tatsumi-tosou.com
+</footer>
+
+</body>
+</html>
