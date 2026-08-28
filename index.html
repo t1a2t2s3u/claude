@@ -11,104 +11,214 @@
 <style>body{margin:0;background:#f3f2ed}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:#14161d}}:root[data-theme="dark"] body{background:#14161d}</style>
 </head>
 <body>
-<script type="application/json" id="app-state">{"payments":[]}</script>
+<script type="application/json" id="app-state">{"v":2,"payments":[]}</script>
 <script>
 'use strict';
 const SRC = document.currentScript.textContent;
-const STORE_KEY = 'maitsuki-cho:v1';
+const STORE_KEY = 'maitsuki-cho:v2';
+const STORE_KEY_V1 = 'maitsuki-cho:v1';
 
 const FONT_LINKS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">';
 const BOOT_STYLE = '<style>body{margin:0;background:#f3f2ed}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:#14161d}}:root[data-theme="dark"] body{background:#14161d}</style>';
 
+/* ---------- design tokens & styles ---------- */
 const CSS = `
 *,*::before,*::after{box-sizing:border-box}
 :root{
   --bg:#f3f2ed; --surface:#ffffff; --surface2:#eceae2; --ink:#232838; --muted:#6e7383;
-  --line:#dcdad0; --accent:#33518f; --accent-ink:#ffffff; --hanko:#c2452d;
-  --c-sub:#7a5ca8; --c-home:#3e6b8c; --c-util:#b07c2e; --c-net:#2e7d74;
-  --c-ins:#a84e62; --c-loan:#8c6a3e; --c-other:#8a8f9c;
+  --line:#dcdad0; --accent:#33518f; --accent-soft:#33518f22; --accent-ink:#ffffff; --hanko:#c2452d;
+  --rule:rgba(51,81,143,.055);
+  --c-sub:#2a78d6; --c-home:#eb6834; --c-util:#1baf7a; --c-net:#eda100;
+  --c-ins:#e87ba4; --c-loan:#008300; --c-other:#4a3aa7;
+  --bar-dim:#c6cfe2;
   --shadow:0 1px 2px rgba(35,40,56,.06),0 8px 24px rgba(35,40,56,.05);
+  --shadow-lg:0 4px 12px rgba(35,40,56,.12),0 20px 48px rgba(35,40,56,.18);
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     --bg:#14161d; --surface:#1d212b; --surface2:#262b37; --ink:#e9eaf0; --muted:#9aa0b0;
-    --line:#333947; --accent:#93ace0; --accent-ink:#101523; --hanko:#e0684f;
-    --c-sub:#b09ad6; --c-home:#85aecb; --c-util:#d6a75c; --c-net:#6dbcb0;
-    --c-ins:#d68b9c; --c-loan:#c7a06e; --c-other:#9aa0ac;
+    --line:#333947; --accent:#93ace0; --accent-soft:#93ace022; --accent-ink:#101523; --hanko:#e0684f;
+    --rule:rgba(147,172,224,.06);
+    --c-sub:#3987e5; --c-home:#d95926; --c-util:#199e70; --c-net:#c98500;
+    --c-ins:#d55181; --c-loan:#008300; --c-other:#9085e9;
+    --bar-dim:#3a4356;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+    --shadow-lg:0 4px 12px rgba(0,0,0,.4),0 20px 48px rgba(0,0,0,.45);
   }
 }
 :root[data-theme="dark"]{
   --bg:#14161d; --surface:#1d212b; --surface2:#262b37; --ink:#e9eaf0; --muted:#9aa0b0;
-  --line:#333947; --accent:#93ace0; --accent-ink:#101523; --hanko:#e0684f;
-  --c-sub:#b09ad6; --c-home:#85aecb; --c-util:#d6a75c; --c-net:#6dbcb0;
-  --c-ins:#d68b9c; --c-loan:#c7a06e; --c-other:#9aa0ac;
+  --line:#333947; --accent:#93ace0; --accent-soft:#93ace022; --accent-ink:#101523; --hanko:#e0684f;
+  --rule:rgba(147,172,224,.06);
+  --c-sub:#3987e5; --c-home:#d95926; --c-util:#199e70; --c-net:#c98500;
+  --c-ins:#d55181; --c-loan:#008300; --c-other:#9085e9;
+  --bar-dim:#3a4356;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  --shadow-lg:0 4px 12px rgba(0,0,0,.4),0 20px 48px rgba(0,0,0,.45);
 }
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
-.wrap{max-width:720px;margin:0 auto;padding:36px 20px 96px}
-.masthead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:20px}
+.wrap{max-width:760px;margin:0 auto;padding:32px 20px 120px}
+button{font:inherit}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* masthead */
+.masthead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:18px;flex-wrap:wrap}
 .eyebrow{font-size:.72rem;letter-spacing:.14em;color:var(--muted)}
 h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:1.7rem;margin:2px 0 0;letter-spacing:.06em}
-.month{font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:1rem;color:var(--muted);white-space:nowrap}
+.monthnav{display:flex;align-items:center;gap:4px}
+.nav-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:1.05rem;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.nav-btn:hover{background:var(--surface2)}
+.month-label{font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:1.05rem;min-width:8.2em;text-align:center;font-variant-numeric:tabular-nums}
+.today-chip{border:0;background:none;color:var(--accent);font-size:.75rem;cursor:pointer;padding:2px 8px;border-radius:999px;text-decoration:underline;text-underline-offset:3px}
+
+/* cards */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
-.summary{padding:22px 24px;margin-bottom:8px}
+
+/* hero */
+.summary{padding:22px 24px 18px;margin-bottom:14px;background-image:repeating-linear-gradient(to bottom,transparent 0 26px,var(--rule) 26px 27px)}
+.sum-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
 .sum-label{font-size:.78rem;color:var(--muted);letter-spacing:.08em}
-.sum-total{font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:clamp(2rem,6vw,2.6rem);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.25;margin:2px 0 12px}
-.sum-row{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.sum-total{font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:clamp(2rem,6vw,2.7rem);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.25;margin:0 0 10px}
+.sum-row{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:.83rem;color:var(--muted)}
 .sum-row b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600;margin-left:4px}
-.bar{display:flex;gap:2px;height:10px;border-radius:5px;overflow:hidden;margin:16px 0 10px}
-.bar span{min-width:6px}
+.bar{display:flex;gap:2px;height:12px;border-radius:6px;overflow:hidden;margin:16px 0 10px}
+.bar span{min-width:5px}
 .legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.78rem;color:var(--muted)}
 .legend b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600;margin-left:3px}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:0}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;flex:none}
 .next-line{margin-top:14px;font-size:.85rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:12px}
 .next-line b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600}
-.section-title{font-size:.8rem;letter-spacing:.1em;color:var(--muted);margin:26px 4px 10px}
-.sched{padding:2px 0}
-.day{display:grid;grid-template-columns:86px 1fr;align-items:start;padding:14px 20px;border-top:1px solid var(--line)}
+
+/* tabs */
+.tabs{display:flex;gap:4px;background:var(--surface2);border-radius:10px;padding:4px;margin:18px 0 12px;width:max-content}
+.tab{border:0;background:none;color:var(--muted);padding:7px 18px;border-radius:7px;cursor:pointer;font-size:.88rem;font-weight:500}
+.tab:hover{color:var(--ink)}
+.tab.active{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:var(--shadow)}
+
+/* filters */
+.filters{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.filters input[type="search"]{flex:1;min-width:150px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-size:.88rem}
+.filters select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-size:.85rem}
+.cat-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.cat-chip{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:3px 12px 3px 9px;font-size:.76rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.cat-chip:hover{color:var(--ink)}
+.cat-chip.active{border-color:var(--accent);background:var(--accent-soft);color:var(--ink);font-weight:500}
+
+/* list view */
+.sched{padding:2px 0;overflow:hidden}
+.day{display:grid;grid-template-columns:92px 1fr;align-items:start;padding:14px 20px;border-top:1px solid var(--line)}
 .day:first-child{border-top:0}
 .day.next-up{box-shadow:inset 3px 0 0 var(--accent)}
-.day-col{display:flex;align-items:center;padding-top:2px}
+.day-col{display:flex;align-items:center;padding-top:2px;flex-wrap:wrap;gap:2px}
 .day-num{font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:1.35rem;font-weight:600;line-height:1.2;font-variant-numeric:tabular-nums}
 .day-num small{font-size:.8rem;font-weight:500;color:var(--muted);margin-left:2px}
+.eom-note{font-size:.65rem;color:var(--muted);width:100%}
 .day.paid .items,.day.paid .day-num{opacity:.5}
 .stamp{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:2px solid var(--hanko);color:var(--hanko);border-radius:50%;font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:.85rem;transform:rotate(-10deg);margin-left:8px;opacity:.85;flex:none}
 .tag{display:inline-block;font-size:.68rem;line-height:1.6;padding:1px 8px;border-radius:999px;margin-left:8px;flex:none}
 .tag.next{background:var(--accent);color:var(--accent-ink)}
 .tag.today{background:var(--hanko);color:#fff}
 .item{display:flex;align-items:center;gap:10px;padding:5px 0;flex-wrap:wrap}
-.item-name{font-weight:500}
-.chip{font-size:.72rem;color:var(--muted);display:inline-flex;align-items:center}
-.amt{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:600}
+.item-main{display:flex;flex-direction:column;min-width:0}
+.item-name{font-weight:500;line-height:1.4}
+.item-sub{font-size:.72rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;line-height:1.5}
+.freq-badge{display:inline-block;font-size:.66rem;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--muted);vertical-align:1px;margin-left:6px}
+.chip{font-size:.72rem;color:var(--muted);display:inline-flex;align-items:center;flex:none}
+.amt{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
 .item-actions{display:flex;gap:2px;margin-left:6px}
-.icon-btn{border:0;background:none;color:var(--muted);cursor:pointer;font:inherit;font-size:.72rem;padding:3px 7px;border-radius:6px}
+.icon-btn{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.72rem;padding:3px 7px;border-radius:6px}
 .icon-btn:hover{background:var(--surface2);color:var(--ink)}
 .icon-btn.del:hover{color:var(--hanko)}
 .icon-btn.confirm{background:var(--hanko);color:#fff}
 .icon-btn.confirm:hover{background:var(--hanko);color:#fff}
-.form{padding:20px 24px}
-.f-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.f-name{grid-column:1/-1}
+
+/* calendar view */
+.cal{padding:14px;overflow:hidden}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-wd{font-size:.68rem;color:var(--muted);text-align:center;padding:2px 0 6px}
+.cal-wd.sun{color:var(--hanko)}
+.cal-cell{min-height:86px;border:1px solid var(--line);border-radius:8px;padding:5px 6px;font-size:.72rem;background:var(--surface);display:flex;flex-direction:column;gap:2px}
+.cal-cell.blank{border:0;background:none;min-height:0}
+.cal-cell.has{background:var(--surface)}
+.cal-cell.next-up{border-color:var(--accent);box-shadow:inset 0 2px 0 var(--accent)}
+.cal-cell.past .cal-items,.cal-cell.past .cal-daytotal{opacity:.5}
+.cal-daynum{font-variant-numeric:tabular-nums;color:var(--muted);line-height:1.4;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center}
+.cal-cell.today .cal-daynum{border:2px solid var(--hanko);border-radius:50%;color:var(--hanko);font-weight:600}
+.cal-items{display:flex;flex-direction:column;gap:1px;min-width:0}
+.cal-item{display:flex;align-items:center;gap:4px;min-width:0;background:none;border:0;padding:0;color:var(--ink);cursor:pointer;text-align:left;font-size:.7rem;line-height:1.5}
+.cal-item:hover .cal-item-name{text-decoration:underline}
+.cal-item-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-more{font-size:.66rem;color:var(--muted)}
+.cal-daytotal{margin-top:auto;font-variant-numeric:tabular-nums;font-weight:600;font-size:.7rem;text-align:right}
+@media (max-width:600px){
+  .cal-cell{min-height:64px;padding:4px}
+  .cal-item-name{display:none}
+  .cal-item{font-size:.66rem}
+}
+
+/* year view */
+.year{padding:20px 24px}
+.year h2{font-size:.9rem;font-weight:600;margin:0 0 16px}
+.ychart{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;align-items:end;height:140px;border-bottom:1px solid var(--line);padding-bottom:0}
+.ybar{position:relative;border:0;background:none;padding:0;cursor:pointer;height:100%;display:flex;align-items:flex-end}
+.ybar-fill{width:100%;background:var(--bar-dim);border-radius:4px 4px 0 0;min-height:2px}
+.ybar.cur .ybar-fill{background:var(--accent)}
+.ybar:hover .ybar-fill,.ybar:focus-visible .ybar-fill{background:var(--accent)}
+.ychart-labels{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;font-size:.68rem;color:var(--muted);text-align:center;margin:6px 0 0;font-variant-numeric:tabular-nums}
+.ychart-labels .cur{color:var(--accent);font-weight:600}
+.ytable{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:22px}
+.ytable th{font-size:.72rem;color:var(--muted);font-weight:500;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+.ytable th.num,.ytable td.num{text-align:right;font-variant-numeric:tabular-nums}
+.ytable td{padding:7px 8px;border-bottom:1px solid var(--line)}
+.ytable tr:last-child td{border-bottom:0;font-weight:600}
+.ytip{position:fixed;z-index:30;background:var(--ink);color:var(--bg);font-size:.78rem;padding:6px 10px;border-radius:8px;pointer-events:none;box-shadow:var(--shadow);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* empty state */
+.empty{padding:36px 24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px;font-size:.9rem}
+.empty .btn{margin-top:14px}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(20,22,29,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center;padding:16px}
+@media (min-width:600px){.overlay{align-items:center}}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-lg);width:100%;max-width:520px;max-height:calc(100vh - 32px);overflow-y:auto;padding:22px 24px}
+.modal h2{font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:1.15rem;font-weight:600;margin:0 0 14px}
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.preset{border:1px dashed var(--line);background:none;color:var(--muted);border-radius:999px;padding:3px 12px;font-size:.75rem;cursor:pointer}
+.preset:hover{color:var(--ink);border-color:var(--muted)}
+.f-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.f-full{grid-column:1/-1}
 label{display:block;font-size:.75rem;color:var(--muted);margin-bottom:4px}
 input,select{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:.95rem}
-input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.f-actions{display:flex;gap:10px;margin-top:14px;align-items:center}
-.btn{border:0;border-radius:8px;padding:10px 20px;font:inherit;font-weight:600;cursor:pointer}
+.hidden{display:none}
+.f-actions{display:flex;gap:10px;margin-top:18px;align-items:center;flex-wrap:wrap}
+.btn{border:0;border-radius:8px;padding:10px 20px;font-weight:600;cursor:pointer}
 .btn-primary{background:var(--accent);color:var(--accent-ink)}
 .btn-ghost{background:none;color:var(--muted)}
 .btn-ghost:hover{color:var(--ink)}
-.empty{padding:32px 24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px;margin-bottom:8px;font-size:.9rem}
-footer{margin-top:28px;display:flex;justify-content:space-between;gap:12px;font-size:.75rem;color:var(--muted)}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:.85rem;box-shadow:var(--shadow);z-index:10;max-width:90vw}
-@media (prefers-reduced-motion:no-preference){.btn,.icon-btn{transition:background-color .15s,color .15s}}
+.btn-danger{background:none;color:var(--hanko);margin-left:auto}
+.btn-danger.confirm{background:var(--hanko);color:#fff}
+
+/* fab */
+.fab{position:fixed;right:20px;bottom:20px;z-index:10;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:.92rem;padding:13px 22px;cursor:pointer;box-shadow:var(--shadow-lg)}
+.fab:hover{filter:brightness(1.08)}
+
+footer{margin-top:26px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:.75rem;color:var(--muted);flex-wrap:wrap}
+.linklike{border:0;background:none;color:var(--accent);cursor:pointer;font-size:.75rem;padding:0;text-decoration:underline;text-underline-offset:3px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:.85rem;box-shadow:var(--shadow);z-index:40;max-width:90vw}
+@media (prefers-reduced-motion:no-preference){
+  .btn,.icon-btn,.tab,.cat-chip,.nav-btn,.ybar-fill{transition:background-color .15s,color .15s,border-color .15s}
+  .modal{animation:rise .18s ease-out}
+  @keyframes rise{from{transform:translateY(10px);opacity:.6}to{transform:none;opacity:1}}
+}
 @media (max-width:560px){
-  .day{grid-template-columns:72px 1fr;padding:12px 14px}
+  .day{grid-template-columns:76px 1fr;padding:12px 14px}
   .f-grid{grid-template-columns:1fr}
-  .summary,.form{padding:18px 16px}
+  .summary{padding:18px 16px}
+  .year{padding:16px 14px}
 }
 `;
 
+/* ---------- domain data ---------- */
 const CATS = [
   {id:'sub',  label:'サブスク'},
   {id:'home', label:'住まい'},
@@ -119,11 +229,65 @@ const CATS = [
   {id:'other',label:'その他'}
 ];
 const CAT_MAP = Object.fromEntries(CATS.map(c=>[c.id,c]));
+const METHODS = [
+  {id:'card', label:'クレジットカード'},
+  {id:'bank', label:'口座振替'},
+  {id:'cash', label:'現金・コンビニ'},
+  {id:'other',label:'その他'}
+];
+const METHOD_MAP = Object.fromEntries(METHODS.map(m=>[m.id,m]));
+const FREQS = [
+  {id:'monthly',  label:'毎月'},
+  {id:'bimonthly',label:'隔月'},
+  {id:'yearly',   label:'年1回'}
+];
+const FREQ_MAP = Object.fromEntries(FREQS.map(f=>[f.id,f]));
+const PRESETS = [
+  {name:'家賃',           amount:80000, day:27, cat:'home', method:'bank', freq:'monthly'},
+  {name:'電気',           amount:8000,  day:25, cat:'util', method:'bank', freq:'monthly'},
+  {name:'ガス',           amount:5000,  day:25, cat:'util', method:'bank', freq:'monthly'},
+  {name:'水道',           amount:6000,  day:25, cat:'util', method:'bank', freq:'bimonthly'},
+  {name:'スマホ',         amount:3000,  day:10, cat:'net',  method:'card', freq:'monthly'},
+  {name:'Netflix',        amount:1590,  day:1,  cat:'sub',  method:'card', freq:'monthly'},
+  {name:'Spotify',        amount:1080,  day:1,  cat:'sub',  method:'card', freq:'monthly'},
+  {name:'Amazonプライム', amount:600,   day:1,  cat:'sub',  method:'card', freq:'monthly'}
+];
 
+/* ---------- helpers ---------- */
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function yen(n){return '¥' + Number(n||0).toLocaleString('ja-JP');}
+function yen(n){return '¥' + Math.round(Number(n)||0).toLocaleString('ja-JP');}
 function uid(){return Math.random().toString(36).slice(2,8) + Date.now().toString(36);}
+function daysInMonth(y,m){return new Date(y, m, 0).getDate();}
+function occursIn(p,y,m){
+  if(p.freq === 'yearly') return m === p.month;
+  if(p.freq === 'bimonthly') return ((m - p.month) % 2 + 2) % 2 === 0;
+  return true;
+}
+function effDay(p,y,m){return Math.min(p.day, daysInMonth(y,m));}
+function monthlyEquiv(p){
+  if(p.freq === 'yearly') return p.amount/12;
+  if(p.freq === 'bimonthly') return p.amount/2;
+  return p.amount;
+}
+function normalizePayment(p){
+  return {
+    id: p.id || uid(),
+    name: String(p.name||'').slice(0,60),
+    amount: Math.max(1, Math.round(Number(p.amount)||1)),
+    day: Math.min(31, Math.max(1, parseInt(p.day,10)||1)),
+    cat: CAT_MAP[p.cat] ? p.cat : 'other',
+    method: METHOD_MAP[p.method] ? p.method : 'other',
+    freq: FREQ_MAP[p.freq] ? p.freq : 'monthly',
+    month: Math.min(12, Math.max(1, parseInt(p.month,10)||1)),
+    note: String(p.note||'').slice(0,120)
+  };
+}
+function migrate(s){
+  if(!s || !Array.isArray(s.payments)) return {v:2, payments:[]};
+  return {v:2, payments: s.payments.map(normalizePayment)};
+}
 
+/* ---------- self-publishing document template ---------- */
 function docFor(st){
   const json = JSON.stringify(st).replace(/</g,'\\u003c');
   return '<!doctype html>\n<html lang="ja">\n<head>\n'
@@ -134,21 +298,28 @@ function docFor(st){
     + '<script>' + SRC + '</scr' + 'ipt>\n</body>\n</html>';
 }
 
+/* ---------- state ---------- */
 function loadEmbedded(){
   try{
     const el = document.getElementById('app-state');
-    const s = JSON.parse(el ? el.textContent : '');
-    if(s && Array.isArray(s.payments)) return s;
-  }catch(e){}
-  return {payments:[]};
+    return migrate(JSON.parse(el ? el.textContent : ''));
+  }catch(e){ return {v:2, payments:[]}; }
 }
-
 let state = loadEmbedded();
-let art = null;
+let art = null, dl = null;
 let saveMode = 'none';   // 'artifact' | 'local' | 'none'
 let readOnly = false;
-let editingId = null;
-let pendingDelete = null;
+
+const NOW = new Date();
+const view = {
+  y: NOW.getFullYear(), m: NOW.getMonth()+1,
+  tab: 'list', q: '', cats: new Set(), method: '',
+  modal: null,          // null | {mode:'add'} | {mode:'edit', id}
+  pendingDelete: null,  // payment id awaiting delete confirmation
+  modalDelete: false    // delete button in modal awaiting confirmation
+};
+let lastShownTotal = null;
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 document.head.insertAdjacentHTML('beforeend','<style>'+CSS+'</style>');
 const root = document.createElement('div');
@@ -161,20 +332,22 @@ document.body.appendChild(root);
     else{
       saveMode = 'local';
       try{
-        const raw = localStorage.getItem(STORE_KEY);
-        if(raw){ const s = JSON.parse(raw); if(s && Array.isArray(s.payments)) state = s; }
+        const raw = localStorage.getItem(STORE_KEY) || localStorage.getItem(STORE_KEY_V1);
+        if(raw) state = migrate(JSON.parse(raw));
       }catch(e){}
     }
     render();
   })
   .catch(()=>{ saveMode = 'local'; render(); });
+(window.claude && window.claude.use ? window.claude.use('downloads') : Promise.resolve(null))
+  .then(ns=>{ dl = ns; render(); }).catch(()=>{});
 
 function persist(next){
-  state = next;
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify(next)); }catch(e){}
+  state = migrate(next);
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
   render();
   if(art && !readOnly){
-    art.publish(docFor(next)).catch(err=>{
+    art.publish(docFor(state)).catch(err=>{
       const code = err && err.code;
       if(code === 'conflict') return; // 新しい版への再読み込みが始まっている
       if(code === 'not_writer' || code === 'not_granted' || code === 'not_declared'
@@ -198,84 +371,110 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.remove(); }, 3500);
 }
 
+/* ---------- derived data ---------- */
+function paymentsFor(y,m,{filtered=true}={}){
+  let ps = state.payments.filter(p=>occursIn(p,y,m));
+  if(filtered){
+    if(view.q){
+      const q = view.q.toLowerCase();
+      ps = ps.filter(p=>(p.name+' '+p.note).toLowerCase().includes(q));
+    }
+    if(view.cats.size) ps = ps.filter(p=>view.cats.has(p.cat));
+    if(view.method) ps = ps.filter(p=>p.method===view.method);
+  }
+  return ps.slice().sort((a,b)=>effDay(a,y,m)-effDay(b,y,m) || b.amount-a.amount);
+}
+function monthTotal(y,m){
+  return state.payments.filter(p=>occursIn(p,y,m)).reduce((s,p)=>s+p.amount,0);
+}
+
+/* ---------- render ---------- */
 function render(){
-  const now = new Date();
-  const y = now.getFullYear(), mo = now.getMonth()+1, td = now.getDate();
-  const ps = state.payments.slice().sort((a,b)=>a.day-b.day || b.amount-a.amount);
-  const total = ps.reduce((s,p)=>s+p.amount,0);
-  const paid  = ps.filter(p=>p.day<td).reduce((s,p)=>s+p.amount,0);
-  const rest  = total - paid;
-
-  const groups = new Map();
-  ps.forEach(p=>{ if(!groups.has(p.day)) groups.set(p.day,[]); groups.get(p.day).push(p); });
-  const days = [...groups.keys()].sort((a,b)=>a-b);
-
-  let highlightDay = days.find(d=>d>=td);
-  const wraps = highlightDay == null && days.length > 0; // 今月分は終わり、次は来月
-  if(wraps) highlightDay = days[0];
-
-  let nextLine = '';
-  if(highlightDay != null){
-    const items = groups.get(highlightDay);
-    const sum = items.reduce((s,p)=>s+p.amount,0);
-    const label = highlightDay === td ? '今日'
-      : (wraps ? ((mo % 12) + 1) + '月' + highlightDay + '日' : mo + '月' + highlightDay + '日');
-    const names = esc(items[0].name) + (items.length>1 ? ' ほか'+(items.length-1)+'件' : '');
-    nextLine = '<div class="next-line">次の支払い：<b>'+label+'　'+names+'　'+yen(sum)+'</b></div>';
+  const focused = document.activeElement;
+  const focusId = focused && focused.id;
+  let selS=null, selE=null;
+  if(focused && typeof focused.selectionStart === 'number'){
+    try{ selS = focused.selectionStart; selE = focused.selectionEnd; }catch(e){}
   }
 
+  const y = view.y, m = view.m;
+  const today = new Date();
+  const ty = today.getFullYear(), tm = today.getMonth()+1, td = today.getDate();
+  const isCurrent = y===ty && m===tm;
+  const isPast = y<ty || (y===ty && m<tm);
+
+  const all = paymentsFor(y,m,{filtered:false});
+  const ps  = paymentsFor(y,m);
+  const filterActive = !!(view.q || view.cats.size || view.method);
+  const total = all.reduce((s,p)=>s+p.amount,0);
+  const equiv = state.payments.reduce((s,p)=>s+monthlyEquiv(p),0);
+
+  let heroStats;
+  if(isCurrent){
+    const paid = all.filter(p=>effDay(p,y,m)<td).reduce((s,p)=>s+p.amount,0);
+    heroStats = '<span>支払い済み<b>'+yen(paid)+'</b></span>'
+      + '<span>これから<b>'+yen(total-paid)+'</b></span>'
+      + '<span>月平均<b>'+yen(equiv)+'</b></span>';
+  }else{
+    heroStats = '<span>'+all.length+'件の支払い</span>'
+      + '<span>月平均<b>'+yen(equiv)+'</b></span>'
+      + '<span>年間換算<b>'+yen(equiv*12)+'</b></span>';
+  }
+
+  /* next payment line (current month view only) */
+  let nextLine = '';
+  let highlightDay = null, wraps = false;
+  if(isCurrent && all.length){
+    const dayNums = [...new Set(all.map(p=>effDay(p,y,m)))].sort((a,b)=>a-b);
+    highlightDay = dayNums.find(d=>d>=td);
+    if(highlightDay == null){
+      wraps = true;
+      const nm = m===12 ? 1 : m+1, nyy = m===12 ? y+1 : y;
+      const nAll = paymentsFor(nyy,nm,{filtered:false});
+      if(nAll.length){
+        const nd = Math.min(...nAll.map(p=>effDay(p,nyy,nm)));
+        const items = nAll.filter(p=>effDay(p,nyy,nm)===nd);
+        nextLine = nextLineHtml(nm+'月'+nd+'日', items);
+        highlightDay = null;
+      }
+    }else{
+      const items = all.filter(p=>effDay(p,y,m)===highlightDay);
+      nextLine = nextLineHtml(highlightDay===td ? '今日' : m+'月'+highlightDay+'日', items);
+    }
+  }
+
+  /* category stacked bar + legend */
   const catTotals = CATS
-    .map(c=>({...c, sum: ps.filter(p=>p.cat===c.id).reduce((s,p)=>s+p.amount,0)}))
+    .map(c=>({...c, sum: all.filter(p=>p.cat===c.id).reduce((s,p)=>s+p.amount,0)}))
     .filter(c=>c.sum>0);
   const bar = catTotals.map(c=>'<span style="flex:'+c.sum+';background:var(--c-'+c.id+')"></span>').join('');
   const legend = catTotals.map(c=>'<span><span class="dot" style="background:var(--c-'+c.id+')"></span>'+c.label+'<b>'+yen(c.sum)+'</b></span>').join('');
 
-  const summary = ps.length ? (
+  const hero = state.payments.length ? (
     '<section class="card summary">'
-    + '<div class="sum-label">今月の合計</div>'
-    + '<div class="sum-total">'+yen(total)+'</div>'
-    + '<div class="sum-row">'
-    + '<span>支払い済み<b>'+yen(paid)+'</b></span>'
-    + '<span>これから<b>'+yen(rest)+'</b></span>'
-    + '<span>年間換算<b>'+yen(total*12)+'</b></span>'
-    + '</div>'
-    + '<div class="bar">'+bar+'</div>'
-    + '<div class="legend">'+legend+'</div>'
+    + '<div class="sum-label">'+(isCurrent ? '今月の支払い' : y+'年'+m+'月の支払い')+'</div>'
+    + '<div class="sum-total" id="hero-total" data-total="'+total+'">'+yen(total)+'</div>'
+    + '<div class="sum-row">'+heroStats+'</div>'
+    + (catTotals.length ? '<div class="bar">'+bar+'</div><div class="legend">'+legend+'</div>' : '')
     + nextLine
     + '</section>'
-  ) : (
-    '<section class="empty">まだ支払いが登録されていません。<br>家賃やサブスクなど、毎月の支払いを下のフォームから追加してください。</section>'
-  );
+  ) : '';
 
-  const sched = days.map(d=>{
-    const isPaid = d < td;
-    const cls = 'day' + (isPaid ? ' paid' : '') + (d === highlightDay && !isPaid ? ' next-up' : '');
-    let mark = '';
-    if(isPaid) mark = '<span class="stamp">済</span>';
-    else if(d === td) mark = '<span class="tag today">今日</span>';
-    else if(d === highlightDay) mark = '<span class="tag next">'+(wraps?'来月':'つぎ')+'</span>';
-    const items = groups.get(d).map(p=>{
-      const cat = CAT_MAP[p.cat] || CAT_MAP.other;
-      const delBtn = pendingDelete === p.id
-        ? '<button type="button" class="icon-btn del confirm" data-act="del2" data-id="'+p.id+'">本当に削除？</button>'
-        : '<button type="button" class="icon-btn del" data-act="del" data-id="'+p.id+'">削除</button>';
-      return '<div class="item">'
-        + '<span class="item-name">'+esc(p.name)+'</span>'
-        + '<span class="chip"><span class="dot" style="background:var(--c-'+cat.id+')"></span>'+cat.label+'</span>'
-        + '<span class="amt">'+yen(p.amount)+'</span>'
-        + '<span class="item-actions">'
-        + '<button type="button" class="icon-btn" data-act="edit" data-id="'+p.id+'">編集</button>'
-        + delBtn
-        + '</span></div>';
-    }).join('');
-    return '<div class="'+cls+'"><div class="day-col"><span class="day-num">'+d+'<small>日</small></span>'+mark+'</div><div class="items">'+items+'</div></div>';
-  }).join('');
-
-  const editing = editingId ? ps.find(p=>p.id===editingId) : null;
-  const dayOpts = Array.from({length:31},(_,i)=>i+1)
-    .map(d=>'<option value="'+d+'"'+((editing?editing.day:1)===d?' selected':'')+'>'+d+'日</option>').join('');
-  const catOpts = CATS
-    .map(c=>'<option value="'+c.id+'"'+((editing?editing.cat:'sub')===c.id?' selected':'')+'>'+c.label+'</option>').join('');
+  /* tab content */
+  let content = '';
+  if(!state.payments.length){
+    content = '<section class="empty">まだ支払いが登録されていません。<br>家賃やサブスクなど、毎月・隔月・年1回の支払いを登録すると、<br>月ごとの合計やカレンダーがここに表示されます。'
+      + '<div><button class="btn btn-primary" data-act="add">最初の支払いを追加</button></div></section>';
+  }else if(view.tab === 'list'){
+    content = filtersHtml() + listHtml(ps, y, m, {isCurrent, isPast, td, highlightDay});
+  }else if(view.tab === 'cal'){
+    content = filtersHtml() + calendarHtml(ps, y, m, {isCurrent, isPast, td, highlightDay});
+  }else{
+    content = yearHtml(y, {ty, tm});
+  }
+  if(state.payments.length && view.tab!=='year' && filterActive && !ps.length){
+    content += '<section class="empty" style="margin-top:10px">条件に合う支払いがありません。</section>';
+  }
 
   const saveNote = saveMode === 'artifact' ? '変更は自動で保存されます'
     : saveMode === 'local' ? 'この端末（ブラウザ）に保存されます' : '';
@@ -283,63 +482,367 @@ function render(){
   root.innerHTML =
     '<header class="masthead">'
     + '<div><div class="eyebrow">毎月の支払いをひと目で</div><h1>まいつき帳</h1></div>'
-    + '<div class="month">'+y+'年'+mo+'月</div>'
+    + '<div><div class="monthnav">'
+    + '<button class="nav-btn" data-act="prev" aria-label="前の月">‹</button>'
+    + '<span class="month-label">'+y+'年'+m+'月</span>'
+    + '<button class="nav-btn" data-act="next" aria-label="次の月">›</button>'
+    + '</div>'
+    + (isCurrent ? '' : '<div style="text-align:center"><button class="today-chip" data-act="today">今月に戻る</button></div>')
+    + '</div>'
     + '</header>'
-    + summary
-    + (ps.length ? '<div class="section-title">支払いスケジュール</div><section class="card sched">'+sched+'</section>' : '')
-    + '<div class="section-title">'+(editing?'支払いを編集':'支払いを追加')+'</div>'
-    + '<section class="card form"><form id="pay-form">'
+    + hero
+    + (state.payments.length ?
+      '<div class="tabs" role="tablist">'
+      + tabBtn('list','リスト') + tabBtn('cal','カレンダー') + tabBtn('year','年間')
+      + '</div>' : '')
+    + content
+    + '<footer><span>全'+state.payments.length+'件を登録中　'+saveNote+'</span>'
+    + (dl && state.payments.length ? '<button class="linklike" data-act="csv">CSVで書き出す</button>' : '')
+    + '</footer>'
+    + (view.modal ? modalHtml() : '');
+
+  if(!view.modal){
+    let fab = document.getElementById('fab');
+    if(!fab && state.payments.length){
+      fab = document.createElement('button');
+      fab.id='fab'; fab.className='fab'; fab.dataset.act='add'; fab.textContent='＋ 支払いを追加';
+      document.body.appendChild(fab);
+      fab.addEventListener('click',()=>openModal({mode:'add'}));
+    }
+    if(fab && !state.payments.length){ fab.remove(); }
+  }else{
+    const fab = document.getElementById('fab'); if(fab) fab.remove();
+  }
+
+  /* restore focus lost to re-render */
+  if(focusId){
+    const el = document.getElementById(focusId);
+    if(el){
+      el.focus();
+      if(selS!=null && typeof el.setSelectionRange==='function'){
+        try{ el.setSelectionRange(selS,selE); }catch(e){}
+      }
+    }
+  }
+
+  animateHero(total);
+}
+
+function tabBtn(id,label){
+  return '<button class="tab'+(view.tab===id?' active':'')+'" role="tab" aria-selected="'+(view.tab===id)+'" data-act="tab" data-tab="'+id+'">'+label+'</button>';
+}
+
+function nextLineHtml(when, items){
+  const sum = items.reduce((s,p)=>s+p.amount,0);
+  const names = esc(items[0].name) + (items.length>1 ? ' ほか'+(items.length-1)+'件' : '');
+  return '<div class="next-line">次の支払い：<b>'+when+'　'+names+'　'+yen(sum)+'</b></div>';
+}
+
+function filtersHtml(){
+  const chips = CATS.map(c=>{
+    const on = view.cats.has(c.id);
+    return '<button class="cat-chip'+(on?' active':'')+'" data-act="cat" data-cat="'+c.id+'" aria-pressed="'+on+'">'
+      + '<span class="dot" style="background:var(--c-'+c.id+')"></span>'+c.label+'</button>';
+  }).join('');
+  const methods = '<option value="">支払い方法：すべて</option>'
+    + METHODS.map(mt=>'<option value="'+mt.id+'"'+(view.method===mt.id?' selected':'')+'>'+mt.label+'</option>').join('');
+  return '<div class="filters">'
+    + '<input id="search" type="search" placeholder="名前・メモで検索" value="'+esc(view.q)+'" autocomplete="off">'
+    + '<select id="f-method" aria-label="支払い方法で絞り込み">'+methods+'</select>'
+    + '</div><div class="cat-chips">'+chips+'</div>';
+}
+
+function itemMeta(p){
+  const bits = [];
+  if(p.freq==='yearly') bits.push('年1回（'+p.month+'月）');
+  bits.push(METHOD_MAP[p.method].label);
+  if(p.note) bits.push(esc(p.note));
+  return bits.join('　');
+}
+
+function listHtml(ps, y, m, ctx){
+  if(!ps.length) return '';
+  const dim = daysInMonth(y,m);
+  const groups = new Map();
+  ps.forEach(p=>{ const d = effDay(p,y,m); if(!groups.has(d)) groups.set(d,[]); groups.get(d).push(p); });
+  const days = [...groups.keys()].sort((a,b)=>a-b);
+  const rows = days.map(d=>{
+    const isPaid = ctx.isPast || (ctx.isCurrent && d < ctx.td);
+    const isToday = ctx.isCurrent && d === ctx.td;
+    const isNext = ctx.isCurrent && d === ctx.highlightDay && !isPaid;
+    const cls = 'day' + (isPaid?' paid':'') + (isNext?' next-up':'');
+    let mark = '';
+    if(isPaid) mark = '<span class="stamp">済</span>';
+    else if(isToday) mark = '<span class="tag today">今日</span>';
+    else if(isNext) mark = '<span class="tag next">つぎ</span>';
+    const eom = groups.get(d).some(p=>p.day>dim) ? '<span class="eom-note">（月末扱い）</span>' : '';
+    const items = groups.get(d).map(p=>{
+      const cat = CAT_MAP[p.cat];
+      const delBtn = view.pendingDelete === p.id
+        ? '<button type="button" class="icon-btn del confirm" data-act="del2" data-id="'+p.id+'">本当に削除？</button>'
+        : '<button type="button" class="icon-btn del" data-act="del" data-id="'+p.id+'">削除</button>';
+      return '<div class="item">'
+        + '<div class="item-main"><span class="item-name">'+esc(p.name)
+        + (p.freq!=='monthly' ? '<span class="freq-badge">'+(p.freq==='yearly'?'年1回':'隔月')+'</span>' : '')
+        + '</span><span class="item-sub">'+itemMeta(p)+'</span></div>'
+        + '<span class="chip"><span class="dot" style="background:var(--c-'+cat.id+')"></span>'+cat.label+'</span>'
+        + '<span class="amt">'+yen(p.amount)+'</span>'
+        + '<span class="item-actions">'
+        + '<button type="button" class="icon-btn" data-act="edit" data-id="'+p.id+'">編集</button>'
+        + delBtn
+        + '</span></div>';
+    }).join('');
+    return '<div class="'+cls+'"><div class="day-col"><span class="day-num">'+d+'<small>日</small></span>'+mark+eom+'</div><div class="items">'+items+'</div></div>';
+  }).join('');
+  return '<section class="card sched">'+rows+'</section>';
+}
+
+function calendarHtml(ps, y, m, ctx){
+  const dim = daysInMonth(y,m);
+  const first = new Date(y, m-1, 1).getDay(); // 0=Sun
+  const byDay = new Map();
+  ps.forEach(p=>{ const d = effDay(p,y,m); if(!byDay.has(d)) byDay.set(d,[]); byDay.get(d).push(p); });
+  const wd = ['日','月','火','水','木','金','土']
+    .map((w,i)=>'<div class="cal-wd'+(i===0?' sun':'')+'">'+w+'</div>').join('');
+  let cells = '';
+  for(let i=0;i<first;i++) cells += '<div class="cal-cell blank"></div>';
+  for(let d=1;d<=dim;d++){
+    const items = byDay.get(d) || [];
+    const isPaid = ctx.isPast || (ctx.isCurrent && d < ctx.td);
+    const isToday = ctx.isCurrent && d === ctx.td;
+    const isNext = ctx.isCurrent && d === ctx.highlightDay && !isPaid && items.length;
+    const cls = 'cal-cell' + (items.length?' has':'') + (isToday?' today':'') + (isNext?' next-up':'') + (isPaid?' past':'');
+    const shown = items.slice(0,3).map(p=>
+      '<button type="button" class="cal-item" data-act="edit" data-id="'+p.id+'" title="'+esc(p.name)+' '+yen(p.amount)+'">'
+      + '<span class="dot" style="background:var(--c-'+p.cat+')"></span>'
+      + '<span class="cal-item-name">'+esc(p.name)+'</span></button>').join('');
+    const more = items.length>3 ? '<span class="cal-more">＋'+(items.length-3)+'件</span>' : '';
+    const sum = items.reduce((s,p)=>s+p.amount,0);
+    cells += '<div class="'+cls+'"><span class="cal-daynum">'+d+'</span>'
+      + '<div class="cal-items">'+shown+more+'</div>'
+      + (items.length ? '<span class="cal-daytotal">'+yen(sum)+'</span>' : '')
+      + '</div>';
+  }
+  return '<section class="card cal"><div class="cal-grid">'+wd+cells+'</div></section>';
+}
+
+function yearHtml(y, ctx){
+  const totals = Array.from({length:12},(_,i)=>monthTotal(y,i+1));
+  const max = Math.max(...totals, 1);
+  const bars = totals.map((t,i)=>{
+    const m = i+1;
+    const cur = y===ctx.ty && m===ctx.tm;
+    const h = Math.round(t/max*100);
+    return '<button type="button" class="ybar'+(cur?' cur':'')+'" data-act="goto" data-m="'+m+'"'
+      + ' data-tip="'+y+'年'+m+'月　'+yen(t)+'" aria-label="'+y+'年'+m+'月 '+yen(t)+'">'
+      + '<span class="ybar-fill" style="height:'+Math.max(h, t>0?3:1)+'%"></span></button>';
+  }).join('');
+  const labels = totals.map((t,i)=>'<span class="'+(y===ctx.ty && i+1===ctx.tm?'cur':'')+'">'+(i+1)+'月</span>').join('');
+  const annual = totals.reduce((s,t)=>s+t,0);
+  const catRows = CATS.map(c=>{
+    let sum = 0;
+    for(let m=1;m<=12;m++) sum += state.payments.filter(p=>p.cat===c.id && occursIn(p,y,m)).reduce((s,p)=>s+p.amount,0);
+    return {c, sum};
+  }).filter(r=>r.sum>0)
+    .sort((a,b)=>b.sum-a.sum)
+    .map(r=>'<tr><td><span class="dot" style="background:var(--c-'+r.c.id+')"></span>'+r.c.label+'</td>'
+      + '<td class="num">'+yen(r.sum/12)+'</td><td class="num">'+yen(r.sum)+'</td></tr>').join('');
+  return '<section class="card year">'
+    + '<h2>'+y+'年の月別合計</h2>'
+    + '<div class="ychart">'+bars+'</div>'
+    + '<div class="ychart-labels">'+labels+'</div>'
+    + '<table class="ytable"><thead><tr><th>カテゴリ</th><th class="num">月平均</th><th class="num">年間</th></tr></thead><tbody>'
+    + catRows
+    + '<tr><td>合計</td><td class="num">'+yen(annual/12)+'</td><td class="num">'+yen(annual)+'</td></tr>'
+    + '</tbody></table>'
+    + '</section>';
+}
+
+function modalHtml(){
+  const editing = view.modal.mode==='edit' ? state.payments.find(p=>p.id===view.modal.id) : null;
+  const v = editing || {name:'', amount:'', day:27, cat:'sub', method:'card', freq:'monthly', month:(new Date()).getMonth()+1, note:''};
+  const dayOpts = Array.from({length:31},(_,i)=>i+1)
+    .map(d=>'<option value="'+d+'"'+(v.day===d?' selected':'')+'>'+d+'日'+(d>=29?'（ない月は月末）':'')+'</option>').join('');
+  const catOpts = CATS.map(c=>'<option value="'+c.id+'"'+(v.cat===c.id?' selected':'')+'>'+c.label+'</option>').join('');
+  const methodOpts = METHODS.map(mt=>'<option value="'+mt.id+'"'+(v.method===mt.id?' selected':'')+'>'+mt.label+'</option>').join('');
+  const freqOpts = FREQS.map(f=>'<option value="'+f.id+'"'+(v.freq===f.id?' selected':'')+'>'+f.label+'</option>').join('');
+  const monthOpts = Array.from({length:12},(_,i)=>i+1)
+    .map(mm=>'<option value="'+mm+'"'+(v.month===mm?' selected':'')+'>'+mm+'月</option>').join('');
+  const presets = editing ? '' :
+    '<div class="presets">'
+    + PRESETS.map((p,i)=>'<button type="button" class="preset" data-act="preset" data-i="'+i+'">'+esc(p.name)+'</button>').join('')
+    + '</div>';
+  const delBtn = editing
+    ? (view.modalDelete
+      ? '<button type="button" class="btn btn-danger confirm" data-act="mdel2">本当に削除する</button>'
+      : '<button type="button" class="btn btn-danger" data-act="mdel">削除</button>')
+    : '';
+  return '<div class="overlay" data-act="overlay"><div class="modal" role="dialog" aria-modal="true" aria-label="'+(editing?'支払いを編集':'支払いを追加')+'">'
+    + '<h2>'+(editing?'支払いを編集':'支払いを追加')+'</h2>'
+    + presets
+    + '<form id="pay-form">'
     + '<div class="f-grid">'
-    + '<div class="f-name"><label for="f-name">名前</label><input id="f-name" required maxlength="60" placeholder="例：家賃、Netflix、電気代" value="'+(editing?esc(editing.name):'')+'"></div>'
-    + '<div><label for="f-amount">金額（円）</label><input id="f-amount" type="number" min="1" step="1" inputmode="numeric" required value="'+(editing?editing.amount:'')+'"></div>'
-    + '<div><label for="f-day">支払日</label><select id="f-day">'+dayOpts+'</select></div>'
-    + '<div><label for="f-cat">カテゴリ</label><select id="f-cat">'+catOpts+'</select></div>'
+    + '<div class="f-full"><label for="m-name">名前</label><input id="m-name" required maxlength="60" placeholder="例：家賃、Netflix、電気代" value="'+esc(v.name)+'"></div>'
+    + '<div><label for="m-amount">金額（円）</label><input id="m-amount" type="number" min="1" step="1" inputmode="numeric" required value="'+v.amount+'"></div>'
+    + '<div><label for="m-freq">頻度</label><select id="m-freq">'+freqOpts+'</select></div>'
+    + '<div><label for="m-day">支払日</label><select id="m-day">'+dayOpts+'</select></div>'
+    + '<div id="m-month-wrap" class="'+(v.freq==='monthly'?'hidden':'')+'"><label for="m-month" id="m-month-label">'+(v.freq==='yearly'?'支払月':'支払月（基準）')+'</label><select id="m-month">'+monthOpts+'</select></div>'
+    + '<div><label for="m-cat">カテゴリ</label><select id="m-cat">'+catOpts+'</select></div>'
+    + '<div><label for="m-method">支払い方法</label><select id="m-method">'+methodOpts+'</select></div>'
+    + '<div class="f-full"><label for="m-note">メモ（任意）</label><input id="m-note" maxlength="120" placeholder="例：更新は4月、解約検討中" value="'+esc(v.note)+'"></div>'
     + '</div>'
     + '<div class="f-actions">'
     + '<button class="btn btn-primary" type="submit">'+(editing?'保存する':'追加する')+'</button>'
-    + (editing ? '<button class="btn btn-ghost" type="button" data-act="cancel">キャンセル</button>' : '')
+    + '<button class="btn btn-ghost" type="button" data-act="close">キャンセル</button>'
+    + delBtn
     + '</div>'
-    + '</form></section>'
-    + '<footer><span>'+ps.length+'件の支払い</span><span>'+saveNote+'</span></footer>';
+    + '</form></div></div>';
+}
+
+/* hero count-up */
+function animateHero(target){
+  const el = document.getElementById('hero-total');
+  if(!el){ lastShownTotal = null; return; }
+  if(reducedMotion || lastShownTotal === null || lastShownTotal === target){
+    lastShownTotal = target; return;
+  }
+  const from = lastShownTotal, dur = 400, t0 = performance.now();
+  lastShownTotal = target;
+  (function tick(t){
+    const k = Math.min(1,(t-t0)/dur), e = 1-Math.pow(1-k,3);
+    el.textContent = yen(from + (target-from)*e);
+    if(k<1) requestAnimationFrame(tick);
+  })(t0);
+}
+
+/* year-bar tooltip */
+let tipEl = null;
+function showTip(text,x,yy){
+  if(!tipEl){ tipEl = document.createElement('div'); tipEl.className='ytip'; document.body.appendChild(tipEl); }
+  tipEl.textContent = text;
+  tipEl.style.left = Math.min(x+12, innerWidth-140)+'px';
+  tipEl.style.top = (yy-36)+'px';
+}
+function hideTip(){ if(tipEl){ tipEl.remove(); tipEl = null; } }
+
+/* ---------- actions ---------- */
+function openModal(mo){ view.modal = mo; view.modalDelete = false; render();
+  const f = document.getElementById('m-name'); if(f) f.focus(); }
+function closeModal(){ view.modal = null; view.modalDelete = false; render(); }
+function shiftMonth(d){
+  let m = view.m + d, y = view.y;
+  if(m<1){ m=12; y--; } if(m>12){ m=1; y++; }
+  view.y=y; view.m=m; view.pendingDelete=null; render();
+}
+function exportCsv(){
+  if(!dl) return;
+  const q = s => '"'+String(s).replace(/"/g,'""')+'"';
+  const head = ['名前','金額','頻度','支払日','支払月','カテゴリ','支払い方法','メモ','月換算'];
+  const rows = state.payments.map(p=>[
+    p.name, p.amount, FREQ_MAP[p.freq].label, p.day+'日',
+    p.freq==='monthly'?'':p.month+'月',
+    CAT_MAP[p.cat].label, METHOD_MAP[p.method].label, p.note, Math.round(monthlyEquiv(p))
+  ]);
+  const csv = '\uFEFF' + [head].concat(rows).map(r=>r.map(q).join(',')).join('\r\n');
+  dl.save({filename:'maitsuki-cho.csv', data:csv})
+    .then(()=>toast('CSVを保存しました'))
+    .catch(err=>{ if(err && err.code!=='declined') toast('CSVを保存できませんでした'); });
 }
 
 root.addEventListener('click', e=>{
   const b = e.target.closest('[data-act]');
   if(!b) return;
   const act = b.dataset.act, id = b.dataset.id;
-  if(act === 'edit'){
-    editingId = id; pendingDelete = null; render();
-    const f = document.getElementById('f-name');
-    if(f) f.focus();
-  }else if(act === 'del'){
-    pendingDelete = id; render();
-  }else if(act === 'del2'){
-    if(editingId === id) editingId = null;
-    pendingDelete = null;
-    persist({payments: state.payments.filter(p=>p.id !== id)});
-  }else if(act === 'cancel'){
-    editingId = null; render();
+  if(act==='prev') shiftMonth(-1);
+  else if(act==='next') shiftMonth(1);
+  else if(act==='today'){ view.y=NOW.getFullYear(); view.m=NOW.getMonth()+1; render(); }
+  else if(act==='tab'){ view.tab=b.dataset.tab; view.pendingDelete=null; render(); }
+  else if(act==='cat'){
+    const c=b.dataset.cat;
+    if(view.cats.has(c)) view.cats.delete(c); else view.cats.add(c);
+    render();
   }
+  else if(act==='add') openModal({mode:'add'});
+  else if(act==='edit') openModal({mode:'edit', id});
+  else if(act==='del'){ view.pendingDelete=id; render(); }
+  else if(act==='del2'){
+    view.pendingDelete=null;
+    persist({payments: state.payments.filter(p=>p.id!==id)});
+  }
+  else if(act==='close') closeModal();
+  else if(act==='overlay'){ if(e.target===b) closeModal(); }
+  else if(act==='mdel'){ view.modalDelete=true; render(); }
+  else if(act==='mdel2'){
+    const pid=view.modal && view.modal.id;
+    view.modal=null; view.modalDelete=false;
+    persist({payments: state.payments.filter(p=>p.id!==pid)});
+  }
+  else if(act==='preset'){
+    const p = PRESETS[Number(b.dataset.i)];
+    if(!p) return;
+    const set=(fid,val)=>{ const el=document.getElementById(fid); if(el) el.value=val; };
+    set('m-name',p.name); set('m-amount',p.amount); set('m-day',p.day);
+    set('m-cat',p.cat); set('m-method',p.method); set('m-freq',p.freq);
+    const wrap=document.getElementById('m-month-wrap');
+    if(wrap) wrap.classList.toggle('hidden', p.freq==='monthly');
+    const amt=document.getElementById('m-amount'); if(amt){ amt.focus(); amt.select(); }
+  }
+  else if(act==='goto'){ view.m=Number(b.dataset.m); view.tab='list'; hideTip(); render(); }
+  else if(act==='csv') exportCsv();
 });
 
-root.addEventListener('submit', e=>{
-  if(e.target.id !== 'pay-form') return;
-  e.preventDefault();
-  const val = id => { const el = document.getElementById(id); return el ? el.value : ''; };
-  const name = val('f-name').trim();
-  const amount = Math.round(Number(val('f-amount')));
-  const day = Math.min(31, Math.max(1, parseInt(val('f-day'),10) || 1));
-  const cat = CAT_MAP[val('f-cat')] ? val('f-cat') : 'other';
-  if(!name || !(amount > 0)) return;
-  let next;
-  if(editingId){
-    next = state.payments.map(p=>p.id===editingId ? {...p, name, amount, day, cat} : p);
-    editingId = null;
-  }else{
-    next = state.payments.concat([{id: uid(), name, amount, day, cat}]);
+root.addEventListener('input', e=>{
+  if(e.target.id==='search'){ view.q=e.target.value; render(); }
+});
+root.addEventListener('change', e=>{
+  if(e.target.id==='f-method'){ view.method=e.target.value; render(); }
+  if(e.target.id==='m-freq'){
+    const wrap=document.getElementById('m-month-wrap');
+    const lab=document.getElementById('m-month-label');
+    if(wrap) wrap.classList.toggle('hidden', e.target.value==='monthly');
+    if(lab) lab.textContent = e.target.value==='yearly' ? '支払月' : '支払月（基準）';
   }
-  pendingDelete = null;
+});
+root.addEventListener('submit', e=>{
+  if(e.target.id!=='pay-form') return;
+  e.preventDefault();
+  const val = id => { const el=document.getElementById(id); return el ? el.value : ''; };
+  const p = normalizePayment({
+    id: view.modal && view.modal.mode==='edit' ? view.modal.id : undefined,
+    name: val('m-name').trim(), amount: val('m-amount'), day: val('m-day'),
+    cat: val('m-cat'), method: val('m-method'), freq: val('m-freq'),
+    month: val('m-month'), note: val('m-note').trim()
+  });
+  if(!p.name || !(Number(val('m-amount'))>0)) return;
+  let next;
+  if(view.modal && view.modal.mode==='edit'){
+    next = state.payments.map(x=>x.id===p.id ? p : x);
+  }else{
+    next = state.payments.concat([p]);
+  }
+  view.modal=null; view.modalDelete=false; view.pendingDelete=null;
   persist({payments: next});
+});
+root.addEventListener('mouseover', e=>{
+  const b = e.target.closest('.ybar');
+  if(b) showTip(b.dataset.tip, e.clientX, e.clientY);
+});
+root.addEventListener('mousemove', e=>{
+  const b = e.target.closest('.ybar');
+  if(b && tipEl) showTip(b.dataset.tip, e.clientX, e.clientY);
+});
+root.addEventListener('mouseout', e=>{
+  if(e.target.closest('.ybar')) hideTip();
+});
+root.addEventListener('focusin', e=>{
+  const b = e.target.closest('.ybar');
+  if(b){ const r=b.getBoundingClientRect(); showTip(b.dataset.tip, r.left, r.top); }
+});
+root.addEventListener('focusout', e=>{
+  if(e.target.closest('.ybar')) hideTip();
+});
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape' && view.modal) closeModal();
 });
 
 render();
