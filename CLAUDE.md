@@ -2,51 +2,47 @@
 
 Guidance for Claude Code and other AI assistants working in this repository.
 
-## Current repository state
-
-**This repository is empty.** As of the creation of this file it contains no
-source code, no build configuration, no tests, and no commit history — this
-file is the initial commit.
-
-Everything below is therefore a scaffold. Do not treat any section as
-describing real, existing behaviour until it has been filled in against
-actual code. If you are the first assistant to work here after code has been
-added, replace the placeholder sections with what you find in the tree, and
-delete this notice.
-
 ## Project overview
 
-_To be filled in._ Record here: what the project does, who it is for, and the
-one or two design decisions a newcomer would otherwise get wrong.
+「まいつき帳」— a single-file web app for seeing all of one's monthly
+recurring payments (rent, subscriptions, utilities…) at a glance. Everything
+lives in `index.html`: markup, styles, and script are inline, with Google
+Fonts as the only external dependency. UI copy is Japanese.
+
+Design decision a newcomer would get wrong: the app republishes **itself** to
+persist data. State is embedded as JSON in
+`<script type="application/json" id="app-state">`, and on save the script
+rebuilds the whole document from its own source
+(`document.currentScript.textContent`) via `docFor()` and calls the Claude
+Artifact runtime's `artifact.publish()`. When that runtime is absent (file
+opened directly), it falls back to `localStorage`. Consequences:
+
+- Never write a literal `</script>` inside the inline script (it is always
+  split as `'</scr' + 'ipt>'`), and keep the `docFor()` head template in sync
+  with the real `<head>`.
+- The embedded JSON escapes the `<` character as the unicode escape `\u003c` when serialized.
 
 ## Repository structure
 
-_To be filled in._ Once directories exist, describe the top-level layout and
-what belongs in each part — enough that an assistant can guess correctly
-where a new file should go.
+- `index.html` — the entire application.
+- `README.md` — user-facing description (Japanese).
 
 ## Development workflow
 
-### Setup
+No build, no dependencies. Open `index.html` in a browser to run it.
 
-_To be filled in._ The exact commands to get from a fresh clone to a working
-environment.
-
-### Build, test, lint
-
-_To be filled in._ Record the canonical commands, not approximations — an
-assistant will run these verbatim. Note which are fast enough to run on every
-change and which are slow.
-
-### Running the application
-
-_To be filled in._
+Quick syntax check after editing the inline script:
+extract the `<script>` body and run `node --check` on it.
 
 ## Conventions
 
-_To be filled in._ Language and formatting rules, naming patterns, error
-handling style, testing approach, and anything that is enforced in review but
-not by tooling.
+- Keep it a single self-contained file; inline any new CSS/JS.
+- Theme tokens: full light palette on bare `:root`; dark overrides live in
+  `@media (prefers-color-scheme: dark)` guarded with
+  `:root:not([data-theme="light"])` **and** duplicated under
+  `:root[data-theme="dark"]`. Never give a color its only definition inside
+  one of those blocks.
+- Escape all user-entered text through `esc()` before interpolating into HTML.
 
 ## Git workflow
 
@@ -60,5 +56,4 @@ not by tooling.
 
 - Prefer reading the code over trusting this file where the two disagree, and
   fix this file when you find a discrepancy.
-- Keep this document short and specific. Sections that restate general good
-  practice should be deleted rather than expanded.
+- Keep this document short and specific.

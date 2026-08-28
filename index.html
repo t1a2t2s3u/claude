@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>まいつき帳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f3f2ed}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:#14161d}}:root[data-theme="dark"] body{background:#14161d}</style>
+</head>
+<body>
+<script type="application/json" id="app-state">{"payments":[]}</script>
+<script>
+'use strict';
+const SRC = document.currentScript.textContent;
+const STORE_KEY = 'maitsuki-cho:v1';
+
+const FONT_LINKS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">';
+const BOOT_STYLE = '<style>body{margin:0;background:#f3f2ed}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:#14161d}}:root[data-theme="dark"] body{background:#14161d}</style>';
+
+const CSS = `
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#f3f2ed; --surface:#ffffff; --surface2:#eceae2; --ink:#232838; --muted:#6e7383;
+  --line:#dcdad0; --accent:#33518f; --accent-ink:#ffffff; --hanko:#c2452d;
+  --c-sub:#7a5ca8; --c-home:#3e6b8c; --c-util:#b07c2e; --c-net:#2e7d74;
+  --c-ins:#a84e62; --c-loan:#8c6a3e; --c-other:#8a8f9c;
+  --shadow:0 1px 2px rgba(35,40,56,.06),0 8px 24px rgba(35,40,56,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#14161d; --surface:#1d212b; --surface2:#262b37; --ink:#e9eaf0; --muted:#9aa0b0;
+    --line:#333947; --accent:#93ace0; --accent-ink:#101523; --hanko:#e0684f;
+    --c-sub:#b09ad6; --c-home:#85aecb; --c-util:#d6a75c; --c-net:#6dbcb0;
+    --c-ins:#d68b9c; --c-loan:#c7a06e; --c-other:#9aa0ac;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14161d; --surface:#1d212b; --surface2:#262b37; --ink:#e9eaf0; --muted:#9aa0b0;
+  --line:#333947; --accent:#93ace0; --accent-ink:#101523; --hanko:#e0684f;
+  --c-sub:#b09ad6; --c-home:#85aecb; --c-util:#d6a75c; --c-net:#6dbcb0;
+  --c-ins:#d68b9c; --c-loan:#c7a06e; --c-other:#9aa0ac;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:36px 20px 96px}
+.masthead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:20px}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;color:var(--muted)}
+h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:1.7rem;margin:2px 0 0;letter-spacing:.06em}
+.month{font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:1rem;color:var(--muted);white-space:nowrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.summary{padding:22px 24px;margin-bottom:8px}
+.sum-label{font-size:.78rem;color:var(--muted);letter-spacing:.08em}
+.sum-total{font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:clamp(2rem,6vw,2.6rem);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.25;margin:2px 0 12px}
+.sum-row{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.sum-row b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600;margin-left:4px}
+.bar{display:flex;gap:2px;height:10px;border-radius:5px;overflow:hidden;margin:16px 0 10px}
+.bar span{min-width:6px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.78rem;color:var(--muted)}
+.legend b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600;margin-left:3px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:0}
+.next-line{margin-top:14px;font-size:.85rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:12px}
+.next-line b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600}
+.section-title{font-size:.8rem;letter-spacing:.1em;color:var(--muted);margin:26px 4px 10px}
+.sched{padding:2px 0}
+.day{display:grid;grid-template-columns:86px 1fr;align-items:start;padding:14px 20px;border-top:1px solid var(--line)}
+.day:first-child{border-top:0}
+.day.next-up{box-shadow:inset 3px 0 0 var(--accent)}
+.day-col{display:flex;align-items:center;padding-top:2px}
+.day-num{font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:1.35rem;font-weight:600;line-height:1.2;font-variant-numeric:tabular-nums}
+.day-num small{font-size:.8rem;font-weight:500;color:var(--muted);margin-left:2px}
+.day.paid .items,.day.paid .day-num{opacity:.5}
+.stamp{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:2px solid var(--hanko);color:var(--hanko);border-radius:50%;font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:.85rem;transform:rotate(-10deg);margin-left:8px;opacity:.85;flex:none}
+.tag{display:inline-block;font-size:.68rem;line-height:1.6;padding:1px 8px;border-radius:999px;margin-left:8px;flex:none}
+.tag.next{background:var(--accent);color:var(--accent-ink)}
+.tag.today{background:var(--hanko);color:#fff}
+.item{display:flex;align-items:center;gap:10px;padding:5px 0;flex-wrap:wrap}
+.item-name{font-weight:500}
+.chip{font-size:.72rem;color:var(--muted);display:inline-flex;align-items:center}
+.amt{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:600}
+.item-actions{display:flex;gap:2px;margin-left:6px}
+.icon-btn{border:0;background:none;color:var(--muted);cursor:pointer;font:inherit;font-size:.72rem;padding:3px 7px;border-radius:6px}
+.icon-btn:hover{background:var(--surface2);color:var(--ink)}
+.icon-btn.del:hover{color:var(--hanko)}
+.icon-btn.confirm{background:var(--hanko);color:#fff}
+.icon-btn.confirm:hover{background:var(--hanko);color:#fff}
+.form{padding:20px 24px}
+.f-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.f-name{grid-column:1/-1}
+label{display:block;font-size:.75rem;color:var(--muted);margin-bottom:4px}
+input,select{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:.95rem}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.f-actions{display:flex;gap:10px;margin-top:14px;align-items:center}
+.btn{border:0;border-radius:8px;padding:10px 20px;font:inherit;font-weight:600;cursor:pointer}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-ghost{background:none;color:var(--muted)}
+.btn-ghost:hover{color:var(--ink)}
+.empty{padding:32px 24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px;margin-bottom:8px;font-size:.9rem}
+footer{margin-top:28px;display:flex;justify-content:space-between;gap:12px;font-size:.75rem;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:.85rem;box-shadow:var(--shadow);z-index:10;max-width:90vw}
+@media (prefers-reduced-motion:no-preference){.btn,.icon-btn{transition:background-color .15s,color .15s}}
+@media (max-width:560px){
+  .day{grid-template-columns:72px 1fr;padding:12px 14px}
+  .f-grid{grid-template-columns:1fr}
+  .summary,.form{padding:18px 16px}
+}
+`;
+
+const CATS = [
+  {id:'sub',  label:'サブスク'},
+  {id:'home', label:'住まい'},
+  {id:'util', label:'水道・光熱'},
+  {id:'net',  label:'通信'},
+  {id:'ins',  label:'保険'},
+  {id:'loan', label:'ローン・カード'},
+  {id:'other',label:'その他'}
+];
+const CAT_MAP = Object.fromEntries(CATS.map(c=>[c.id,c]));
+
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function yen(n){return '¥' + Number(n||0).toLocaleString('ja-JP');}
+function uid(){return Math.random().toString(36).slice(2,8) + Date.now().toString(36);}
+
+function docFor(st){
+  const json = JSON.stringify(st).replace(/</g,'\\u003c');
+  return '<!doctype html>\n<html lang="ja">\n<head>\n'
+    + '<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+    + '<meta name="color-scheme" content="light dark">\n<title>まいつき帳</title>\n'
+    + FONT_LINKS + '\n' + BOOT_STYLE + '\n</head>\n<body>\n'
+    + '<script type="application/json" id="app-state">' + json + '</scr' + 'ipt>\n'
+    + '<script>' + SRC + '</scr' + 'ipt>\n</body>\n</html>';
+}
+
+function loadEmbedded(){
+  try{
+    const el = document.getElementById('app-state');
+    const s = JSON.parse(el ? el.textContent : '');
+    if(s && Array.isArray(s.payments)) return s;
+  }catch(e){}
+  return {payments:[]};
+}
+
+let state = loadEmbedded();
+let art = null;
+let saveMode = 'none';   // 'artifact' | 'local' | 'none'
+let readOnly = false;
+let editingId = null;
+let pendingDelete = null;
+
+document.head.insertAdjacentHTML('beforeend','<style>'+CSS+'</style>');
+const root = document.createElement('div');
+root.className = 'wrap';
+document.body.appendChild(root);
+
+(window.claude && window.claude.use ? window.claude.use('artifact') : Promise.resolve(null))
+  .then(ns=>{
+    if(ns){ art = ns; saveMode = 'artifact'; }
+    else{
+      saveMode = 'local';
+      try{
+        const raw = localStorage.getItem(STORE_KEY);
+        if(raw){ const s = JSON.parse(raw); if(s && Array.isArray(s.payments)) state = s; }
+      }catch(e){}
+    }
+    render();
+  })
+  .catch(()=>{ saveMode = 'local'; render(); });
+
+function persist(next){
+  state = next;
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(next)); }catch(e){}
+  render();
+  if(art && !readOnly){
+    art.publish(docFor(next)).catch(err=>{
+      const code = err && err.code;
+      if(code === 'conflict') return; // 新しい版への再読み込みが始まっている
+      if(code === 'not_writer' || code === 'not_granted' || code === 'not_declared'
+        || code === 'capability_disabled' || code === 'capability_removed' || code === 'consent_required'){
+        readOnly = true; saveMode = 'local';
+        toast('このページには保存できないため、この端末にのみ保存しました');
+        render();
+        return;
+      }
+      toast('保存に失敗しました。時間をおいてもう一度お試しください');
+    });
+  }
+}
+
+let toastTimer = null;
+function toast(msg){
+  let el = document.getElementById('toast');
+  if(!el){ el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; document.body.appendChild(el); }
+  el.textContent = msg;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ el.remove(); }, 3500);
+}
+
+function render(){
+  const now = new Date();
+  const y = now.getFullYear(), mo = now.getMonth()+1, td = now.getDate();
+  const ps = state.payments.slice().sort((a,b)=>a.day-b.day || b.amount-a.amount);
+  const total = ps.reduce((s,p)=>s+p.amount,0);
+  const paid  = ps.filter(p=>p.day<td).reduce((s,p)=>s+p.amount,0);
+  const rest  = total - paid;
+
+  const groups = new Map();
+  ps.forEach(p=>{ if(!groups.has(p.day)) groups.set(p.day,[]); groups.get(p.day).push(p); });
+  const days = [...groups.keys()].sort((a,b)=>a-b);
+
+  let highlightDay = days.find(d=>d>=td);
+  const wraps = highlightDay == null && days.length > 0; // 今月分は終わり、次は来月
+  if(wraps) highlightDay = days[0];
+
+  let nextLine = '';
+  if(highlightDay != null){
+    const items = groups.get(highlightDay);
+    const sum = items.reduce((s,p)=>s+p.amount,0);
+    const label = highlightDay === td ? '今日'
+      : (wraps ? ((mo % 12) + 1) + '月' + highlightDay + '日' : mo + '月' + highlightDay + '日');
+    const names = esc(items[0].name) + (items.length>1 ? ' ほか'+(items.length-1)+'件' : '');
+    nextLine = '<div class="next-line">次の支払い：<b>'+label+'　'+names+'　'+yen(sum)+'</b></div>';
+  }
+
+  const catTotals = CATS
+    .map(c=>({...c, sum: ps.filter(p=>p.cat===c.id).reduce((s,p)=>s+p.amount,0)}))
+    .filter(c=>c.sum>0);
+  const bar = catTotals.map(c=>'<span style="flex:'+c.sum+';background:var(--c-'+c.id+')"></span>').join('');
+  const legend = catTotals.map(c=>'<span><span class="dot" style="background:var(--c-'+c.id+')"></span>'+c.label+'<b>'+yen(c.sum)+'</b></span>').join('');
+
+  const summary = ps.length ? (
+    '<section class="card summary">'
+    + '<div class="sum-label">今月の合計</div>'
+    + '<div class="sum-total">'+yen(total)+'</div>'
+    + '<div class="sum-row">'
+    + '<span>支払い済み<b>'+yen(paid)+'</b></span>'
+    + '<span>これから<b>'+yen(rest)+'</b></span>'
+    + '<span>年間換算<b>'+yen(total*12)+'</b></span>'
+    + '</div>'
+    + '<div class="bar">'+bar+'</div>'
+    + '<div class="legend">'+legend+'</div>'
+    + nextLine
+    + '</section>'
+  ) : (
+    '<section class="empty">まだ支払いが登録されていません。<br>家賃やサブスクなど、毎月の支払いを下のフォームから追加してください。</section>'
+  );
+
+  const sched = days.map(d=>{
+    const isPaid = d < td;
+    const cls = 'day' + (isPaid ? ' paid' : '') + (d === highlightDay && !isPaid ? ' next-up' : '');
+    let mark = '';
+    if(isPaid) mark = '<span class="stamp">済</span>';
+    else if(d === td) mark = '<span class="tag today">今日</span>';
+    else if(d === highlightDay) mark = '<span class="tag next">'+(wraps?'来月':'つぎ')+'</span>';
+    const items = groups.get(d).map(p=>{
+      const cat = CAT_MAP[p.cat] || CAT_MAP.other;
+      const delBtn = pendingDelete === p.id
+        ? '<button type="button" class="icon-btn del confirm" data-act="del2" data-id="'+p.id+'">本当に削除？</button>'
+        : '<button type="button" class="icon-btn del" data-act="del" data-id="'+p.id+'">削除</button>';
+      return '<div class="item">'
+        + '<span class="item-name">'+esc(p.name)+'</span>'
+        + '<span class="chip"><span class="dot" style="background:var(--c-'+cat.id+')"></span>'+cat.label+'</span>'
+        + '<span class="amt">'+yen(p.amount)+'</span>'
+        + '<span class="item-actions">'
+        + '<button type="button" class="icon-btn" data-act="edit" data-id="'+p.id+'">編集</button>'
+        + delBtn
+        + '</span></div>';
+    }).join('');
+    return '<div class="'+cls+'"><div class="day-col"><span class="day-num">'+d+'<small>日</small></span>'+mark+'</div><div class="items">'+items+'</div></div>';
+  }).join('');
+
+  const editing = editingId ? ps.find(p=>p.id===editingId) : null;
+  const dayOpts = Array.from({length:31},(_,i)=>i+1)
+    .map(d=>'<option value="'+d+'"'+((editing?editing.day:1)===d?' selected':'')+'>'+d+'日</option>').join('');
+  const catOpts = CATS
+    .map(c=>'<option value="'+c.id+'"'+((editing?editing.cat:'sub')===c.id?' selected':'')+'>'+c.label+'</option>').join('');
+
+  const saveNote = saveMode === 'artifact' ? '変更は自動で保存されます'
+    : saveMode === 'local' ? 'この端末（ブラウザ）に保存されます' : '';
+
+  root.innerHTML =
+    '<header class="masthead">'
+    + '<div><div class="eyebrow">毎月の支払いをひと目で</div><h1>まいつき帳</h1></div>'
+    + '<div class="month">'+y+'年'+mo+'月</div>'
+    + '</header>'
+    + summary
+    + (ps.length ? '<div class="section-title">支払いスケジュール</div><section class="card sched">'+sched+'</section>' : '')
+    + '<div class="section-title">'+(editing?'支払いを編集':'支払いを追加')+'</div>'
+    + '<section class="card form"><form id="pay-form">'
+    + '<div class="f-grid">'
+    + '<div class="f-name"><label for="f-name">名前</label><input id="f-name" required maxlength="60" placeholder="例：家賃、Netflix、電気代" value="'+(editing?esc(editing.name):'')+'"></div>'
+    + '<div><label for="f-amount">金額（円）</label><input id="f-amount" type="number" min="1" step="1" inputmode="numeric" required value="'+(editing?editing.amount:'')+'"></div>'
+    + '<div><label for="f-day">支払日</label><select id="f-day">'+dayOpts+'</select></div>'
+    + '<div><label for="f-cat">カテゴリ</label><select id="f-cat">'+catOpts+'</select></div>'
+    + '</div>'
+    + '<div class="f-actions">'
+    + '<button class="btn btn-primary" type="submit">'+(editing?'保存する':'追加する')+'</button>'
+    + (editing ? '<button class="btn btn-ghost" type="button" data-act="cancel">キャンセル</button>' : '')
+    + '</div>'
+    + '</form></section>'
+    + '<footer><span>'+ps.length+'件の支払い</span><span>'+saveNote+'</span></footer>';
+}
+
+root.addEventListener('click', e=>{
+  const b = e.target.closest('[data-act]');
+  if(!b) return;
+  const act = b.dataset.act, id = b.dataset.id;
+  if(act === 'edit'){
+    editingId = id; pendingDelete = null; render();
+    const f = document.getElementById('f-name');
+    if(f) f.focus();
+  }else if(act === 'del'){
+    pendingDelete = id; render();
+  }else if(act === 'del2'){
+    if(editingId === id) editingId = null;
+    pendingDelete = null;
+    persist({payments: state.payments.filter(p=>p.id !== id)});
+  }else if(act === 'cancel'){
+    editingId = null; render();
+  }
+});
+
+root.addEventListener('submit', e=>{
+  if(e.target.id !== 'pay-form') return;
+  e.preventDefault();
+  const val = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+  const name = val('f-name').trim();
+  const amount = Math.round(Number(val('f-amount')));
+  const day = Math.min(31, Math.max(1, parseInt(val('f-day'),10) || 1));
+  const cat = CAT_MAP[val('f-cat')] ? val('f-cat') : 'other';
+  if(!name || !(amount > 0)) return;
+  let next;
+  if(editingId){
+    next = state.payments.map(p=>p.id===editingId ? {...p, name, amount, day, cat} : p);
+    editingId = null;
+  }else{
+    next = state.payments.concat([{id: uid(), name, amount, day, cat}]);
+  }
+  pendingDelete = null;
+  persist({payments: next});
+});
+
+render();
+</script>
+</body>
+</html>
