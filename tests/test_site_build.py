@@ -71,6 +71,22 @@ def test_faq_is_linked_from_navigation_and_sitemap(built):
     assert f"{BASE_URL}/faq/" in read(out, "sitemap.xml")
 
 
+def test_chat_widget_is_on_every_site_page(built):
+    """チャット相談ウィジェット。回答は faq.toml の承認済みの文面だけを
+    使うシナリオ式（AI生成なし）。全ページに出て、パネルは hidden で
+    始まる（display:flex が hidden に勝つ事故の回帰確認も兼ねる）。"""
+    _, out = built
+    for page in site_pages(out):
+        html = page.read_text(encoding="utf-8")
+        assert 'id="chatFab"' in html, page
+        assert "#chatPanel[hidden] { display: none; }" in html, page
+    # faq.toml の全問が回答データとして埋め込まれている
+    from seo_meo.site.content import load_faq
+
+    home = read(out, "index.html")
+    assert home.count("{ q: ") == len(load_faq(SITE_ROOT))
+
+
 def test_urls_end_in_a_slash_not_an_extension(built):
     """URL は後から変えると評価を失うので、最初から拡張子を出さない形にする。"""
     _, out = built

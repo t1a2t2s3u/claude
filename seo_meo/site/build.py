@@ -98,6 +98,8 @@ class _Builder:
             testimonials=self.content.testimonials,
             works=self.content.works,
             posts=self.content.posts,
+            # チャット相談ウィジェット（base.html）が全ページで使う
+            faq=self.content.faq,
             page_title=page_title,
             page_description=_truncate(description),
             canonical=f"{self.settings.canonical_base}{path}",
@@ -262,7 +264,6 @@ class _Builder:
                 "お問い合わせの前の疑問にお答えします。"
             ),
             section="faq",
-            faq=self.content.faq,
             trail=trail,
             jsonld=jsonld,
         )

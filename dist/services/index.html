@@ -465,5 +465,148 @@
   <a class="mobile-line" href="https://lin.ee/WxoWd1J" rel="noopener">LINEで相談</a>
   <a class="mobile-form" href="/contact/">見積り依頼</a>
 </div>
+
+<button id="chatFab" type="button" aria-label="チャットで質問する">
+  <span class="chat-fab-icon">💬</span><span class="chat-fab-label">質問する</span>
+</button>
+<div id="chatPanel" hidden>
+  <div class="chat-head">
+    <div>
+      <strong>辰弥塗装工業</strong>
+      <small>よくあるご質問にお答えします</small>
+    </div>
+    <button type="button" id="chatClose" aria-label="閉じる">✕</button>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+</div>
+<style>
+  #chatFab {
+    position: fixed; right: 16px; bottom: 16px; z-index: 60;
+    display: inline-flex; align-items: center; gap: .4rem;
+    border: 0; border-radius: 999px; padding: .65rem 1.1rem;
+    background: var(--brand-deep); color: #fff; font: inherit; font-weight: 700;
+    box-shadow: 0 4px 16px rgba(6, 51, 63, .35); cursor: pointer;
+  }
+  .chat-fab-icon { font-size: 1.1rem; }
+  #chatPanel[hidden] { display: none; } /* display:flex が hidden 属性に勝たないように */
+  #chatPanel {
+    position: fixed; right: 12px; bottom: 12px; z-index: 61;
+    width: min(360px, calc(100vw - 24px)); height: min(540px, calc(100vh - 90px));
+    display: flex; flex-direction: column; overflow: hidden;
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(6, 51, 63, .3);
+  }
+  .chat-head {
+    background: var(--brand-deep); color: #fff; padding: .7rem .9rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .chat-head strong { display: block; font-size: .95rem; }
+  .chat-head small { display: block; font-size: .72rem; opacity: .85; font-weight: 400; }
+  #chatClose { border: 0; background: none; color: #fff; font-size: 1.05rem; cursor: pointer; padding: .2rem .4rem; }
+  .chat-body { flex: 1; overflow-y: auto; padding: .8rem; background: #f2f7fa; }
+  .chat-msg { max-width: 85%; border-radius: 12px; padding: .55rem .75rem; margin-bottom: .5rem;
+    font-size: .85rem; line-height: 1.6; white-space: pre-wrap; }
+  .chat-msg.bot { background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+  .chat-msg.user { background: var(--brand-deep); color: #fff; margin-left: auto; border-bottom-right-radius: 4px; }
+  .chat-chips { display: flex; flex-wrap: wrap; gap: .4rem; margin: .2rem 0 .8rem; }
+  .chat-chips button, .chat-chips a {
+    border: 1.5px solid var(--brand-text); background: #fff; color: var(--brand-text);
+    border-radius: 999px; padding: .4rem .8rem; font: inherit; font-size: .78rem; font-weight: 700;
+    cursor: pointer; text-decoration: none;
+  }
+  .chat-chips a.chat-cta { background: var(--accent); border-color: var(--accent); color: #fff; }
+  @media (max-width: 767px) {
+    /* 画面下の電話・LINEバーと重ならないように */
+    #chatFab { bottom: 72px; }
+    #chatPanel { bottom: 68px; height: min(500px, calc(100vh - 140px)); }
+  }
+</style>
+<script>
+(function () {
+  "use strict";
+  var FAQ = [
+    { q: "\u898b\u7a4d\u308a\u306f\u7121\u6599\u3067\u3059\u304b\uff1f\u65ad\u3063\u3066\u3082\u3044\u3044\u3067\u3059\u304b\uff1f", a: ["\u73fe\u5730\u8abf\u67fb\u3082\u304a\u898b\u7a4d\u308a\u3082\u7121\u6599\u3067\u3059\u3002\u304a\u65ad\u308a\u3044\u305f\u3060\u3044\u3066\u3082\u3001\u8cbb\u7528\u306f\u4e00\u5207\u304b\u304b\u308a\u307e\u305b\u3093\u3002", "\u304a\u898b\u7a4d\u308a\u3092\u304a\u51fa\u3057\u3057\u305f\u3042\u3068\u306b\u3001\u3053\u3061\u3089\u304b\u3089\u7e70\u308a\u8fd4\u3057\u3054\u9023\u7d61\u3059\u308b\u3053\u3068\u3082\u3042\u308a\u307e\u305b\u3093\u3002"] },
+    { q: "\u307e\u3060\u5de5\u4e8b\u3059\u308b\u304b\u6c7a\u3081\u3066\u3044\u306a\u3044\u306e\u3067\u3059\u304c\u3001\u76f8\u8ac7\u3060\u3051\u3067\u3082\u3044\u3044\u3067\u3059\u304b\uff1f", a: ["\u69cb\u3044\u307e\u305b\u3093\u3002\u300c\u4eca\u3059\u3050\u3067\u306f\u306a\u3044\u3051\u308c\u3069\u3001\u72b6\u614b\u3060\u3051\u898b\u3066\u307b\u3057\u3044\u300d\u3068\u3044\u3046\u70b9\u691c\u3060\u3051\u306e\u3054\u4f9d\u983c\u3082\u304a\u53d7\u3051\u3057\u3066\u3044\u307e\u3059\u3002", "\u62dd\u898b\u3057\u3066\u300c\u307e\u3060\u5857\u308a\u66ff\u3048\u306e\u5fc5\u8981\u306f\u3042\u308a\u307e\u305b\u3093\u300d\u3068\u3044\u3046\u7d50\u679c\u3067\u3042\u308c\u3070\u3001\u305d\u306e\u3088\u3046\u306b\u304a\u4f1d\u3048\u3057\u307e\u3059\u3002"] },
+    { q: "\u8cbb\u7528\u306f\u3069\u306e\u304f\u3089\u3044\u304b\u304b\u308a\u307e\u3059\u304b\uff1f", a: ["\u8db3\u5834\u30fb\u9ad8\u5727\u6d17\u6d44\u30fb\u30b3\u30fc\u30ad\u30f3\u30b0\u5de5\u4e8b\u30fb\u5916\u58c1\u30fb\u5c4b\u6839\u30fb\u4ed8\u5e2f\u90e8\u306e\u5857\u88c5\u307e\u3067\u3001\u3059\u3079\u3066\u8fbc\u307f\u306e\u30d1\u30c3\u30af\u6599\u91d1\u3067\u3054\u6848\u5185\u3057\u3066\u3044\u307e\u3059\u300230\u576a\u7a0b\u5ea6\u306e\u6238\u5efa\u3066\u306e\u5834\u5408\u306e\u76ee\u5b89\u3092\u6599\u91d1\u30da\u30fc\u30b8\u306b\u8f09\u305b\u3066\u3044\u307e\u3059\u3002", "\u304a\u5bb6\u306b\u3088\u3063\u3066\u5fc5\u8981\u306a\u88dc\u4fee\u304c\u5909\u308f\u308b\u306e\u3067\u3001\u6b63\u78ba\u306a\u91d1\u984d\u306f\u7121\u6599\u306e\u73fe\u5730\u8abf\u67fb\u306e\u3046\u3048\u3067\u304a\u51fa\u3057\u3057\u307e\u3059\u3002"] },
+    { q: "\u5bb6\u307e\u3067\u6765\u3066\u3082\u3089\u3046\u524d\u306b\u3001\u3060\u3044\u305f\u3044\u306e\u91d1\u984d\u3060\u3051\u77e5\u308a\u305f\u3044\u3067\u3059", a: ["LINE\u3067\u3001\u304a\u5bb6\u306e\u5199\u771f\uff08\u6b63\u9762\u304b\u30891\u679a\u30fb\u659c\u3081\u304b\u30891\u679a\uff09\u3068\u3001\u5efa\u7269\u306e\u7e26\u3068\u6a2a\u306e\u3060\u3044\u305f\u3044\u306e\u9577\u3055\u3092\u9001\u3063\u3066\u3044\u305f\u3060\u3051\u308c\u3070\u3001\u304a\u304a\u3088\u305d\u306e\u91d1\u984d\u3092\u304a\u8fd4\u3057\u3057\u307e\u3059\u3002", "\u9577\u3055\u306f\u300c\u305f\u3076\u3093\u3053\u308c\u304f\u3089\u3044\u300d\u3067\u5927\u4e08\u592b\u3067\u3059\u3002"] },
+    { q: "\u5de5\u4e8b\u306b\u306f\u3069\u306e\u304f\u3089\u3044\u65e5\u6570\u304c\u304b\u304b\u308a\u307e\u3059\u304b\uff1f", a: ["\u6238\u5efa\u30662\u968e\u5efa\u3066\u3067\u300110\u65e5\u524d\u5f8c\u304c\u76ee\u5b89\u3067\u3059\u3002\u8db3\u5834\u3092\u7d44\u3080\u3001\u9ad8\u5727\u6d17\u6d44\u3001\u4e0b\u5730\u306e\u88dc\u4fee\u30fb\u30b3\u30fc\u30ad\u30f3\u30b0\u5de5\u4e8b\u3001\u4e0b\u5857\u308a\u30fb\u4e2d\u5857\u308a\u30fb\u4e0a\u5857\u308a\u3001\u8db3\u5834\u3092\u5916\u3059\u3001\u3068\u3044\u3046\u9806\u3067\u9032\u307f\u307e\u3059\u3002", "\u96e8\u3084\u6c17\u6e29\u3067\u5ef6\u3073\u308b\u3053\u3068\u304c\u3042\u308a\u307e\u3059\u3002\u79cb\u7530\u3067\u306f\u7279\u306b\u3001\u6d17\u6d44\u3057\u305f\u3042\u3068\u3057\u3063\u304b\u308a\u4e7e\u304b\u3059\u65e5\u6570\u304c\u5fc5\u8981\u3067\u3059\u3002\u6025\u3044\u3067\u5857\u308b\u3068\u9577\u6301\u3061\u3057\u307e\u305b\u3093\u3002"] },
+    { q: "\u5de5\u4e8b\u4e2d\u306f\u5f15\u3063\u8d8a\u3057\u304c\u5fc5\u8981\u3067\u3059\u304b\uff1f", a: ["\u5fc5\u8981\u3042\u308a\u307e\u305b\u3093\u3002\u5de5\u4e8b\u4e2d\u3082\u3001\u304a\u4f4f\u307e\u3044\u306e\u307e\u307e\u3067\u5927\u4e08\u592b\u3067\u3059\u3002"] },
+    { q: "\u5857\u308a\u66ff\u3048\u306f\u3044\u3064\u9803\u3084\u308b\u306e\u304c\u3044\u3044\u3067\u3059\u304b\uff1f", a: ["\u79cb\u7530\u3067\u5916\u58c1\u5857\u88c5\u304c\u3067\u304d\u308b\u306e\u306f\u3001\u304a\u304a\u3080\u306d4\u6708\u304b\u308911\u6708\u307e\u3067\u3067\u3059\u300212\u6708\u301c3\u6708\u306f\u3001\u96ea\u3068\u4f4e\u6e29\u306e\u305f\u3081\u96e3\u3057\u304f\u306a\u308a\u307e\u3059\u3002", "\u3054\u5e0c\u671b\u306e\u6642\u671f\u306e2\u301c3\u304b\u6708\u524d\u306b\u3054\u76f8\u8ac7\u3044\u305f\u3060\u304f\u3068\u3001\u4f59\u88d5\u3092\u6301\u3063\u3066\u9032\u3081\u3089\u308c\u307e\u3059\u3002\u3068\u304f\u306b4\u301c5\u6708\u306f\u5e0c\u671b\u304c\u96c6\u4e2d\u3057\u307e\u3059\u3002"] },
+    { q: "\u4fdd\u8a3c\u306f\u3042\u308a\u307e\u3059\u304b\uff1f", a: ["\u304a\u4ed8\u3051\u3057\u3066\u3044\u307e\u3059\u3002\u5e74\u6570\u306f\u4f7f\u3046\u5857\u6599\u306e\u30b0\u30ec\u30fc\u30c9\u306b\u3088\u3063\u3066\u5909\u308f\u308a\u3001\u30b7\u30ea\u30b3\u30f3\u5857\u6599\u306e1\u5e74\u304b\u3089\u7121\u6a5f\u5857\u6599\u306e5\u5e74\u307e\u3067\u3067\u3059\u3002", "\u4fdd\u8a3c\u306e\u7bc4\u56f2\u306f\u3001\u304a\u6e21\u3057\u3059\u308b\u66f8\u9762\u306b\u8a18\u8f09\u3057\u307e\u3059\u3002\u53e3\u982d\u3067\u306f\u7d42\u308f\u3089\u305b\u307e\u305b\u3093\u3002"] },
+    { q: "\u5bfe\u5fdc\u30a8\u30ea\u30a2\u306f\u3069\u3053\u3067\u3059\u304b\uff1f", a: ["\u79cb\u7530\u5e02\u3068\u6f5f\u4e0a\u5e02\u3092\u4e2d\u5fc3\u306b\u3001\u5357\u79cb\u7530\u90e1\u306b\u3082\u4f3a\u3063\u3066\u3044\u307e\u3059\u3002", "\u305d\u306e\u307b\u304b\u306e\u5730\u57df\u3082\u3001\u8ddd\u96e2\u306b\u3088\u3063\u3066\u306f\u304a\u53d7\u3051\u3067\u304d\u307e\u3059\u3002\u307e\u305a\u306f\u304a\u4f4f\u307e\u3044\u306e\u5e02\u753a\u6751\u3092\u304a\u77e5\u3089\u305b\u304f\u3060\u3055\u3044\u3002\u304a\u4f3a\u3044\u3067\u304d\u308b\u304b\u3069\u3046\u304b\u3001\u305d\u306e\u5834\u3067\u304a\u7b54\u3048\u3057\u307e\u3059\u3002"] },
+    { q: "\u4ed6\u793e\u306e\u898b\u7a4d\u308a\u304c\u3042\u308b\u306e\u3067\u3059\u304c\u3001\u898b\u3066\u3082\u3089\u3048\u307e\u3059\u304b\uff1f", a: ["\u62dd\u898b\u3057\u307e\u3059\u3002\u5185\u5bb9\u3092\u8a3a\u65ad\u3057\u3066\u3001\u5206\u304b\u308a\u3084\u3059\u304f\u304a\u4f1d\u3048\u3057\u307e\u3059\u3002\u76f8\u898b\u7a4d\u308a\u306f\u6b53\u8fce\u3067\u3059\u3002"] },
+  ];
+  var LINE_URL = "https://lin.ee/WxoWd1J";
+  var TEL_LINK = "08077065395";
+  var fab = document.getElementById("chatFab");
+  var panel = document.getElementById("chatPanel");
+  var body = document.getElementById("chatBody");
+  var started = false;
+
+  function scrollDown() { body.scrollTop = body.scrollHeight; }
+  function bubble(cls, text) {
+    var el = document.createElement("div");
+    el.className = "chat-msg " + cls;
+    el.textContent = text;
+    body.appendChild(el);
+    scrollDown();
+  }
+  function chips(items) {
+    var box = document.createElement("div");
+    box.className = "chat-chips";
+    items.forEach(function (it) {
+      var el;
+      if (it.href) {
+        el = document.createElement("a");
+        el.href = it.href;
+        if (it.cta) el.className = "chat-cta";
+        if (it.external) el.rel = "noopener";
+      } else {
+        el = document.createElement("button");
+        el.type = "button";
+        el.addEventListener("click", function () { box.remove(); it.onTap(); });
+      }
+      el.textContent = it.label;
+      box.appendChild(el);
+    });
+    body.appendChild(box);
+    scrollDown();
+  }
+  function contactChips() {
+    var items = [{ label: "他の質問を見る", onTap: showQuestions }];
+    if (LINE_URL) items.push({ label: "LINEで無料相談", href: LINE_URL, external: true });
+    items.push({ label: "電話をかける", href: "tel:" + TEL_LINK });
+    items.push({ label: "無料の現地調査を申し込む", href: "/contact/", cta: true });
+    chips(items);
+  }
+  function showQuestions() {
+    bubble("bot", "気になる質問をタップしてください。");
+    chips(FAQ.map(function (item, i) {
+      return { label: item.q, onTap: function () { answer(i); } };
+    }));
+  }
+  function answer(i) {
+    bubble("user", FAQ[i].q);
+    FAQ[i].a.forEach(function (p) { bubble("bot", p); });
+    contactChips();
+  }
+  function start() {
+    if (started) return;
+    started = true;
+    bubble("bot", "こんにちは！辰弥塗装工業です。よくいただくご質問に、この場でお答えします。");
+    showQuestions();
+  }
+  fab.addEventListener("click", function () {
+    panel.hidden = false;
+    fab.hidden = true;
+    start();
+    scrollDown();
+  });
+  document.getElementById("chatClose").addEventListener("click", function () {
+    panel.hidden = true;
+    fab.hidden = false;
+  });
+})();
+</script>
 </body>
 </html>
