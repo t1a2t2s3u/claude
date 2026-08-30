@@ -121,7 +121,9 @@ class _Builder:
         html = self.render(
             "index.html",
             "/",
-            title=f"{company.name}｜{company.tagline}",
+            # 検索結果で「地域＋工事名」で探す人に届くよう、キーワードを先頭に。
+            # 上位の同業もこの形（地域・サービス｜信頼要素＋社名）を取っている
+            title=f"{company.city}の外壁塗装・屋根塗装｜職人直営の{company.name}",
             description=company.description,
             section="home",
             jsonld=jsonld,
