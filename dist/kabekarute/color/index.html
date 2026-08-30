@@ -61,6 +61,12 @@
   .tools .mode { border: 1.5px solid var(--line); background: #fff; color: var(--muted);
     border-radius: 8px; padding: .35rem .6rem; font: inherit; font-size: .8rem; font-weight: 700; cursor: pointer; }
   .tools .mode.on { background: var(--deep); border-color: var(--deep); color: #fff; }
+  .part { border: 1.5px solid var(--line); background: #fff; color: var(--muted);
+    border-radius: 8px; padding: .35rem .7rem; font: inherit; font-size: .85rem; font-weight: 700;
+    cursor: pointer; display: inline-flex; align-items: center; gap: .35rem; }
+  .part.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .part .dot { width: .85em; height: .85em; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,.85); box-shadow: 0 0 0 1px rgba(0,0,0,.18); }
   .slider-row { display: flex; align-items: center; gap: .5rem; font-size: .75rem; color: var(--muted); margin-top: .5rem; }
   .slider-row input[type=range] { flex: 1; }
   .palette { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: .45rem; margin-top: .4rem; }
@@ -90,7 +96,7 @@
 
 <main>
   <section class="card">
-    <p class="steps"><b>① 写真を選ぶ → ② 壁をタップで選択 → ③ 色を選ぶ → ④ この色で確定</b>　の順に使います。2色目を選べばツートンも試せます。</p>
+    <p class="steps"><b>① 写真を選ぶ → ② 部位（外壁・屋根・付帯部）を選ぶ → ③ タップやAIで範囲を選ぶ → ④ 色を選ぶ</b>　の順に使います。部位を切り替えても、それぞれの選択と色はそのまま残るので、外壁と屋根の組み合わせを自由に試せます。</p>
     <div id="dropzone" onclick="document.getElementById('file').click()">
       📷 タップして写真を選ぶ（撮影もできます）<br>
       <span style="font-size:.75rem">正面から撮った、明るい写真がきれいに仕上がります</span>
@@ -107,13 +113,20 @@
         <span id="zoomBadge" style="display:none"></span>
       </div>
       <p class="hint" style="margin:.35rem 0 0">拡大すると細かい部分を選べます。スマホは<b>2本指で広げてズーム・2本指でずらして移動</b>（🪄モード中は1本指でも移動できます）。</p>
+      <div class="tools" id="partRow" style="margin-top:.6rem">
+        <span style="font-size:.78rem; color:var(--muted); font-weight:700;">部位:</span>
+        <button class="part on" id="part-wall" onclick="setPart('wall')">外壁<span class="dot"></span></button>
+        <button class="part" id="part-roof" onclick="setPart('roof')">屋根<span class="dot"></span></button>
+        <button class="part" id="part-trim" onclick="setPart('trim')">付帯部<span class="dot"></span></button>
+        <button class="part" id="part-other" onclick="setPart('other')">その他<span class="dot"></span></button>
+      </div>
       <div class="tools">
         <button class="mode on" id="mode-wand" onclick="setMode('wand')">🪄 タップで選択</button>
         <button class="mode" id="mode-ai" onclick="setMode('ai')">✨ AIで選択</button>
         <button class="mode" id="mode-brush" onclick="setMode('brush')">🖌 ブラシで追加</button>
         <button class="mode" id="mode-erase" onclick="setMode('erase')">◻ 消しゴム</button>
         <button class="btn small ghost" onclick="closeGaps()">すき間をうめる</button>
-        <button class="btn small ghost" onclick="clearMask()">選択を解除</button>
+        <button class="btn small ghost" onclick="clearMask()">この部位の選択を解除</button>
         <button class="btn small ghost" id="undoBtn" onclick="undoBake()" disabled>1つ戻す</button>
         <button class="btn small ghost" onpointerdown="showOrig(true)" onpointerup="showOrig(false)" onpointerleave="showOrig(false)">押す間ビフォー</button>
       </div>
@@ -124,13 +137,13 @@
         はっきりした輪郭（屋根と空の境目など）で選択を止める
       </label></div>
       <p class="hint" style="margin-top:.2rem">壁と空が似た色でも、輪郭の線で選択が止まります。壁の途中で止まってしまうときはチェックを外すか、「ブラシで追加」で足してください。</p>
-      <p class="hint" style="margin-top:.2rem"><b>✨ AIで選択</b>は、タップした面（壁・屋根など）をAIがまるごと判別して選びます。判別はお使いの端末の中だけで動き、<b>写真が外部に送信されることはありません</b>。初回だけ部品の読み込み（約18MB）に少し時間がかかります。はみ出しは「消しゴム」で直せます。</p>
+      <p class="hint" style="margin-top:.2rem"><b>✨ AIで選択</b>は、タップした面をAIがまるごと判別して、<b>いま選んでいる部位</b>に入れます。例：「屋根」を選んで屋根をタップ→屋根だけが選択されます。判別はお使いの端末の中だけで動き、<b>写真が外部に送信されることはありません</b>。初回だけ部品の読み込み（約18MB）に少し時間がかかります。はみ出しは「消しゴム」で直せます。</p>
       <div class="hint" id="aiStatus" style="display:none; font-weight:700; color:var(--deep);"></div>
     </div>
   </section>
 
   <section class="card" id="colorCard" style="display:none">
-    <p class="steps"><b>色を選ぶ</b>（選択した部分に、その場で色が乗ります）</p>
+    <p class="steps"><b>色を選ぶ</b>（いま選んでいる部位「<span id="activePartName">外壁</span>」に、その場で色が乗ります）</p>
     <div class="palette" id="palette"></div>
     <div class="custom-color">自由な色: <input type="color" id="customColor" value="#c8b89a" onchange="pickCustom(this.value)"></div>
     <div class="slider-row">下地の質感の残り具合 <input type="range" id="tex" min="0" max="100" value="40" oninput="texv.textContent=this.value; render()"> <span id="texv">40</span></div>
@@ -166,10 +179,9 @@
       <div id="roofMsg" class="hint"></div>
     </div>
     <div class="tools" style="margin-top:.8rem">
-      <button class="btn accent" id="bakeBtn" onclick="bake()" disabled>✓ この色で確定（次の色へ）</button>
       <button class="btn" onclick="saveImage()">💾 画像を保存</button>
     </div>
-    <p class="hint">確定すると選択が解除され、続けて別の場所（1階・屋根など）に次の色を試せます。</p>
+    <p class="hint">部位を切り替えれば、外壁・屋根・付帯部それぞれの色をいつでも変えられます。1つの部位に2色使いたいとき（1階と2階で別の色など）は「その他」をお使いください。</p>
     <div class="disclaimer">
       ⚠ 画面の色は、実際の塗料の色と完全には一致しません。日塗工番号の色は番号の体系
       （色相・明度・彩度）から計算した近似色、屋根用塗料の標準色も色名に基づく近似色です。
@@ -191,14 +203,23 @@ const MAXW = 1400;
 
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d", { willReadFrequently: true });
+// 部位ごとに選択範囲と色を持つ。1画素はどれか1つの部位にだけ属する
+// （mask の値 0=未選択、1〜4=PARTSの並び順の部位番号）。これにより
+// 「確定」の手順なしで外壁・屋根・付帯部の色を同時に表示・変更できる
+const PARTS = [
+  { key: "wall", label: "外壁" },
+  { key: "roof", label: "屋根" },
+  { key: "trim", label: "付帯部" },
+  { key: "other", label: "その他" },
+];
 let orig = null;      // 元画像 ImageData
-let baked = null;     // 確定済み ImageData
-let mask = null;      // Uint8Array 選択マスク
+let mask = null;      // Uint8Array 部位マップ
+let partColors = [null, null, null, null]; // 部位ごとの色 {h,s,l,hex}
+let activeIdx = 0;    // いま操作対象の部位
+let act = 1;          // mask に書く値（activeIdx + 1）
 let edges = null;     // Uint8Array 輪郭マップ（1=はっきりした輪郭）
-let history = [];     // 操作の取り消し用スタック（選択・ブラシ・確定を区別せず1本で持つ）
+let history = [];     // 操作の取り消し用スタック
 let mode = "wand";
-let color = null;     // [h, s]（選択中の色）
-let colorRgb = null;
 let showingOrig = false;
 
 // ---- 画像の読み込み ----
@@ -211,11 +232,12 @@ document.getElementById("file").addEventListener("change", (ev) => {
     canvas.height = Math.round(img.height * scale);
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     orig = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    baked = ctx.getImageData(0, 0, canvas.width, canvas.height);
     mask = new Uint8Array(canvas.width * canvas.height);
+    partColors = [null, null, null, null];
     buildEdges();
     origCanvas = null; // AI判別用の元画像キャッシュを作り直す
     history = []; updateUndo();
+    setPart("wall");
     URL.revokeObjectURL(img.src);
     document.getElementById("dropzone").style.display = "none";
     document.getElementById("stage").style.display = "";
@@ -226,7 +248,25 @@ document.getElementById("file").addEventListener("change", (ev) => {
   img.src = URL.createObjectURL(f);
 });
 
-// ---- モード・スライダー ----
+// ---- 部位・モード・スライダー ----
+function setPart(key) {
+  activeIdx = Math.max(0, PARTS.findIndex(p => p.key === key));
+  act = activeIdx + 1;
+  document.getElementById("activePartName").textContent = PARTS[activeIdx].label;
+  document.querySelectorAll(".swatch").forEach(x => x.classList.remove("on"));
+  renderPartRow();
+  if (orig) render();
+}
+function renderPartRow() {
+  PARTS.forEach((p, i) => {
+    const b = document.getElementById("part-" + p.key);
+    b.classList.toggle("on", i === activeIdx);
+    const dot = b.querySelector(".dot");
+    const c = partColors[i];
+    dot.style.background = c ? c.hex : "transparent";
+    dot.style.visibility = c ? "visible" : "hidden";
+  });
+}
 function setMode(m) {
   mode = m;
   for (const k of ["wand", "ai", "brush", "erase"])
@@ -388,8 +428,8 @@ async function aiSelect(x, y) {
       alert("うまく判別できませんでした。もう少し面の中央をタップするか、「タップで選択」をお使いください。");
       return;
     }
-    pushHistory("sel");
-    for (let p = 0; p < tmp.length; p++) if (tmp[p]) mask[p] = 1; // 追加方式（複数タップで足せる）
+    pushHistory();
+    for (let p = 0; p < tmp.length; p++) if (tmp[p]) mask[p] = act; // 追加方式（複数タップで足せる）
     render();
   } catch (e) {
     alert("AIでの判別に失敗しました。「タップで選択」をお使いください。");
@@ -399,7 +439,7 @@ async function aiSelect(x, y) {
 // ---- タップ選択（同じ色がつながっている範囲を選ぶ） ----
 function wand(x, y) {
   const { width: w, height: h } = canvas;
-  const d = baked.data;
+  const d = orig.data;
   const i0 = (y * w + x) * 4;
   const r0 = d[i0], g0 = d[i0 + 1], b0 = d[i0 + 2];
   const t = Number(tol.value); const t2 = t * t * 3;
@@ -413,7 +453,7 @@ function wand(x, y) {
     const i = p * 4;
     const dr = d[i] - r0, dg = d[i + 1] - g0, db = d[i + 2] - b0;
     if (dr * dr + dg * dg + db * db > t2) continue;
-    mask[p] = 1;
+    mask[p] = act; // 別の部位に入っていた画素は、いま選んでいる部位へ移る
     // 輪郭上の画素は選択には含める（塗り残しの線を出さない）が、
     // そこから先へは広げない＝輪郭で選択が止まる。タップ地点だけは
     // 輪郭の上でも広げる（細かい模様の上をタップしても反応するように）
@@ -436,25 +476,29 @@ function paint(x, y, erase) {
     const span = Math.floor(Math.sqrt(rad * rad - dy * dy));
     for (let dx = -span; dx <= span; dx++) {
       const xx = x + dx; if (xx < 0 || xx >= w) continue;
-      mask[yy * w + xx] = erase ? 0 : 1;
+      mask[yy * w + xx] = erase ? 0 : act; // 消しゴムはどの部位からも消す
     }
   }
 }
 
 // ---- 操作履歴（1つ戻す） ----
-// タップ選択・ブラシひと筆・すき間うめ・選択解除・確定を、それぞれ1操作
-// として積む。確定だけは画像自体が変わるので baked も一緒に控える
-// （毎回控えるとメモリを食い過ぎるため、選択系は mask のみ）。
+// タップ選択・ブラシひと筆・すき間うめ・選択解除・色選びを、それぞれ
+// 1操作として積む。部位マップと各部位の色をまとめて控える
 const HISTORY_MAX = 8;
-function pushHistory(kind) {
+function pushHistory() {
   if (history.length >= HISTORY_MAX) history.shift();
   history.push({
-    kind,
     mask: new Uint8Array(mask),
-    baked: kind === "bake" ? new ImageData(new Uint8ClampedArray(baked.data), baked.width, baked.height) : null,
-    color, colorRgb,
+    colors: partColors.slice(),
+    activeIdx,
   });
   updateUndo();
+}
+function restoreHistory(h) {
+  mask = h.mask; partColors = h.colors;
+  activeIdx = h.activeIdx; act = activeIdx + 1;
+  document.getElementById("activePartName").textContent = PARTS[activeIdx].label;
+  renderPartRow(); updateUndo(); render();
 }
 
 // ---- ズームと操作の振り分け ----
@@ -503,10 +547,7 @@ let suppressTap = false;    // ピンチした指が残っている間は選択�
 
 function cancelStroke() {
   // ブラシの途中で2本目の指が来たら、そのひと筆をなかったことにする
-  if (dragging && history.length) {
-    mask = history.pop().mask;
-    updateUndo(); render();
-  }
+  if (dragging && history.length) restoreHistory(history.pop());
   dragging = false;
 }
 
@@ -531,7 +572,7 @@ canvas.addEventListener("pointerdown", (ev) => {
     tapStart = { x: ev.clientX, y: ev.clientY, moved: false };
     panning = true;
   } else {
-    pushHistory("sel"); // ブラシはひと筆（押してから離すまで）で1操作
+    pushHistory(); // ブラシはひと筆（押してから離すまで）で1操作
     dragging = true;
     const { x, y } = pos(ev);
     paint(x, y, mode === "erase"); render();
@@ -571,7 +612,7 @@ function endPointer(ev) {
   if (pointers.size === 0) { suppressTap = false; panning = false; }
   if (ev.type === "pointerup" && wasTap && orig && !showingOrig) {
     if (mode === "wand") {
-      pushHistory("sel");
+      pushHistory();
       const { x, y } = pos(ev);
       wand(x, y); render();
     } else if (mode === "ai") {
@@ -587,8 +628,9 @@ window.addEventListener("pointerup", () => { if (pointers.size === 0) dragging =
 
 function clearMask() {
   if (!mask) return;
-  if (mask.includes(1)) pushHistory("sel"); // 誤タップの解除も戻せるように
-  mask.fill(0); render();
+  if (mask.includes(act)) pushHistory(); // 誤タップの解除も戻せるように
+  for (let p = 0; p < mask.length; p++) if (mask[p] === act) mask[p] = 0;
+  render();
 }
 
 function dilateErode(src, w, h, dilate) {
@@ -613,14 +655,20 @@ function dilateErode(src, w, h, dilate) {
 }
 function closeGaps() {
   if (!mask) return;
-  pushHistory("sel");
-  // 膨張2回→収縮2回。目地の中や境目に残った細かい塗り残しが埋まる
-  let m = mask;
+  pushHistory();
+  // いま選んでいる部位だけを対象に、膨張2回→収縮2回。
+  // 目地の中や境目に残った細かい塗り残しが埋まる
+  let m = new Uint8Array(mask.length);
+  for (let p = 0; p < mask.length; p++) m[p] = mask[p] === act ? 1 : 0;
   m = dilateErode(m, canvas.width, canvas.height, true);
   m = dilateErode(m, canvas.width, canvas.height, true);
   m = dilateErode(m, canvas.width, canvas.height, false);
   m = dilateErode(m, canvas.width, canvas.height, false);
-  mask = m; render();
+  for (let p = 0; p < mask.length; p++) {
+    if (m[p]) mask[p] = act;
+    else if (mask[p] === act) mask[p] = 0;
+  }
+  render();
 }
 
 // ---- 色 ----
@@ -655,12 +703,13 @@ function hslToRgb(h, s, l) {
   return [Math.round(f(h + 1 / 3) * 255), Math.round(f(h) * 255), Math.round(f(h - 1 / 3) * 255)];
 }
 function pickColor(hex, el) {
-  colorRgb = hexToRgb(hex);
-  const [h, s, l] = rgbToHsl(...colorRgb);
-  color = { h, s, l };
+  const rgb = hexToRgb(hex);
+  const [h, s, l] = rgbToHsl(...rgb);
+  pushHistory(); // 色選びも1操作として戻せる
+  partColors[activeIdx] = { h, s, l, hex };
   document.querySelectorAll(".swatch").forEach(x => x.classList.remove("on"));
   if (el) el.classList.add("on");
-  bakeBtn.disabled = false;
+  renderPartRow();
   render();
 }
 function setRoofMsg(html) { document.getElementById("roofMsg").innerHTML = html; }
@@ -856,38 +905,37 @@ for (const paint of ROOF_PAINTS) {
   }
 }
 
-// ---- 描画（選択部分に色を乗せたプレビュー） ----
+// ---- 描画（全部位の色を同時に合成したプレビュー） ----
 function render() {
-  if (!baked) return;
+  if (!orig) return;
   if (showingOrig) { ctx.putImageData(orig, 0, 0); return; }
-  const out = new ImageData(new Uint8ClampedArray(baked.data), baked.width, baked.height);
+  const out = new ImageData(new Uint8ClampedArray(orig.data), orig.width, orig.height);
   const d = out.data;
-  if (color) {
-    // 元の壁の「平均の明るさ」を基準にし、そこからの差（目地や影）だけを
-    // 質感として残す。基準を平均にすることで、濃い壁→薄い色でも下地の
-    // 暗さに引きずられず、選んだ色の明るさどおりに仕上がる
-    let sum = 0, n = 0;
-    for (let p = 0; p < mask.length; p++) {
-      if (!mask[p]) continue;
-      const i = p * 4;
-      sum += rgbToHsl(d[i], d[i + 1], d[i + 2])[2]; n++;
-    }
-    const meanL = n ? sum / n : 0.5;
-    const k = Number(document.getElementById("tex").value) / 100 * 1.2;
-    for (let p = 0; p < mask.length; p++) {
-      if (!mask[p]) continue;
-      const i = p * 4;
+  // 部位ごとの「平均の明るさ」を基準にし、そこからの差（目地や影）だけを
+  // 質感として残す。基準を平均にすることで、濃い壁→薄い色でも下地の
+  // 暗さに引きずられず、選んだ色の明るさどおりに仕上がる
+  const sums = [0, 0, 0, 0], counts = [0, 0, 0, 0];
+  for (let p = 0; p < mask.length; p++) {
+    const v = mask[p]; if (!v) continue;
+    const i = p * 4;
+    sums[v - 1] += rgbToHsl(d[i], d[i + 1], d[i + 2])[2]; counts[v - 1]++;
+  }
+  const k = Number(document.getElementById("tex").value) / 100 * 1.2;
+  for (let p = 0; p < mask.length; p++) {
+    const v = mask[p]; if (!v) continue;
+    const i = p * 4;
+    const col = partColors[v - 1];
+    if (col) {
+      const meanL = counts[v - 1] ? sums[v - 1] / counts[v - 1] : 0.5;
       const l0 = rgbToHsl(d[i], d[i + 1], d[i + 2])[2];
-      const l = Math.max(0, Math.min(1, color.l + (l0 - meanL) * k));
-      const [r, g, b] = hslToRgb(color.h, color.s, l);
+      const l = Math.max(0, Math.min(1, col.l + (l0 - meanL) * k));
+      const [r, g, b] = hslToRgb(col.h, col.s, l);
       d[i] = r; d[i + 1] = g; d[i + 2] = b;
-    }
-  } else {
-    // 色が未選択のときは、選択範囲を水色で示す
-    for (let p = 0; p < mask.length; p++) {
-      if (!mask[p]) continue;
-      const i = p * 4;
+    } else if (v === act) {
+      // 色が未選択の部位は水色で示す（操作中の部位は濃いめ）
       d[i] = d[i] * .55; d[i + 1] = d[i + 1] * .75 + 40; d[i + 2] = d[i + 2] * .6 + 90;
+    } else {
+      d[i] = d[i] * .8; d[i + 1] = d[i + 1] * .85 + 18; d[i + 2] = d[i + 2] * .8 + 45;
     }
   }
   ctx.putImageData(out, 0, 0);
@@ -895,30 +943,10 @@ function render() {
 
 function showOrig(v) { showingOrig = v; render(); }
 
-// ---- 確定・取り消し・保存 ----
-function bake() {
-  if (!color) return;
-  pushHistory("bake");
-  render();
-  baked = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  mask.fill(0); color = null; colorRgb = null;
-  document.querySelectorAll(".swatch").forEach(x => x.classList.remove("on"));
-  bakeBtn.disabled = true;
-  updateUndo(); render();
-}
-function undoBake() {
+// ---- 取り消し・保存 ----
+function undoBake() { // ボタンとの互換のため関数名は据え置き
   if (!history.length) return;
-  const h = history.pop();
-  mask = h.mask;
-  if (h.kind === "bake") {
-    // 確定の取り消し: 画像と、確定直前の選択・色まで戻す（プレビューが復活する）
-    baked = h.baked;
-    color = h.color; colorRgb = h.colorRgb;
-    document.querySelectorAll(".swatch").forEach(x => x.classList.remove("on"));
-  }
-  // 選択系の取り消しでは、いま選んでいる色はそのまま（色まで戻ると混乱する）
-  bakeBtn.disabled = !color;
-  updateUndo(); render();
+  restoreHistory(history.pop());
 }
 function updateUndo() { undoBtn.disabled = history.length === 0; }
 
