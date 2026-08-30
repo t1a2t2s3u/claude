@@ -67,7 +67,7 @@
 <section class="section">
   <div class="wrap">
     <h2 class="section-title">対応する工事</h2>
-    <p class="service-lead">下の3つは、ひとつのパック料金にまとめて含まれています。</p>
+    <p class="service-lead">下の{{ package_services|length }}つは、ひとつのパック料金にまとめて含まれています。</p>
     <div class="service-grid">
       {% for service in package_services %}
       <a class="service-card{% if service_photos_ready %} service-card-photo{% endif %}" href="/services/#{{ service.slug }}">

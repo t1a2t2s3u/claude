@@ -406,7 +406,8 @@ a { color: var(--brand-text); }
 @media (min-width: 900px) {
   body { padding-bottom: 0; }
   .mobile-bar { display: none; }
-  .service-grid { grid-template-columns: repeat(3, 1fr); }
+  /* パック内の工事は4件。3列だと1枚だけ2段目に落ちて不揃いになる */
+  .service-grid { grid-template-columns: repeat(4, 1fr); }
   .work-grid { grid-template-columns: repeat(3, 1fr); }
   .work-grid-full { grid-template-columns: repeat(3, 1fr); }
   .flow { grid-template-columns: repeat(4, 1fr); }
