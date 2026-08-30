@@ -109,6 +109,7 @@
       <p class="hint" style="margin:.35rem 0 0">拡大すると細かい部分を選べます。スマホは<b>2本指で広げてズーム・2本指でずらして移動</b>（🪄モード中は1本指でも移動できます）。</p>
       <div class="tools">
         <button class="mode on" id="mode-wand" onclick="setMode('wand')">🪄 タップで選択</button>
+        <button class="mode" id="mode-ai" onclick="setMode('ai')">✨ AIで選択</button>
         <button class="mode" id="mode-brush" onclick="setMode('brush')">🖌 ブラシで追加</button>
         <button class="mode" id="mode-erase" onclick="setMode('erase')">◻ 消しゴム</button>
         <button class="btn small ghost" onclick="closeGaps()">すき間をうめる</button>
@@ -123,6 +124,8 @@
         はっきりした輪郭（屋根と空の境目など）で選択を止める
       </label></div>
       <p class="hint" style="margin-top:.2rem">壁と空が似た色でも、輪郭の線で選択が止まります。壁の途中で止まってしまうときはチェックを外すか、「ブラシで追加」で足してください。</p>
+      <p class="hint" style="margin-top:.2rem"><b>✨ AIで選択</b>は、タップした面（壁・屋根など）をAIがまるごと判別して選びます。判別はお使いの端末の中だけで動き、<b>写真が外部に送信されることはありません</b>。初回だけ部品の読み込み（約18MB）に少し時間がかかります。はみ出しは「消しゴム」で直せます。</p>
+      <div class="hint" id="aiStatus" style="display:none; font-weight:700; color:var(--deep);"></div>
     </div>
   </section>
 
@@ -211,6 +214,7 @@ document.getElementById("file").addEventListener("change", (ev) => {
     baked = ctx.getImageData(0, 0, canvas.width, canvas.height);
     mask = new Uint8Array(canvas.width * canvas.height);
     buildEdges();
+    origCanvas = null; // AI判別用の元画像キャッシュを作り直す
     history = []; updateUndo();
     URL.revokeObjectURL(img.src);
     document.getElementById("dropzone").style.display = "none";
@@ -225,7 +229,7 @@ document.getElementById("file").addEventListener("change", (ev) => {
 // ---- モード・スライダー ----
 function setMode(m) {
   mode = m;
-  for (const k of ["wand", "brush", "erase"])
+  for (const k of ["wand", "ai", "brush", "erase"])
     document.getElementById("mode-" + k).classList.toggle("on", k === m);
 }
 tol.oninput = () => tolv.textContent = tol.value;
@@ -294,6 +298,102 @@ function buildEdges() {
       if (gx * gx + gy * gy > TH2) edges[p] = 1;
     }
   }
+}
+
+// ---- AIで選択（MediaPipe Interactive Segmenter） ----
+// タップした場所にある「面」をAIがまるごと判別する。モデルと実行部品は
+// このサイト自身から配信し、判別は端末内（WebAssembly）で完結する。
+// 写真が外部へ送信されない、というカベカルテの約束を守るための構成。
+let segmenter = null, aiLoading = false, origCanvas = null;
+function aiStatus(msg) {
+  const el = document.getElementById("aiStatus");
+  el.style.display = msg ? "" : "none"; el.textContent = msg || "";
+}
+async function ensureSegmenter() {
+  if (segmenter) return segmenter;
+  if (aiLoading) return null; // 読み込み中の連打は無視（状態表示が出ている）
+  aiLoading = true;
+  try {
+    aiStatus("AIの部品を読み込んでいます…（初回のみ・約18MB）");
+    const vision = await import("./ai/vision_bundle.mjs");
+    const files = await vision.FilesetResolver.forVisionTasks("ai/wasm");
+    // magic_touch モデルは Legacy 版の API で動く（新APIは別形式のモデル要求）
+    segmenter = await vision.InteractiveSegmenterLegacy.createFromOptions(files, {
+      baseOptions: { modelAssetPath: "ai/magic_touch.tflite" },
+      outputCategoryMask: true, outputConfidenceMasks: false,
+    });
+    aiStatus("");
+    return segmenter;
+  } catch (e) {
+    aiStatus("");
+    alert("AIの部品を読み込めませんでした。通信環境の良い場所でもう一度試すか、「タップで選択」をお使いください。");
+    return null;
+  } finally { aiLoading = false; }
+}
+async function aiSelect(x, y) {
+  const seg = await ensureSegmenter();
+  if (!seg || !orig) return;
+  aiStatus("AIで判別中…");
+  try {
+    if (!origCanvas) {
+      // 判別は元画像に対して行う（確定済みの塗り色に影響されないように）
+      origCanvas = document.createElement("canvas");
+      origCanvas.width = canvas.width; origCanvas.height = canvas.height;
+      origCanvas.getContext("2d").putImageData(orig, 0, 0);
+    }
+    // 速度優先で縮小してから判別し、結果のマスクを引き伸ばす
+    const MAXSEG = 512;
+    const sc = Math.min(1, MAXSEG / Math.max(canvas.width, canvas.height));
+    const sw = Math.max(1, Math.round(canvas.width * sc));
+    const sh = Math.max(1, Math.round(canvas.height * sc));
+    const segCanvas = document.createElement("canvas");
+    segCanvas.width = sw; segCanvas.height = sh;
+    segCanvas.getContext("2d").drawImage(origCanvas, 0, 0, sw, sh);
+    const picked = await new Promise((resolve, reject) => {
+      seg.segment(segCanvas, { keypoint: { x: x / canvas.width, y: y / canvas.height } }, (res) => {
+        try {
+          // マスクはコールバックの中でしか読めないため、ここで写し取る
+          const m = res.categoryMask;
+          const data = m.getAsUint8Array().slice();
+          res.close();
+          resolve({ data, mw: m.width, mh: m.height });
+        } catch (err) { reject(err); }
+      });
+    });
+    const { data, mw, mh } = picked;
+    // タップ地点の値＝前景として扱う（0/255どちら向きの割り当てでも動く）
+    const tx = Math.min(mw - 1, Math.round(x / canvas.width * mw));
+    const ty = Math.min(mh - 1, Math.round(y / canvas.height * mh));
+    const fg = data[ty * mw + tx];
+    const w = canvas.width, h = canvas.height;
+    const tmp = new Uint8Array(w * h);
+    let n = 0;
+    // 双一次補間で拡大する（最近傍だと縁が階段状にカクつくため）
+    for (let cy = 0; cy < h; cy++) {
+      const fy = Math.min(mh - 1.001, cy * mh / h);
+      const y0 = fy | 0, wy = fy - y0;
+      for (let cx = 0; cx < w; cx++) {
+        const fx = Math.min(mw - 1.001, cx * mw / w);
+        const x0 = fx | 0, wx = fx - x0;
+        const v00 = data[y0 * mw + x0] === fg ? 1 : 0;
+        const v01 = data[y0 * mw + x0 + 1] === fg ? 1 : 0;
+        const v10 = data[(y0 + 1) * mw + x0] === fg ? 1 : 0;
+        const v11 = data[(y0 + 1) * mw + x0 + 1] === fg ? 1 : 0;
+        const v = v00 * (1 - wx) * (1 - wy) + v01 * wx * (1 - wy) + v10 * (1 - wx) * wy + v11 * wx * wy;
+        if (v >= 0.5) { tmp[cy * w + cx] = 1; n++; }
+      }
+    }
+    // ほぼ全面・ほぼゼロは判別失敗とみなし、選択を汚さない
+    if (n < w * h * 0.002 || n > w * h * 0.98) {
+      alert("うまく判別できませんでした。もう少し面の中央をタップするか、「タップで選択」をお使いください。");
+      return;
+    }
+    pushHistory("sel");
+    for (let p = 0; p < tmp.length; p++) if (tmp[p]) mask[p] = 1; // 追加方式（複数タップで足せる）
+    render();
+  } catch (e) {
+    alert("AIでの判別に失敗しました。「タップで選択」をお使いください。");
+  } finally { aiStatus(""); }
 }
 
 // ---- タップ選択（同じ色がつながっている範囲を選ぶ） ----
@@ -426,7 +526,7 @@ canvas.addEventListener("pointerdown", (ev) => {
     return;
   }
   if (pointers.size > 2 || suppressTap) return;
-  if (mode === "wand") {
+  if (mode === "wand" || mode === "ai") {
     // 選択はタップ（指を離した時）で確定。押したまま動かすと移動になる
     tapStart = { x: ev.clientX, y: ev.clientY, moved: false };
     panning = true;
@@ -469,10 +569,15 @@ function endPointer(ev) {
   pointers.delete(ev.pointerId);
   if (pointers.size < 2) pinch = null;
   if (pointers.size === 0) { suppressTap = false; panning = false; }
-  if (ev.type === "pointerup" && wasTap && mode === "wand" && orig && !showingOrig) {
-    pushHistory("sel");
-    const { x, y } = pos(ev);
-    wand(x, y); render();
+  if (ev.type === "pointerup" && wasTap && orig && !showingOrig) {
+    if (mode === "wand") {
+      pushHistory("sel");
+      const { x, y } = pos(ev);
+      wand(x, y); render();
+    } else if (mode === "ai") {
+      const { x, y } = pos(ev);
+      aiSelect(x, y); // 非同期。履歴は判別に成功してから積む
+    }
   }
   if (pointers.size === 0) { tapStart = null; dragging = false; }
 }
