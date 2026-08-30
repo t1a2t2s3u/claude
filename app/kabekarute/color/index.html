@@ -119,7 +119,9 @@
         <button class="part" id="part-roof" onclick="setPart('roof')">屋根<span class="dot"></span></button>
         <button class="part" id="part-trim" onclick="setPart('trim')">付帯部<span class="dot"></span></button>
         <button class="part" id="part-other" onclick="setPart('other')">その他<span class="dot"></span></button>
+        <button class="btn small ghost" onclick="autoDetect(activeIdx)">✨ おまかせ判別をやり直す</button>
       </div>
+      <p class="hint" style="margin:.3rem 0 0"><b>外壁・屋根はボタンを押すだけでAIが自動判別</b>して選択します（初回のみ選択が空のとき）。判別が違うところは、タップ・ブラシ・消しゴムで直すか「おまかせ判別をやり直す」を押してください。付帯部は細かいので、タップやブラシで選んでください。</p>
       <div class="tools">
         <button class="mode on" id="mode-wand" onclick="setMode('wand')">🪄 タップで選択</button>
         <button class="mode" id="mode-ai" onclick="setMode('ai')">✨ AIで選択</button>
@@ -235,9 +237,9 @@ document.getElementById("file").addEventListener("change", (ev) => {
     mask = new Uint8Array(canvas.width * canvas.height);
     partColors = [null, null, null, null];
     buildEdges();
-    origCanvas = null; // AI判別用の元画像キャッシュを作り直す
+    origCanvas = null; analysisCache = null; // AI判別用のキャッシュを作り直す
     history = []; updateUndo();
-    setPart("wall");
+    setPart("wall"); // 部位が空なので、外壁のおまかせ判別が自動で走る
     URL.revokeObjectURL(img.src);
     document.getElementById("dropzone").style.display = "none";
     document.getElementById("stage").style.display = "";
@@ -249,13 +251,16 @@ document.getElementById("file").addEventListener("change", (ev) => {
 });
 
 // ---- 部位・モード・スライダー ----
-function setPart(key) {
+function setPart(key, noAuto) {
   activeIdx = Math.max(0, PARTS.findIndex(p => p.key === key));
   act = activeIdx + 1;
   document.getElementById("activePartName").textContent = PARTS[activeIdx].label;
   document.querySelectorAll(".swatch").forEach(x => x.classList.remove("on"));
   renderPartRow();
-  if (orig) render();
+  if (!orig) return;
+  render();
+  // 外壁・屋根は、その部位がまだ空ならボタンを押すだけでAIが自動判別する
+  if (!noAuto && (key === "wall" || key === "roof") && !mask.includes(act)) autoDetect(activeIdx);
 }
 function renderPartRow() {
   PARTS.forEach((p, i) => {
@@ -430,6 +435,225 @@ async function aiSelect(x, y) {
     }
     pushHistory();
     for (let p = 0; p < tmp.length; p++) if (tmp[p]) mask[p] = act; // 追加方式（複数タップで足せる）
+    render();
+  } catch (e) {
+    alert("AIでの判別に失敗しました。「タップで選択」をお使いください。");
+  } finally { aiStatus(""); }
+}
+
+// ---- AIおまかせ判別（部位ボタンを押すだけで外壁・屋根を自動選択） ----
+// AIモデルは「点を指定して面を切り抜く」方式なので、アプリ側が自動で
+// 点を打つ。空をヒューリスティックで見つけ、外壁は建物の中央部に
+// 複数の点を打って結果の多数決、屋根は空との境界線の直下に点を打つ。
+let analysisCache = null; // 写真ごとの解析キャッシュ（縮小画像・空・稜線・外壁）
+function buildAnalysis() {
+  if (analysisCache) return analysisCache;
+  const MAXSEG = 512;
+  const sc = Math.min(1, MAXSEG / Math.max(canvas.width, canvas.height));
+  const sw = Math.max(1, Math.round(canvas.width * sc));
+  const sh = Math.max(1, Math.round(canvas.height * sc));
+  if (!origCanvas) {
+    origCanvas = document.createElement("canvas");
+    origCanvas.width = canvas.width; origCanvas.height = canvas.height;
+    origCanvas.getContext("2d").putImageData(orig, 0, 0);
+  }
+  const c = document.createElement("canvas");
+  c.width = sw; c.height = sh;
+  c.getContext("2d").drawImage(origCanvas, 0, 0, sw, sh);
+  const px = c.getContext("2d").getImageData(0, 0, sw, sh).data;
+  // 空: 画像の上端から「隣どうしの色が近い」画素を辿る（グラデーションは
+  // つながり、屋根との境目のような急な変化で止まる）
+  const sky = new Uint8Array(sw * sh);
+  const stack = [];
+  for (let x = 0; x < sw; x++) stack.push(x);
+  const TOL = 26;
+  while (stack.length) {
+    const p = stack.pop();
+    if (sky[p]) continue;
+    sky[p] = 1;
+    const x = p % sw, y = (p / sw) | 0;
+    if (y > sh * 0.9) continue;
+    const i = p * 4;
+    for (const q of [p - 1, p + 1, p - sw, p + sw]) {
+      if (q < 0 || q >= sw * sh || sky[q]) continue;
+      if (Math.abs(q % sw - x) > 1) continue;
+      const j = q * 4;
+      if (Math.abs(px[j] - px[i]) < TOL && Math.abs(px[j + 1] - px[i + 1]) < TOL && Math.abs(px[j + 2] - px[i + 2]) < TOL) stack.push(q);
+    }
+  }
+  // 空の妥当性: ある程度明るく、画像の1〜6割を占めるはず。外れたら「空なし」
+  let n = 0, bright = 0;
+  for (let p = 0; p < sw * sh; p++) {
+    if (!sky[p]) continue;
+    n++;
+    const i = p * 4;
+    if (px[i] + px[i + 1] + px[i + 2] > 330) bright++;
+  }
+  if (n < sw * sh * 0.03 || n > sw * sh * 0.7 || bright < n * 0.5) sky.fill(0);
+  // 稜線: 各列で最初に空でなくなる高さ
+  const skyline = new Int16Array(sw);
+  for (let x = 0; x < sw; x++) {
+    let y = 0;
+    while (y < sh && sky[y * sw + x]) y++;
+    skyline[x] = y;
+  }
+  analysisCache = { sw, sh, canvas: c, sky, skyline, wallUnion: null };
+  return analysisCache;
+}
+// 縮小画像上の1点でAI判別を実行し、前景マスク（縮小サイズ）を返す
+function segAtSmall(A, sx, sy) {
+  return new Promise((resolve) => {
+    try {
+      segmenter.segment(A.canvas, { keypoint: { x: sx / A.sw, y: sy / A.sh } }, (res) => {
+        try {
+          const m = res.categoryMask;
+          const data = m.getAsUint8Array().slice();
+          const mw = m.width, mh = m.height;
+          res.close();
+          const fg = data[Math.min(mh - 1, Math.round(sy * mh / A.sh)) * mw + Math.min(mw - 1, Math.round(sx * mw / A.sw))];
+          const out = new Uint8Array(A.sw * A.sh);
+          let cnt = 0;
+          for (let y = 0; y < A.sh; y++) {
+            const my = Math.min(mh - 1, (y * mh / A.sh) | 0);
+            for (let x = 0; x < A.sw; x++) {
+              const mx = Math.min(mw - 1, (x * mw / A.sw) | 0);
+              if (data[my * mw + mx] === fg) { out[y * A.sw + x] = 1; cnt++; }
+            }
+          }
+          resolve({ seg: out, frac: cnt / (A.sw * A.sh) });
+        } catch (e) { resolve(null); }
+      });
+    } catch (e) { resolve(null); }
+  });
+}
+function overlapFrac(a, b) { // aのうちbと重なる割合
+  let na = 0, both = 0;
+  for (let p = 0; p < a.length; p++) { if (a[p]) { na++; if (b[p]) both++; } }
+  return na ? both / na : 0;
+}
+async function detectWallSmall(A) {
+  if (A.wallUnion) return A.wallUnion;
+  // 建物の中央部にありそうな位置へ7点。空の中は避ける
+  const pts = [[.3,.5],[.5,.45],[.7,.5],[.4,.62],[.6,.62],[.5,.32],[.25,.6]]
+    .map(([fx, fy]) => [Math.round(fx * A.sw), Math.round(fy * A.sh)])
+    .filter(([x, y]) => !A.sky[y * A.sw + x]);
+  // 個々の判別結果を選別して合成する。「家全体＋周辺」のような大きすぎる
+  // 結果や、空と重なる結果は捨てる（多数決だと巨大な結果に引きずられ、
+  // 隣家や道路まで外壁になってしまう）
+  const segs = [];
+  for (const [x, y] of pts) {
+    const r = await segAtSmall(A, x, y);
+    if (!r || r.frac < 0.03 || r.frac > 0.45) continue;
+    if (overlapFrac(r.seg, A.sky) > 0.15) continue;
+    if (segs.some(s => overlapFrac(r.seg, s) > 0.7 && overlapFrac(s, r.seg) > 0.7)) continue; // 同じ面
+    segs.push(r.seg);
+  }
+  if (!segs.length) return null;
+  // 大きい面から順に、合計が画像の55%を超えない範囲で合成
+  segs.sort((a, b) => b.reduce((s, v) => s + v, 0) - a.reduce((s, v) => s + v, 0));
+  const union = new Uint8Array(A.sw * A.sh);
+  let cnt = 0;
+  for (const s of segs) {
+    let add = 0;
+    for (let p = 0; p < s.length; p++) if (s[p] && !union[p]) add++;
+    if (cnt + add > A.sw * A.sh * 0.55 && cnt > 0) continue;
+    for (let p = 0; p < s.length; p++) if (s[p]) union[p] = 1;
+    cnt += add;
+  }
+  if (cnt < A.sw * A.sh * 0.02) return null;
+  A.wallUnion = union;
+  return union;
+}
+async function detectRoofSmall(A) {
+  const wall = await detectWallSmall(A); // 屋根の判定基準として外壁の位置も見る
+  const { sw, sh } = A;
+  const roof = new Uint8Array(sw * sh);
+  let found = false;
+  const tryPoint = async (x, y, opt) => {
+    const r = await segAtSmall(A, x, y);
+    if (!r || r.frac < 0.005 || r.frac > (opt.maxFrac || 0.35)) return false;
+    if (overlapFrac(r.seg, A.sky) > 0.3) return false;
+    // 判別結果のうち、点とつながっている一かたまりだけを使う
+    //（「画面中の暗い場所ぜんぶ」のような飛び地つきの結果に巻き込まれない）
+    const seed = y * sw + x;
+    if (!r.seg[seed]) return false;
+    const comp = new Uint8Array(sw * sh);
+    const stack = [seed];
+    while (stack.length) {
+      const p = stack.pop();
+      if (p < 0 || p >= comp.length || comp[p] || !r.seg[p]) continue;
+      comp[p] = 1;
+      const px = p % sw;
+      if (px > 0) stack.push(p - 1);
+      if (px < sw - 1) stack.push(p + 1);
+      stack.push(p - sw, p + sw);
+    }
+    // 空（と、指定があれば外壁の判別結果）を除いた残りを屋根候補とする
+    const keep = [];
+    let minX = sw, maxX = 0, minY = sh, maxY = 0;
+    for (let p = 0; p < comp.length; p++) {
+      if (!comp[p] || A.sky[p]) continue;
+      if (opt.subtractWall && wall && wall[p]) continue;
+      keep.push(p);
+      const px = p % sw, py = (p / sw) | 0;
+      if (px < minX) minX = px; if (px > maxX) maxX = px;
+      if (py < minY) minY = py; if (py > maxY) maxY = py;
+    }
+    if (keep.length <= 150) return false;
+    // 屋根は横に広い形のはず。縦長の結果（電柱・影など）は捨てる
+    if (opt.minAspect && (maxX - minX + 1) / (maxY - minY + 1) < opt.minAspect) return false;
+    for (const p of keep) roof[p] = 1;
+    return true;
+  };
+  // ① 空に接する屋根: 稜線のすぐ下に点を打つ（縦長の結果は捨てる）
+  for (const fx of [.3, .5, .7]) {
+    const x = Math.round(fx * sw);
+    const yTop = A.skyline[x];
+    if (yTop <= 0 || yTop > sh * 0.75) continue;
+    if (await tryPoint(x, Math.min(sh - 1, yTop + Math.max(4, Math.round(sh * 0.02))),
+                       { subtractWall: true, minAspect: 1.3 })) found = true;
+  }
+  return found ? roof : null;
+}
+async function autoDetect(idx) {
+  if (!orig) return;
+  const key = PARTS[idx].key;
+  if (key !== "wall" && key !== "roof") {
+    alert("おまかせ判別は外壁と屋根に対応しています。付帯部などの細かい部分は、タップ・ブラシで選んでください。");
+    return;
+  }
+  const seg = await ensureSegmenter(); if (!seg) return;
+  aiStatus(`AIが${PARTS[idx].label}を判別しています…`);
+  try {
+    const A = buildAnalysis();
+    const small = key === "wall" ? await detectWallSmall(A) : await detectRoofSmall(A);
+    if (!small) {
+      alert(key === "roof"
+        ? "この写真では屋根を自動で特定できませんでした。「屋根」を選んだまま、屋根の上を1回タップしてください。"
+        : "外壁をうまく判別できませんでした。「タップで選択」や「ブラシで追加」で選んでください。");
+      if (key === "roof") setMode("wand"); // 細い屋根はタップ選択の方が正確
+
+      return;
+    }
+    // 縮小マスクを双一次補間で本来のサイズへ
+    const w = canvas.width, h = canvas.height, v = idx + 1;
+    const tmp = new Uint8Array(w * h);
+    for (let cy = 0; cy < h; cy++) {
+      const fy = Math.min(A.sh - 1.001, cy * A.sh / h);
+      const y0 = fy | 0, wy = fy - y0;
+      for (let cx = 0; cx < w; cx++) {
+        const fx = Math.min(A.sw - 1.001, cx * A.sw / w);
+        const x0 = fx | 0, wx = fx - x0;
+        const val = small[y0 * A.sw + x0] * (1 - wx) * (1 - wy) + small[y0 * A.sw + x0 + 1] * wx * (1 - wy)
+                  + small[(y0 + 1) * A.sw + x0] * (1 - wx) * wy + small[(y0 + 1) * A.sw + x0 + 1] * wx * wy;
+        if (val >= 0.5) tmp[cy * w + cx] = 1;
+      }
+    }
+    pushHistory();
+    for (let p = 0; p < mask.length; p++) {
+      if (tmp[p]) mask[p] = v;               // 判別結果をこの部位に
+      else if (mask[p] === v) mask[p] = 0;   // やり直し時は前回の結果を置き換える
+    }
     render();
   } catch (e) {
     alert("AIでの判別に失敗しました。「タップで選択」をお使いください。");
