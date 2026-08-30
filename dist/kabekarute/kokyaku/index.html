@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="../icon-32.png?v=2">
+<link rel="icon" type="image/png" sizes="16x16" href="../icon-16.png?v=2">
+<link rel="apple-touch-icon" href="../icon-180.png?v=2">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>カベカルテ 顧客台帳</title>
+<style>
+  :root {
+    --deep: #0b4a5f; --brand: #00a3c9; --accent: #e2661f;
+    --ink: #1b2a31; --muted: #566871; --line: #d3e4ec;
+    --bg: #f2f7fa; --card: #ffffff; --tint: #eaf4f7; --radius: 10px;
+    --danger: #b3261e; --warn: #a05a00;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    background: var(--bg); color: var(--ink); font-size: 15px; line-height: 1.55;
+  }
+  header.app-head {
+    background: var(--deep); color: #fff; padding: .7rem 1rem;
+    display: flex; align-items: center; gap: .6rem;
+  }
+  header.app-head h1 { font-size: 1.05rem; margin: 0; font-weight: 700; }
+  .beta { background: var(--accent); font-size: .7rem; padding: .1rem .45rem; border-radius: 99px; font-weight: 700; }
+  main { max-width: 760px; margin: 0 auto; padding: .8rem .8rem 3rem; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: .8rem .9rem; margin-bottom: .8rem; box-shadow: 0 2px 8px rgba(6,51,63,.07);
+  }
+  .btn {
+    display: inline-block; border: 0; border-radius: 8px; padding: .55rem 1rem;
+    font: inherit; font-weight: 700; cursor: pointer; color: #fff; background: var(--deep);
+  }
+  .btn.accent { background: var(--accent); }
+  .btn.ghost { background: #fff; color: var(--deep); border: 1.5px solid var(--deep); }
+  .btn.small { padding: .3rem .6rem; font-size: .78rem; }
+  .btn.danger { background: #fff; color: var(--danger); border: 1.5px solid var(--danger); }
+  label { display: block; font-size: .78rem; color: var(--muted); font-weight: 700; margin-bottom: .15rem; }
+  input[type=text], input[type=date], input[type=tel], textarea, select {
+    width: 100%; padding: .5rem .6rem; border: 1px solid var(--line); border-radius: 6px;
+    font: inherit; background: #fff;
+  }
+  textarea { resize: vertical; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  .toolbar { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; }
+  .toolbar input[type=text] { flex: 1; min-width: 9rem; }
+  .toolbar select { width: auto; }
+  .hint { font-size: .74rem; color: var(--muted); margin: .5rem 0 0; }
+  .alertband {
+    border-radius: 8px; padding: .55rem .8rem; font-size: .82rem; font-weight: 700;
+    margin-bottom: .8rem; cursor: pointer;
+  }
+  .alertband.due { background: #fdecea; color: var(--danger); border: 1px solid #f2b8b5; }
+  .alertband.soon { background: #fff6e8; color: var(--warn); border: 1px solid #f0d9b0; }
+  .cust {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: .7rem .9rem; margin-bottom: .6rem; cursor: pointer; box-shadow: 0 2px 8px rgba(6,51,63,.05);
+  }
+  .cust:active { transform: translateY(1px); }
+  .cust .nm { font-weight: 700; color: var(--deep); font-size: 1rem; }
+  .cust .sub { font-size: .78rem; color: var(--muted); margin-top: .1rem; }
+  .badge { display: inline-block; font-size: .7rem; font-weight: 700; border-radius: 99px; padding: .1rem .55rem; margin-left: .4rem; vertical-align: 1px; }
+  .badge.due { background: #fdecea; color: var(--danger); }
+  .badge.soon { background: #fff6e8; color: var(--warn); }
+  .badge.plan { background: var(--tint); color: var(--deep); }
+  .ev { border-top: 1px solid var(--line); padding: .5rem 0; display: flex; gap: .6rem; align-items: baseline; }
+  .ev .d { font-size: .76rem; color: var(--muted); white-space: nowrap; }
+  .ev .k { font-size: .76rem; font-weight: 700; color: var(--deep); white-space: nowrap; }
+  .ev .m { font-size: .84rem; flex: 1; }
+  .ev button { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: .9rem; }
+  .empty { text-align: center; color: var(--muted); font-size: .85rem; padding: 2rem 1rem; }
+  h2.sec { font-size: .92rem; color: var(--deep); border-left: 4px solid var(--accent); padding-left: .5rem; margin: 1.1rem 0 .5rem; }
+</style>
+</head>
+<body>
+
+<header class="app-head">
+  <a href="../index.html" title="カベカルテのホームへ" style="color:#fff; text-decoration:none; opacity:.85; font-size:1.15rem;">⌂</a>
+  <h1>カベカルテ <span style="font-weight:400; font-size:.85em;">顧客台帳</span></h1><span class="beta">v1.0</span>
+</header>
+
+<main>
+
+<!-- ============ 一覧 ============ -->
+<div id="listView">
+  <section class="card">
+    <div class="toolbar">
+      <input type="text" id="q" placeholder="名前・住所・電話・メモで検索" oninput="renderList()">
+      <select id="sortMode" onchange="renderList()">
+        <option value="updated">更新が新しい順</option>
+        <option value="next">点検・連絡が近い順</option>
+        <option value="name">名前順</option>
+      </select>
+    </div>
+    <div class="toolbar" style="margin-top:.5rem">
+      <button class="btn small accent" onclick="addCustomer()">＋ 顧客を追加</button>
+      <button class="btn small ghost" onclick="importShindan()">📋 診断・見積りから取り込む</button>
+      <button class="btn small ghost" onclick="importKanko()">🏠 完工報告から取り込む</button>
+    </div>
+    <div class="toolbar" style="margin-top:.5rem">
+      <button class="btn small ghost" onclick="exportLedger()">💾 台帳を保存</button>
+      <button class="btn small ghost" onclick="document.getElementById('importFile').click()">📂 読み込み</button>
+      <input type="file" id="importFile" accept=".html,.json,text/html,application/json" style="display:none" onchange="importLedger(event)">
+    </div>
+    <p class="hint">「取り込む」は、診断・見積り／完工報告アプリでいま入力中の内容から顧客と記録を作ります。同じお名前の方がいれば、その方に記録を追記します。完工報告から取り込むと、<b>1年点検の予定を自動でセット</b>します。</p>
+  </section>
+
+  <div id="alerts"></div>
+  <div id="custList"></div>
+
+  <p class="hint">台帳は文字だけを保存します（写真は診断・完工の案件ファイル側に残ります）。データはこの端末の中だけに保存されるため、<b>「台帳を保存」でのファイル控えを忘れずに</b>。</p>
+</div>
+
+<!-- ============ 詳細 ============ -->
+<div id="detailView" style="display:none">
+  <section class="card">
+    <div class="toolbar" style="justify-content:space-between">
+      <button class="btn small ghost" onclick="showList()">← 一覧へ戻る</button>
+      <button class="btn small danger" onclick="removeCustomer()">この顧客を削除</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="grid2">
+      <div><label>お客様名</label><input type="text" id="f_name" placeholder="山田 太郎" oninput="saveField('name', this.value)"></div>
+      <div><label>電話番号</label><input type="tel" id="f_phone" placeholder="090-0000-0000" oninput="saveField('phone', this.value)"></div>
+    </div>
+    <div style="margin-top:.6rem"><label>ご住所</label><input type="text" id="f_address" oninput="saveField('address', this.value)"></div>
+    <div style="margin-top:.6rem"><label>メモ（家の特徴・ご要望など）</label><textarea id="f_note" rows="2" oninput="saveField('note', this.value)"></textarea></div>
+  </section>
+
+  <section class="card">
+    <h2 class="sec" style="margin-top:0">次回の点検・連絡の予定</h2>
+    <div class="grid2">
+      <div><label>予定日</label><input type="date" id="f_nextDate" onchange="saveField('nextDate', this.value)"></div>
+      <div><label>内容</label><input type="text" id="f_nextNote" placeholder="1年点検／見積の返事待ち など" oninput="saveField('nextNote', this.value)"></div>
+    </div>
+    <p class="hint">予定日が近づくと（7日前から）、一覧の上にお知らせが出ます。済んだら下の「記録」に残して、次の予定を入れ直してください。</p>
+  </section>
+
+  <section class="card">
+    <h2 class="sec" style="margin-top:0">記録（新しい順）</h2>
+    <div class="toolbar">
+      <input type="date" id="ev_date" style="width:auto">
+      <select id="ev_kind">
+        <option>現地調査</option><option>見積提出</option><option>契約</option>
+        <option>着工</option><option>完工</option><option>点検</option>
+        <option>連絡</option><option>その他</option>
+      </select>
+      <input type="text" id="ev_memo" placeholder="内容（例：外壁見積 ¥980,000 提出）" style="flex:1; min-width:10rem">
+      <button class="btn small" onclick="addEvent()">追加</button>
+    </div>
+    <div id="evList" style="margin-top:.5rem"></div>
+  </section>
+</div>
+
+</main>
+
+<script>
+"use strict";
+const KEY = "kabekarute.customers";
+let customers = [];
+let editingId = null;
+let storageWarned = false;
+
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function fmtDate(s) {
+  if (!s) return "";
+  const [y, m, d] = s.split("-").map(Number);
+  return isNaN(d) ? s : `${y}/${m}/${d}`;
+}
+function daysUntil(s) {
+  if (!s) return null;
+  const [y, m, d] = s.split("-").map(Number);
+  const t = new Date(); t.setHours(0, 0, 0, 0);
+  return Math.round((new Date(y, m - 1, d) - t) / 86400000);
+}
+function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+// 「山田 太郎様」「山田太郎 様」を同一人物として扱うための正規化
+function normName(s) { return String(s || "").replace(/\s+/g, "").replace(/様$/, ""); }
+
+function load() {
+  try { customers = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { customers = []; }
+}
+function persist() {
+  try { localStorage.setItem(KEY, JSON.stringify(customers)); }
+  catch (e) {
+    if (!storageWarned) {
+      storageWarned = true;
+      alert("端末内の保存容量がいっぱいのため、自動保存が止まりました。「台帳を保存」でファイルに書き出してください。");
+    }
+  }
+}
+function touch(c) { c.updated = new Date().toISOString(); persist(); }
+function byId(id) { return customers.find(c => c.id === id); }
+
+// ---- 一覧 ----
+function badgeFor(c) {
+  const n = daysUntil(c.nextDate);
+  if (n === null) return "";
+  const label = esc(c.nextNote || "点検・連絡");
+  if (n < 0) return `<span class="badge due">${label}：${fmtDate(c.nextDate)} 予定日を過ぎています</span>`;
+  if (n <= 7) return `<span class="badge soon">${label}：${fmtDate(c.nextDate)}（あと${n}日）</span>`;
+  return `<span class="badge plan">${label}：${fmtDate(c.nextDate)}</span>`;
+}
+function renderAlerts() {
+  const due = customers.filter(c => { const n = daysUntil(c.nextDate); return n !== null && n < 0; }).length;
+  const soon = customers.filter(c => { const n = daysUntil(c.nextDate); return n !== null && n >= 0 && n <= 7; }).length;
+  let html = "";
+  if (due) html += `<div class="alertband due" onclick="sortMode.value='next'; renderList()">⚠ 予定日を過ぎている顧客が ${due}件 あります（タップで並べ替え）</div>`;
+  if (soon) html += `<div class="alertband soon" onclick="sortMode.value='next'; renderList()">🔔 7日以内に点検・連絡の予定が ${soon}件 あります</div>`;
+  document.getElementById("alerts").innerHTML = html;
+}
+function renderList() {
+  renderAlerts();
+  const q = document.getElementById("q").value.trim();
+  let list = customers.slice();
+  if (q) {
+    const t = q.replace(/\s+/g, "").toLowerCase();
+    list = list.filter(c => (normName(c.name) + (c.address || "") + (c.phone || "") + (c.note || "")).toLowerCase().includes(t));
+  }
+  const mode = document.getElementById("sortMode").value;
+  if (mode === "name") list.sort((a, b) => normName(a.name).localeCompare(normName(b.name), "ja"));
+  else if (mode === "next") list.sort((a, b) => {
+    const na = daysUntil(a.nextDate), nb = daysUntil(b.nextDate);
+    if (na === null && nb === null) return (b.updated || "").localeCompare(a.updated || "");
+    if (na === null) return 1;
+    if (nb === null) return -1;
+    return na - nb;
+  });
+  else list.sort((a, b) => (b.updated || "").localeCompare(a.updated || ""));
+
+  const box = document.getElementById("custList");
+  if (!list.length) {
+    box.innerHTML = `<div class="empty">${customers.length ? "検索に当てはまる顧客がいません" : "まだ顧客がいません。「＋ 顧客を追加」か、診断・見積りアプリで入力してから「取り込む」を押してください"}</div>`;
+    return;
+  }
+  box.innerHTML = list.map(c => {
+    const last = (c.events || [])[0];
+    return `<div class="cust" onclick="openDetail('${c.id}')">
+      <div class="nm">${esc(normName(c.name) || "（名前未記入）")}　様${badgeFor(c)}</div>
+      <div class="sub">${esc(c.address || "")}${c.phone ? "　📞" + esc(c.phone) : ""}</div>
+      ${last ? `<div class="sub">最新: ${fmtDate(last.date)}　${esc(last.kind)}${last.memo ? "　" + esc(last.memo) : ""}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+// ---- 詳細 ----
+function showList() { editingId = null; document.getElementById("detailView").style.display = "none"; document.getElementById("listView").style.display = ""; renderList(); }
+function openDetail(id) {
+  const c = byId(id); if (!c) return;
+  editingId = id;
+  document.getElementById("listView").style.display = "none";
+  document.getElementById("detailView").style.display = "";
+  f_name.value = c.name || ""; f_phone.value = c.phone || "";
+  f_address.value = c.address || ""; f_note.value = c.note || "";
+  f_nextDate.value = c.nextDate || ""; f_nextNote.value = c.nextNote || "";
+  ev_date.value = todayStr(); ev_memo.value = "";
+  renderEvents();
+  window.scrollTo(0, 0);
+}
+function saveField(k, v) { const c = byId(editingId); if (!c) return; c[k] = v; touch(c); }
+function renderEvents() {
+  const c = byId(editingId); if (!c) return;
+  const box = document.getElementById("evList");
+  if (!(c.events || []).length) { box.innerHTML = `<div class="empty" style="padding:.8rem">まだ記録がありません</div>`; return; }
+  box.innerHTML = c.events.map((e, i) => `
+    <div class="ev">
+      <span class="d">${fmtDate(e.date)}</span><span class="k">${esc(e.kind)}</span>
+      <span class="m">${esc(e.memo || "")}</span>
+      <button title="この記録を削除" onclick="removeEvent(${i})">✕</button>
+    </div>`).join("");
+}
+function addEvent() {
+  const c = byId(editingId); if (!c) return;
+  const memo = ev_memo.value.trim();
+  c.events = c.events || [];
+  c.events.unshift({ date: ev_date.value || todayStr(), kind: ev_kind.value, memo });
+  c.events.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  touch(c); ev_memo.value = ""; renderEvents();
+}
+function removeEvent(i) {
+  const c = byId(editingId); if (!c) return;
+  c.events.splice(i, 1); touch(c); renderEvents();
+}
+function addCustomer() {
+  const c = { id: newId(), name: "", phone: "", address: "", note: "", nextDate: "", nextNote: "", events: [], updated: new Date().toISOString() };
+  customers.push(c); persist(); openDetail(c.id);
+}
+function removeCustomer() {
+  const c = byId(editingId); if (!c) return;
+  if (!confirm(`「${normName(c.name) || "（名前未記入）"} 様」を台帳から削除します。記録も消えます。よろしいですか？`)) return;
+  customers = customers.filter(x => x.id !== editingId);
+  persist(); showList();
+}
+
+// ---- 他アプリからの取り込み ----
+function findOrCreate(name, address, phone) {
+  const key = normName(name);
+  let c = key ? customers.find(x => normName(x.name) === key) : null;
+  if (!c) {
+    c = { id: newId(), name: name || "", phone: phone || "", address: address || "", note: "", nextDate: "", nextNote: "", events: [], updated: new Date().toISOString() };
+    customers.push(c);
+  } else {
+    if (!c.address && address) c.address = address;
+    if (!c.phone && phone) c.phone = phone;
+  }
+  return c;
+}
+function pushEvent(c, ev) {
+  c.events = c.events || [];
+  // 同じ日付・種別・内容の記録は二重に取り込まない（取り込みボタンの連打対策）
+  if (c.events.some(e => e.date === ev.date && e.kind === ev.kind && e.memo === ev.memo)) return false;
+  c.events.unshift(ev);
+  c.events.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  return true;
+}
+function amountOf(it) {
+  const q = parseFloat(it.qty), u = parseFloat(String(it.price).replace(/[,¥]/g, ""));
+  if (isNaN(q) || isNaN(u)) return null;
+  return q * u;
+}
+function importShindan() {
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem("shindan.draft") || "null"); } catch (e) {}
+  if (!d || !(d.customer || "").trim()) { alert("診断・見積りアプリに入力中の内容が見つかりません。先に「診断・見積り」でお客様名まで入力してください。"); return; }
+  const c = findOrCreate(d.customer, d.address, "");
+  const sub = (d.estItems || []).reduce((s, it) => s + (amountOf(it) ?? 0), 0);
+  const rate = Number(String(d.taxRate || "10").replace(/[^0-9.]/g, "")) || 0;
+  const total = sub + Math.floor(sub * rate / 100);
+  const memo = (total > 0 ? `見積合計 ¥${Math.round(total).toLocaleString("ja-JP")}（税込）` : "") +
+               ((d.findings || []).length ? `　所見${d.findings.length}件` : "");
+  const added = pushEvent(c, { date: d.date || todayStr(), kind: "現地調査", memo: memo.trim() });
+  touch(c); renderList();
+  alert(added ? `「${normName(c.name)} 様」に現地調査の記録を追加しました。` : `この内容はすでに「${normName(c.name)} 様」に取り込み済みです。`);
+}
+function importKanko() {
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem("kanko.draft") || "null"); } catch (e) {}
+  if (!d || !(d.customer || "").trim()) { alert("完工報告アプリに入力中の内容が見つかりません。先に「完工報告」でお客様名まで入力してください。"); return; }
+  const c = findOrCreate(d.customer, d.address, "");
+  const endDate = d.endDate || d.startDate || todayStr();
+  const memo = [(d.workName || "").trim(), (d.warranty || "").trim() ? `保証: ${(d.warranty || "").trim()}` : ""].filter(Boolean).join("　");
+  const added = pushEvent(c, { date: endDate, kind: "完工", memo });
+  // 完工の1年後を点検予定に。すでに予定が入っている場合は上書きしない
+  let planMsg = "";
+  if (!c.nextDate) {
+    const [y, m, dd] = endDate.split("-").map(Number);
+    if (!isNaN(dd)) {
+      c.nextDate = `${y + 1}-${String(m).padStart(2, "0")}-${String(dd).padStart(2, "0")}`;
+      c.nextNote = "1年点検";
+      planMsg = `\n1年点検の予定（${fmtDate(c.nextDate)}）をセットしました。`;
+    }
+  }
+  touch(c); renderList();
+  alert((added ? `「${normName(c.name)} 様」に完工の記録を追加しました。` : `この内容はすでに「${normName(c.name)} 様」に取り込み済みです。`) + planMsg);
+}
+
+// ---- 台帳の保存・読み込み ----
+function caseFileHtml(title, bodyHtml, data) {
+  const json = JSON.stringify(data).replace(/</g, "\\u003c");
+  return `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${title}｜カベカルテ 台帳の控え</title>
+<style>body{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;margin:0;background:#f2f7fa;color:#1b2a31;line-height:1.6}
+.wrap{max-width:720px;margin:0 auto;padding:1rem}
+.head{background:#0b4a5f;color:#fff;padding:1rem;font-weight:700}
+.head small{display:block;font-weight:400;font-size:.75rem;opacity:.85}
+table{width:100%;border-collapse:collapse;background:#fff;margin:.8rem 0}
+th,td{border:1px solid #d3e4ec;padding:6px 9px;font-size:.85rem;text-align:left}
+th{background:#eaf4f7;color:#0b4a5f}
+h2{font-size:1rem;color:#0b4a5f;border-left:4px solid #e2661f;padding-left:.5rem;margin:1.4rem 0 .5rem}
+p{margin:.2rem 0;font-size:.88rem}
+.notice{background:#fff6e8;border-radius:8px;padding:.7rem .9rem;font-size:.8rem;color:#6b5b45;margin:1rem 0}
+.foot{font-size:.72rem;color:#566871;text-align:center;padding:1rem 0 2rem}</style></head><body>
+<div class="head">カベカルテ 台帳の控え<small>${title}</small></div>
+<div class="wrap">
+<div class="notice">📂 このファイルは「カベカルテ 顧客台帳」のデータです。<b>アプリ（kabekarute.com）の顧客台帳の「読み込み」からこのファイルを選ぶと、台帳に取り込めます</b>（同じ顧客は新しい方の内容で更新されます）。このページ自体は、内容を確認するための控えです。</div>
+${bodyHtml}
+</div>
+<div class="foot">カベカルテ ｜ https://kabekarute.com</div>
+<script type="application/json" id="kabekarute-data">${json}</scr` + `ipt>
+</body></html>`;
+}
+function exportLedger() {
+  if (!customers.length) { alert("台帳がまだ空です。"); return; }
+  const rows = customers.slice().sort((a, b) => normName(a.name).localeCompare(normName(b.name), "ja")).map(c => `
+    <h2>${esc(normName(c.name) || "（名前未記入）")}　様</h2>
+    <table>
+      <tr><th style="width:28%">ご住所</th><td>${esc(c.address || "")}</td></tr>
+      <tr><th>電話番号</th><td>${esc(c.phone || "")}</td></tr>
+      ${c.nextDate ? `<tr><th>次回予定</th><td>${fmtDate(c.nextDate)}　${esc(c.nextNote || "")}</td></tr>` : ""}
+      ${c.note ? `<tr><th>メモ</th><td>${esc(c.note)}</td></tr>` : ""}
+    </table>
+    ${(c.events || []).length ? `<table><tr><th style="width:22%">日付</th><th style="width:20%">種別</th><th>内容</th></tr>${c.events.map(e => `<tr><td>${fmtDate(e.date)}</td><td>${esc(e.kind)}</td><td>${esc(e.memo || "")}</td></tr>`).join("")}</table>` : ""}
+  `).join("");
+  const stamp = todayStr();
+  const html = caseFileHtml(`顧客台帳（${customers.length}名・${fmtDate(stamp)}時点）`, rows,
+    { type: "kokyaku-ledger", customers });
+  const blob = new Blob([html], { type: "text/html" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `kokyaku_daicho_${stamp.replaceAll("-", "")}.html`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function readCaseFile(text) {
+  const t = text.trim();
+  if (t.startsWith("{")) return JSON.parse(t);
+  const m = text.match(/<script type="application\/json" id="kabekarute-data">([\s\S]*?)<\/script>/);
+  if (!m) throw new Error("no data");
+  return JSON.parse(m[1]);
+}
+function importLedger(ev) {
+  const file = ev.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const d = readCaseFile(r.result);
+      const list = d.type === "kokyaku-ledger" ? d.customers : null;
+      if (!Array.isArray(list)) throw new Error("not ledger");
+      let added = 0, updated = 0;
+      for (const inc of list) {
+        const cur = customers.find(x => x.id === inc.id) ||
+                    customers.find(x => normName(x.name) && normName(x.name) === normName(inc.name));
+        if (!cur) { customers.push(inc); added++; continue; }
+        // 新しい方を正とし、記録は両方を残して重複だけ除く
+        const evs = [...(cur.events || [])];
+        for (const e of (inc.events || [])) {
+          if (!evs.some(x => x.date === e.date && x.kind === e.kind && x.memo === e.memo)) evs.push(e);
+        }
+        evs.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+        const newer = (inc.updated || "") > (cur.updated || "") ? inc : cur;
+        Object.assign(cur, { name: newer.name, phone: newer.phone, address: newer.address, note: newer.note, nextDate: newer.nextDate, nextNote: newer.nextNote, updated: newer.updated, events: evs });
+        updated++;
+      }
+      persist(); renderList();
+      alert(`読み込みました（追加 ${added}名・更新 ${updated}名）。`);
+    } catch (e) {
+      alert("ファイルを読み込めませんでした。顧客台帳の「台帳を保存」で作ったファイルを選んでください。");
+    }
+  };
+  r.readAsText(file); ev.target.value = "";
+}
+
+load();
+renderList();
+</script>
+</body>
+</html>
