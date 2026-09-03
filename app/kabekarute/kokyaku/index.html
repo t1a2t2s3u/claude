@@ -74,6 +74,28 @@
   .ev button { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: .9rem; }
   .empty { text-align: center; color: var(--muted); font-size: .85rem; padding: 2rem 1rem; }
   h2.sec { font-size: .92rem; color: var(--deep); border-left: 4px solid var(--accent); padding-left: .5rem; margin: 1.1rem 0 .5rem; }
+  /* 経営サマリー */
+  .tiles { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .5rem; }
+  @media (max-width: 480px) { .tiles { grid-template-columns: 1fr 1fr; } }
+  .tile { background: var(--tint); border-radius: 8px; padding: .45rem .6rem; }
+  .tile .t { font-size: .68rem; color: var(--muted); font-weight: 700; }
+  .tile .v { font-size: 1.05rem; font-weight: 700; color: var(--deep); }
+  .tile.warn .v { color: var(--danger); }
+  /* 売上推移（月ごとの入金額）。1系列・単色の棒グラフ */
+  .chart { display: flex; gap: 6px; align-items: flex-end; height: 108px; margin-top: .7rem; padding: 0 .1rem; }
+  .chart .col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; min-width: 0; }
+  .chart .val { font-size: .62rem; color: var(--muted); white-space: nowrap; }
+  .chart .bar { width: 100%; max-width: 34px; background: var(--deep); border-radius: 4px 4px 0 0; min-height: 2px; }
+  .chart .bar.zero { background: var(--line); }
+  .chart .mon { font-size: .68rem; color: var(--muted); margin-top: .2rem; white-space: nowrap; }
+  /* 顧客詳細の請求一覧 */
+  .invrow { border-top: 1px solid var(--line); padding: .45rem 0; display: flex; gap: .6rem; align-items: baseline; font-size: .84rem; }
+  .invrow .d { font-size: .76rem; color: var(--muted); white-space: nowrap; }
+  .invrow .a { margin-left: auto; font-weight: 700; color: var(--deep); white-space: nowrap; }
+  .stbadge { display: inline-block; font-size: .68rem; font-weight: 700; border-radius: 99px; padding: .05rem .5rem; white-space: nowrap; }
+  .stbadge.unpaid, .stbadge.part { background: #fff6e8; color: var(--warn); }
+  .stbadge.overdue { background: #fdecea; color: var(--danger); }
+  .stbadge.paid { background: #e7f3ef; color: #1b6e53; }
 </style>
 </head>
 <body>
@@ -87,6 +109,16 @@
 
 <!-- ============ 一覧 ============ -->
 <div id="listView">
+  <section class="card" id="bizSummary" style="display:none">
+    <div class="tiles">
+      <div class="tile"><div class="t">今月の入金</div><div class="v" id="tileMonth">¥0</div></div>
+      <div class="tile" id="tileUnpaidBox"><div class="t">未収金額</div><div class="v" id="tileUnpaid">¥0</div></div>
+      <div class="tile" id="tileOverdueBox"><div class="t">期限超過の請求</div><div class="v" id="tileOverdue">0件</div></div>
+    </div>
+    <div class="chart" id="salesChart" role="img" aria-label="月ごとの入金額の推移"></div>
+    <p class="hint">金額は「請求書・入金」アプリの記録から集計しています。<a href="../seikyu/index.html" style="color:var(--deep)">請求書・入金を開く →</a></p>
+  </section>
+
   <section class="card">
     <div class="toolbar">
       <input type="text" id="q" placeholder="名前・住所・電話・メモで検索" oninput="renderList()">
@@ -156,6 +188,12 @@
     </div>
     <div id="evList" style="margin-top:.5rem"></div>
   </section>
+
+  <section class="card" id="custInvCard" style="display:none">
+    <h2 class="sec" style="margin-top:0">請求・入金</h2>
+    <div id="custInvList"></div>
+    <p class="hint">この一覧は「請求書・入金」アプリの記録です。編集は<a href="../seikyu/index.html" style="color:var(--deep)">請求書・入金アプリ</a>で行ってください。</p>
+  </section>
 </div>
 
 </main>
@@ -192,6 +230,92 @@ function normName(s) { return String(s || "").replace(/\s+/g, "").replace(/様$/
 function load() {
   try { customers = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { customers = []; }
 }
+
+// ---- 請求書・入金アプリのデータ（読み取りだけ。編集はあちらで） ----
+function loadInvoices() {
+  try { return JSON.parse(localStorage.getItem("kabekarute.invoices") || "[]"); } catch (e) { return []; }
+}
+function invNum(v) { const n = parseFloat(String(v ?? "").replace(/[,¥\s]/g, "")); return isNaN(n) ? null : n; }
+function invTotal(inv) {
+  const sub = (inv.items || []).reduce((s, it) => {
+    const q = invNum(it.qty), u = invNum(it.price);
+    return s + (q === null || u === null ? 0 : q * u);
+  }, 0);
+  return sub + Math.floor(sub * ((invNum(inv.taxRate) ?? 10) / 100));
+}
+function invStatus(inv) {
+  const t = invTotal(inv);
+  if (!inv.paidDate) {
+    const n = daysUntil(inv.dueDate);
+    return (n !== null && n < 0) ? "overdue" : "unpaid";
+  }
+  const paid = invNum(inv.paidAmount);
+  if (paid !== null && t > 0 && paid < t) return "part";
+  return "paid";
+}
+const INV_LABEL = { unpaid: "未入金", overdue: "期限超過", part: "一部入金", paid: "入金済み" };
+function yen(n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); }
+// グラフの目盛り用。桁が多いと潰れるので万円で丸める
+function yenShort(n) {
+  if (n >= 10000) return Math.round(n / 10000).toLocaleString("ja-JP") + "万";
+  return "¥" + Math.round(n).toLocaleString("ja-JP");
+}
+function renderBiz() {
+  const invoices = loadInvoices();
+  const box = document.getElementById("bizSummary");
+  if (!invoices.length) { box.style.display = "none"; return; }
+  box.style.display = "";
+  const ym = todayStr().slice(0, 7);
+  let month = 0, unpaid = 0, overdue = 0;
+  for (const inv of invoices) {
+    const t = invTotal(inv), st = invStatus(inv);
+    if (inv.paidDate && (inv.paidDate || "").startsWith(ym)) month += invNum(inv.paidAmount) ?? t;
+    if (st === "unpaid" || st === "overdue") unpaid += t;
+    if (st === "part") unpaid += Math.max(0, t - (invNum(inv.paidAmount) ?? 0));
+    if (st === "overdue") overdue++;
+  }
+  document.getElementById("tileMonth").textContent = yen(month);
+  document.getElementById("tileUnpaid").textContent = yen(unpaid);
+  document.getElementById("tileUnpaidBox").className = "tile" + (unpaid > 0 ? " warn" : "");
+  document.getElementById("tileOverdue").textContent = overdue + "件";
+  document.getElementById("tileOverdueBox").className = "tile" + (overdue > 0 ? " warn" : "");
+
+  // 直近6か月の入金額（入金日ベース）
+  const months = [];
+  const now = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`, label: `${d.getMonth() + 1}月`, sum: 0 });
+  }
+  for (const inv of invoices) {
+    if (!inv.paidDate) continue;
+    const m = months.find(x => (inv.paidDate || "").startsWith(x.key));
+    if (m) m.sum += invNum(inv.paidAmount) ?? invTotal(inv);
+  }
+  const max = Math.max(...months.map(m => m.sum), 1);
+  document.getElementById("salesChart").innerHTML = months.map(m => `
+    <div class="col" title="${m.label} ${yen(m.sum)}">
+      <div class="val">${m.sum ? yenShort(m.sum) : ""}</div>
+      <div class="bar${m.sum ? "" : " zero"}" style="height:${Math.max(2, Math.round(m.sum / max * 76))}px"></div>
+      <div class="mon">${m.label}</div>
+    </div>`).join("");
+}
+function renderCustInvoices(c) {
+  const card = document.getElementById("custInvCard");
+  const key = normName(c.name);
+  const list = key ? loadInvoices().filter(inv => normName(inv.customer) === key)
+    .sort((a, b) => (b.date || "").localeCompare(a.date || "")) : [];
+  if (!list.length) { card.style.display = "none"; return; }
+  card.style.display = "";
+  document.getElementById("custInvList").innerHTML = list.map(inv => {
+    const st = invStatus(inv);
+    return `<div class="invrow">
+      <span class="d">${fmtDate(inv.date)}</span>
+      <span>${esc(inv.title || "請求書")}　<span class="stbadge ${st}">${INV_LABEL[st]}</span></span>
+      <span class="a">${yen(invTotal(inv))}</span>
+    </div>`;
+  }).join("");
+}
 function persist() {
   try { localStorage.setItem(KEY, JSON.stringify(customers)); }
   catch (e) {
@@ -223,6 +347,7 @@ function renderAlerts() {
 }
 function renderList() {
   renderAlerts();
+  renderBiz();
   const q = document.getElementById("q").value.trim();
   let list = customers.slice();
   if (q) {
@@ -267,6 +392,7 @@ function openDetail(id) {
   f_nextDate.value = c.nextDate || ""; f_nextNote.value = c.nextNote || "";
   ev_date.value = todayStr(); ev_memo.value = "";
   renderEvents();
+  renderCustInvoices(c);
   window.scrollTo(0, 0);
 }
 function saveField(k, v) { const c = byId(editingId); if (!c) return; c[k] = v; touch(c); }
