@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>星よみ手帳 — 生年月日でわかる今日の運勢</title>
+  <meta name="description" content="生年月日を入力するだけで、12星座の今日の運勢と数秘術による性格診断がわかる占いアプリ。">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔮</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <h1 class="site-title">✦ 星よみ手帳 ✦</h1>
+    <p class="site-subtitle">生年月日から、今日のあなたの運勢と生まれ持った資質をよみときます</p>
+  </header>
+
+  <main>
+    <section class="card input-card" aria-labelledby="input-heading">
+      <h2 id="input-heading">あなたの生年月日</h2>
+      <form id="fortune-form">
+        <div class="date-fields">
+          <label class="date-field">
+            <span>年</span>
+            <select id="input-year" required></select>
+          </label>
+          <label class="date-field">
+            <span>月</span>
+            <select id="input-month" required></select>
+          </label>
+          <label class="date-field">
+            <span>日</span>
+            <select id="input-day" required></select>
+          </label>
+        </div>
+        <button type="submit" class="submit-button">今日の運勢をみる</button>
+      </form>
+    </section>
+
+    <div id="result" class="result" hidden>
+      <section class="card sign-card" aria-labelledby="sign-heading">
+        <h2 id="sign-heading" class="visually-hidden">あなたの星座</h2>
+        <div class="sign-header">
+          <div class="sign-symbol" id="sign-symbol"></div>
+          <div>
+            <p class="sign-name" id="sign-name"></p>
+            <p class="sign-meta" id="sign-meta"></p>
+          </div>
+        </div>
+        <p class="sign-traits" id="sign-traits"></p>
+      </section>
+
+      <section class="card fortune-card" aria-labelledby="fortune-heading">
+        <h2 id="fortune-heading">今日の運勢 <span class="fortune-date" id="fortune-date"></span></h2>
+        <p class="fortune-message" id="fortune-message"></p>
+        <dl class="score-list" id="score-list"></dl>
+        <div class="lucky-row">
+          <div class="lucky-box">
+            <span class="lucky-label">ラッキーカラー</span>
+            <span class="lucky-value" id="lucky-color"></span>
+          </div>
+          <div class="lucky-box">
+            <span class="lucky-label">ラッキーアイテム</span>
+            <span class="lucky-value" id="lucky-item"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card numerology-card" aria-labelledby="numerology-heading">
+        <h2 id="numerology-heading">数秘術でみる、あなたの資質</h2>
+        <div class="life-path">
+          <div class="life-path-number" id="life-path-number"></div>
+          <div>
+            <p class="life-path-title" id="life-path-title"></p>
+            <p class="life-path-description" id="life-path-description"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card ranking-card" aria-labelledby="ranking-heading">
+        <h2 id="ranking-heading">今日の12星座ランキング</h2>
+        <ol class="ranking-list" id="ranking-list"></ol>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>結果はエンターテインメントとしてお楽しみください。</p>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

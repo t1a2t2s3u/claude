@@ -1,0 +1,357 @@
+:root {
+  --bg-top: #1b1a3a;
+  --bg-bottom: #2d1b4e;
+  --card-bg: rgba(255, 255, 255, 0.07);
+  --card-border: rgba(255, 255, 255, 0.14);
+  --text: #f2effa;
+  --text-muted: #b9b2d8;
+  --accent: #f6c453;
+  --accent-soft: rgba(246, 196, 83, 0.16);
+  --star-filled: #f6c453;
+  --star-empty: rgba(255, 255, 255, 0.22);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic',
+    'Noto Sans JP', sans-serif;
+  color: var(--text);
+  /* fixed アタッチメントは長いページやモバイルで背景が途切れるため使わない */
+  background-color: var(--bg-bottom);
+  background-image: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100vh);
+  background-repeat: no-repeat;
+  line-height: 1.7;
+}
+
+/* 夜空の星の瞬き */
+.stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 28% 68%, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 41% 12%, #ffe9b0 50%, transparent 51%),
+    radial-gradient(1px 1px at 57% 44%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 66% 82%, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 78% 28%, #ffe9b0 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 60%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 8% 86%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 94% 8%, #fff 50%, transparent 51%);
+  opacity: 0.7;
+  animation: twinkle 4s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.45; }
+  to { opacity: 0.85; }
+}
+
+.site-header {
+  text-align: center;
+  padding: 48px 16px 8px;
+}
+
+.site-title {
+  margin: 0;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  text-shadow: 0 0 24px rgba(246, 196, 83, 0.4);
+}
+
+.site-subtitle {
+  margin: 12px auto 0;
+  max-width: 34em;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  position: relative;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 24px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.card h2 {
+  margin: 0 0 16px;
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+}
+
+/* --- 入力フォーム --- */
+.date-fields {
+  display: flex;
+  gap: 12px;
+}
+
+.date-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.date-field select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.submit-button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f6c453, #e88f4c);
+  color: #2a1c04;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(246, 196, 83, 0.35);
+}
+
+/* --- 結果表示 --- */
+.result {
+  animation: rise 0.5s ease both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sign-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sign-symbol {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid rgba(246, 196, 83, 0.4);
+}
+
+.sign-name {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.sign-meta {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.sign-traits {
+  margin: 16px 0 0;
+  color: var(--text);
+}
+
+.fortune-date {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 8px;
+}
+
+.fortune-message {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+}
+
+.score-list {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.score-row dt {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.score-row dd {
+  margin: 0;
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+}
+
+.score-row .filled { color: var(--star-filled); }
+.score-row .empty { color: var(--star-empty); }
+
+.lucky-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.lucky-box {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.lucky-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.lucky-value {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* --- 数秘術 --- */
+.life-path {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.life-path-number {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.7rem;
+  font-weight: 700;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid rgba(246, 196, 83, 0.4);
+}
+
+.life-path-title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.life-path-description {
+  margin: 0;
+  color: var(--text);
+}
+
+/* --- ランキング --- */
+.ranking-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.ranking-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.ranking-list li.is-you {
+  background: var(--accent-soft);
+  border: 1px solid rgba(246, 196, 83, 0.45);
+}
+
+.rank-number {
+  width: 2.8em;
+  text-align: right;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.ranking-list li:nth-child(-n + 3) .rank-number {
+  color: var(--accent);
+}
+
+.rank-sign {
+  flex: 1;
+}
+
+.rank-stars {
+  letter-spacing: 0.1em;
+  font-size: 0.9rem;
+}
+
+.rank-stars .filled { color: var(--star-filled); }
+.rank-stars .empty { color: var(--star-empty); }
+
+.site-footer {
+  text-align: center;
+  padding: 0 16px 32px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .card { padding: 18px; }
+  .lucky-row { flex-direction: column; }
+}
