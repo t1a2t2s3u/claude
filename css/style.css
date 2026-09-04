@@ -120,6 +120,54 @@ main {
   font-size: 1rem;
 }
 
+.blood-fieldset {
+  margin: 20px 0 0;
+  padding: 0;
+  border: none;
+}
+
+.blood-fieldset legend {
+  padding: 0;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.blood-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.blood-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.blood-option span {
+  display: block;
+  padding: 10px 0;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.blood-option input:checked + span {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.blood-option input:focus-visible + span {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .submit-button {
   margin-top: 20px;
   width: 100%;
@@ -150,40 +198,93 @@ main {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.sign-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+/* --- 複合プロフィール --- */
+.profile-badges {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
 
-.sign-symbol {
-  width: 64px;
-  height: 64px;
-  flex-shrink: 0;
+.profile-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 14px 8px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.profile-badge-icon {
   display: grid;
   place-items: center;
-  font-size: 2rem;
+  width: 44px;
+  height: 44px;
+  font-size: 1.5rem;
   border-radius: 50%;
   background: var(--accent-soft);
   color: var(--accent);
   border: 1px solid rgba(246, 196, 83, 0.4);
 }
 
-.sign-name {
-  margin: 0;
-  font-size: 1.5rem;
+.profile-badge-blood {
+  font-size: 1.1rem;
   font-weight: 700;
 }
 
-.sign-meta {
-  margin: 4px 0 0;
-  color: var(--text-muted);
-  font-size: 0.85rem;
+.profile-badge-name {
+  margin-top: 6px;
+  font-weight: 700;
 }
 
-.sign-traits {
-  margin: 16px 0 0;
+.profile-badge-meta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.composite-catch {
+  margin: 20px 0 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+.composite-description {
+  margin: 0;
+}
+
+.profile-details {
+  margin-top: 16px;
+}
+
+.profile-details summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.trait-list {
+  margin: 12px 0 0;
+}
+
+.trait-list dt {
+  font-weight: 700;
+  margin-top: 12px;
+}
+
+.trait-list dd {
+  margin: 4px 0 0;
   color: var(--text);
+}
+
+.fortune-note,
+.ranking-note {
+  margin: -8px 0 16px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
 .fortune-date {

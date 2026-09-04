@@ -4,6 +4,7 @@
 export const ZODIAC_SIGNS = [
   {
     id: 'aries',
+    keyword: '情熱',
     name: '牡羊座',
     symbol: '♈',
     element: '火',
@@ -12,6 +13,7 @@ export const ZODIAC_SIGNS = [
   },
   {
     id: 'taurus',
+    keyword: '安定感',
     name: '牡牛座',
     symbol: '♉',
     element: '地',
@@ -20,6 +22,7 @@ export const ZODIAC_SIGNS = [
   },
   {
     id: 'gemini',
+    keyword: '発信力',
     name: '双子座',
     symbol: '♊',
     element: '風',
@@ -28,6 +31,7 @@ export const ZODIAC_SIGNS = [
   },
   {
     id: 'cancer',
+    keyword: '共感力',
     name: '蟹座',
     symbol: '♋',
     element: '水',
@@ -36,6 +40,7 @@ export const ZODIAC_SIGNS = [
   },
   {
     id: 'leo',
+    keyword: '華やかさ',
     name: '獅子座',
     symbol: '♌',
     element: '火',
@@ -44,6 +49,7 @@ export const ZODIAC_SIGNS = [
   },
   {
     id: 'virgo',
+    keyword: '緻密さ',
     name: '乙女座',
     symbol: '♍',
     element: '地',
@@ -52,6 +58,7 @@ export const ZODIAC_SIGNS = [
   },
   {
     id: 'libra',
+    keyword: '調和',
     name: '天秤座',
     symbol: '♎',
     element: '風',
@@ -60,6 +67,7 @@ export const ZODIAC_SIGNS = [
   },
   {
     id: 'scorpio',
+    keyword: '集中力',
     name: '蠍座',
     symbol: '♏',
     element: '水',
@@ -68,6 +76,7 @@ export const ZODIAC_SIGNS = [
   },
   {
     id: 'sagittarius',
+    keyword: '冒険心',
     name: '射手座',
     symbol: '♐',
     element: '火',
@@ -76,6 +85,7 @@ export const ZODIAC_SIGNS = [
   },
   {
     id: 'capricorn',
+    keyword: '忍耐力',
     name: '山羊座',
     symbol: '♑',
     element: '地',
@@ -84,6 +94,7 @@ export const ZODIAC_SIGNS = [
   },
   {
     id: 'aquarius',
+    keyword: '独創性',
     name: '水瓶座',
     symbol: '♒',
     element: '風',
@@ -92,6 +103,7 @@ export const ZODIAC_SIGNS = [
   },
   {
     id: 'pisces',
+    keyword: '想像力',
     name: '魚座',
     symbol: '♓',
     element: '水',

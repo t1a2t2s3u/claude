@@ -1,4 +1,7 @@
 import { getZodiacSign } from './zodiac.js';
+import { getEto } from './eto.js';
+import { BLOOD_TYPES } from './bloodtype.js';
+import { getCompositeProfile } from './composite.js';
 import { getLifePathNumber, LIFE_PATH_MEANINGS } from './numerology.js';
 import { getDailyFortune, getDailyRanking } from './fortune.js';
 
@@ -56,19 +59,38 @@ function starsHtml(score) {
   return `<span class="filled">${filled}</span><span class="empty">${empty}</span>`;
 }
 
-function renderSign(sign) {
-  document.getElementById('sign-symbol').textContent = sign.symbol;
-  document.getElementById('sign-name').textContent = sign.name;
-  document.getElementById('sign-meta').textContent =
-    `${sign.period} ・ ${sign.element}の星座`;
-  document.getElementById('sign-traits').textContent = sign.traits;
+function setText(id, text) {
+  document.getElementById(id).textContent = text;
+}
+
+function renderProfile(sign, eto, blood) {
+  setText('sign-symbol', sign.symbol);
+  setText('sign-name', sign.name);
+  setText('sign-meta', `${sign.element}の星座`);
+  setText('eto-emoji', eto.emoji);
+  setText('eto-name', `${eto.name}年`);
+  setText('blood-label-icon', blood.id);
+  setText('blood-label', blood.label);
+
+  const profile = getCompositeProfile(sign, eto, blood);
+  setText('composite-catch', profile.catchphrase);
+  setText('composite-description', profile.description);
+
+  setText('trait-sign-title', `${sign.symbol} ${sign.name}(${sign.period})`);
+  setText('sign-traits', sign.traits);
+  setText('trait-eto-title', `${eto.emoji} ${eto.name}年`);
+  setText('eto-traits', eto.traits);
+  setText('trait-blood-title', `🩸 ${blood.label}`);
+  setText('blood-traits', blood.traits);
 }
 
 function renderFortune(fortune) {
   const today = new Date();
-  document.getElementById('fortune-date').textContent =
-    `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
-  document.getElementById('fortune-message').textContent = fortune.message;
+  setText(
+    'fortune-date',
+    `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`
+  );
+  setText('fortune-message', fortune.message);
 
   const list = document.getElementById('score-list');
   list.innerHTML = '';
@@ -84,17 +106,16 @@ function renderFortune(fortune) {
     list.appendChild(row);
   }
 
-  document.getElementById('lucky-color').textContent = fortune.luckyColor;
-  document.getElementById('lucky-item').textContent = fortune.luckyItem;
+  setText('lucky-color', fortune.luckyColor);
+  setText('lucky-item', fortune.luckyItem);
 }
 
 function renderNumerology(year, month, day) {
   const n = getLifePathNumber(year, month, day);
   const meaning = LIFE_PATH_MEANINGS[n];
-  document.getElementById('life-path-number').textContent = String(n);
-  document.getElementById('life-path-title').textContent =
-    `運命数 ${n} — ${meaning.title}`;
-  document.getElementById('life-path-description').textContent = meaning.description;
+  setText('life-path-number', String(n));
+  setText('life-path-title', `運命数 ${n} — ${meaning.title}`);
+  setText('life-path-description', meaning.description);
 }
 
 function renderRanking(yourSignId) {
@@ -126,10 +147,14 @@ form.addEventListener('submit', (event) => {
   const year = Number(yearSelect.value);
   const month = Number(monthSelect.value);
   const day = Number(daySelect.value);
+  const bloodId = new FormData(form).get('blood');
 
   const sign = getZodiacSign(month, day);
-  renderSign(sign);
-  renderFortune(getDailyFortune(sign.id));
+  const eto = getEto(year);
+  const blood = BLOOD_TYPES[bloodId];
+
+  renderProfile(sign, eto, blood);
+  renderFortune(getDailyFortune(sign.id, new Date(), `${eto.id}:${blood.id}`));
   renderNumerology(year, month, day);
   renderRanking(sign.id);
 

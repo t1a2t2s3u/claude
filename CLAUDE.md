@@ -4,18 +4,21 @@ Guidance for Claude Code and other AI assistants working in this repository.
 
 ## Project overview
 
-「星よみ手帳」— 生年月日を入力すると、12星座の今日の運勢と数秘術(運命数)
-診断を表示する日本語の占いWebアプリ。ビルド工程も実行時依存もない静的サイト
-として動く。
+「星よみ手帳」— 生年月日と血液型を入力すると、星座×干支×血液型の複合
+プロフィール鑑定、今日のパーソナル運勢、数秘術(運命数)診断を表示する
+日本語の占いWebアプリ。ビルド工程も実行時依存もない静的サイトとして動く。
 
 設計上の要点:
 
-- 運勢は乱数ではなく「日付 + 星座ID」をシードにした決定的生成
-  (`js/fortune.js`)。同じ日は必ず同じ結果になることが仕様であり、
-  `Math.random()` に置き換えてはいけない。
-- 占いロジック(zodiac / numerology / fortune)はDOM非依存のESモジュール。
-  ブラウザとNodeテストの両方から同一コードを読み込むため、これらのファイル
-  にDOM APIやブラウザ専用APIを入れないこと。
+- 運勢は乱数ではなく「日付 + 星座ID + 干支ID + 血液型」をシードにした
+  決定的生成(`js/fortune.js`)。同じ日・同じ人は必ず同じ結果になることが
+  仕様であり、`Math.random()` に置き換えてはいけない。12星座ランキングは
+  星座のみのシード(パーソナルシードなし)で生成する。
+- 占いロジック(zodiac / eto / bloodtype / composite / numerology /
+  fortune)はDOM非依存のESモジュール。ブラウザとNodeテストの両方から
+  同一コードを読み込むため、これらのファイルにDOM APIやブラウザ専用APIを
+  入れないこと。
+- 干支は元日切り替えの暦年で判定する(旧暦・立春は考慮しない)。
 
 ## Repository structure
 
@@ -23,6 +26,9 @@ Guidance for Claude Code and other AI assistants working in this repository.
 index.html        画面構造(エントリポイント)
 css/style.css     全スタイル(夜空テーマ、レスポンシブ)
 js/zodiac.js      12星座データ・星座判定
+js/eto.js         干支(十二支)データ・判定
+js/bloodtype.js   血液型の性質データ
+js/composite.js   星座×干支×血液型の複合プロフィール生成
 js/numerology.js  運命数の計算・意味データ
 js/fortune.js     日替わり運勢とランキングの生成
 js/main.js        フォームと結果表示のDOM制御(ここだけDOMに触れる)

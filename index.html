@@ -18,7 +18,7 @@
 
   <main>
     <section class="card input-card" aria-labelledby="input-heading">
-      <h2 id="input-heading">あなたの生年月日</h2>
+      <h2 id="input-heading">あなたのこと、教えてください</h2>
       <form id="fortune-form">
         <div class="date-fields">
           <label class="date-field">
@@ -34,25 +34,69 @@
             <select id="input-day" required></select>
           </label>
         </div>
+        <fieldset class="blood-fieldset">
+          <legend>血液型</legend>
+          <div class="blood-options" id="blood-options">
+            <label class="blood-option">
+              <input type="radio" name="blood" value="A" required>
+              <span>A型</span>
+            </label>
+            <label class="blood-option">
+              <input type="radio" name="blood" value="B">
+              <span>B型</span>
+            </label>
+            <label class="blood-option">
+              <input type="radio" name="blood" value="O">
+              <span>O型</span>
+            </label>
+            <label class="blood-option">
+              <input type="radio" name="blood" value="AB">
+              <span>AB型</span>
+            </label>
+          </div>
+        </fieldset>
         <button type="submit" class="submit-button">今日の運勢をみる</button>
       </form>
     </section>
 
     <div id="result" class="result" hidden>
-      <section class="card sign-card" aria-labelledby="sign-heading">
-        <h2 id="sign-heading" class="visually-hidden">あなたの星座</h2>
-        <div class="sign-header">
-          <div class="sign-symbol" id="sign-symbol"></div>
-          <div>
-            <p class="sign-name" id="sign-name"></p>
-            <p class="sign-meta" id="sign-meta"></p>
+      <section class="card profile-card" aria-labelledby="profile-heading">
+        <h2 id="profile-heading">あなたの複合プロフィール</h2>
+        <div class="profile-badges">
+          <div class="profile-badge">
+            <span class="profile-badge-icon" id="sign-symbol"></span>
+            <span class="profile-badge-name" id="sign-name"></span>
+            <span class="profile-badge-meta" id="sign-meta"></span>
+          </div>
+          <div class="profile-badge">
+            <span class="profile-badge-icon" id="eto-emoji"></span>
+            <span class="profile-badge-name" id="eto-name"></span>
+            <span class="profile-badge-meta">干支</span>
+          </div>
+          <div class="profile-badge">
+            <span class="profile-badge-icon profile-badge-blood" id="blood-label-icon"></span>
+            <span class="profile-badge-name" id="blood-label"></span>
+            <span class="profile-badge-meta">血液型</span>
           </div>
         </div>
-        <p class="sign-traits" id="sign-traits"></p>
+        <p class="composite-catch" id="composite-catch"></p>
+        <p class="composite-description" id="composite-description"></p>
+        <details class="profile-details">
+          <summary>それぞれの要素をくわしくみる</summary>
+          <dl class="trait-list">
+            <dt id="trait-sign-title"></dt>
+            <dd id="sign-traits"></dd>
+            <dt id="trait-eto-title"></dt>
+            <dd id="eto-traits"></dd>
+            <dt id="trait-blood-title"></dt>
+            <dd id="blood-traits"></dd>
+          </dl>
+        </details>
       </section>
 
       <section class="card fortune-card" aria-labelledby="fortune-heading">
-        <h2 id="fortune-heading">今日の運勢 <span class="fortune-date" id="fortune-date"></span></h2>
+        <h2 id="fortune-heading">今日のあなたの運勢 <span class="fortune-date" id="fortune-date"></span></h2>
+        <p class="fortune-note">星座 × 干支 × 血液型 から、あなただけの運勢を鑑定しています。</p>
         <p class="fortune-message" id="fortune-message"></p>
         <dl class="score-list" id="score-list"></dl>
         <div class="lucky-row">
@@ -80,6 +124,7 @@
 
       <section class="card ranking-card" aria-labelledby="ranking-heading">
         <h2 id="ranking-heading">今日の12星座ランキング</h2>
+        <p class="ranking-note">星座単体の運勢による順位です。</p>
         <ol class="ranking-list" id="ranking-list"></ol>
       </section>
     </div>

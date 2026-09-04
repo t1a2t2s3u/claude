@@ -105,8 +105,11 @@ function score(rng) {
 
 /**
  * 指定した日付・星座の運勢を生成する。
+ * personalSeed に干支や血液型などを渡すと、同じ星座でも人ごとに
+ * 異なる「パーソナル運勢」になる(決定性は保たれる)。
  * @param {string} signId 星座ID(例: 'aries')
  * @param {Date} [date] 省略時は今日
+ * @param {string} [personalSeed] 追加のシード(例: 'ne:A')
  * @returns {{
  *   dateKey: string,
  *   scores: { total: number, love: number, work: number, money: number },
@@ -115,9 +118,12 @@ function score(rng) {
  *   message: string,
  * }}
  */
-export function getDailyFortune(signId, date = new Date()) {
+export function getDailyFortune(signId, date = new Date(), personalSeed = '') {
   const dateKey = formatDateKey(date);
-  const rng = mulberry32(hashString(`${dateKey}:${signId}`));
+  const seedKey = personalSeed
+    ? `${dateKey}:${signId}:${personalSeed}`
+    : `${dateKey}:${signId}`;
+  const rng = mulberry32(hashString(seedKey));
 
   const scores = {
     total: score(rng),
