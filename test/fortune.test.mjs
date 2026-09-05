@@ -59,6 +59,16 @@ test('スコアは1〜5、ラッキー要素は候補リストから選ばれる
   }
 });
 
+test('恋愛・仕事・金運のカテゴリ別アドバイスが含まれる', () => {
+  for (const sign of ZODIAC_SIGNS) {
+    const f = getDailyFortune(sign.id, DATE_A, 'ne:A');
+    for (const key of ['love', 'work', 'money']) {
+      assert.equal(typeof f.advice[key], 'string');
+      assert.ok(f.advice[key].length > 0, `${sign.id} の ${key} アドバイスが空`);
+    }
+  }
+});
+
 test('ランキングは12星座すべてを含み、総合スコアの降順で並ぶ', () => {
   const ranking = getDailyRanking(DATE_A);
   assert.equal(ranking.length, 12);

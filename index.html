@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>星よみ手帳 — 生年月日でわかる今日の運勢</title>
-  <meta name="description" content="生年月日を入力するだけで、12星座の今日の運勢と数秘術による性格診断がわかる占いアプリ。">
+  <title>星よみ手帳 — タロット×四柱推命×複合占い</title>
+  <meta name="description" content="生年月日と血液型から、今日のタロット・パーソナル運勢・四柱推命鑑定・ふたりの相性診断がわかる占いアプリ。">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔮</text></svg>">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -13,120 +13,220 @@
 
   <header class="site-header">
     <h1 class="site-title">✦ 星よみ手帳 ✦</h1>
-    <p class="site-subtitle">生年月日から、今日のあなたの運勢と生まれ持った資質をよみときます</p>
+    <p class="site-subtitle">タロットと四柱推命、星座×干支×血液型で、今日のあなたとふたりの相性をよみときます</p>
   </header>
 
+  <nav class="tab-nav" role="tablist" aria-label="占いの種類">
+    <button type="button" class="tab-button is-active" id="tab-daily" role="tab" aria-selected="true" aria-controls="panel-daily">🔮 きょうの占い</button>
+    <button type="button" class="tab-button" id="tab-aishou" role="tab" aria-selected="false" aria-controls="panel-aishou">💞 相性診断</button>
+  </nav>
+
   <main>
-    <section class="card input-card" aria-labelledby="input-heading">
-      <h2 id="input-heading">あなたのこと、教えてください</h2>
-      <form id="fortune-form">
-        <div class="date-fields">
-          <label class="date-field">
-            <span>年</span>
-            <select id="input-year" required></select>
-          </label>
-          <label class="date-field">
-            <span>月</span>
-            <select id="input-month" required></select>
-          </label>
-          <label class="date-field">
-            <span>日</span>
-            <select id="input-day" required></select>
-          </label>
-        </div>
-        <fieldset class="blood-fieldset">
-          <legend>血液型</legend>
-          <div class="blood-options" id="blood-options">
-            <label class="blood-option">
-              <input type="radio" name="blood" value="A" required>
-              <span>A型</span>
+    <!-- ============ きょうの占い ============ -->
+    <div id="panel-daily" role="tabpanel" aria-labelledby="tab-daily">
+      <section class="card input-card" aria-labelledby="input-heading">
+        <h2 id="input-heading">あなたのこと、教えてください</h2>
+        <form id="fortune-form">
+          <div class="date-fields">
+            <label class="date-field">
+              <span>年</span>
+              <select id="input-year" required></select>
             </label>
-            <label class="blood-option">
-              <input type="radio" name="blood" value="B">
-              <span>B型</span>
+            <label class="date-field">
+              <span>月</span>
+              <select id="input-month" required></select>
             </label>
-            <label class="blood-option">
-              <input type="radio" name="blood" value="O">
-              <span>O型</span>
-            </label>
-            <label class="blood-option">
-              <input type="radio" name="blood" value="AB">
-              <span>AB型</span>
+            <label class="date-field">
+              <span>日</span>
+              <select id="input-day" required></select>
             </label>
           </div>
-        </fieldset>
-        <button type="submit" class="submit-button">今日の運勢をみる</button>
-      </form>
-    </section>
-
-    <div id="result" class="result" hidden>
-      <section class="card profile-card" aria-labelledby="profile-heading">
-        <h2 id="profile-heading">あなたの複合プロフィール</h2>
-        <div class="profile-badges">
-          <div class="profile-badge">
-            <span class="profile-badge-icon" id="sign-symbol"></span>
-            <span class="profile-badge-name" id="sign-name"></span>
-            <span class="profile-badge-meta" id="sign-meta"></span>
-          </div>
-          <div class="profile-badge">
-            <span class="profile-badge-icon" id="eto-emoji"></span>
-            <span class="profile-badge-name" id="eto-name"></span>
-            <span class="profile-badge-meta">干支</span>
-          </div>
-          <div class="profile-badge">
-            <span class="profile-badge-icon profile-badge-blood" id="blood-label-icon"></span>
-            <span class="profile-badge-name" id="blood-label"></span>
-            <span class="profile-badge-meta">血液型</span>
-          </div>
-        </div>
-        <p class="composite-catch" id="composite-catch"></p>
-        <p class="composite-description" id="composite-description"></p>
-        <details class="profile-details">
-          <summary>それぞれの要素をくわしくみる</summary>
-          <dl class="trait-list">
-            <dt id="trait-sign-title"></dt>
-            <dd id="sign-traits"></dd>
-            <dt id="trait-eto-title"></dt>
-            <dd id="eto-traits"></dd>
-            <dt id="trait-blood-title"></dt>
-            <dd id="blood-traits"></dd>
-          </dl>
-        </details>
+          <fieldset class="blood-fieldset">
+            <legend>血液型</legend>
+            <div class="blood-options">
+              <label class="blood-option"><input type="radio" name="blood" value="A" required><span>A型</span></label>
+              <label class="blood-option"><input type="radio" name="blood" value="B"><span>B型</span></label>
+              <label class="blood-option"><input type="radio" name="blood" value="O"><span>O型</span></label>
+              <label class="blood-option"><input type="radio" name="blood" value="AB"><span>AB型</span></label>
+            </div>
+          </fieldset>
+          <button type="submit" class="submit-button">今日の運勢をみる</button>
+        </form>
       </section>
 
-      <section class="card fortune-card" aria-labelledby="fortune-heading">
-        <h2 id="fortune-heading">今日のあなたの運勢 <span class="fortune-date" id="fortune-date"></span></h2>
-        <p class="fortune-note">星座 × 干支 × 血液型 から、あなただけの運勢を鑑定しています。</p>
-        <p class="fortune-message" id="fortune-message"></p>
-        <dl class="score-list" id="score-list"></dl>
-        <div class="lucky-row">
-          <div class="lucky-box">
-            <span class="lucky-label">ラッキーカラー</span>
-            <span class="lucky-value" id="lucky-color"></span>
+      <div id="result" class="result" hidden>
+        <section class="card tarot-section" aria-labelledby="tarot-heading">
+          <h2 id="tarot-heading">今日の一枚 <span class="fortune-date js-fortune-date"></span></h2>
+          <p class="tarot-note" id="tarot-note">カードをタップして、今日のあなたへの一枚をめくってください。</p>
+          <button type="button" class="tarot-flip" id="tarot-flip" aria-label="タロットカードをめくる">
+            <span class="tarot-inner">
+              <span class="tarot-face tarot-back" aria-hidden="true">✦</span>
+              <span class="tarot-face tarot-front">
+                <span class="tarot-emoji" id="tarot-emoji"></span>
+                <span class="tarot-roman" id="tarot-roman"></span>
+                <span class="tarot-name" id="tarot-name"></span>
+              </span>
+            </span>
+          </button>
+          <div class="tarot-result" id="tarot-result" hidden>
+            <p class="tarot-title"><span id="tarot-result-name"></span> <span class="tarot-orientation" id="tarot-orientation"></span></p>
+            <p class="tarot-keywords" id="tarot-keywords"></p>
+            <p class="tarot-message" id="tarot-message"></p>
+            <dl class="tarot-advice">
+              <dt>💗 恋愛</dt><dd id="tarot-love"></dd>
+              <dt>💼 仕事</dt><dd id="tarot-work"></dd>
+              <dt>💰 金運</dt><dd id="tarot-money"></dd>
+            </dl>
           </div>
-          <div class="lucky-box">
-            <span class="lucky-label">ラッキーアイテム</span>
-            <span class="lucky-value" id="lucky-item"></span>
+        </section>
+
+        <section class="card fortune-card" aria-labelledby="fortune-heading">
+          <h2 id="fortune-heading">今日のあなたの運勢 <span class="fortune-date js-fortune-date"></span></h2>
+          <p class="fortune-note">星座 × 干支 × 血液型 から、あなただけの運勢を鑑定しています。</p>
+          <p class="fortune-message" id="fortune-message"></p>
+          <div class="total-row">
+            <span class="total-label">総合運</span>
+            <span class="total-stars" id="total-stars"></span>
           </div>
-        </div>
+          <div class="category-list" id="category-list"></div>
+          <div class="lucky-row">
+            <div class="lucky-box">
+              <span class="lucky-label">ラッキーカラー</span>
+              <span class="lucky-value" id="lucky-color"></span>
+            </div>
+            <div class="lucky-box">
+              <span class="lucky-label">ラッキーアイテム</span>
+              <span class="lucky-value" id="lucky-item"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card profile-card" aria-labelledby="profile-heading">
+          <h2 id="profile-heading">あなたの複合プロフィール</h2>
+          <div class="profile-badges">
+            <div class="profile-badge">
+              <span class="profile-badge-icon" id="sign-symbol"></span>
+              <span class="profile-badge-name" id="sign-name"></span>
+              <span class="profile-badge-meta" id="sign-meta"></span>
+            </div>
+            <div class="profile-badge">
+              <span class="profile-badge-icon" id="eto-emoji"></span>
+              <span class="profile-badge-name" id="eto-name"></span>
+              <span class="profile-badge-meta">干支</span>
+            </div>
+            <div class="profile-badge">
+              <span class="profile-badge-icon profile-badge-blood" id="blood-label-icon"></span>
+              <span class="profile-badge-name" id="blood-label"></span>
+              <span class="profile-badge-meta">血液型</span>
+            </div>
+          </div>
+          <p class="composite-catch" id="composite-catch"></p>
+          <p class="composite-description" id="composite-description"></p>
+          <details class="profile-details">
+            <summary>それぞれの要素をくわしくみる</summary>
+            <dl class="trait-list">
+              <dt id="trait-sign-title"></dt>
+              <dd id="sign-traits"></dd>
+              <dt id="trait-eto-title"></dt>
+              <dd id="eto-traits"></dd>
+              <dt id="trait-blood-title"></dt>
+              <dd id="blood-traits"></dd>
+            </dl>
+          </details>
+        </section>
+
+        <section class="card fourpillars-card" aria-labelledby="fourpillars-heading">
+          <h2 id="fourpillars-heading">四柱推命でみる、あなたの本質</h2>
+          <div class="pillar-row">
+            <div class="pillar-box">
+              <span class="pillar-label">年柱</span>
+              <span class="pillar-value" id="year-pillar"></span>
+            </div>
+            <div class="pillar-box">
+              <span class="pillar-label">日柱</span>
+              <span class="pillar-value" id="day-pillar"></span>
+            </div>
+            <div class="pillar-box">
+              <span class="pillar-label">日干(あなたの星)</span>
+              <span class="pillar-value" id="day-stem"></span>
+            </div>
+          </div>
+          <p class="day-stem-title" id="day-stem-title"></p>
+          <p class="day-stem-description" id="day-stem-description"></p>
+          <p class="fourpillars-note">※ 生まれ日の干支(日柱)を中心にみる簡易鑑定です。年柱は元日切り替えの暦年で求めています。</p>
+        </section>
+
+        <section class="card numerology-card" aria-labelledby="numerology-heading">
+          <h2 id="numerology-heading">数秘術でみる、あなたの資質</h2>
+          <div class="life-path">
+            <div class="life-path-number" id="life-path-number"></div>
+            <div>
+              <p class="life-path-title" id="life-path-title"></p>
+              <p class="life-path-description" id="life-path-description"></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card ranking-card" aria-labelledby="ranking-heading">
+          <h2 id="ranking-heading">今日の12星座ランキング</h2>
+          <p class="ranking-note">星座単体の運勢による順位です。</p>
+          <ol class="ranking-list" id="ranking-list"></ol>
+        </section>
+      </div>
+    </div>
+
+    <!-- ============ 相性診断 ============ -->
+    <div id="panel-aishou" role="tabpanel" aria-labelledby="tab-aishou" hidden>
+      <section class="card input-card" aria-labelledby="aishou-heading">
+        <h2 id="aishou-heading">ふたりの相性診断</h2>
+        <p class="aishou-lead">生年月日と血液型から、星座・干支・血液型・五行の4つの視点で相性をよみときます。</p>
+        <form id="aishou-form">
+          <div class="person-grid">
+            <fieldset class="person-fieldset">
+              <legend>あなた</legend>
+              <div class="date-fields">
+                <label class="date-field"><span>年</span><select id="a-year" required></select></label>
+                <label class="date-field"><span>月</span><select id="a-month" required></select></label>
+                <label class="date-field"><span>日</span><select id="a-day" required></select></label>
+              </div>
+              <div class="blood-options blood-options-compact">
+                <label class="blood-option"><input type="radio" name="blood-a" value="A" required><span>A</span></label>
+                <label class="blood-option"><input type="radio" name="blood-a" value="B"><span>B</span></label>
+                <label class="blood-option"><input type="radio" name="blood-a" value="O"><span>O</span></label>
+                <label class="blood-option"><input type="radio" name="blood-a" value="AB"><span>AB</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="person-fieldset">
+              <legend>お相手</legend>
+              <div class="date-fields">
+                <label class="date-field"><span>年</span><select id="b-year" required></select></label>
+                <label class="date-field"><span>月</span><select id="b-month" required></select></label>
+                <label class="date-field"><span>日</span><select id="b-day" required></select></label>
+              </div>
+              <div class="blood-options blood-options-compact">
+                <label class="blood-option"><input type="radio" name="blood-b" value="A" required><span>A</span></label>
+                <label class="blood-option"><input type="radio" name="blood-b" value="B"><span>B</span></label>
+                <label class="blood-option"><input type="radio" name="blood-b" value="O"><span>O</span></label>
+                <label class="blood-option"><input type="radio" name="blood-b" value="AB"><span>AB</span></label>
+              </div>
+            </fieldset>
+          </div>
+          <button type="submit" class="submit-button">相性をみる</button>
+        </form>
       </section>
 
-      <section class="card numerology-card" aria-labelledby="numerology-heading">
-        <h2 id="numerology-heading">数秘術でみる、あなたの資質</h2>
-        <div class="life-path">
-          <div class="life-path-number" id="life-path-number"></div>
-          <div>
-            <p class="life-path-title" id="life-path-title"></p>
-            <p class="life-path-description" id="life-path-description"></p>
+      <div id="aishou-result" class="result" hidden>
+        <section class="card aishou-card" aria-labelledby="aishou-result-heading">
+          <h2 id="aishou-result-heading">診断結果</h2>
+          <div class="aishou-pair" id="aishou-pair"></div>
+          <div class="aishou-score">
+            <span class="aishou-score-number" id="aishou-total"></span>
+            <span class="aishou-score-unit">点</span>
           </div>
-        </div>
-      </section>
-
-      <section class="card ranking-card" aria-labelledby="ranking-heading">
-        <h2 id="ranking-heading">今日の12星座ランキング</h2>
-        <p class="ranking-note">星座単体の運勢による順位です。</p>
-        <ol class="ranking-list" id="ranking-list"></ol>
-      </section>
+          <p class="aishou-overall" id="aishou-overall"></p>
+          <dl class="axis-list" id="axis-list"></dl>
+        </section>
+      </div>
     </div>
   </main>
 

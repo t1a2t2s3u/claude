@@ -63,8 +63,62 @@ const MESSAGES = {
   ],
 };
 
+// カテゴリ別アドバイス。スコア帯(高: 4-5 / 中: 3 / 低: 1-2)ごとの候補。
+const CATEGORY_ADVICE = {
+  love: {
+    high: [
+      '恋愛運は絶好調。気になる人には自分から連絡してみて。素直さが一番の魅力になります。',
+      '愛される日。ほめ言葉は照れずに受け取ると、さらに良い流れがやってきます。',
+      'ふたりの距離がぐっと縮まる予感。次に会う約束を今日のうちに決めるのが吉。',
+    ],
+    mid: [
+      '穏やかな恋愛運。焦らず、日常の小さな「ありがとう」を積み重ねるのが吉です。',
+      '聞き役に回ると魅力が伝わる日。相手の話に丁寧に相づちを打ってみて。',
+    ],
+    low: [
+      '今日は自分磨きに向く日。好きな服や香りで、自分の機嫌を先に取りましょう。',
+      '恋を急がない方がうまくいく日。返信はゆっくりでも大丈夫です。',
+    ],
+  },
+  work: {
+    high: [
+      '仕事運は上昇気流。挑戦したかった仕事に手を挙げると、追い風が吹きます。',
+      '集中力が冴える日。一番重たいタスクを午前中に片づけると波に乗れます。',
+      'あなたの提案が通りやすい日。温めていたアイデアを出すなら今日です。',
+    ],
+    mid: [
+      '安定した仕事運。ルーティンを丁寧にこなすことが、明日の信頼につながります。',
+      '整理整頓が運気を助ける日。机とメールの受信箱を片づけてみて。',
+    ],
+    low: [
+      '無理は禁物の日。確認を念入りに、締め切りには余裕を持たせましょう。',
+      '頑張りすぎないのが正解。今日は6割の力で流し、明日に備えて。',
+    ],
+  },
+  money: {
+    high: [
+      '金運は好調。お得な情報が舞い込みやすい日なので、アンテナを高くして。',
+      '使いどころが冴える日。長く使うものへの投資は今日が買いどきです。',
+    ],
+    mid: [
+      '金運は安定。予算内でのやりくりが楽しくなる日です。',
+      '小さな節約が効く日。コンビニに寄る回数を1回減らすと流れが良くなります。',
+    ],
+    low: [
+      '財布のひもは固めに。「今日は見るだけ」と決めてウィンドウショッピングを。',
+      '大きな買い物は明日以降に。今日は貯める日と割り切ると運気が守られます。',
+    ],
+  },
+};
+
+function adviceBand(score) {
+  if (score >= 4) return 'high';
+  if (score === 3) return 'mid';
+  return 'low';
+}
+
 // mulberry32: シード付きの軽量な擬似乱数生成器。
-function mulberry32(seed) {
+export function mulberry32(seed) {
   let a = seed >>> 0;
   return function () {
     a |= 0;
@@ -76,7 +130,7 @@ function mulberry32(seed) {
 }
 
 // 文字列を32bit整数ハッシュに変換する(FNV-1a)。
-function hashString(str) {
+export function hashString(str) {
   let h = 0x811c9dc5;
   for (let i = 0; i < str.length; i++) {
     h ^= str.charCodeAt(i);
@@ -138,6 +192,11 @@ export function getDailyFortune(signId, date = new Date(), personalSeed = '') {
     luckyColor: pick(rng, LUCKY_COLORS),
     luckyItem: pick(rng, LUCKY_ITEMS),
     message: pick(rng, MESSAGES[scores.total]),
+    advice: {
+      love: pick(rng, CATEGORY_ADVICE.love[adviceBand(scores.love)]),
+      work: pick(rng, CATEGORY_ADVICE.work[adviceBand(scores.work)]),
+      money: pick(rng, CATEGORY_ADVICE.money[adviceBand(scores.money)]),
+    },
   };
 }
 
