@@ -57,17 +57,8 @@
       <div id="result" class="result" hidden>
         <section class="card tarot-section" aria-labelledby="tarot-heading">
           <h2 id="tarot-heading">今日の一枚 <span class="fortune-date js-fortune-date"></span></h2>
-          <p class="tarot-note" id="tarot-note">カードをタップして、今日のあなたへの一枚をめくってください。</p>
-          <button type="button" class="tarot-flip" id="tarot-flip" aria-label="タロットカードをめくる">
-            <span class="tarot-inner">
-              <span class="tarot-face tarot-back" aria-hidden="true">✦</span>
-              <span class="tarot-face tarot-front">
-                <span class="tarot-emoji" id="tarot-emoji"></span>
-                <span class="tarot-roman" id="tarot-roman"></span>
-                <span class="tarot-name" id="tarot-name"></span>
-              </span>
-            </span>
-          </button>
+          <p class="tarot-note" id="tarot-note">5枚の中から、直感で今日の一枚を選んでください。</p>
+          <div class="tarot-spread" id="tarot-spread" role="group" aria-label="伏せられたタロットカード"></div>
           <div class="tarot-result" id="tarot-result" hidden>
             <p class="tarot-title"><span id="tarot-result-name"></span> <span class="tarot-orientation" id="tarot-orientation"></span></p>
             <p class="tarot-keywords" id="tarot-keywords"></p>

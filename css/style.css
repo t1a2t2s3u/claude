@@ -236,16 +236,55 @@ main {
   color: var(--text-muted);
 }
 
-.tarot-flip {
-  display: block;
-  margin: 0 auto;
-  width: 150px;
-  height: 240px;
+.tarot-spread {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  min-height: 220px;
+  perspective: 900px;
+}
+
+.tarot-pick {
+  width: 82px;
+  height: 132px;
   padding: 0;
   border: none;
   background: none;
   cursor: pointer;
-  perspective: 900px;
+  transform: var(--fan, none);
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+/* 扇状に少しずつ傾けて並べる */
+.tarot-pick:nth-child(1) { --fan: rotate(-9deg) translateY(14px); }
+.tarot-pick:nth-child(2) { --fan: rotate(-4.5deg) translateY(4px); }
+.tarot-pick:nth-child(3) { --fan: rotate(0deg) translateY(0); }
+.tarot-pick:nth-child(4) { --fan: rotate(4.5deg) translateY(4px); }
+.tarot-pick:nth-child(5) { --fan: rotate(9deg) translateY(14px); }
+
+.tarot-spread:not(.has-picked) .tarot-pick:hover,
+.tarot-spread:not(.has-picked) .tarot-pick:focus-visible {
+  transform: var(--fan, none) translateY(-10px);
+}
+
+.tarot-pick:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+/* 選ばれなかったカードは静かに退場する */
+.tarot-spread.has-picked .tarot-pick:not(.is-chosen) {
+  opacity: 0;
+  transform: var(--fan, none) translateY(18px) scale(0.9);
+  pointer-events: none;
+}
+
+/* 選んだカードは中央で大きくめくれる */
+.tarot-spread.has-picked .tarot-pick.is-chosen {
+  transform: rotate(0deg) scale(1.5);
+  z-index: 1;
 }
 
 .tarot-inner {
@@ -257,12 +296,8 @@ main {
   transition: transform 0.7s cubic-bezier(0.4, 0.1, 0.2, 1);
 }
 
-.tarot-flip.is-flipped .tarot-inner {
+.tarot-pick.is-flipped .tarot-inner {
   transform: rotateY(180deg);
-}
-
-.tarot-flip:not(.is-flipped):hover .tarot-inner {
-  transform: translateY(-6px) rotateZ(-1.5deg);
 }
 
 .tarot-face {
@@ -272,18 +307,18 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  border-radius: 14px;
+  gap: 4px;
+  border-radius: 10px;
   backface-visibility: hidden;
   border: 1px solid rgba(246, 196, 83, 0.5);
 }
 
 .tarot-back {
-  font-size: 2.4rem;
+  font-size: 1.5rem;
   color: var(--accent);
   background:
     radial-gradient(circle at 50% 32%, rgba(246, 196, 83, 0.22), transparent 55%),
-    repeating-linear-gradient(45deg, rgba(246, 196, 83, 0.12) 0 6px, transparent 6px 14px),
+    repeating-linear-gradient(45deg, rgba(246, 196, 83, 0.12) 0 4px, transparent 4px 10px),
     linear-gradient(160deg, #241f4d, #33205a);
 }
 
@@ -293,19 +328,25 @@ main {
 }
 
 .tarot-emoji {
-  font-size: 3rem;
+  font-size: 1.9rem;
+}
+
+/* 逆位置のときは絵柄をさかさまに見せる */
+.tarot-front.is-reversed .tarot-emoji {
+  transform: rotate(180deg);
 }
 
 .tarot-roman {
-  font-size: 0.8rem;
+  font-size: 0.6rem;
   letter-spacing: 0.3em;
   color: var(--text-muted);
 }
 
 .tarot-name {
-  font-size: 1.1rem;
+  font-size: 0.68rem;
   font-weight: 700;
   color: var(--accent);
+  white-space: nowrap;
 }
 
 .tarot-result {
@@ -366,13 +407,19 @@ main {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tarot-inner {
+  .tarot-inner,
+  .tarot-pick {
     transition: none;
   }
   .result,
   .tarot-result {
     animation: none;
   }
+}
+
+@media (max-width: 480px) {
+  .tarot-spread { gap: 5px; min-height: 200px; }
+  .tarot-pick { width: 64px; height: 104px; }
 }
 
 /* --- 運勢カテゴリ --- */

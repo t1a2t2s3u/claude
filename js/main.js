@@ -115,19 +115,18 @@ function renderProfile(sign, eto, blood) {
   setText('blood-traits', blood.traits);
 }
 
+const TAROT_SPREAD_SIZE = 5;
+
 function renderTarot(tarot) {
   const { card, isReversed } = tarot;
-  const flip = document.getElementById('tarot-flip');
+  const spread = document.getElementById('tarot-spread');
   const tarotResult = document.getElementById('tarot-result');
 
-  // 前回の状態をリセットしてから今日のカードを仕込む
-  flip.classList.remove('is-flipped');
+  // 前回の状態をリセットし、伏せた5枚を並べ直す
+  spread.classList.remove('has-picked');
+  spread.innerHTML = '';
   tarotResult.hidden = true;
-  setText('tarot-note', 'カードをタップして、今日のあなたへの一枚をめくってください。');
-
-  setText('tarot-emoji', card.emoji);
-  setText('tarot-roman', card.roman);
-  setText('tarot-name', card.name);
+  setText('tarot-note', '5枚の中から、直感で今日の一枚を選んでください。');
 
   const meaning = isReversed ? card.reversed : card.upright;
   setText('tarot-result-name', `${card.name}(${card.roman})`);
@@ -137,17 +136,54 @@ function renderTarot(tarot) {
   setText('tarot-love', card.love);
   setText('tarot-work', card.work);
   setText('tarot-money', card.money);
+
+  // どのカードを選んでも「今日のあなたの一枚」が現れる(選ぶ行為は演出)
+  for (let i = 0; i < TAROT_SPREAD_SIZE; i++) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'tarot-pick';
+    button.setAttribute('aria-label', `${i + 1}枚目のカードを選ぶ`);
+
+    const inner = document.createElement('span');
+    inner.className = 'tarot-inner';
+
+    const back = document.createElement('span');
+    back.className = 'tarot-face tarot-back';
+    back.setAttribute('aria-hidden', 'true');
+    back.textContent = '✦';
+
+    const front = document.createElement('span');
+    front.className = 'tarot-face tarot-front';
+    if (isReversed) front.classList.add('is-reversed');
+    const emoji = document.createElement('span');
+    emoji.className = 'tarot-emoji';
+    emoji.textContent = card.emoji;
+    const roman = document.createElement('span');
+    roman.className = 'tarot-roman';
+    roman.textContent = card.roman;
+    const name = document.createElement('span');
+    name.className = 'tarot-name';
+    name.textContent = card.name;
+    front.append(emoji, roman, name);
+
+    inner.append(back, front);
+    button.appendChild(inner);
+    button.addEventListener('click', () => onTarotPick(button));
+    spread.appendChild(button);
+  }
 }
 
-function onTarotFlip() {
-  const flip = document.getElementById('tarot-flip');
-  if (flip.classList.contains('is-flipped')) return;
-  flip.classList.add('is-flipped');
-  setText('tarot-note', '今日のあなたに届いたカードは──');
-  // カードが開ききってから意味を表示する
+function onTarotPick(button) {
+  const spread = document.getElementById('tarot-spread');
+  if (spread.classList.contains('has-picked')) return;
+  spread.classList.add('has-picked');
+  button.classList.add('is-chosen');
+  setText('tarot-note', 'あなたが選んだ、今日の一枚は──');
+  // 他のカードが下がってから、選んだカードをめくる
+  window.setTimeout(() => button.classList.add('is-flipped'), 250);
   window.setTimeout(() => {
     document.getElementById('tarot-result').hidden = false;
-  }, 650);
+  }, 1000);
 }
 
 function renderFortune(fortune) {
@@ -290,8 +326,6 @@ setupTabs();
 const readMyDate = setupDateSelects('input-year', 'input-month', 'input-day', 1995);
 const readDateA = setupDateSelects('a-year', 'a-month', 'a-day', 1995);
 const readDateB = setupDateSelects('b-year', 'b-month', 'b-day', 1993);
-
-document.getElementById('tarot-flip').addEventListener('click', onTarotFlip);
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
