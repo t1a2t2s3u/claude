@@ -143,7 +143,21 @@ function renderProfile(sign, eto, blood) {
 
   const profile = getCompositeProfile(sign, eto, blood);
   setText('composite-catch', profile.catchphrase);
-  setText('composite-description', profile.description);
+
+  const sections = document.getElementById('composite-sections');
+  sections.innerHTML = '';
+  for (const section of profile.sections) {
+    const block = document.createElement('div');
+    block.className = 'composite-section';
+    const label = document.createElement('span');
+    label.className = 'composite-label';
+    label.textContent = section.label;
+    const text = document.createElement('p');
+    text.className = 'composite-text';
+    text.textContent = section.text;
+    block.append(label, text);
+    sections.appendChild(block);
+  }
 
   setText('trait-sign-title', `${sign.symbol} ${sign.name}(${sign.period})`);
   setText('sign-traits', sign.traits);

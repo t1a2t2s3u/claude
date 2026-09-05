@@ -737,8 +737,34 @@ main {
   letter-spacing: 0.04em;
 }
 
-.composite-description {
+.composite-sections {
+  display: grid;
+  gap: 14px;
+}
+
+.composite-section {
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.composite-label {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+
+.composite-label::before {
+  content: '― ';
+  color: rgba(246, 196, 83, 0.5);
+}
+
+.composite-text {
   margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.9;
 }
 
 .profile-details {
