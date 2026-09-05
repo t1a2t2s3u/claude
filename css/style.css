@@ -15,11 +15,19 @@
   box-sizing: border-box;
 }
 
+button,
+select,
+input {
+  font-family: inherit;
+}
+
+/* しっぽり明朝: 静謐で神秘的なトーンの明朝体。Cinzel: 石碑刻印風のローマン体 */
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic',
-    'Noto Sans JP', sans-serif;
+  font-family: 'Shippori Mincho', 'Hiragino Mincho ProN', 'Yu Mincho',
+    'Noto Serif JP', serif;
+  font-weight: 500;
   color: var(--text);
   /* fixed アタッチメントは長いページやモバイルで背景が途切れるため使わない */
   background-color: var(--bg-bottom);
@@ -60,9 +68,14 @@ body {
 .site-title {
   margin: 0;
   font-size: clamp(1.8rem, 5vw, 2.6rem);
-  letter-spacing: 0.14em;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   color: var(--accent);
   text-shadow: 0 0 24px rgba(246, 196, 83, 0.4);
+}
+
+.site-subtitle {
+  letter-spacing: 0.06em;
 }
 
 .site-subtitle {
@@ -123,7 +136,8 @@ main {
 .card h2 {
   margin: 0 0 16px;
   font-size: 1.15rem;
-  letter-spacing: 0.06em;
+  font-weight: 600;
+  letter-spacing: 0.12em;
 }
 
 /* --- 入力フォーム --- */
@@ -602,8 +616,9 @@ main {
 }
 
 .aishou-score-number {
+  font-family: 'Cinzel', 'Shippori Mincho', serif;
   font-size: 3.2rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--accent);
   text-shadow: 0 0 24px rgba(246, 196, 83, 0.35);
   font-variant-numeric: tabular-nums;
@@ -813,8 +828,9 @@ main {
   flex-shrink: 0;
   display: grid;
   place-items: center;
+  font-family: 'Cinzel', 'Shippori Mincho', serif;
   font-size: 1.7rem;
-  font-weight: 700;
+  font-weight: 600;
   border-radius: 50%;
   background: var(--accent-soft);
   color: var(--accent);

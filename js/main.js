@@ -19,6 +19,36 @@ const result = document.getElementById('result');
 const aishouForm = document.getElementById('aishou-form');
 const aishouResult = document.getElementById('aishou-result');
 
+// --- 入力内容の保存・復元(localStorage) ---
+// プライベートモードなどで使えない環境でも動くよう、失敗は握りつぶす。
+
+const STORAGE_KEYS = {
+  daily: 'hoshiyomi:daily-profile:v1',
+  aishou: 'hoshiyomi:aishou-profile:v1',
+};
+
+function loadStored(key) {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveStored(key, value) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // 保存できない環境では単に記憶されないだけにする
+  }
+}
+
+function setBloodRadio(name, blood) {
+  const radio = document.querySelector(`input[name="${name}"][value="${blood}"]`);
+  if (radio) radio.checked = true;
+}
+
 // --- 共通ユーティリティ ---
 
 function fillSelect(select, values, labelSuffix, selected) {
@@ -56,11 +86,19 @@ function setupDateSelects(yearId, monthId, dayId, defaultYear) {
   yearSelect.addEventListener('change', sync);
   monthSelect.addEventListener('change', sync);
 
-  return () => ({
-    year: Number(yearSelect.value),
-    month: Number(monthSelect.value),
-    day: Number(daySelect.value),
-  });
+  return {
+    read: () => ({
+      year: Number(yearSelect.value),
+      month: Number(monthSelect.value),
+      day: Number(daySelect.value),
+    }),
+    set: ({ year, month, day }) => {
+      yearSelect.value = String(year);
+      monthSelect.value = String(month);
+      sync();
+      daySelect.value = String(day);
+    },
+  };
 }
 
 function starsHtml(score) {
@@ -322,14 +360,36 @@ function renderCompatibility(compat) {
 
 setupTabs();
 
-const readMyDate = setupDateSelects('input-year', 'input-month', 'input-day', 1995);
-const readDateA = setupDateSelects('a-year', 'a-month', 'a-day', 1995);
-const readDateB = setupDateSelects('b-year', 'b-month', 'b-day', 1993);
+const myDate = setupDateSelects('input-year', 'input-month', 'input-day', 1995);
+const dateA = setupDateSelects('a-year', 'a-month', 'a-day', 1995);
+const dateB = setupDateSelects('b-year', 'b-month', 'b-day', 1993);
+
+// 前回の入力を復元する
+const storedDaily = loadStored(STORAGE_KEYS.daily);
+if (storedDaily) {
+  myDate.set(storedDaily);
+  if (storedDaily.blood) setBloodRadio('blood', storedDaily.blood);
+  // 相性診断の「あなた」にも同じプロフィールを入れておく
+  dateA.set(storedDaily);
+  if (storedDaily.blood) setBloodRadio('blood-a', storedDaily.blood);
+}
+const storedAishou = loadStored(STORAGE_KEYS.aishou);
+if (storedAishou) {
+  if (storedAishou.a) {
+    dateA.set(storedAishou.a);
+    if (storedAishou.a.blood) setBloodRadio('blood-a', storedAishou.a.blood);
+  }
+  if (storedAishou.b) {
+    dateB.set(storedAishou.b);
+    if (storedAishou.b.blood) setBloodRadio('blood-b', storedAishou.b.blood);
+  }
+}
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
-  const { year, month, day } = readMyDate();
+  const { year, month, day } = myDate.read();
   const bloodId = new FormData(form).get('blood');
+  saveStored(STORAGE_KEYS.daily, { year, month, day, blood: bloodId });
 
   const sign = getZodiacSign(month, day);
   const eto = getEto(year);
@@ -350,8 +410,9 @@ form.addEventListener('submit', (event) => {
 aishouForm.addEventListener('submit', (event) => {
   event.preventDefault();
   const data = new FormData(aishouForm);
-  const personA = { ...readDateA(), blood: data.get('blood-a') };
-  const personB = { ...readDateB(), blood: data.get('blood-b') };
+  const personA = { ...dateA.read(), blood: data.get('blood-a') };
+  const personB = { ...dateB.read(), blood: data.get('blood-b') };
+  saveStored(STORAGE_KEYS.aishou, { a: personA, b: personB });
 
   renderCompatibility(getCompatibility(personA, personB));
 
