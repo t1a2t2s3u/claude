@@ -28,6 +28,7 @@ Guidance for Claude Code and other AI assistants working in this repository.
 
 ```
 index.html          画面構造(タブ構成のエントリポイント)
+assets/tarot/       ウェイト版タロットの絵柄(パブリックドメイン、22枚)
 css/style.css       全スタイル(夜空テーマ、レスポンシブ)
 js/zodiac.js        12星座データ・星座判定
 js/eto.js           干支(十二支)データ・判定

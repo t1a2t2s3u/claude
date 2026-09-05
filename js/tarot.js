@@ -10,6 +10,7 @@ export const TAROT_CARDS = [
     name: '愚者',
     roman: '0',
     emoji: '🌈',
+    image: 'assets/tarot/00-fool.jpg',
     upright: {
       keywords: '自由・新しい旅立ち',
       message: '心のままに一歩踏み出すとき。経験がないことこそ、あなたの伸びしろです。',
@@ -27,6 +28,7 @@ export const TAROT_CARDS = [
     name: '魔術師',
     roman: 'I',
     emoji: '✨',
+    image: 'assets/tarot/01-magician.jpg',
     upright: {
       keywords: '創造・才能の開花',
       message: '持っている道具はすべてそろっています。あなたの手で形にする番です。',
@@ -44,6 +46,7 @@ export const TAROT_CARDS = [
     name: '女教皇',
     roman: 'II',
     emoji: '🌙',
+    image: 'assets/tarot/02-high-priestess.jpg',
     upright: {
       keywords: '直感・静かな知性',
       message: '答えはすでに心の中に。静かな時間が、正しい判断を連れてきます。',
@@ -61,6 +64,7 @@ export const TAROT_CARDS = [
     name: '女帝',
     roman: 'III',
     emoji: '🌹',
+    image: 'assets/tarot/03-empress.jpg',
     upright: {
       keywords: '豊かさ・愛情',
       message: '与えた優しさが実りとなって返ってくる、豊穣のカードです。',
@@ -78,6 +82,7 @@ export const TAROT_CARDS = [
     name: '皇帝',
     roman: 'IV',
     emoji: '👑',
+    image: 'assets/tarot/04-emperor.jpg',
     upright: {
       keywords: 'リーダーシップ・達成',
       message: '主導権を握って進めるとき。あなたの決断が周囲の指針になります。',
@@ -95,6 +100,7 @@ export const TAROT_CARDS = [
     name: '法王',
     roman: 'V',
     emoji: '🕊️',
+    image: 'assets/tarot/05-hierophant.jpg',
     upright: {
       keywords: '信頼・導き',
       message: '目上の人や経験者の助言が幸運の鍵。素直さが運を連れてきます。',
@@ -112,6 +118,7 @@ export const TAROT_CARDS = [
     name: '恋人',
     roman: 'VI',
     emoji: '💞',
+    image: 'assets/tarot/06-lovers.jpg',
     upright: {
       keywords: 'ときめき・選択',
       message: '心が惹かれる方を選んで大丈夫。楽しい選択が正解になる日です。',
@@ -129,6 +136,7 @@ export const TAROT_CARDS = [
     name: '戦車',
     roman: 'VII',
     emoji: '🐎',
+    image: 'assets/tarot/07-chariot.jpg',
     upright: {
       keywords: '前進・勝利',
       message: 'アクセルを踏むべきとき。スピードに乗ったあなたは止まりません。',
@@ -146,6 +154,7 @@ export const TAROT_CARDS = [
     name: '力',
     roman: 'VIII',
     emoji: '🦁',
+    image: 'assets/tarot/08-strength.jpg',
     upright: {
       keywords: '内なる強さ・忍耐',
       message: '力ずくではなく、しなやかに。あなたの穏やかさが状況を制します。',
@@ -163,6 +172,7 @@ export const TAROT_CARDS = [
     name: '隠者',
     roman: 'IX',
     emoji: '🏮',
+    image: 'assets/tarot/09-hermit.jpg',
     upright: {
       keywords: '内省・探究',
       message: 'ひとりの時間が答えをくれる日。心の声に耳を澄ませましょう。',
@@ -180,6 +190,7 @@ export const TAROT_CARDS = [
     name: '運命の輪',
     roman: 'X',
     emoji: '🎡',
+    image: 'assets/tarot/10-wheel-of-fortune.jpg',
     upright: {
       keywords: '転機・チャンス',
       message: '流れが大きく動き出します。回ってきたチャンスの輪に乗って。',
@@ -197,6 +208,7 @@ export const TAROT_CARDS = [
     name: '正義',
     roman: 'XI',
     emoji: '⚖️',
+    image: 'assets/tarot/11-justice.jpg',
     upright: {
       keywords: 'バランス・公正',
       message: '筋を通した行動が信頼を生みます。フェアなあなたが輝く日。',
@@ -214,6 +226,7 @@ export const TAROT_CARDS = [
     name: '吊るされた男',
     roman: 'XII',
     emoji: '🙃',
+    image: 'assets/tarot/12-hanged-man.jpg',
     upright: {
       keywords: '視点の転換・熟成',
       message: '止まっているようで、内側では実が熟しています。逆さから見れば発見あり。',
@@ -231,6 +244,7 @@ export const TAROT_CARDS = [
     name: '死神',
     roman: 'XIII',
     emoji: '🦋',
+    image: 'assets/tarot/13-death.jpg',
     upright: {
       keywords: '再生・リセット',
       message: 'ひとつの区切りは、新しい始まりの合図。手放すほど軽くなります。',
@@ -248,6 +262,7 @@ export const TAROT_CARDS = [
     name: '節制',
     roman: 'XIV',
     emoji: '🫖',
+    image: 'assets/tarot/14-temperance.jpg',
     upright: {
       keywords: '調和・ほどよさ',
       message: '混ぜ合わせる名人になれる日。異なるものの間に立つと運が開けます。',
@@ -265,6 +280,7 @@ export const TAROT_CARDS = [
     name: '悪魔',
     roman: 'XV',
     emoji: '🍫',
+    image: 'assets/tarot/15-devil.jpg',
     upright: {
       keywords: '魅力・誘惑',
       message: '抗いがたい魅力が高まる日。楽しみは上手にコントロールして。',
@@ -282,6 +298,7 @@ export const TAROT_CARDS = [
     name: '塔',
     roman: 'XVI',
     emoji: '⚡',
+    image: 'assets/tarot/16-tower.jpg',
     upright: {
       keywords: '衝撃・目覚め',
       message: '予想外の出来事は、固定観念を壊すギフト。壊れた後に本物が残ります。',
@@ -299,6 +316,7 @@ export const TAROT_CARDS = [
     name: '星',
     roman: 'XVII',
     emoji: '🌟',
+    image: 'assets/tarot/17-star.jpg',
     upright: {
       keywords: '希望・インスピレーション',
       message: '願いに向かって光が差す日。理想を口に出すと現実が動きます。',
@@ -316,6 +334,7 @@ export const TAROT_CARDS = [
     name: '月',
     roman: 'XVIII',
     emoji: '🌕',
+    image: 'assets/tarot/18-moon.jpg',
     upright: {
       keywords: '感受性・神秘',
       message: '揺らぐ気持ちも大切な情報。急がず、ゆっくり輪郭を確かめて。',
@@ -333,6 +352,7 @@ export const TAROT_CARDS = [
     name: '太陽',
     roman: 'XIX',
     emoji: '☀️',
+    image: 'assets/tarot/19-sun.jpg',
     upright: {
       keywords: '成功・生命力',
       message: 'まぶしいほどの追い風。あなたの明るさがそのまま幸運になります。',
@@ -350,6 +370,7 @@ export const TAROT_CARDS = [
     name: '審判',
     roman: 'XX',
     emoji: '🎺',
+    image: 'assets/tarot/20-judgement.jpg',
     upright: {
       keywords: '復活・決断',
       message: '眠っていたものが目を覚ます日。過去の努力が呼び戻されます。',
@@ -367,6 +388,7 @@ export const TAROT_CARDS = [
     name: '世界',
     roman: 'XXI',
     emoji: '🌍',
+    image: 'assets/tarot/21-world.jpg',
     upright: {
       keywords: '完成・祝福',
       message: 'ひとつのサイクルが美しく完成します。自分を思いきり褒めてあげて。',

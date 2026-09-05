@@ -1,6 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { getDailyTarot, TAROT_CARDS } from '../js/tarot.js';
+
+const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const DATE_A = new Date(2026, 8, 4);
 const DATE_B = new Date(2026, 8, 5);
@@ -9,7 +14,7 @@ test('大アルカナ22枚がすべて定義されている', () => {
   assert.equal(TAROT_CARDS.length, 22);
   TAROT_CARDS.forEach((card, i) => {
     assert.equal(card.id, i);
-    for (const field of ['name', 'roman', 'emoji', 'love', 'work', 'money']) {
+    for (const field of ['name', 'roman', 'emoji', 'image', 'love', 'work', 'money']) {
       assert.ok(card[field], `${card.name} の ${field} が未定義`);
     }
     for (const side of ['upright', 'reversed']) {
@@ -17,6 +22,15 @@ test('大アルカナ22枚がすべて定義されている', () => {
       assert.ok(card[side].message, `${card.name} の ${side}.message が未定義`);
     }
   });
+});
+
+test('全カードの画像ファイルがリポジトリに存在する', () => {
+  for (const card of TAROT_CARDS) {
+    assert.ok(
+      existsSync(join(REPO_ROOT, card.image)),
+      `${card.name} の画像がない: ${card.image}`
+    );
+  }
 });
 
 test('同じ日・同じ人なら同じカードになる(決定性)', () => {

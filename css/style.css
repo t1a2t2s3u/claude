@@ -325,28 +325,33 @@ main {
 .tarot-front {
   transform: rotateY(180deg);
   background: linear-gradient(165deg, #3a2a63, #241f4d);
+  padding: 3px;
 }
 
-.tarot-emoji {
-  font-size: 1.9rem;
+.tarot-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 7px;
+  display: block;
 }
 
 /* 逆位置のときは絵柄をさかさまに見せる */
-.tarot-front.is-reversed .tarot-emoji {
+.tarot-front.is-reversed img {
   transform: rotate(180deg);
 }
 
-.tarot-roman {
-  font-size: 0.6rem;
-  letter-spacing: 0.3em;
-  color: var(--text-muted);
+.tarot-result-image {
+  display: block;
+  width: 150px;
+  margin: 0 auto 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(246, 196, 83, 0.5);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
 }
 
-.tarot-name {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: var(--accent);
-  white-space: nowrap;
+.tarot-result-image.is-reversed {
+  transform: rotate(180deg);
 }
 
 .tarot-result {

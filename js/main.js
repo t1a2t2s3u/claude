@@ -137,6 +137,11 @@ function renderTarot(tarot) {
   setText('tarot-work', card.work);
   setText('tarot-money', card.money);
 
+  const resultImage = document.getElementById('tarot-result-image');
+  resultImage.src = card.image;
+  resultImage.alt = `${card.name}のカード(ウェイト版タロット)`;
+  resultImage.classList.toggle('is-reversed', isReversed);
+
   // どのカードを選んでも「今日のあなたの一枚」が現れる(選ぶ行為は演出)
   for (let i = 0; i < TAROT_SPREAD_SIZE; i++) {
     const button = document.createElement('button');
@@ -155,16 +160,10 @@ function renderTarot(tarot) {
     const front = document.createElement('span');
     front.className = 'tarot-face tarot-front';
     if (isReversed) front.classList.add('is-reversed');
-    const emoji = document.createElement('span');
-    emoji.className = 'tarot-emoji';
-    emoji.textContent = card.emoji;
-    const roman = document.createElement('span');
-    roman.className = 'tarot-roman';
-    roman.textContent = card.roman;
-    const name = document.createElement('span');
-    name.className = 'tarot-name';
-    name.textContent = card.name;
-    front.append(emoji, roman, name);
+    const art = document.createElement('img');
+    art.src = card.image;
+    art.alt = `${card.name}のカード`;
+    front.appendChild(art);
 
     inner.append(back, front);
     button.appendChild(inner);
