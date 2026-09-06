@@ -1,6 +1,6 @@
 ---
 title: 「AI社員」ブームの正体 — 実際に運用してわかった、できること・まだ幻想なこと
-date: 2026-09-01
+date: 2026-09-06
 status: draft
 author: writer
 ---
