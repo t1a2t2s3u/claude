@@ -39,6 +39,17 @@ experiences or earnings figures is forbidden).
 - `.claude/skills/` — one directory per AI employee. New employees get a new
   skill directory here, not more sections in existing skills.
 
+## Office board
+
+A live status dashboard ("AI社員オフィス") is published as a Claude
+artifact: https://claude.ai/code/artifact/c7d8805a-a816-41b8-b2f8-f8c401d90f6c
+
+Each employee's skill includes a reporting step that updates the board's
+database (via the Artifact tool's `write_db`) at the end of a run:
+`employees/<id>` for status, `activity/<YYYYMMDD-HHMM>` for the feed, and
+`office/stats` (secretary only) for task-board counts. Reporting is
+best-effort — sessions without the Artifact tool skip it.
+
 ## Conventions
 
 - User-facing content (task board, reports, skill instructions) is written in

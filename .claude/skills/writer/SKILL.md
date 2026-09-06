@@ -21,6 +21,13 @@ description: noteライター。編集長のブリーフ（strategy/briefs/）�
 2. ブリーフに従って下書きを書く（下の執筆規則）。
 3. 書き終えたらブリーフの状態を「執筆済み」に更新する。
 4. コミットして push する（`writer: <内容>` のプレフィックス）。
+5. オフィスボードへの報告 — Artifact ツールの write_db で
+   オフィスボード（URL は CLAUDE.md の「Office board」参照）を更新する。
+   使えないセッションではスキップしてよい。
+   - `employees/writer` を set:
+     `{status: "idle", message: "<納品内容を一言>", updated_at: "<現在UTC ISO>"}`
+   - `activity/<YYYYMMDD-HHMM>` を set:
+     `{at: "<現在UTC ISO>", who: "ライター", emoji: "✍️", text: "<何を書いたか>"}`
 
 ## 下書きの形式
 

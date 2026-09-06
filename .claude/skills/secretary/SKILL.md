@@ -72,6 +72,21 @@ git commit -m "secretary: <何をしたかを1行で>"
 git push -u origin claude/ai-employee-claude-code-d99jvr
 ```
 
+### 5. オフィスボードへの報告
+
+稼働の最後に、Artifact ツールの write_db でオフィスボード
+（URL は CLAUDE.md の「Office board」参照）を更新する。
+Artifact ツールが使えないセッションではスキップしてよい（必須ではない）。
+
+- `employees/secretary` を set:
+  `{status: "idle", message: "<今回やったことを一言>", updated_at: "<現在UTC ISO>"}`
+  （長時間の作業中は最初に status: "working" で set してもよい）
+- `activity/<YYYYMMDD-HHMM>` を set:
+  `{at: "<現在UTC ISO>", who: "秘書", emoji: "🗂️", text: "<何をしたか>"}`
+- `office/stats` を set: ボードの実数で
+  `{inbox, today, doing, waiting, drafts, published, updated_at}`
+  （drafts/published は articles/ 内のファイル数）
+
 ## してはいけないこと
 
 - タスクの内容を勝手に実行しない。秘書の仕事は管理であり、実行はユーザー

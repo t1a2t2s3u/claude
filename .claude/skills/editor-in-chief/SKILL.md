@@ -32,6 +32,13 @@ description: note編集長。noteマネタイズチームの戦略立案・企�
    （下のテンプレート）。ライターはこれだけを頼りに書くので、
    「なぜこの記事が買われるのか」まで書き切ること。
 5. **保存** — コミットして push する（`editor: <内容>` のプレフィックス）。
+6. **オフィスボードへの報告** — Artifact ツールの write_db で
+   オフィスボード（URL は CLAUDE.md の「Office board」参照）を更新する。
+   使えないセッションではスキップしてよい。
+   - `employees/editor` を set:
+     `{status: "idle", message: "<今回の成果を一言>", updated_at: "<現在UTC ISO>"}`
+   - `activity/<YYYYMMDD-HHMM>` を set:
+     `{at: "<現在UTC ISO>", who: "編集長", emoji: "📰", text: "<何をしたか>"}`
 
 ## ブリーフのテンプレート
 
