@@ -19,6 +19,8 @@ Current employees:
   researcher in phase 1.
 - **writer** (`.claude/skills/writer/`) — drafts note articles from the
   editor's briefs.
+- **sns** (`.claude/skills/sns/`) — drafts X (Twitter) promo posts into the
+  `sns/queue.md` posting queue; the owner posts them manually.
 
 The note team's boundary: AI staff research, plan, and draft; the owner
 personally publishes to note, sets prices, and supplies real personal
@@ -36,6 +38,7 @@ experiences or earnings figures is forbidden).
   lane-level changes to `editorial-policy.md` need the user's approval.
 - `articles/` — article drafts and published copies; see `articles/README.md`
   for the flow.
+- `sns/` — the X posting queue (`queue.md`) maintained by the sns employee.
 - `.claude/skills/` — one directory per AI employee. New employees get a new
   skill directory here, not more sections in existing skills.
 
