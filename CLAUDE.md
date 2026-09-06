@@ -15,12 +15,18 @@ Current employees:
   task-related request from the user (adding, checking, or reorganizing
   tasks) goes through that skill.
 - **editor-in-chief** (`.claude/skills/editor-in-chief/`) — strategy,
-  planning, and writing briefs for the note monetization team. Doubles as
-  researcher in phase 1.
+  planning, and writing briefs for the note monetization team.
+- **researcher** (`.claude/skills/researcher/`) — weekly trend research
+  reports (`strategy/research/`) feeding the editor's Monday meeting.
 - **writer** (`.claude/skills/writer/`) — drafts note articles from the
-  editor's briefs.
+  editor's briefs into `articles/drafts/`.
+- **reviewer** (`.claude/skills/reviewer/`) — proofreads drafts and promotes
+  passing ones to `articles/ready/` with a review memo.
 - **sns** (`.claude/skills/sns/`) — drafts X (Twitter) and Threads promo
   posts into the `sns/queue.md` posting queue; the owner posts them manually.
+- **analyst** (`.claude/skills/analyst/`) — records owner-supplied metrics in
+  `analytics/` and writes improvement proposals for the editor. Never invents
+  numbers.
 
 The note team's boundary: AI staff research, plan, and draft; the owner
 personally publishes to note, sets prices, and supplies real personal
@@ -38,7 +44,10 @@ experiences or earnings figures is forbidden).
   lane-level changes to `editorial-policy.md` need the user's approval.
 - `articles/` — article drafts and published copies; see `articles/README.md`
   for the flow.
-- `sns/` — the X posting queue (`queue.md`) maintained by the sns employee.
+- `sns/` — the X/Threads posting queue (`queue.md`) maintained by the sns
+  employee.
+- `analytics/` — the KPI log (`kpi.md`), owner-supplied data drops (`inbox/`),
+  and the analyst's weekly reports (`reports/`).
 - `.claude/skills/` — one directory per AI employee. New employees get a new
   skill directory here, not more sections in existing skills.
 
