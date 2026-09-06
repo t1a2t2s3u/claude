@@ -29,5 +29,5 @@
   （無料 / ブリーフ: strategy/briefs/2026-08-30-ai-staff-diary-01.md）
 - [執筆済み] Claude CodeでAI秘書を作る完全手順書（コピペ用設定ファイル付き）
   （有料 / ブリーフ: strategy/briefs/2026-08-30-ai-secretary-howto.md）
-- [企画] 「AI社員」ブームの正体を整理する — 何ができて何がまだ幻想か
+- [執筆済み] 「AI社員」ブームの正体を整理する — 何ができて何がまだ幻想か
   （無料 / ブリーフ: strategy/briefs/2026-08-30-ai-staff-boom.md）
