@@ -4,28 +4,27 @@ Guidance for Claude Code and other AI assistants working in this repository.
 
 ## Project overview
 
-This repository hosts a content operation for a note (note.com) publication,
-run by scheduled AI assistants ("Routines") acting as staff: a writer
-(Tue/Thu 8:00 JST) drafts articles, an editor-in-chief (Mon 8:00 JST)
-reviews and promotes them. Publishing to note itself and posting to social
-media are manual, human steps.
-
-There is no application code, build system, or test suite. The deliverables
-are Markdown articles under `note事業部/`.
+This repository hosts the owner's AI-employee workspace: a note (note.com)
+monetization team of seven scheduled AI staff (editor-in-chief, writer,
+reviewer, SNS, analyst, researcher, task secretary). Each member runs as a
+persistent session that its Routine delivers into, and pushes to the team
+branch `claude/ai-employee-claude-code-d99jvr` — that branch's CLAUDE.md,
+`.claude/skills/`, and `strategy/` are the authoritative team docs.
+Publishing to note and posting to social media are manual, human steps.
 
 ## Repository structure
 
-- `note事業部/` — the content operation. See `note事業部/README.md` for the
-  workflow and folder layout (`drafts/`, `published/`, `research/`, `sns/`).
-- `note事業部/編集方針.md` — editorial policy. All assistants writing or
-  editing articles must follow it.
+- Team workspace (branch `claude/ai-employee-claude-code-d99jvr`):
+  `articles/` (drafts → ready → published), `strategy/` (editorial policy,
+  calendar, briefs), `sns/`, `analytics/`, `TASKS.md`, `reports/`.
+- `note事業部/` (this branch) — a retired earlier setup, merged into the
+  team workspace on 2026-09-06; kept as a record only.
 
 ## Conventions
 
-- Articles are Japanese Markdown files named `YYYY-MM-DD-slug.md` with YAML
-  front matter (`title`, `date`, `status`, `author`).
-- The writer and editor both push to the single content branch
-  `claude/note-content` from their persistent sessions.
+- Articles are Japanese Markdown files named `YYYY-MM-DD-slug.md`.
+- Routines must deliver into persistent sessions with a declared outcome
+  branch; throwaway per-fire sessions cannot push and must not be used.
 
 ## Git workflow
 
