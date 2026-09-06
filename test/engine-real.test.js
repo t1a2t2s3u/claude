@@ -5,7 +5,7 @@ import {
   step,
   stepDays,
   placeMarketOrder,
-  placeLimitOrder,
+  placeOrder,
   snapshot,
   quotes,
   isAtEnd,
@@ -136,7 +136,7 @@ test('実データでも成行・指値の約定は同じ規則で動く', () =>
 
   // 波形の中心（2500 円）を指値にすれば、下振れした日に必ず約定する
   const limit = 2500;
-  placeLimitOrder(state, { symbol: '7203', side: 'buy', qty: 100, limit });
+  placeOrder(state, { symbol: '7203', side: 'buy', qty: 100, price: limit });
   let filled = null;
   for (let i = 0; i < 30 && !filled; i++) {
     const r = step(state, dataset);
@@ -144,7 +144,7 @@ test('実データでも成行・指値の約定は同じ規則で動く', () =>
     filled = r.fills.find((f) => f.trade) ?? null;
   }
   assert.ok(filled, '波形が下げる局面で約定するはず');
-  assert.ok(filled.trade.price <= filled.order.limit + 1e-9);
+  assert.ok(filled.trade.price <= filled.order.price + 1e-9);
 });
 
 test('配当は実際の権利落ち日に、実際の金額で入る', () => {

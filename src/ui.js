@@ -4,14 +4,15 @@ import {
   stepDays,
   quotes,
   snapshot,
+  currentPrices,
   placeMarketOrder,
-  placeLimitOrder,
+  placeOrder,
   cancelOrder,
   createEngine,
   createRealEngine,
 } from './engine.js';
 import { loadDataset, DATA_BASE } from './dataset.js';
-import { commission, buyCost, heldQty } from './portfolio.js';
+import { commission, buyCost, heldQty, shortCapacity, shortNotional } from './portfolio.js';
 import { sma } from './market.js';
 import { summarize } from './stats.js';
 import { drawCandles, drawLine, THEME } from './chart.js';
@@ -60,6 +61,19 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
   const priceFmt = (v) => fmtPriceRaw(v, cur());
 
   const selected = () => quotes(state).find((q) => q.symbol === ui.symbol);
+
+  /** side の表示名。売建中の買いは「買い戻し」と呼ぶ */
+  function sideLabel(side, symbol) {
+    if (side === 'short') return '空売り';
+    if (side === 'sell') return '売り';
+    return heldQty(state.portfolio, symbol) < 0 ? '買い戻し' : '買い';
+  }
+
+  /** いま新しく建てられる空売りの想定元本の余力 */
+  function shortRoom() {
+    const capacity = shortCapacity(snapshot(state).equity);
+    return Math.max(0, capacity - shortNotional(state.portfolio, currentPrices(state)));
+  }
 
   function toast(message) {
     const node = $('toast');
@@ -152,14 +166,29 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
       $('chart-meta').innerHTML = `<span class="${pnlClass(snap.totalPnl)}">${signedMoney(
         snap.totalPnl
       )} (${percent(snap.totalReturn)})</span> · ${state.equity.length - 1}営業日`;
-      $('chart-legend').hidden = true;
 
       const points = ui.range > 0 ? state.equity.slice(-ui.range) : state.equity;
-      drawLine(canvas, points, { baseline: state.portfolio.initialCash });
+      // 指数を「同じ元手で指数に投資していたら」の金額に直して重ねる
+      const base = points.find((e) => e.index > 0);
+      const compare = base
+        ? points.map((e) => ({
+            date: e.date,
+            value: (state.portfolio.initialCash * (e.index ?? base.index)) / base.index,
+          }))
+        : null;
+
+      $('chart-legend').hidden = false;
+      $('chart-legend').innerHTML =
+        '<span class="dot" style="--c: #3ecf8e"></span>総資産' +
+        '<span class="dot" style="--c: #8f9bb0"></span>指数（同元手）';
+      drawLine(canvas, points, { baseline: state.portfolio.initialCash, compare });
       return;
     }
 
     $('chart-legend').hidden = false;
+    $('chart-legend').innerHTML =
+      '<span class="dot" style="--c: #f2b544"></span>5日移動平均' +
+      '<span class="dot" style="--c: #7c5cff"></span>25日移動平均';
     const allBars = inst.bars;
     if (allBars.length === 0) {
       $('chart-name').textContent = `${inst.name}（${inst.symbol}）`;
@@ -199,13 +228,19 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
     return snap.rows
       .map((row) => {
         const q = quotes(state).find((x) => x.symbol === row.symbol);
+        const short = row.qty < 0;
+        const label = short
+          ? `<span class="tag short">売建</span>${esc(q.name)}`
+          : esc(q.name);
         return `<div class="row" data-symbol="${row.symbol}">
           <div class="left">
-            <span class="name">${esc(q.name)}</span>
-            <span class="meta">${number(row.qty)}株 · 取得 ${priceFmt(row.avgCost)} → ${priceFmt(row.last)}</span>
+            <span class="name">${label}</span>
+            <span class="meta">${number(Math.abs(row.qty))}株 · ${short ? '建値' : '取得'} ${priceFmt(
+              row.avgCost
+            )} → ${priceFmt(row.last)}</span>
           </div>
           <div class="right">
-            <div>${money(row.value)}</div>
+            <div>${money(Math.abs(row.value))}</div>
             <div class="${pnlClass(row.unrealized)}">${signedMoney(row.unrealized)} (${percent(
               row.unrealizedRatio
             )})</div>
@@ -219,12 +254,17 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
     if (state.orders.length === 0) {
       return '<p class="empty">未約定の指値注文はありません</p>';
     }
+    const sideTag = { buy: '買', sell: '売', short: '空' };
     return state.orders
       .map(
         (o) => `<div class="row">
           <div class="left">
-            <span class="name"><span class="tag ${o.side}">${o.side === 'buy' ? '買' : '売'}</span>${esc(o.name)}</span>
-            <span class="meta">${number(o.qty)}株 · 指値 ${priceFmt(o.limit)} · ${o.placedAt}発注</span>
+            <span class="name"><span class="tag ${o.side}">${sideTag[o.side] ?? '?'}</span><span class="tag ${
+              o.kind === 'stop' ? 'stop' : 'flat'
+            }">${o.kind === 'stop' ? '逆指値' : '指値'}</span>${esc(o.name)}</span>
+            <span class="meta">${number(o.qty)}株 · ${o.kind === 'stop' ? '逆指値' : '指値'} ${priceFmt(
+              o.price
+            )} · ${o.placedAt}発注</span>
           </div>
           <div class="right"><button class="link" data-cancel="${o.id}">取消</button></div>
         </div>`
@@ -236,15 +276,16 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
     const trades = [...state.portfolio.trades].reverse().slice(0, 80);
     if (trades.length === 0) return '<p class="empty">まだ取引がありません</p>';
 
+    const labels = { buy: '買', sell: '売', short: '空', cover: '戻', dividend: '配' };
     return trades
       .map((t) => {
-        const label = t.type === 'buy' ? '買' : t.type === 'sell' ? '売' : '配';
+        const label = labels[t.type] ?? '?';
         const detail =
           t.type === 'dividend'
-            ? `${number(t.qty)}株 · 1株 ${priceFmt(t.price)}`
+            ? `${number(Math.abs(t.qty))}株 · 1株 ${priceFmt(t.price)}${t.amount < 0 ? '（配当落調整金）' : ''}`
             : `${number(t.qty)}株 × ${priceFmt(t.price)} · 手数料 ${money(t.fee)}`;
         const pnl =
-          t.type === 'sell'
+          t.type === 'sell' || t.type === 'cover'
             ? `<div class="${pnlClass(t.pnl)}">${signedMoney(t.pnl)}</div>`
             : '';
         return `<div class="row">
@@ -286,6 +327,8 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
       ['総資産', money(s.equity), ''],
       ['累計損益', signedMoney(s.totalPnl), pnlClass(s.totalPnl)],
       ['トータルリターン', percent(s.totalReturn), pnlClass(s.totalReturn)],
+      ['指数（同期間）', percent(s.benchmark), pnlClass(s.benchmark)],
+      ['超過リターン', percent(s.excess), pnlClass(s.excess)],
       ['経過営業日', `${number(s.days)}日`, ''],
       ['実現損益', signedMoney(s.realized), pnlClass(s.realized)],
       ['評価損益', signedMoney(s.unrealized), pnlClass(s.unrealized)],
@@ -348,32 +391,43 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
     const inst = selected();
     syncQtyControls(inst.lot);
     $('order-symbol').textContent = `${inst.name}（${inst.symbol}）`;
-    $('limit-field').hidden = ui.orderType !== 'limit';
+    $('limit-field').hidden = ui.orderType === 'market';
+    $('price-label').textContent = ui.orderType === 'stop' ? '逆指値価格' : '指値価格';
 
     const limitInput = $('limit-input');
-    if (ui.orderType === 'limit' && limitInput.value === '' && inst.last > 0) {
+    if (ui.orderType !== 'market' && limitInput.value === '' && inst.last > 0) {
       // 初期値も通貨の呼値の刻みで入れる（ドルで整数に丸めるとセントが失われる）
       limitInput.value = String(roundPrice(inst.last, cur()));
     }
 
     limitInput.step = cur() === 'JPY' ? '0.1' : '0.01';
     const qty = Number($('qty-input').value) || 0;
-    const px = ui.orderType === 'limit' ? Number(limitInput.value) || inst.last : inst.last;
+    const px = ui.orderType !== 'market' ? Number(limitInput.value) || inst.last : inst.last;
     const notional = px * qty;
     const fee = qty > 0 && notional > 0 ? commission(notional, cur()) : 0;
 
-    $('avail-label').textContent = ui.side === 'buy' ? '買付余力' : '保有株数';
-    $('avail-value').textContent =
-      ui.side === 'buy' ? money(state.portfolio.cash) : `${number(heldQty(state.portfolio, inst.symbol))}株`;
+    const held = heldQty(state.portfolio, inst.symbol);
+    if (ui.side === 'short') {
+      $('avail-label').textContent = '空売り余力（想定元本）';
+      $('avail-value').textContent = money(shortRoom());
+    } else if (ui.side === 'sell') {
+      $('avail-label').textContent = '保有株数';
+      $('avail-value').textContent = `${number(Math.max(0, held))}株`;
+    } else if (held < 0) {
+      $('avail-label').textContent = '売建株数';
+      $('avail-value').textContent = `${number(-held)}株`;
+    } else {
+      $('avail-label').textContent = '買付余力';
+      $('avail-value').textContent = money(state.portfolio.cash);
+    }
     $('est-notional').textContent = money(notional);
     $('est-fee').textContent = money(fee);
     $('est-total').textContent = signedMoney(ui.side === 'buy' ? -(notional + fee) : notional - fee);
 
+    const typeLabel = { market: '成行', limit: '指値', stop: '逆指値' }[ui.orderType];
     const submit = $('btn-submit');
-    submit.textContent = `${ui.side === 'buy' ? '買い' : '売り'}${
-      ui.orderType === 'limit' ? '指値' : '成行'
-    }注文を出す`;
-    submit.classList.toggle('sell', ui.side === 'sell');
+    submit.textContent = `${sideLabel(ui.side, inst.symbol)}の${typeLabel}注文を出す`;
+    submit.classList.toggle('sell', ui.side !== 'buy');
   }
 
   function render() {
@@ -402,11 +456,8 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
       if (fill.expired) {
         toast(`指値失効：${fill.order.name} ${fill.reason}`);
       } else {
-        toast(
-          `約定：${fill.order.name} ${fill.order.side === 'buy' ? '買' : '売'} ${number(
-            fill.order.qty
-          )}株 @ ${priceFmt(fill.trade.price)}`
-        );
+        const tag = { buy: '買', sell: '売', short: '空売り' }[fill.order.side] ?? '';
+        toast(`約定：${fill.order.name} ${tag} ${number(fill.order.qty)}株 @ ${priceFmt(fill.trade.price)}`);
       }
     }
     if (fills.length === 0 && dividends.length > 0) {
@@ -490,14 +541,16 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
   function submitOrder() {
     const inst = selected();
     const qty = Number($('qty-input').value);
+    const label = sideLabel(ui.side, inst.symbol);
     const result =
       ui.orderType === 'market'
         ? placeMarketOrder(state, { symbol: inst.symbol, side: ui.side, qty })
-        : placeLimitOrder(state, {
+        : placeOrder(state, {
             symbol: inst.symbol,
             side: ui.side,
             qty,
-            limit: Number($('limit-input').value),
+            kind: ui.orderType,
+            price: Number($('limit-input').value),
           });
 
     if (!result.ok) {
@@ -506,12 +559,14 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
     }
 
     if (result.trade) {
+      message(`${label}完了：${number(qty)}株 @ ${priceFmt(result.trade.price)}`, true);
+    } else {
       message(
-        `${ui.side === 'buy' ? '買付' : '売却'}完了：${number(qty)}株 @ ${priceFmt(result.trade.price)}`,
+        `${label}の${ui.orderType === 'stop' ? '逆指値' : '指値'}注文を受け付けました（${priceFmt(
+          result.order.price
+        )}）`,
         true
       );
-    } else {
-      message(`指値注文を受け付けました（${priceFmt(result.order.limit)}）`, true);
       ui.logTab = 'orders';
       syncTabs('log-tabs', 'log', ui.logTab);
     }
@@ -522,14 +577,24 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
 
   function maxQty() {
     const inst = selected();
-    if (ui.side === 'sell') return heldQty(state.portfolio, inst.symbol);
+    const held = heldQty(state.portfolio, inst.symbol);
+    if (ui.side === 'sell') return Math.max(0, held);
 
     const px =
-      ui.orderType === 'limit' ? Number($('limit-input').value) || inst.last : inst.last * 1.0005;
+      ui.orderType !== 'market' ? Number($('limit-input').value) || inst.last : inst.last * 1.0005;
     if (!(px > 0)) return 0;
+
+    if (ui.side === 'short') {
+      if (held > 0) return 0;
+      return Math.floor(shortRoom() / (px * inst.lot)) * inst.lot;
+    }
+
     let lots = Math.floor(state.portfolio.cash / (px * inst.lot));
     while (lots > 0 && buyCost(px, lots * inst.lot, cur()) > state.portfolio.cash) lots--;
-    return lots * inst.lot;
+    let qty = lots * inst.lot;
+    // 売建中の買いは買い戻し。建玉を超えては買えない
+    if (held < 0) qty = Math.min(qty, -held);
+    return qty;
   }
 
   function syncTabs(containerId, attr, value) {

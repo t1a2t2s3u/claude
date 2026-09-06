@@ -446,6 +446,11 @@ table.grid td:first-child {
   color: #ffd5d6;
 }
 
+#side-seg .seg-btn[data-side='short'].is-active {
+  background: rgba(124, 92, 255, 0.3);
+  color: #d9ccff;
+}
+
 .field {
   display: flex;
   align-items: center;
@@ -617,6 +622,21 @@ table.grid td:first-child {
 .tag.dividend {
   background: rgba(62, 207, 142, 0.2);
   color: #96e6c2;
+}
+
+.tag.short {
+  background: rgba(124, 92, 255, 0.25);
+  color: #cdbcff;
+}
+
+.tag.cover {
+  background: rgba(242, 181, 68, 0.22);
+  color: #ffe1a3;
+}
+
+.tag.stop {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--muted);
 }
 
 .link {

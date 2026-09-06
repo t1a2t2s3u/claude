@@ -4,7 +4,9 @@ Guidance for Claude Code and other AI assistants working in this repository.
 
 ## Project overview
 
-ブラウザだけで動く株式投資シミュレータ。成行・指値の売買、配当、手数料、成績集計を扱う。
+ブラウザだけで動く株式投資シミュレータ。成行・指値・逆指値の売買、空売り（簡易信用）、
+配当、手数料、成績集計（指数ベンチマーク比較つき）を扱う。建玉は符号付き qty ひとつで
+持ち、負なら売建。ゼロをまたぐ注文（ドテン）は検証側で禁止している。
 相場には 2 モードあり、`state.mode` で分岐する。
 
 - `'sim'` … `market.js` が乱数で生成する架空の 10 銘柄

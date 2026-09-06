@@ -44,9 +44,9 @@ export function sharpe(returns) {
   return vol === 0 ? 0 : (mean * TRADING_DAYS) / vol;
 }
 
-/** 売却済みトレードの勝敗集計 */
+/** 決済済みトレード（現物売り・買い戻し）の勝敗集計 */
 export function tradeStats(trades) {
-  const closed = trades.filter((t) => t.type === 'sell');
+  const closed = trades.filter((t) => t.type === 'sell' || t.type === 'cover');
   const wins = closed.filter((t) => t.pnl > 0);
   const losses = closed.filter((t) => t.pnl < 0);
   const grossWin = wins.reduce((a, t) => a + t.pnl, 0);
@@ -63,9 +63,20 @@ export function tradeStats(trades) {
   };
 }
 
+/** ベンチマーク（指数）の同期間リターン。equity の並記値から求める */
+export function benchmarkReturn(equity) {
+  const first = equity.find((e) => e.index > 0);
+  const last = [...equity].reverse().find((e) => e.index > 0);
+  if (!first || !last || first === last) return 0;
+  return last.index / first.index - 1;
+}
+
 export function summarize(state, snapshot) {
   const returns = dailyReturns(state.equity);
+  const benchmark = benchmarkReturn(state.equity);
   return {
+    benchmark,
+    excess: snapshot.totalReturn - benchmark,
     equity: snapshot.equity,
     totalPnl: snapshot.totalPnl,
     totalReturn: snapshot.totalReturn,

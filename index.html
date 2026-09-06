@@ -121,15 +121,17 @@ npm run fetch -- --symbols 7203,6758,AAPL</code></pre>
           <div class="seg" id="side-seg">
             <button class="seg-btn is-active" data-side="buy">買い</button>
             <button class="seg-btn" data-side="sell">売り</button>
+            <button class="seg-btn" data-side="short">空売り</button>
           </div>
 
           <div class="seg" id="type-seg">
             <button class="seg-btn is-active" data-type="market">成行</button>
             <button class="seg-btn" data-type="limit">指値</button>
+            <button class="seg-btn" data-type="stop">逆指値</button>
           </div>
 
           <label class="field" id="limit-field" hidden>
-            <span>指値価格</span>
+            <span id="price-label">指値価格</span>
             <input id="limit-input" type="number" min="1" step="0.1" inputmode="decimal" />
           </label>
 

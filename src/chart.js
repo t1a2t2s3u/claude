@@ -11,6 +11,7 @@ export const THEME = {
   sma25: '#7c5cff',
   equity: '#3ecf8e',
   equityFill: 'rgba(62,207,142,0.14)',
+  benchmark: '#8f9bb0',
   base: 'rgba(233,238,248,0.25)',
 };
 
@@ -177,8 +178,15 @@ export function drawCandles(canvas, bars, overlays = []) {
   };
 }
 
-/** 資産推移などの折れ線。baseline を渡すとその水準に基準線を引く */
-export function drawLine(canvas, points, { color = THEME.equity, fill = THEME.equityFill, baseline = null } = {}) {
+/**
+ * 資産推移などの折れ線。baseline を渡すとその水準に基準線を引き、
+ * compare（同じ長さの [{date, value}]）を渡すと比較系列を細線で重ねる。
+ */
+export function drawLine(
+  canvas,
+  points,
+  { color = THEME.equity, fill = THEME.equityFill, baseline = null, compare = null } = {}
+) {
   const { ctx, width, height } = setup(canvas);
   if (points.length < 2) {
     ctx.fillStyle = THEME.text;
@@ -195,6 +203,7 @@ export function drawLine(canvas, points, { color = THEME.equity, fill = THEME.eq
   const plotW = Math.max(1, plotRight - plotLeft);
 
   const values = points.map((p) => p.value);
+  if (compare) for (const p of compare) values.push(p.value);
   let min = Math.min(...values, baseline ?? Infinity);
   let max = Math.max(...values, baseline ?? -Infinity);
   const pad = (max - min) * 0.08 || Math.abs(max) * 0.02 || 1;
@@ -224,6 +233,15 @@ export function drawLine(canvas, points, { color = THEME.equity, fill = THEME.eq
     ctx.lineTo(plotRight, y(baseline));
     ctx.stroke();
     ctx.setLineDash([]);
+  }
+
+  if (compare && compare.length > 1) {
+    const cx = (i) => plotLeft + (plotW * i) / (compare.length - 1);
+    ctx.beginPath();
+    compare.forEach((p, i) => (i === 0 ? ctx.moveTo(cx(i), y(p.value)) : ctx.lineTo(cx(i), y(p.value))));
+    ctx.strokeStyle = THEME.benchmark;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
   }
 
   ctx.beginPath();

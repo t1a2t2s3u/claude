@@ -5,7 +5,7 @@ import {
   step,
   stepDays,
   placeMarketOrder,
-  placeLimitOrder,
+  placeOrder,
   cancelOrder,
   snapshot,
   quotes,
@@ -77,19 +77,19 @@ test('資金を超える成行注文は拒否される', () => {
 test('単元未満の注文は拒否される', () => {
   const s = createEngine({ seed: 5 });
   assert.equal(placeMarketOrder(s, { symbol: '1010', side: 'buy', qty: 50 }).ok, false);
-  assert.equal(placeLimitOrder(s, { symbol: '1010', side: 'buy', qty: 150, limit: 100 }).ok, false);
+  assert.equal(placeOrder(s, { symbol: '1010', side: 'buy', qty: 150, kind: 'limit', price: 100 }).ok, false);
 });
 
 test('未保有の銘柄は売れない', () => {
   const s = createEngine({ seed: 5 });
   assert.equal(placeMarketOrder(s, { symbol: '1010', side: 'sell', qty: 100 }).ok, false);
-  assert.equal(placeLimitOrder(s, { symbol: '1010', side: 'sell', qty: 100, limit: 9999 }).ok, false);
+  assert.equal(placeOrder(s, { symbol: '1010', side: 'sell', qty: 100, kind: 'limit', price: 9999 }).ok, false);
 });
 
 test('指値買いは安値が指値に届いた日に約定する', () => {
   const s = createEngine({ seed: 21 });
   const limit = s.market.instruments['1010'].last * 0.9;
-  placeLimitOrder(s, { symbol: '1010', side: 'buy', qty: 100, limit });
+  placeOrder(s, { symbol: '1010', side: 'buy', qty: 100, price: limit });
   assert.equal(s.orders.length, 1);
 
   let filled = null;
@@ -100,8 +100,8 @@ test('指値買いは安値が指値に届いた日に約定する', () => {
 
   assert.ok(filled, '250 営業日以内に約定するはず');
   const bar = s.market.instruments['1010'].bars.at(-1);
-  assert.ok(bar.low <= filled.order.limit);
-  assert.ok(filled.trade.price <= filled.order.limit + 1e-9);
+  assert.ok(bar.low <= filled.order.price);
+  assert.ok(filled.trade.price <= filled.order.price + 1e-9);
   assert.equal(s.orders.length, 0);
   assert.equal(heldQty(s.portfolio, '1010'), 100);
 });
@@ -110,20 +110,20 @@ test('指値売りは高値が指値に届いた日に約定する', () => {
   const s = createEngine({ seed: 33 });
   placeMarketOrder(s, { symbol: '1308', side: 'buy', qty: 100 });
   const limit = s.market.instruments['1308'].last * 1.05;
-  placeLimitOrder(s, { symbol: '1308', side: 'sell', qty: 100, limit });
+  placeOrder(s, { symbol: '1308', side: 'sell', qty: 100, price: limit });
 
   let filled = null;
   for (let i = 0; i < 400 && !filled; i++) {
     filled = step(s).fills.find((f) => f.trade) ?? null;
   }
   assert.ok(filled, '400 営業日以内に約定するはず');
-  assert.ok(filled.trade.price >= filled.order.limit - 1e-9);
+  assert.ok(filled.trade.price >= filled.order.price - 1e-9);
   assert.equal(heldQty(s.portfolio, '1308'), 0);
 });
 
 test('注文は取り消せる', () => {
   const s = createEngine({ seed: 7 });
-  const { order } = placeLimitOrder(s, { symbol: '1010', side: 'buy', qty: 100, limit: 1 });
+  const { order } = placeOrder(s, { symbol: '1010', side: 'buy', qty: 100, kind: 'limit', price: 1 });
   assert.equal(cancelOrder(s, order.id), true);
   assert.equal(s.orders.length, 0);
   assert.equal(cancelOrder(s, 'unknown'), false);

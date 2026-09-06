@@ -18,11 +18,13 @@ import {
   applyDividend,
   validateBuy,
   validateSell,
+  validateShort,
+  shortNotional,
   evaluate,
   heldQty,
 } from './portfolio.js';
 
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 // 初期資金は通貨ごとに桁が違う
 export const DEFAULT_CASH = { JPY: 3_000_000, USD: 30_000 };
 // ウォームアップ 60 営業日ぶんの足を作ると、ちょうど 2024-01-04 が取引開始日になる
@@ -64,7 +66,7 @@ export function createEngine({
     portfolio: createPortfolio(cash),
     orders: [],
     news: [],
-    equity: [{ date, value: cash }],
+    equity: [{ date, value: cash, index: market.index }],
   };
 }
 
@@ -100,9 +102,10 @@ export function createRealEngine(dataset, { cash, startIndex } = {}) {
     portfolio: createPortfolio(initialCash),
     orders: [],
     news: [],
-    equity: [{ date, value: initialCash }],
+    equity: [],
   };
   rebuildMarket(state, dataset);
+  state.equity.push({ date, value: initialCash, index: state.market.index });
   return state;
 }
 
@@ -211,7 +214,25 @@ export function isAtEnd(state, dataset) {
 
 /* ------------------------------------------------------------------ 注文 */
 
-/** 成行注文。その場で約定させる（スリッページあり） */
+/** side ごとの検証。空売りは時価（保証金の余力）が要るので、ここでまとめて計算する */
+function validateOrder(state, { side, symbol, price, qty, lot }) {
+  if (side === 'buy') {
+    return validateBuy(state.portfolio, { symbol, price, qty, lot, currency: state.currency });
+  }
+  if (side === 'short') {
+    return validateShort(state.portfolio, {
+      symbol,
+      price,
+      qty,
+      lot,
+      equity: snapshot(state).equity,
+      shortTotal: shortNotional(state.portfolio, currentPrices(state)),
+    });
+  }
+  return validateSell(state.portfolio, { symbol, qty, lot });
+}
+
+/** 成行注文。その場で約定させる（スリッページあり）。side は buy / sell / short */
 export function placeMarketOrder(state, { symbol, side, qty }) {
   const inst = findInstrument(state, symbol);
   if (!inst) return { ok: false, reason: '銘柄が見つかりません' };
@@ -220,10 +241,7 @@ export function placeMarketOrder(state, { symbol, side, qty }) {
   if (!(base > 0)) return { ok: false, reason: 'この日はまだ取引できません（上場前）' };
   const price = roundPrice(base * (1 + (side === 'buy' ? SLIPPAGE : -SLIPPAGE)), state.currency);
 
-  const check =
-    side === 'buy'
-      ? validateBuy(state.portfolio, { price, qty, lot: inst.lot, currency: state.currency })
-      : validateSell(state.portfolio, { symbol, qty, lot: inst.lot });
+  const check = validateOrder(state, { side, symbol, price, qty, lot: inst.lot });
   if (!check.ok) return check;
 
   const args = { date: state.date, symbol, name: inst.name, qty, price, currency: state.currency };
@@ -232,15 +250,25 @@ export function placeMarketOrder(state, { symbol, side, qty }) {
   return { ok: true, trade };
 }
 
-/** 指値注文。翌営業日以降、値幅が条件を満たした日に約定する */
-export function placeLimitOrder(state, { symbol, side, qty, limit }) {
+/**
+ * 指値・逆指値注文（kind: 'limit' | 'stop'）。翌営業日以降、値幅が条件を満たした日に約定する。
+ *   指値   … 買いは price 以下に下がったら、売り・空売りは price 以上に上がったら（有利な方向）
+ *   逆指値 … 買いは price 以上に上がったら、売り・空売りは price 以下に下がったら（損切り・順張り）
+ */
+export function placeOrder(state, { symbol, side, qty, kind = 'limit', price }) {
   const inst = findInstrument(state, symbol);
   if (!inst) return { ok: false, reason: '銘柄が見つかりません' };
-  if (!Number.isFinite(limit) || limit <= 0) return { ok: false, reason: '指値を入力してください' };
+  if (!['limit', 'stop'].includes(kind)) return { ok: false, reason: '注文種別が不正です' };
+  if (!Number.isFinite(price) || price <= 0) {
+    return { ok: false, reason: kind === 'stop' ? '逆指値を入力してください' : '指値を入力してください' };
+  }
   if (!Number.isFinite(qty) || qty <= 0) return { ok: false, reason: '数量を入力してください' };
   if (qty % inst.lot !== 0) return { ok: false, reason: `売買単位は${inst.lot}株です` };
-  if (side === 'sell' && qty > heldQty(state.portfolio, symbol)) {
+  if (side === 'sell' && qty > Math.max(0, heldQty(state.portfolio, symbol))) {
     return { ok: false, reason: '保有株数が不足しています' };
+  }
+  if (side === 'short' && heldQty(state.portfolio, symbol) > 0) {
+    return { ok: false, reason: '現物を保有中の銘柄は空売りできません（先に売却してください）' };
   }
 
   const order = {
@@ -248,8 +276,9 @@ export function placeLimitOrder(state, { symbol, side, qty, limit }) {
     symbol,
     name: inst.name,
     side,
+    kind,
     qty,
-    limit: roundPrice(limit, state.currency),
+    price: roundPrice(price, state.currency),
     placedAt: state.date,
   };
   state.orders.push(order);
@@ -277,20 +306,38 @@ function fillOrders(state, date) {
       continue;
     }
 
-    const hit = order.side === 'buy' ? bar.low <= order.limit : bar.high >= order.limit;
+    const buying = order.side === 'buy';
+    // 指値は有利な方向に届いたら、逆指値は不利な方向に抜けたら発動する
+    const hit =
+      order.kind === 'stop'
+        ? buying
+          ? bar.high >= order.price
+          : bar.low <= order.price
+        : buying
+          ? bar.low <= order.price
+          : bar.high >= order.price;
     if (!hit) {
       remaining.push(order);
       continue;
     }
 
-    // 寄り付きで既に指値を超えていれば、より有利な始値で約定する
+    // 指値は寄り付きが有利ならその始値で。逆指値は発動後の成行なので不利な方に寄る
     const price =
-      order.side === 'buy' ? Math.min(order.limit, bar.open) : Math.max(order.limit, bar.open);
+      order.kind === 'stop'
+        ? buying
+          ? Math.max(order.price, bar.open)
+          : Math.min(order.price, bar.open)
+        : buying
+          ? Math.min(order.price, bar.open)
+          : Math.max(order.price, bar.open);
 
-    const check =
-      order.side === 'buy'
-        ? validateBuy(state.portfolio, { price, qty: order.qty, lot: inst.lot, currency: state.currency })
-        : validateSell(state.portfolio, { symbol: order.symbol, qty: order.qty, lot: inst.lot });
+    const check = validateOrder(state, {
+      side: order.side,
+      symbol: order.symbol,
+      price,
+      qty: order.qty,
+      lot: inst.lot,
+    });
 
     if (!check.ok) {
       // 資金や株数が足りなければ失効させる（残しても永久に約定しないため）
@@ -365,9 +412,14 @@ function payDividendsReal(state, dataset, date) {
 
 function refreshEquity(state) {
   const { equity } = snapshot(state);
+  const index = state.market.index;
   const last = state.equity[state.equity.length - 1];
-  if (last && last.date === state.date) last.value = equity;
-  else state.equity.push({ date: state.date, value: equity });
+  if (last && last.date === state.date) {
+    last.value = equity;
+    last.index = index;
+  } else {
+    state.equity.push({ date: state.date, value: equity, index });
+  }
 }
 
 function trimBars(state) {
