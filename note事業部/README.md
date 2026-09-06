@@ -10,10 +10,18 @@ note記事の制作・公開・SNS集客をAI社員（Routine）で運用する�
 
 | 役割 | 稼働 | 仕事 |
 |---|---|---|
-| ライター | 火・木 8:00 | `drafts/` に記事ドラフトを1本執筆し、`claude/writer-draft-YYYYMMDD` ブランチにプッシュ |
-| 編集長 | 月 8:00 | `drafts/` の記事をレビュー・編集し、`published/` へ移動。`claude/editor-review-YYYYMMDD` ブランチにプッシュ |
+| ライター | 火・木 8:00 | `drafts/` に記事ドラフトを1本執筆し、`claude/note-content` ブランチにプッシュ |
+| 編集長 | 月 8:00 | `drafts/` の記事をレビュー・編集し、`published/` へ移動。`claude/note-content` ブランチにプッシュ |
 | リサーチ | （未稼働） | ネタ候補・参考資料を `research/` にストックする予定 |
 | SNS担当 | （未稼働） | `published/` の記事の告知文を `sns/` に作成する予定 |
+
+ライターと編集長はそれぞれ常設セッション（Routineが毎回そこに配信される）で、
+成果はすべて単一のコンテンツブランチ `claude/note-content` に集約される。
+使い捨てセッションはプッシュ権限を持てず成果を残せなかったため、この方式にした。
+
+既存の編集資料（編集方針の詳細・記事ブリーフ・各役割のスキル定義）は
+`claude/ai-employee-claude-code-d99jvr` ブランチの `strategy/` と
+`.claude/skills/` にあり、両名はそれも参照する。
 
 ## フォルダ構成
 

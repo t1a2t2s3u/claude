@@ -24,8 +24,8 @@ are Markdown articles under `note事業部/`.
 
 - Articles are Japanese Markdown files named `YYYY-MM-DD-slug.md` with YAML
   front matter (`title`, `date`, `status`, `author`).
-- The writer pushes to `claude/writer-draft-YYYYMMDD` branches; the editor
-  pushes to `claude/editor-review-YYYYMMDD` branches.
+- The writer and editor both push to the single content branch
+  `claude/note-content` from their persistent sessions.
 
 ## Git workflow
 
