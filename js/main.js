@@ -339,6 +339,16 @@ function renderCompatibility(compat) {
   setText('aishou-total', String(compat.total));
   setText('aishou-overall', compat.overallComment);
 
+  const highlightsBox = document.getElementById('aishou-highlights');
+  const highlightsList = document.getElementById('highlights-list');
+  highlightsList.innerHTML = '';
+  for (const highlight of compat.highlights) {
+    const li = document.createElement('li');
+    li.textContent = highlight;
+    highlightsList.appendChild(li);
+  }
+  highlightsBox.hidden = compat.highlights.length === 0;
+
   const list = document.getElementById('axis-list');
   list.innerHTML = '';
   for (const axis of compat.axes) {
@@ -349,10 +359,13 @@ function renderCompatibility(compat) {
     head.className = 'axis-head';
     const label = document.createElement('span');
     label.textContent = axis.label;
+    const relation = document.createElement('span');
+    relation.className = 'axis-relation';
+    relation.textContent = axis.relation;
     const score = document.createElement('span');
     score.className = 'axis-score';
     score.textContent = `${axis.score}点`;
-    head.append(label, score);
+    head.append(label, relation, score);
 
     const bar = document.createElement('dd');
     bar.className = 'axis-bar';
