@@ -27,6 +27,10 @@ Current employees:
 - **analyst** (`.claude/skills/analyst/`) — records owner-supplied metrics in
   `analytics/` and writes improvement proposals for the editor. Never invents
   numbers.
+- **product-scout** (`.claude/skills/product-scout/`) — hunts for app/tool
+  ideas the owner could actually build with Claude Code and monetize; writes
+  weekly reports and idea memos under `product/`. Separate from the note team:
+  the researcher hunts article topics, the scout hunts products to sell.
 
 The note team's boundary: AI staff research, plan, and draft; the owner
 personally publishes to note, sets prices, and supplies real personal
@@ -48,6 +52,8 @@ experiences or earnings figures is forbidden).
   employee.
 - `analytics/` — the KPI log (`kpi.md`), owner-supplied data drops (`inbox/`),
   and the analyst's weekly reports (`reports/`).
+- `product/` — the app-idea pipeline (`pipeline.md`), the scout's weekly
+  research (`reports/`), and per-idea planning memos (`ideas/`).
 - `.claude/skills/` — one directory per AI employee. New employees get a new
   skill directory here, not more sections in existing skills.
 
