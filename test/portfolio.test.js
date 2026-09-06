@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { roundMoney } from '../src/format.js';
 import {
   createPortfolio,
   commission,
@@ -34,6 +35,26 @@ test('ドル建ての手数料はセント単位で、下限・上限もドル�
   assert.equal(commission(5000, 'USD'), 5);
   assert.equal(commission(1_000_000, 'USD'), FEES.USD.max);
   assert.equal(commission(3333, 'USD'), 3.33); // セント未満は丸める
+});
+
+test('セント刻みの売買を繰り返しても現金に浮動小数点の誤差が残らない', () => {
+  const p = createPortfolio(30_000);
+  for (let i = 0; i < 50; i++) {
+    applyBuy(p, args({ qty: 3, price: 67.85, currency: 'USD' }));
+    applySell(p, args({ qty: 3, price: 44.91, currency: 'USD' }));
+  }
+  assert.ok(p.cash > 0);
+  // 誤差が残っていると「表示上は足りるのに資金不足」になるため、常に最小単位ちょうどで持つ
+  assert.equal(p.cash, roundMoney(p.cash, 'USD'));
+  assert.equal(p.cash, Math.round(p.cash * 100) / 100);
+});
+
+test('配当もセント単位で丸めて入金される', () => {
+  const p = createPortfolio(1000);
+  applyBuy(p, args({ qty: 1, price: 100, currency: 'USD' }));
+  applyDividend(p, { date: '2024-03-29', symbol: '1010', name: 'x', qty: 3, perShare: 0.205, currency: 'USD' });
+  assert.equal(p.dividends, 0.62); // 0.615 → セントに丸め
+  assert.equal(p.cash, roundMoney(p.cash, 'USD'));
 });
 
 test('価格が付いていない銘柄は買えない', () => {

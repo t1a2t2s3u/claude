@@ -119,7 +119,6 @@ function splitCsvLine(line) {
 
 /** 取り込み済みの構造（universe と 銘柄別ファイルの中身）を組み立てる */
 export function buildImport(bySymbol, names, { limit = 0 } = {}) {
-  // CSV 内の Yahoo 由来コード（BRK.B など）はドットをハイフンに寄せて表示を揃える
   let symbols = [...bySymbol.keys()].sort();
   if (limit > 0) symbols = symbols.slice(0, limit);
 
@@ -130,6 +129,7 @@ export function buildImport(bySymbol, names, { limit = 0 } = {}) {
   for (const symbol of symbols) {
     const bars = bySymbol.get(symbol);
     for (const bar of bars) calendar.add(bar.date);
+    // 価格 CSV と銘柄名一覧でクラス株の表記が揺れる（BRK.B と BRK-B）ので、両方で引く
     const info = names.get(symbol) ?? names.get(symbol.replace('.', '-')) ?? null;
 
     files.push({

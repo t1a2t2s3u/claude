@@ -302,3 +302,37 @@ test('market を捨てて再構築しても、足の窓と現在値が一致す�
     stepDays(revived, 5, dataset).map((r) => r.date)
   );
 });
+
+test('通貨の違うデータセットには結び直せない', () => {
+  const jpy = fakeDataset({ days: 120 });
+  const state = createRealEngine(jpy, { startIndex: 60 });
+  const usd = fakeDataset({ days: 120, baseCurrency: 'USD' });
+  const result = rebindDataset(state, usd);
+  assert.equal(result.ok, false);
+  assert.match(result.reason, /通貨/);
+});
+
+test('休みの多い銘柄でも、再構築後の足がプレイ中と完全に一致する（上限超過時）', () => {
+  const dataset = fakeDataset({ days: 900 });
+  // AAPL を 10 日に 1 日休ませて、カレンダー日数と足の本数をずらす
+  const sparse = dataset.series.get('AAPL');
+  dataset.calendar.forEach((date, i) => {
+    if (i % 10 === 3) sparse.byDate.delete(date);
+  });
+  sparse.bars = [...sparse.byDate.values()];
+
+  const state = createRealEngine(dataset, { startIndex: 60 });
+  stepDays(state, 830, dataset); // 足の保持上限（750 本）を超えて進める
+
+  const revived = JSON.parse(JSON.stringify({ ...state, market: null }));
+  rebuildMarket(revived, dataset);
+
+  for (const symbol of ['7203', 'AAPL']) {
+    assert.equal(
+      revived.market.instruments[symbol].bars.length,
+      state.market.instruments[symbol].bars.length,
+      `${symbol} の本数`
+    );
+    assert.deepEqual(revived.market.instruments[symbol].bars, state.market.instruments[symbol].bars);
+  }
+});

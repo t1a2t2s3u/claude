@@ -19,6 +19,7 @@ import {
   money as fmtMoney,
   signedMoney as fmtSignedMoney,
   price as fmtPriceRaw,
+  roundPrice,
   percent,
   number,
   jpDate,
@@ -350,8 +351,9 @@ export function createApp({ state: initialState, dataset: initialDataset = null 
     $('limit-field').hidden = ui.orderType !== 'limit';
 
     const limitInput = $('limit-input');
-    if (ui.orderType === 'limit' && limitInput.value === '') {
-      limitInput.value = String(Math.round(inst.last));
+    if (ui.orderType === 'limit' && limitInput.value === '' && inst.last > 0) {
+      // 初期値も通貨の呼値の刻みで入れる（ドルで整数に丸めるとセントが失われる）
+      limitInput.value = String(roundPrice(inst.last, cur()));
     }
 
     limitInput.step = cur() === 'JPY' ? '0.1' : '0.01';

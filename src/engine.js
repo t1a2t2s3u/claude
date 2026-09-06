@@ -114,10 +114,16 @@ export function createRealEngine(dataset, { cash, startIndex } = {}) {
 export function rebuildMarket(state, dataset) {
   const market = createMarketState(state.instruments);
   const startIdx = Math.max(0, dataset.calendar.indexOf(state.startDate));
-  // プレイ中に持っていたはずの履歴（ウォームアップ + 経過日数、上限 MAX_BARS）を再現する
-  const from = Math.max(0, startIdx - WARMUP_DAYS, state.cursor - (MAX_BARS - 1));
+  // プレイ中と同じ範囲（ウォームアップ開始日から現在まで）を再生してから、
+  // trimBars と同じ「足の本数」で切り詰める。カレンダー日数で切ると、
+  // 休みのある銘柄だけ実際より短い履歴になってしまう
+  const from = Math.max(0, startIdx - WARMUP_DAYS);
   for (let i = from; i <= state.cursor; i++) {
     appendRealBars(market, state.instruments, dataset, dataset.calendar[i]);
+  }
+  for (const inst of state.instruments) {
+    const m = market.instruments[inst.symbol];
+    if (m.bars.length > MAX_BARS) m.bars = m.bars.slice(-MAX_BARS);
   }
   state.market = market;
 }
@@ -422,6 +428,10 @@ export function stepDays(state, n, dataset = null) {
  */
 export function rebindDataset(state, dataset) {
   if (state.mode !== 'real') return { ok: true };
+  // 通貨の違うデータに黙って結び直すと、円の現金でドルの株を売買することになる
+  if ((dataset.universe.baseCurrency ?? 'JPY') !== (state.currency ?? 'JPY')) {
+    return { ok: false, reason: '保存時のデータと通貨が合いません' };
+  }
   const cursor = dataset.calendar.indexOf(state.date);
   if (cursor < 0) return { ok: false, reason: '保存時のデータと日付が合いません' };
   state.cursor = cursor;

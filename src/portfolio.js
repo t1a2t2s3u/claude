@@ -1,15 +1,17 @@
 // 保有ポジションと現金の管理。取得単価は移動平均法で更新する。
 
-// 手数料は通貨ごとに下限・上限が違う（円は 55〜1,100 円、ドルは 0.5〜8 ドル）
+import { roundMoney } from './format.js';
+
+// 手数料は通貨ごとに下限・上限が違う（円は 55〜1,100 円、ドルは 0.5〜8 ドル）。
+// 最小単位（円 / セント）への丸めは format.js の roundMoney に一元化している
 export const FEES = {
-  JPY: { rate: 0.001, min: 55, max: 1100, unit: 1 },
-  USD: { rate: 0.001, min: 0.5, max: 8, unit: 0.01 },
+  JPY: { rate: 0.001, min: 55, max: 1100 },
+  USD: { rate: 0.001, min: 0.5, max: 8 },
 };
 
 export function commission(notional, currency = 'JPY') {
   const fee = FEES[currency] ?? FEES.JPY;
-  const raw = Math.min(fee.max, Math.max(fee.min, notional * fee.rate));
-  return Math.round(raw / fee.unit) * fee.unit;
+  return roundMoney(Math.min(fee.max, Math.max(fee.min, notional * fee.rate)), currency);
 }
 
 export function createPortfolio(cash) {
@@ -60,7 +62,9 @@ export function applyBuy(portfolio, { date, symbol, name, qty, price, currency =
   const notional = price * qty;
   const fee = commission(notional, currency);
 
-  portfolio.cash -= notional + fee;
+  // セント刻みの積み重ねで現金に浮動小数点の誤差が残ると、
+  // 表示上は足りる注文が資金不足で弾かれるため、毎回最小単位に丸め直す
+  portfolio.cash = roundMoney(portfolio.cash - (notional + fee), currency);
   portfolio.fees += fee;
 
   const pos = portfolio.positions[symbol];
@@ -83,7 +87,7 @@ export function applySell(portfolio, { date, symbol, name, qty, price, currency 
   const pos = portfolio.positions[symbol];
   const pnl = (price - pos.avgCost) * qty;
 
-  portfolio.cash += notional - fee;
+  portfolio.cash = roundMoney(portfolio.cash + (notional - fee), currency);
   portfolio.fees += fee;
   portfolio.realized += pnl;
 
@@ -97,9 +101,8 @@ export function applySell(portfolio, { date, symbol, name, qty, price, currency 
 
 /** 配当の入金 */
 export function applyDividend(portfolio, { date, symbol, name, qty, perShare, currency = 'JPY' }) {
-  const unit = (FEES[currency] ?? FEES.JPY).unit;
-  const amount = Math.round((perShare * qty) / unit) * unit;
-  portfolio.cash += amount;
+  const amount = roundMoney(perShare * qty, currency);
+  portfolio.cash = roundMoney(portfolio.cash + amount, currency);
   portfolio.dividends += amount;
   const trade = { date, type: 'dividend', symbol, name, qty, price: perShare, amount, fee: 0, pnl: 0 };
   portfolio.trades.push(trade);
