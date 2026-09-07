@@ -195,6 +195,19 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .btn-sm{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:5px 12px;font-size:.78rem;font-weight:500;cursor:pointer}
 .btn-sm:hover{background:var(--surface2)}
 .panel-head .cnt{font-size:.72rem;color:var(--muted);font-weight:500}
+.tips h2{margin-bottom:10px}
+.mg-line{font-size:.83rem;line-height:1.85;color:var(--muted);margin-bottom:16px}
+.mg-line b{color:var(--ink);font-weight:600}
+.tip{border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin-bottom:10px}
+.tip.hot{border-left:3px solid var(--accent)}
+.tip-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.tip-title{font-weight:600;font-size:.93rem;line-height:1.5}
+.tip-save{font-variant-numeric:tabular-nums;font-weight:700;color:var(--accent);white-space:nowrap;font-size:.88rem}
+.tip-body{font-size:.79rem;color:var(--muted);line-height:1.85;margin-top:5px}
+.tip-body b{color:var(--ink);font-weight:600}
+.tip-note{font-size:.74rem;color:var(--muted);line-height:1.7;margin-top:7px}
+.tip-when{font-size:.75rem;line-height:1.7;margin-top:9px;padding-top:8px;border-top:1px dashed var(--line)}
+.tip-when b{font-weight:600}
 .chip-row{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 4px}
 .chip-row .cat-chip .cnt{color:var(--muted);font-size:.7rem;font-variant-numeric:tabular-nums}
 .chip-row .cat-chip.active .cnt{color:var(--ink)}
@@ -634,7 +647,7 @@ const view = {
   section: 'pay',       // 'pay' | 'biz' | 'tax'
   y: NOW.getFullYear(), m: NOW.getMonth()+1,
   tab: 'list', q: '', cats: new Set(), method: '',
-  bizTab: 'month', bizSort: 'desc', bizFilter: 'all',
+  bizTab: 'month', bizSort: 'desc', bizFilter: 'all', tipsAll: false,
   modal: null,          // {kind:'pay'|'biz', mode:'add'|'edit', id?, type?}
   pendingDelete: null,
   modalDelete: false
@@ -741,7 +754,8 @@ function calcTax(y){
   const exEntries = bizSum(y,'ex');
   const ap = apportionYear(y);
   const expenses = exEntries + ap;
-  const profit = Math.max(0, inSum - expenses);   // 青色控除前の事業利益
+  const rawProfit = inSum - expenses;             // 赤字なら負のまま
+  const profit = Math.max(0, rawProfit);         // 青色控除前の事業利益
   const extra = pr.extraDeduction;
 
   if(pr.workMode === 'free'){
@@ -784,9 +798,9 @@ function calcTax(y){
     }
     const taxTotal = it + rt + bt + ct;
     const net = inSum - expenses - taxTotal - social;
-    return {mode:'free', inSum, exEntries, ap, expenses, profit, blue, income,
-      pension, nhi, nhiCfg:nhiRes.cfg, social, basic, itTaxable:Math.max(0,itTaxable), it, rt, bt, ct,
-      salesTax, purchaseTax, ctLabel,
+    return {mode:'free', inSum, exEntries, ap, expenses, rawProfit, profit, blue, blueMax, income,
+      pension, nhi, nhiCfg:nhiRes.cfg, social, basic, itTaxable:Math.max(0,itTaxable), rtTaxable,
+      it, rt, bt, ct, salesTax, purchaseTax, ctLabel,
       taxTotal, all: taxTotal+social, net, monthly: Math.ceil((taxTotal+social)/12/1000)*1000};
   }
 
@@ -801,8 +815,9 @@ function calcTax(y){
   const addIT = Math.max(0, itAll - itBase);
   const addRT = Math.round(sideProfit*TAX.residentRate);
   const taxTotal = addIT + addRT;
-  return {mode:'side', inSum, exEntries, ap, expenses, sideProfit, sal, salIncome, social,
-    addIT, addRT, taxTotal, needFiling: sideProfit>200000,
+  const sideTaxable = totalIncome - social - extra - basicDeduction(totalIncome);
+  return {mode:'side', inSum, exEntries, ap, expenses, rawProfit, sideProfit, sal, salIncome, social,
+    totalIncome, sideTaxable, addIT, addRT, taxTotal, needFiling: sideProfit>200000,
     net: inSum - expenses - taxTotal, monthly: Math.ceil(taxTotal/12/100)*100};
 }
 
@@ -1380,6 +1395,7 @@ function renderTax(c){
           +(state.profile.care40&&!t.nhiCfg.std?'・介護分は本人のみ':'')))
       + '<div class="trow total"><span class="tlab">合計</span><span class="tval">'+yen(t.all)+'</span></div>'
       + '</section>'
+      + renderTips(t, view.y)
       + disclaimerHtml();
   }
 
@@ -1406,6 +1422,7 @@ function renderTax(c){
     + trow('追加の住民税', yen(t.addRT), '副業所得 × 10%')
     + '<div class="trow total"><span class="tlab">副業による追加負担の合計</span><span class="tval">'+yen(t.taxTotal)+'</span></div>'
     + '</section>'
+    + renderTips(t, view.y)
     + disclaimerHtml();
 }
 
@@ -1452,6 +1469,310 @@ function trow(label, val, note){
 }
 function disclaimerHtml(){
   return '<div class="notice">この金額は<b>概算</b>です。令和7・8年分の税制（基礎控除の特例を含む）・令和8年度の国民年金・選択した市区町村の令和8年度国民健康保険料率（一覧にない自治体は入力した料率）をもとに計算しており、実際の税額は各種控除や所得の内容、翌年度の料率改定などによって変わります。確定申告や納付の際は、税務署・自治体・税理士の案内で必ずご確認ください。</div>';
+}
+
+/* ---------- 節税のヒント ----------
+   「あと1円ぶん」の限界税率を出し、そこから効果額を見積もる。
+   経費（＝所得そのものを減らす）は所得税・住民税・個人事業税・国保に効くが、
+   小規模企業共済やiDeCoのような所得控除は所得税・住民税にしか効かない。 */
+function marginalRates(t){
+  const pr = state.profile;
+  const rateAt = taxable=>{
+    if(taxable<=0) return 0;
+    for(const [lim,r] of TAX.brackets) if(taxable<=lim) return r*1.021;
+    return 0;
+  };
+  if(t.mode==='side'){
+    const r = rateAt(t.sideTaxable) + (t.sideProfit>0 ? TAX.residentRate : 0);
+    return {it:rateAt(t.sideTaxable), rt:TAX.residentRate, bt:0, nhi:0, expense:r, deduction:r};
+  }
+  const itR = rateAt(t.itTaxable);
+  const rtR = t.rtTaxable>0 ? TAX.residentRate : 0;
+  const btR = (pr.bizTaxRate>0 && t.profit>TAX.bizTaxExempt) ? pr.bizTaxRate/100 : 0;
+  let nhiR = 0;
+  if(pr.hiType==='nhi'){
+    const c = nhiConfig(pr).comps;
+    const nb = Math.max(0, t.income - TAX.nhiBase);
+    /* 賦課限度額に達している区分は、所得が減っても保険料が変わらない */
+    const mr = (comp, members)=>
+      (comp && comp.r>0 && (nb*comp.r/100 + comp.k*members + comp.h) < comp.cap) ? comp.r/100 : 0;
+    if(nb>0){
+      nhiR = mr(c.med, pr.nhiMembers) + mr(c.sup, pr.nhiMembers)
+        + (c.kid ? mr(c.kid, pr.nhiMembers) : 0)
+        + (pr.care40 ? mr(c.care, 1) : 0);
+    }
+  }
+  return {it:itR, rt:rtR, bt:btR, nhi:nhiR,
+    expense: itR+rtR+btR+nhiR, deduction: itR+rtR};
+}
+
+function taxTips(t, y){
+  const pr = state.profile;
+  const mg = marginalRates(t);
+  const tips = [];
+  const curY = NOW.getFullYear();
+  const aoY = (NOW <= new Date(curY,2,15)) ? curY : curY+1;   // 青色の申請が間に合う年分
+
+  if(t.mode==='side'){
+    if(t.ap===0){
+      tips.push({t:'自宅や車の費用を副業の経費にする', dep:'expense',
+        save: 120000*mg.expense,
+        b:'家賃・電気・スマホ・ネット・車は、副業で使っている割合だけ経費にできます。'
+          +'「支払い」に登録して<b>経費にする割合</b>を決めると、ここに自動で反映されます。'});
+    }
+    if(t.sideProfit<=200000){
+      tips.push({t:'所得20万円以下でも住民税の申告は必要', dep:null, save:0,
+        b:'副業の所得（収入−経費）が20万円以下なので<b>所得税</b>の確定申告は不要ですが、'
+          +'<b>住民税</b>の申告は別に必要です。市区町村の窓口かオンラインで申告できます。'});
+    }else{
+      tips.push({t:'確定申告が必要な水準です', dep:null, save:0,
+        b:'副業の所得が '+yen(t.sideProfit)+' で、20万円を超えています。'
+          +'翌年2月16日〜3月15日に確定申告してください。'
+          +'給与とは別に、収入と経費がわかる記録（このアプリの収支CSV・仕訳CSV）を残しておくと楽になります。'});
+    }
+    tips.push({t:'iDeCo（個人型確定拠出年金）', dep:'deduction',
+      save: 240000*mg.deduction,
+      b:'掛金が全額所得から引けます。会社員の上限は勤務先の企業年金の有無で変わります（月2.0〜2.3万円）。'
+        +'<b>60歳まで引き出せない</b>点だけ納得してから始めてください。',
+      when:'その年の12月までに払い込んだ分が、その年の控除になります'});
+    tips.push({t:'ふるさと納税', dep:null, save:0,
+      b:'税が減るわけではなく、<b>先に払って返礼品を受け取る</b>制度です。実質負担は2,000円。'
+        +'確定申告をする年は<b>ワンストップ特例が使えない</b>ので、申告書に寄附金控除として書きます。',
+      when:'12月31日までの寄附がその年分'});
+    return {tips, mg};
+  }
+
+  /* ── 青色申告 ── */
+  if(pr.filing!=='blue65' && t.profit>0){
+    const cur = t.blueMax;
+    const gain = Math.min(650000-cur, Math.max(0, t.profit-cur));
+    tips.push({t:'青色申告の65万円控除に切り替える', dep:'deduction',
+      save: gain*(mg.it+mg.rt+mg.nhi), hot:true,
+      b:'いまは'+(pr.filing==='blue10'?'青色申告（10万円控除）':'白色申告')+'の設定です。'
+        +'複式簿記で記帳してe-Taxで申告すると<b>65万円</b>（e-Taxを使わないなら55万円）を所得から引けます。'
+        +'赤字を3年繰り越せる、30万円未満の道具を一括で経費にできる、家族への給与を経費にできる、'
+        +'といった特典もまとめて付いてきます。会計ソフトを使えば複式簿記の負担はほとんどありません。',
+      when:'「所得税の青色申告承認申請書」を '+aoY+'年3月15日までに税務署へ（'+aoY+'年分から適用）'});
+  }
+
+  /* ── 家事按分 ── */
+  if(t.ap===0){
+    tips.push({t:'自宅や車の費用を按分して経費にする', dep:'expense',
+      save: 120000*mg.expense, hot:true,
+      b:'家賃・電気・水道・スマホ・ネット・車の維持費は、仕事に使っている割合だけ経費にできます。'
+        +'塗装や建設なら<b>作業場としての自宅、通勤以外の車、工具の保管</b>あたりが対象になりやすいところです。'
+        +(state.payments.length
+          ? '「支払い」に登録済みの固定費を開いて<b>経費にする割合</b>を決めると、ここに自動で反映されます。'
+          : 'まず「支払い」に家賃や光熱費を登録し、<b>経費にする割合</b>を決めてください。')
+        +'割合は面積や使用時間など、あとで説明できる根拠で決めます。'});
+  }
+
+  /* ── 少額減価償却資産 ── */
+  if(pr.filing!=='white' && t.profit>0){
+    tips.push({t:'30万円未満の道具は買った年に全額経費', dep:'expense',
+      save: 0,
+      b:'青色申告なら<b>1個30万円未満</b>の工具・機械・車両などを、買った年に全額経費にできます（年間300万円まで）。'
+        +'白色だと10万円以上は数年に分けて経費にするので、同じ買い物でもその年に落とせる額が変わります。'
+        +'足場・コンプレッサー・高圧洗浄機・軽トラなど、買い替え時期が近いものは年内に前倒しする価値があります。'
+        +'なおこの特例には<b>適用期限</b>があり、これまで延長が繰り返されてきました。'
+        +'年をまたぐ買い物のときは、そのときの期限を確認してください。',
+      when:'12月31日までに買って、<b>実際に使い始めている</b>ことが条件です'});
+  }else if(pr.filing==='white' && t.profit>0){
+    tips.push({t:'10万円以上の道具は一度に経費にできない', dep:null, save:0,
+      b:'白色申告では、10万円以上の工具や車両は数年に分けて経費にします（減価償却）。'
+        +'青色申告にすると30万円未満は買った年に全額落とせるので、道具の買い替えが多い年ほど差が出ます。'});
+  }
+
+  /* ── 小規模企業共済 ── */
+  if(t.profit>0){
+    tips.push({t:'小規模企業共済（個人事業主の退職金）', dep:'deduction',
+      save: 840000*mg.deduction,
+      b:'掛金は月1,000〜70,000円で、<b>全額が所得から引けます</b>。廃業や引退のときに受け取り、'
+        +'そのときも退職所得あつかいで税が軽くなります。'
+        +(mg.deduction>0
+          ? '月1万円（年12万円）なら約'+yen(Math.round(120000*mg.deduction/100)*100)+'、'
+            +'上限の月7万円（年84万円）なら約'+yen(Math.round(840000*mg.deduction/100)*100)+'の節税です。'
+          : '掛金の上限は月7万円（年84万円）です。')
+        +'ただし<b>20年未満で任意解約すると元本割れ</b>します。無理のない額から始めてください。',
+      when:'年内に払い込んだ分がその年の控除。1年分の前納も同じ年に入れられます'});
+    tips.push({t:'iDeCo（個人型確定拠出年金）', dep:'deduction',
+      save: 816000*mg.deduction,
+      b:'個人事業主は<b>月68,000円</b>まで掛けられ、全額が所得から引けます（付加年金と併用するときは月67,000円）。'
+        +'運用益も非課税。ただし<b>60歳まで引き出せません</b>。'
+        +'手元の資金に余裕がないうちは、途中解約できる小規模企業共済を先に検討するのが無難です。'});
+  }
+
+  /* ── 付加年金 ── */
+  tips.push({t:'付加年金（月400円）', dep:null, save:0,
+    b:'国民年金に<b>月400円</b>を上乗せすると、将来の年金が「200円×納めた月数」だけ毎年増えます。'
+      +'受け取り始めて<b>2年で元が取れる</b>計算で、掛金も全額が社会保険料控除になります。'
+      +'国民年金基金とは同時に入れません。市区町村の年金窓口で申し込めます。'});
+
+  /* ── 国民年金の前納 ── */
+  tips.push({t:'国民年金は前納すると割引', dep:null, save:0,
+    b:'口座振替で<b>2年分をまとめて前納すると約1.6万円</b>、1年前納で約4千円の割引になります。'
+      +'まとめて払った分は、払った年に全額を控除するか、各年に分けて控除するかを選べます。',
+    when:'4月開始の前納は、その年の2月末までに申し込み'});
+
+  /* ── 保険料の免除・軽減（所得が低いとき） ── */
+  if(t.income <= 1680000){
+    tips.push({t:'国民年金の免除・納付猶予を申請できるかも', dep:null,
+      save: t.income<=670000 ? t.pension : 0, saveWord:'最大 年 約', hot:t.income<=670000,
+      b:'所得が一定以下だと、国民年金の保険料が全額または一部免除されます。'
+        +'目安は<b>単身で所得67万円以下なら全額免除</b>（扶養親族がいると基準が上がります）。'
+        +'審査は<b>前年の所得</b>で行うので、'+(y-1)+'年の所得が基準内かどうかで決まります。'
+        +'免除された期間も年金の受給資格期間に入り、全額免除でも将来の年金の<b>2分の1は受け取れます</b>。'
+        +'減った分は<b>10年以内なら追納</b>できるので、収入が戻ってから納め直すこともできます。'
+        +'未納のまま放置するのとはまったく違うので、払えないときは必ず申請してください。',
+      when:'申請先は市区町村の年金窓口。7月から翌年6月が1年度の区切りです'});
+  }
+  if(pr.hiType==='nhi' && t.income <= 1000000){
+    tips.push({t:'国民健康保険の均等割にも軽減がある', dep:null, save:0,
+      b:'世帯の所得が基準以下だと、国保の<b>均等割が7割・5割・2割</b>軽減されます。申請は不要ですが、'
+        +'<b>確定申告（または住民税の申告）をしていないと判定されません</b>。'
+        +'所得が少ない年こそ、申告だけは済ませておいてください。'});
+  }
+
+  /* ── 消費税 ── */
+  if(pr.invoice && t.inSum>0){
+    const stx = t.salesTax;
+    const sc = CT_SIMPLE_MAP[pr.ctSimpleType] || CT_SIMPLE_MAP[5];
+    const taxableEx = t.exEntries*pr.ctPurchasePct/100 + apportionTaxableYear(y);
+    const cands = [
+      {id:'simple', label:'簡易課税（'+sc.label+'）', v:Math.floor(stx*(1-sc.rate)/100)*100},
+      {id:'standard', label:'本則課税', v:Math.max(0, Math.floor((stx-Math.floor(taxableEx*10/110))/100)*100)}
+    ];
+    if(y<=2026) cands.unshift({id:'special20', label:'2割特例', v:Math.floor(stx*0.2/100)*100});
+    const best = cands.slice().sort((a,b)=>a.v-b.v)[0];
+    const table = cands.map(o=>'<br>・'+o.label+'：'+yen(o.v)
+      + (o.id===pr.ctMethod ? '（いま選択中）' : '')).join('');
+    if(best.id!==pr.ctMethod && t.ct-best.v>=1000){
+      tips.push({t:'消費税は「'+best.label+'」のほうが安くなりそう', dep:null,
+        save: t.ct-best.v, hot:true,
+        b:'いまの記録（売上 '+yen(t.inSum)+'・経費 '+yen(t.exEntries)+'）で3つの方式を比べると：'+table
+          +'<br>ただし<b>2割特例</b>は免税事業者からインボイス登録した人が対象で、個人は2026年分まで。'
+          +'<b>簡易課税</b>は基準期間の課税売上5,000万円以下＋事前の届出が必要で、いちど選ぶと2年続けます。'
+          +'<b>本則課税</b>は経費のインボイスをすべて保存する必要があります。',
+        when: best.id==='simple'
+          ? '「消費税簡易課税制度選択届出書」を '+y+'年12月31日までに出すと '+(y+1)+'年分から'
+          : null});
+    }else{
+      tips.push({t:'消費税の課税方式は、いまの選択でよさそう', dep:null, save:0,
+        b:'いまの記録で3つの方式を比べると：'+table
+          +'<br>経費が増えると本則課税が有利になることがあります。年末にもう一度見比べてください。'});
+    }
+    if(pr.ctMethod==='special20' && y>=2026){
+      tips.push({t:'2割特例は2026年分で終わり', dep:null, save:0, hot:true,
+        b:'個人事業主の<b>2割特例は2026年分（令和8年分）が最後</b>です。'
+          +'2027年分からは簡易課税か本則課税を選ぶことになります。'
+          +'売上に対して経費が少ない仕事なら、多くの場合は簡易課税のほうが有利です。',
+        when:'簡易課税を2027年分から使うなら、2026年12月31日までに届出が必要です'});
+    }
+  }else if(!pr.invoice){
+    if(t.inSum>10000000){
+      tips.push({t:'売上1,000万円を超えると2年後から消費税', dep:null, save:0, hot:true,
+        b:'記録した売上が '+yen(t.inSum)+' で、1,000万円を超えています。'
+          +'この場合<b>'+(y+2)+'年から消費税の納税義務</b>が生じます。'
+          +'いまのうちに簡易課税と本則課税のどちらが有利かを見ておくと、届出の期限を逃しません。'});
+    }else{
+      tips.push({t:'いまは消費税を納めなくてよい', dep:null, save:0,
+        b:'インボイス未登録で売上が1,000万円以下なので、消費税の納税義務はありません。'
+          +'登録は任意です。登録すると<b>売上の中から消費税を納める</b>ことになるので、'
+          +'取引先から求められているかどうかで判断してください。'});
+    }
+  }
+
+  /* ── 個人事業税 ── */
+  if(t.bt>0){
+    tips.push({t:'払った個人事業税は翌年の経費になる', dep:null, save:0,
+      b:'個人事業税は8月と11月に納めます。<b>納めた年の必要経費</b>になるので、'
+        +y+'年分として'+(y+1)+'年に払う '+yen(t.bt)+' は、'+(y+1)+'年の経費に入れてください。'
+        +'なお個人事業税の計算では青色申告特別控除は使えません（利益に足し戻します）。'});
+  }else if(t.profit>2400000 && pr.bizTaxRate>0){
+    tips.push({t:'利益290万円を超えると個人事業税', dep:null, save:0,
+      b:'個人事業税には<b>事業主控除290万円</b>があり、いまの利益 '+yen(t.profit)+' なら0円です。'
+        +'あと '+yen(TAX.bizTaxExempt-t.profit)+' 増えると、超えた分に'+pr.bizTaxRate+'%かかり始めます。'});
+  }
+
+  /* ── 専従者給与 ── */
+  if(pr.filing!=='white' && t.profit>3000000){
+    tips.push({t:'家族に払う給与を経費にする（青色事業専従者給与）', dep:'expense', save:0,
+      b:'生計を同じくする15歳以上の家族が仕事を手伝っているなら、'
+        +'届け出た範囲でその給与を<b>全額経費</b>にできます。仕事の内容に見合った額であることが条件です。'
+        +'ただしその家族について<b>配偶者控除・扶養控除は使えなくなる</b>ので、手取りで比べて決めてください。',
+      when:'「青色事業専従者給与に関する届出書」を '+aoY+'年3月15日までに（新たに専従者を置いた場合は2ヶ月以内）'});
+  }
+
+  /* ── 赤字 ── */
+  if(t.rawProfit<0){
+    tips.push({t:'今年の赤字は、来年以降の税金を減らせる', dep:null, save:0, hot:true,
+      b:'いまの記録は '+yen(Math.abs(t.rawProfit))+' の赤字です。'
+        +(pr.filing==='white'
+          ? '白色申告では赤字を繰り越せませんが、<b>青色申告なら3年間</b>繰り越して、'
+            +'黒字になった年の利益から差し引けます。'
+          : '青色申告なので<b>3年間繰り越して</b>、黒字になった年の利益から差し引けます。')
+        +'赤字の年でも、忘れずに確定申告してください。'});
+  }
+
+  /* ── ふるさと納税 ── */
+  if(t.rt>0){
+    tips.push({t:'ふるさと納税', dep:null, save:0,
+      b:'税が減るわけではなく、<b>先に払って返礼品を受け取る</b>制度です。実質負担は2,000円。'
+        +'上限の目安は住民税の所得割（いまの目安で '+yen(Math.max(0,t.rt-5000))+' 程度）の2割ほどです。'
+        +'個人事業主は確定申告をするので<b>ワンストップ特例は使えません</b>。申告書に寄附金控除として書きます。',
+      when:'12月31日までの寄附がその年分'});
+  }
+
+  return {tips, mg};
+}
+
+function renderTips(t, y){
+  const {tips, mg} = taxTips(t, y);
+  if(!tips.length) return '';
+  const per = r => yen(Math.round(10000*r/10)*10);
+  let lead;
+  if(mg.expense<=0 && mg.deduction<=0){
+    lead = 'いまの記録では<b>所得税・住民税はかかっていません</b>。'
+      + 'この状態では控除を増やすタイプの節税は効かないので、'
+      + '国民年金・国保そのものを軽くする方法と、来年以降にそなえる準備が中心になります。';
+  }else{
+    lead = 'いまの所得だと、<b>経費を1万円増やすと約'+per(mg.expense)+'</b>、'
+      + '<b>所得控除（共済・iDeCoなど）を1万円増やすと約'+per(mg.deduction)+'</b> 負担が軽くなります。'
+      + (mg.nhi>0 ? '経費のほうが効くのは、所得そのものが減って<b>国民健康保険料も下がる</b>からです。' : '');
+  }
+  const rank = tips.map((tp,i)=>({tp, i, s: tp.save>=1000 ? tp.save : 0, h: tp.hot?1:0}))
+    .sort((a,b)=> (b.s-a.s) || (b.h-a.h) || (a.i-b.i));
+  const LIMIT = 4;
+  const shown = view.tipsAll ? rank : rank.slice(0, LIMIT);
+  const cards = shown.map(({tp})=>{
+    const save = tp.save>=1000
+      ? '<span class="tip-save">'+(tp.saveWord||'年 約')+yen(Math.round(tp.save/100)*100)+'</span>' : '';
+    const dead = tp.dep==='deduction' && mg.deduction<=0
+      ? '<div class="tip-note">※いまは所得税・住民税がかかっていないため、すぐの節税にはなりません。収入が増えた年に効きます。</div>'
+      : tp.dep==='expense' && mg.expense<=0
+      ? '<div class="tip-note">※いまは税負担がないため金額としての効果は出ませんが、記録しておくと収入が増えた年に効きます。</div>'
+      : '';
+    return '<div class="tip'+(tp.hot?' hot':'')+'">'
+      + '<div class="tip-head"><span class="tip-title">'+tp.t+'</span>'+save+'</div>'
+      + '<div class="tip-body">'+tp.b+'</div>'
+      + dead
+      + (tp.when ? '<div class="tip-when">期限・手続き：'+tp.when+'</div>' : '')
+      + '</div>';
+  }).join('');
+  const more = rank.length>LIMIT
+    ? '<button class="btn-sm" data-act="tipsall">'
+      + (view.tipsAll ? '最初の'+LIMIT+'件だけ表示' : 'ほかのヒントも見る（あと'+(rank.length-LIMIT)+'件）')
+      + '</button>'
+    : '';
+  return '<section class="card panel tips">'
+    + '<h2>節税のヒント</h2>'
+    + '<div class="mg-line">'+lead+'</div>'
+    + cards
+    + more
+    + '<div class="notice" style="margin-top:14px">ここに出るのは、記録した金額から選んだ<b>一般的な情報</b>です。'
+    + '使えるかどうかは事業の内容や家族の状況で変わり、制度も毎年変わります。'
+    + '実際に手続きする前に、税務署・自治体・税理士にご確認ください。</div>'
+    + '</section>';
 }
 
 /* ---------- modal ---------- */
@@ -1716,6 +2037,7 @@ root.addEventListener('click', e=>{
   else if(act==='biztab'){ view.bizTab=b.dataset.tab; view.pendingDelete=null; render(); }
   else if(act==='bizsort'){ view.bizSort = view.bizSort==='desc' ? 'asc' : 'desc'; render(); }
   else if(act==='bizfilter'){ view.bizFilter = b.dataset.f; view.pendingDelete=null; render(); }
+  else if(act==='tipsall'){ view.tipsAll = !view.tipsAll; render(); }
   else if(act==='csv') exportCsv();
   else if(act==='bizcsv') exportBizCsv();
   else if(act==='jrncsv') exportJournalCsv();

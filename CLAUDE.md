@@ -24,9 +24,16 @@ opened directly), it falls back to `localStorage`. Consequences:
 
 Tax parameters (income-tax brackets, R7/R8 basic deduction table, pension)
 live in the `TAX` constant near the top of the inline script; NHI rates are
-in `NHI_STD` (31 prefectures' standard rates) and `NHI_PRESETS` (exact city
+in `NHI_STD` (33 prefectures' standard rates) and `NHI_PRESETS` (exact city
 rates) — update them when fiscal years roll over. State is v3:
 `{payments, biz, profile}`; `migrate()` upgrades older embedded state.
+
+`taxTips()` builds the 節税 advice from `calcTax()`'s output and
+`marginalRates()`. It hard-codes filing deadlines and the 2026 end of the
+消費税 2割特例, so it needs a pass whenever tax rules change — a tip that no
+longer applies is worse than no tip. Effect amounts come from the marginal
+rate, and expenses vs. income deductions are deliberately kept apart
+(expenses also reduce 国保 and 個人事業税; income deductions do not).
 
 ## Repository structure
 
