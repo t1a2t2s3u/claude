@@ -207,6 +207,10 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 #set-form[data-ht="manual"] .ht-nhi{opacity:.45}
 #set-form[data-ht="nhi"] .ht-manual{opacity:.45}
 #set-form[data-ht="nhi"] .ht-note-manual{display:none}
+#set-form[data-inv="0"] .ct-field{display:none}
+#set-form[data-ct="special20"] .ct-simple,#set-form[data-ct="special20"] .ct-standard{display:none}
+#set-form[data-ct="simple"] .ct-standard{display:none}
+#set-form[data-ct="standard"] .ct-simple{display:none}
 .info-notice{border-left-color:var(--accent);margin:0 0 14px}
 .check-line{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ink);padding:6px 0}
 .check-line input{width:auto}
@@ -266,14 +270,15 @@ footer{margin-top:26px;display:flex;justify-content:space-between;align-items:ce
 `;
 
 /* ---------- domain data ---------- */
+/* tx: 消費税の課税仕入れになるか（居住用家賃・保険料・ローン返済は非課税/対象外） */
 const CATS = [
-  {id:'sub',  label:'サブスク'},
-  {id:'home', label:'住まい'},
-  {id:'util', label:'水道・光熱'},
-  {id:'net',  label:'通信'},
-  {id:'ins',  label:'保険'},
-  {id:'loan', label:'ローン・カード'},
-  {id:'other',label:'その他'}
+  {id:'sub',  label:'サブスク',        tx:true},
+  {id:'home', label:'住まい',          tx:false},
+  {id:'util', label:'水道・光熱',      tx:true},
+  {id:'net',  label:'通信',            tx:true},
+  {id:'ins',  label:'保険',            tx:false},
+  {id:'loan', label:'ローン・カード',  tx:false},
+  {id:'other',label:'その他',          tx:true}
 ];
 const CAT_MAP = Object.fromEntries(CATS.map(c=>[c.id,c]));
 const METHODS = [
@@ -316,6 +321,25 @@ const BIZ_EX_CATS = [
   {id:'exother',label:'雑費'}
 ];
 const BIZ_CAT_MAP = Object.fromEntries(BIZ_IN_CATS.concat(BIZ_EX_CATS).map(c=>[c.id,c]));
+
+/* 簡易課税のみなし仕入率（消費税法施行令57条） */
+const CT_SIMPLE = [
+  {id:1, label:'第1種 卸売業（90%）',            rate:.90},
+  {id:2, label:'第2種 小売業・農林漁業（80%）',  rate:.80},
+  {id:3, label:'第3種 製造業・建設業など（70%）',rate:.70},
+  {id:4, label:'第4種 飲食業など（60%）',        rate:.60},
+  {id:5, label:'第5種 サービス業・士業など（50%）',rate:.50},
+  {id:6, label:'第6種 不動産業（40%）',          rate:.40}
+];
+const CT_SIMPLE_MAP = Object.fromEntries(CT_SIMPLE.map(c=>[c.id,c]));
+
+/* 仕訳CSV用の勘定科目（一般的な個人事業の科目名。会計ソフト側で読み替え可） */
+const ACC_IN  = {sales:'売上高', inother:'雑収入'};
+const ACC_EX  = {out:'外注工賃', buy:'仕入高', travel:'旅費交通費', comm:'通信費',
+  supply:'消耗品費', ad:'広告宣伝費', meet:'接待交際費', study:'新聞図書費',
+  fee:'支払手数料', exother:'雑費'};
+const ACC_FIX = {sub:'通信費', home:'地代家賃', util:'水道光熱費', net:'通信費',
+  ins:'損害保険料', loan:'雑費', other:'雑費'};
 
 /* ---------- 税制パラメータ（概算用） ----------
    所得税の基礎控除は令和7・8年分（暫定上乗せ込み）。令和9年分以降は
@@ -545,6 +569,9 @@ function normalizeProfile(pr){
     care40: !!pr.care40,
     bizTaxRate: [0,3,4,5].includes(Number(pr.bizTaxRate)) ? Number(pr.bizTaxRate) : 5,
     invoice: !!pr.invoice,
+    ctMethod: ['special20','simple','standard'].includes(pr.ctMethod) ? pr.ctMethod : 'special20',
+    ctSimpleType: CT_SIMPLE_MAP[Number(pr.ctSimpleType)] ? Number(pr.ctSimpleType) : 5,
+    ctPurchasePct: Math.min(100, Math.max(0, Math.round(Number(pr.ctPurchasePct==null?100:pr.ctPurchasePct)||0))),
     extraDeduction: Math.max(0, Math.round(Number(pr.extraDeduction)||0)),
     hiType: pr.hiType==='manual' ? 'manual' : 'nhi',
     hiManual: Math.min(300000, Math.max(0, Math.round(Number(pr.hiManual)||0))),
@@ -686,6 +713,16 @@ function apportionYear(y){
   let s=0; for(let m=1;m<=12;m++) s+=apportionMonth(y,m);
   return Math.round(s);
 }
+function apportionTaxableYear(y){
+  let s=0;
+  for(let m=1;m<=12;m++){
+    s += state.payments.reduce((a,p)=>{
+      const c = CAT_MAP[p.cat];
+      return a + (p.bizPct>0 && c && c.tx && occursIn(p,y,m) ? p.amount*p.bizPct/100 : 0);
+    }, 0);
+  }
+  return Math.round(s);
+}
 
 /* ---------- tax engine ---------- */
 function calcTax(y){
@@ -718,11 +755,28 @@ function calcTax(y){
     const rt = (rtTaxable>0 ? Math.max(0, Math.round(rtTaxable*TAX.residentRate - TAX.residentAdj)) : 0)
       + (income > TAX.residentMin ? TAX.residentFlat : 0);
     const bt = pr.bizTaxRate>0 ? Math.round(Math.max(0, profit - TAX.bizTaxExempt) * pr.bizTaxRate/100) : 0;
-    const ct = pr.invoice ? Math.round(inSum*10/110*0.2) : 0;
+    const salesTax = Math.floor(inSum*10/110);
+    let ct = 0, purchaseTax = 0, ctLabel = 'インボイス未登録';
+    if(pr.invoice){
+      if(pr.ctMethod === 'simple'){
+        const sc = CT_SIMPLE_MAP[pr.ctSimpleType] || CT_SIMPLE_MAP[5];
+        ct = Math.floor(salesTax*(1-sc.rate)/100)*100;
+        ctLabel = '簡易課税・'+sc.label;
+      }else if(pr.ctMethod === 'standard'){
+        const taxableEx = exEntries*pr.ctPurchasePct/100 + apportionTaxableYear(y);
+        purchaseTax = Math.floor(taxableEx*10/110);
+        ct = Math.max(0, Math.floor((salesTax - purchaseTax)/100)*100);
+        ctLabel = '本則課税';
+      }else{
+        ct = Math.floor(salesTax*0.2/100)*100;
+        ctLabel = '2割特例';
+      }
+    }
     const taxTotal = it + rt + bt + ct;
     const net = inSum - expenses - taxTotal - social;
     return {mode:'free', inSum, exEntries, ap, expenses, profit, blue, income,
       pension, nhi, nhiCfg:nhiRes.cfg, social, basic, itTaxable:Math.max(0,itTaxable), it, rt, bt, ct,
+      salesTax, purchaseTax, ctLabel,
       taxTotal, all: taxTotal+social, net, monthly: Math.ceil((taxTotal+social)/12/1000)*1000};
   }
 
@@ -788,7 +842,8 @@ function render(){
     + '<footer><span>固定費'+state.payments.length+'件・収支'+state.biz.length+'件　'+saveNote+'</span>'
     + '<span>'
     + (dl && state.payments.length ? '<button class="linklike" data-act="csv">固定費CSV</button>　' : '')
-    + (dl && state.biz.length ? '<button class="linklike" data-act="bizcsv">収支CSV</button>' : '')
+    + (dl && state.biz.length ? '<button class="linklike" data-act="bizcsv">収支CSV</button>　' : '')
+    + (dl && (state.biz.length || state.payments.some(p=>p.bizPct>0)) ? '<button class="linklike" data-act="jrncsv">仕訳CSV</button>' : '')
     + '</span></footer>'
     + (view.modal ? modalHtml() : '');
 
@@ -1129,7 +1184,8 @@ function renderTax(c){
 
   const settings =
     '<section class="card panel"><h2>計算の設定</h2>'
-    + '<form id="set-form" data-wm="'+pr.workMode+'" data-ht="'+pr.hiType+'">'
+    + '<form id="set-form" data-wm="'+pr.workMode+'" data-ht="'+pr.hiType+'"'
+    + ' data-inv="'+(pr.invoice?'1':'0')+'" data-ct="'+pr.ctMethod+'">'
     + '<div class="f-grid">'
     + '<div><label for="s-workmode">働き方</label><select id="s-workmode">'
     + '<option value="free"'+(pr.workMode==='free'?' selected':'')+'>個人事業主・フリーランス</option>'
@@ -1146,6 +1202,16 @@ function renderTax(c){
     + '<option value="3"'+(pr.bizTaxRate===3?' selected':'')+'>3%</option>'
     + '<option value="0"'+(pr.bizTaxRate===0?' selected':'')+'>非課税の業種（文筆業など）</option>'
     + '</select></div>'
+    + '<div class="wm-free ct-field"><label for="s-ctmethod">消費税の課税方式</label><select id="s-ctmethod">'
+    + '<option value="special20"'+(pr.ctMethod==='special20'?' selected':'')+'>2割特例</option>'
+    + '<option value="simple"'+(pr.ctMethod==='simple'?' selected':'')+'>簡易課税</option>'
+    + '<option value="standard"'+(pr.ctMethod==='standard'?' selected':'')+'>本則課税</option>'
+    + '</select></div>'
+    + '<div class="wm-free ct-field ct-simple"><label for="s-ctsimple">簡易課税の事業区分</label><select id="s-ctsimple">'
+    + CT_SIMPLE.map(c=>'<option value="'+c.id+'"'+(pr.ctSimpleType===c.id?' selected':'')+'>'+c.label+'</option>').join('')
+    + '</select></div>'
+    + '<div class="wm-free ct-field ct-standard"><label for="s-ctpp">経費のうち課税仕入れの割合（%）</label>'
+    + '<input id="s-ctpp" type="number" min="0" max="100" step="1" inputmode="numeric" value="'+pr.ctPurchasePct+'"></div>'
     + '<div class="wm-free"><label for="s-hitype">健康保険の種類</label><select id="s-hitype">'
     + '<option value="nhi"'+(pr.hiType==='nhi'?' selected':'')+'>市区町村の国民健康保険</option>'
     + '<option value="manual"'+(pr.hiType==='manual'?' selected':'')+'>国保組合・任意継続など（金額を入力）</option>'
@@ -1178,7 +1244,7 @@ function renderTax(c){
     + '<div><label for="s-extra">その他の所得控除（年・任意）</label><input id="s-extra" type="number" min="0" step="1000" inputmode="numeric" value="'+(pr.extraDeduction||'')+'" placeholder="生命保険料控除・iDeCoなど"></div>'
     + '<div class="f-full">'
     + '<div class="check-line wm-free"><input type="checkbox" id="s-care40"'+(pr.care40?' checked':'')+'><label for="s-care40" style="margin:0">40〜64歳（国保の介護分を含める）</label></div>'
-    + '<div class="check-line wm-free"><input type="checkbox" id="s-invoice"'+(pr.invoice?' checked':'')+'><label for="s-invoice" style="margin:0">インボイス登録済み（消費税を2割特例で概算）</label></div>'
+    + '<div class="check-line wm-free"><input type="checkbox" id="s-invoice"'+(pr.invoice?' checked':'')+'><label for="s-invoice" style="margin:0">インボイス登録済み（消費税の課税事業者）</label></div>'
     + '</div>'
     + '</div>'
     + '<div class="f-actions"><button class="btn btn-primary" type="submit">設定を保存</button></div>'
@@ -1238,10 +1304,7 @@ function renderTax(c){
           : t.bt>0
             ? '（利益 '+yen(t.profit)+' − 事業主控除 290万円）× '+state.profile.bizTaxRate+'%'
             : '利益 '+yen(t.profit)+' が事業主控除290万円以下のため0円です')
-      + trow('消費税（2割特例の目安）', yen(t.ct),
-        state.profile.invoice
-          ? '売上 '+yen(t.inSum)+' に含まれる消費税 × 20%'
-          : 'インボイス未登録のため0円です（登録済みなら設定でチェック）')
+      + trow('消費税（'+esc(t.ctLabel)+'）', yen(t.ct), ctNote(t))
       + trow('国民年金（令和8年度）', yen(t.pension), '月額 '+yen(TAX.pensionMonthly)+' × 12ヶ月')
       + (t.nhiCfg.manual
         ? trow('健康保険（国保組合・任意継続など）', yen(t.nhi), '入力した月額 '+yen(state.profile.hiManual)+' × 12ヶ月')
@@ -1300,6 +1363,23 @@ function rateRow(label, key, r, k, h){
     + num('c-'+key+'r', r, '0.01', '例 8.5')
     + num('c-'+key+'k', k, '1', '例 30000')
     + num('c-'+key+'h', h, '1', 'なければ0');
+}
+function ctNote(t){
+  const pr = state.profile;
+  if(!pr.invoice) return 'インボイス未登録のため0円です（登録済みなら設定でチェック）';
+  const base = '売上 '+yen(t.inSum)+' に含まれる消費税 '+yen(t.salesTax);
+  if(pr.ctMethod === 'simple'){
+    const sc = CT_SIMPLE_MAP[pr.ctSimpleType] || CT_SIMPLE_MAP[5];
+    return base+' ×（1 − みなし仕入率'+Math.round(sc.rate*100)+'%）'
+      + '　※基準期間の課税売上5,000万円以下＋事前の届出が必要です';
+  }
+  if(pr.ctMethod === 'standard'){
+    return base+' − 課税仕入れの消費税 '+yen(t.purchaseTax)
+      + (t.salesTax - t.purchaseTax < 0 ? '　※仕入税額が上回るため0円（還付の可能性があります）' : '')
+      + '　※経費の'+pr.ctPurchasePct+'%を課税仕入れとして計算';
+  }
+  return base+' × 20%'
+    + (view.y > 2026 ? '　※2割特例は個人事業者は令和8年（2026年）分までです。翌年以降は簡易課税か本則課税を選んでください' : '');
 }
 function trow(label, val, note){
   return '<div class="trow"><span class="tlab">'+label
@@ -1444,6 +1524,55 @@ function exportBizCsv(){
     .catch(err=>{ if(err && err.code!=='declined') toast('CSVを保存できませんでした'); });
 }
 
+function exportJournalCsv(){
+  if(!dl) return;
+  const y = view.y;
+  const pad = n => String(n).padStart(2,'0');
+  const eom = (yy,mm) => yy+'/'+pad(mm)+'/'+pad(daysInMonth(yy,mm));
+  const q = v => '"'+String(v).replace(/"/g,'""')+'"';
+  const salesTx = state.profile.invoice ? '課税売上10%' : '対象外';
+  const rows = [];
+
+  state.biz.filter(b=>b.y===y).sort((a,b)=>a.m-b.m).forEach(b=>{
+    const memo = b.name + (b.note ? '　'+b.note : '');
+    if(b.type==='in'){
+      rows.push([eom(y,b.m), '事業主貸', b.amount, '対象外',
+        ACC_IN[b.cat]||'売上高', b.amount, salesTx, memo]);
+    }else{
+      rows.push([eom(y,b.m), ACC_EX[b.cat]||'雑費', b.amount, '課税仕入10%',
+        '事業主借', b.amount, '対象外', memo]);
+    }
+  });
+
+  /* 家事按分：月ごとに勘定科目でまとめる（今年は当月まで） */
+  const lastM = (y===NOW.getFullYear()) ? NOW.getMonth()+1 : 12;
+  for(let m=1;m<=lastM;m++){
+    const byAcc = new Map();
+    state.payments.filter(p=>p.bizPct>0 && occursIn(p,y,m)).forEach(p=>{
+      const amt = Math.round(p.amount*p.bizPct/100);
+      if(amt<=0) return;
+      const acc = ACC_FIX[p.cat] || '雑費';
+      const cat = CAT_MAP[p.cat];
+      const cur = byAcc.get(acc) || {amt:0, names:[], tx:!!(cat&&cat.tx)};
+      cur.amt += amt;
+      cur.names.push(p.name+'（'+p.bizPct+'%）');
+      byAcc.set(acc, cur);
+    });
+    byAcc.forEach((v,acc)=>{
+      rows.push([eom(y,m), acc, v.amt, v.tx?'課税仕入10%':'対象外',
+        '事業主借', v.amt, '対象外', '家事按分　'+v.names.join('、')]);
+    });
+  }
+
+  if(!rows.length){ toast(y+'年の記録がないため書き出せません'); return; }
+  const head = ['取引日','借方勘定科目','借方金額','借方税区分',
+    '貸方勘定科目','貸方金額','貸方税区分','摘要'];
+  const csv = '\uFEFF' + [head].concat(rows).map(r=>r.map(q).join(',')).join('\r\n');
+  dl.save({filename:'maitsuki-cho-shiwake-'+y+'.csv', data:csv})
+    .then(()=>toast(y+'年の仕訳CSVを保存しました（'+rows.length+'行）'))
+    .catch(err=>{ if(err && err.code!=='declined') toast('CSVを保存できませんでした'); });
+}
+
 root.addEventListener('click', e=>{
   const b = e.target.closest('[data-act]');
   if(!b) return;
@@ -1500,6 +1629,7 @@ root.addEventListener('click', e=>{
   else if(act==='bizgoto'){ view.m=Number(b.dataset.m); hideTip(); render(); }
   else if(act==='csv') exportCsv();
   else if(act==='bizcsv') exportBizCsv();
+  else if(act==='jrncsv') exportJournalCsv();
 });
 
 root.addEventListener('input', e=>{
@@ -1520,6 +1650,14 @@ root.addEventListener('change', e=>{
   if(e.target.id==='s-hitype'){
     const f=document.getElementById('set-form');
     if(f) f.dataset.ht = e.target.value;
+  }
+  if(e.target.id==='s-invoice'){
+    const f=document.getElementById('set-form');
+    if(f) f.dataset.inv = e.target.checked ? '1' : '0';
+  }
+  if(e.target.id==='s-ctmethod'){
+    const f=document.getElementById('set-form');
+    if(f) f.dataset.ct = e.target.value;
   }
   if(e.target.id==='s-nhipref'){
     const citySel=document.getElementById('s-nhicity');
@@ -1574,6 +1712,7 @@ root.addEventListener('submit', e=>{
       salary: val('s-salary'), salarySocial: val('s-salsoc'),
       care40: chk('s-care40'), bizTaxRate: Number(val('s-biztax')),
       invoice: chk('s-invoice'), extraDeduction: val('s-extra'),
+      ctMethod: val('s-ctmethod'), ctSimpleType: val('s-ctsimple'), ctPurchasePct: val('s-ctpp'),
       hiType: val('s-hitype'), hiManual: val('s-himanual'),
       nhiPref: val('s-nhipref'), nhiCity: val('s-nhicity'), nhiMembers: val('s-nhimem'),
       nhiCustom: {
