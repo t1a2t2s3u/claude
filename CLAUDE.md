@@ -22,9 +22,10 @@ opened directly), it falls back to `localStorage`. Consequences:
   with the real `<head>`.
 - The embedded JSON escapes the `<` character as the unicode escape `\u003c` when serialized.
 
-Tax parameters (income-tax brackets, R7/R8 basic deduction table, pension,
-Tokyo-23-ku NHI rates) live in the `TAX` constant near the top of the inline
-script — update them there when fiscal years roll over. State is v3:
+Tax parameters (income-tax brackets, R7/R8 basic deduction table, pension)
+live in the `TAX` constant near the top of the inline script; NHI rates are
+in `NHI_STD` (31 prefectures' standard rates) and `NHI_PRESETS` (exact city
+rates) — update them when fiscal years roll over. State is v3:
 `{payments, biz, profile}`; `migrate()` upgrades older embedded state.
 
 ## Repository structure

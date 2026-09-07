@@ -381,7 +381,11 @@ const NHI_STD = {
   kagawa:{year:'R8',med:{r:8.92,k:54769},sup:{r:2.82,k:17195},care:{r:2.50,k:18014}},
   kochi:{year:'R8',med:{r:7.69,k:47864},sup:{r:2.78,k:17198},care:{r:2.22,k:16233}},
   fukuokaken:{year:'R8',med:{r:7.68,k:47854},sup:{r:2.97,k:18359},care:{r:2.46,k:17961}},
-  miyazaki:{year:'R8',med:{r:7.83,k:48677},sup:{r:2.82,k:17423},care:{r:2.49,k:17743}}
+  miyazaki:{year:'R8',med:{r:7.83,k:48677},sup:{r:2.82,k:17423},care:{r:2.49,k:17743}},
+  saga:{year:'R8',med:{r:9.20,k:57325},sup:{r:2.86,k:17683},care:{r:2.26,k:16547}},
+  nagasaki:{year:'R8',med:{r:7.94,k:49045},sup:{r:3.08,k:18901},care:{r:2.48,k:17752}},
+  kumamoto:{year:'R7',med:{r:7.49,k:45529},sup:{r:2.86,k:17166},care:{r:2.38,k:17248}},
+  okinawa:{year:'R8',med:{r:7.02,k:43739},sup:{r:2.70,k:16740},care:{r:2.33,k:17055}}
 };
 NHI_PREFS.forEach(p=>{ p.std = NHI_STD[p.id] || null; });
 
@@ -1240,10 +1244,11 @@ function nhiCityOptions(prefId, sel){
   const opt = (v,l)=>'<option value="'+v+'"'+(sel===v?' selected':'')+'>'+l+'</option>';
   let out = '';
   if(prefId==='tokyo') out += opt('tokyostd','東京23区（標準的な区）');
-  out += Object.keys(NHI_PRESETS)
-    .filter(k=>k!=='tokyostd' && NHI_PRESETS[k].pref===prefId)
-    .map(k=>opt(k, NHI_PRESETS[k].label)).join('');
-  if(pref.std) out += opt('std','上記以外の市区町村（県の標準料率で概算）');
+  const cities = Object.keys(NHI_PRESETS)
+    .filter(k=>k!=='tokyostd' && NHI_PRESETS[k].pref===prefId);
+  out += cities.map(k=>opt(k, NHI_PRESETS[k].label)).join('');
+  const hasAbove = prefId==='tokyo' || cities.length>0;
+  if(pref.std) out += opt('std', (hasAbove?'上記以外の':'県内の')+'市区町村（都道府県の標準料率で概算）');
   out += opt('custom','料率を自分で入力');
   return out;
 }
