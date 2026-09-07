@@ -1,4 +1,7 @@
-# デフォルトブランチへのpushのたびに、リポジトリをそのままGitHub Pagesへ公開する。
+# デフォルトブランチが更新されるたびに、内容を gh-pages ブランチへ同期して
+# GitHub Pages(公開元: gh-pages)を更新する。
+# ※ Actionsトークンでは Pages サイトの新規作成ができないため、
+#    artifact方式(actions/deploy-pages)ではなくブランチ同期方式を使う。
 name: Deploy to GitHub Pages
 
 on:
@@ -7,27 +10,16 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  sync-gh-pages:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Push current contents to gh-pages
+        run: git push --force origin HEAD:gh-pages
