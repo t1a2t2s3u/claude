@@ -11,12 +11,12 @@
 <style>body{margin:0;background:#f3f2ed}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:#14161d}}:root[data-theme="dark"] body{background:#14161d}</style>
 </head>
 <body>
-<script type="application/json" id="app-state">{"v":2,"payments":[]}</script>
+<script type="application/json" id="app-state">{"v":3,"payments":[],"biz":[],"profile":{}}</script>
 <script>
 'use strict';
 const SRC = document.currentScript.textContent;
-const STORE_KEY = 'maitsuki-cho:v2';
-const STORE_KEY_V1 = 'maitsuki-cho:v1';
+const STORE_KEY = 'maitsuki-cho:v3';
+const OLD_KEYS = ['maitsuki-cho:v2','maitsuki-cho:v1'];
 
 const FONT_LINKS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">';
 const BOOT_STYLE = '<style>body{margin:0;background:#f3f2ed}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:#14161d}}:root[data-theme="dark"] body{background:#14161d}</style>';
@@ -62,7 +62,7 @@ button{font:inherit}
 input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 /* masthead */
-.masthead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.masthead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:14px;flex-wrap:wrap}
 .eyebrow{font-size:.72rem;letter-spacing:.14em;color:var(--muted)}
 h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:1.7rem;margin:2px 0 0;letter-spacing:.06em}
 .monthnav{display:flex;align-items:center;gap:4px}
@@ -71,14 +71,20 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .month-label{font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:1.05rem;min-width:8.2em;text-align:center;font-variant-numeric:tabular-nums}
 .today-chip{border:0;background:none;color:var(--accent);font-size:.75rem;cursor:pointer;padding:2px 8px;border-radius:999px;text-decoration:underline;text-underline-offset:3px}
 
+/* section nav */
+.seg-nav{display:flex;gap:4px;background:var(--surface2);border-radius:12px;padding:4px;margin-bottom:16px}
+.seg{flex:1;border:0;background:none;color:var(--muted);padding:9px 6px;border-radius:9px;cursor:pointer;font-size:.88rem;font-weight:500;text-align:center;white-space:nowrap}
+.seg:hover{color:var(--ink)}
+.seg.active{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:var(--shadow)}
+
 /* cards */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
 
 /* hero */
 .summary{padding:22px 24px 18px;margin-bottom:14px;background-image:repeating-linear-gradient(to bottom,transparent 0 26px,var(--rule) 26px 27px)}
-.sum-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
 .sum-label{font-size:.78rem;color:var(--muted);letter-spacing:.08em}
 .sum-total{font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:clamp(2rem,6vw,2.7rem);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.25;margin:0 0 10px}
+.sum-total small{font-size:.45em;font-weight:500;color:var(--muted)}
 .sum-row{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:.83rem;color:var(--muted)}
 .sum-row b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600;margin-left:4px}
 .bar{display:flex;gap:2px;height:12px;border-radius:6px;overflow:hidden;margin:16px 0 10px}
@@ -118,6 +124,8 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .tag{display:inline-block;font-size:.68rem;line-height:1.6;padding:1px 8px;border-radius:999px;margin-left:8px;flex:none}
 .tag.next{background:var(--accent);color:var(--accent-ink)}
 .tag.today{background:var(--hanko);color:#fff}
+.tag.warn{background:var(--hanko);color:#fff;margin-left:0}
+.tag.ok{border:1px solid var(--line);color:var(--muted);margin-left:0}
 .item{display:flex;align-items:center;gap:10px;padding:5px 0;flex-wrap:wrap}
 .item-main{display:flex;flex-direction:column;min-width:0}
 .item-name{font-weight:500;line-height:1.4}
@@ -139,7 +147,6 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .cal-wd.sun{color:var(--hanko)}
 .cal-cell{min-height:86px;border:1px solid var(--line);border-radius:8px;padding:5px 6px;font-size:.72rem;background:var(--surface);display:flex;flex-direction:column;gap:2px}
 .cal-cell.blank{border:0;background:none;min-height:0}
-.cal-cell.has{background:var(--surface)}
 .cal-cell.next-up{border-color:var(--accent);box-shadow:inset 0 2px 0 var(--accent)}
 .cal-cell.past .cal-items,.cal-cell.past .cal-daytotal{opacity:.5}
 .cal-daynum{font-variant-numeric:tabular-nums;color:var(--muted);line-height:1.4;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center}
@@ -156,22 +163,47 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
   .cal-item{font-size:.66rem}
 }
 
-/* year view */
+/* year view + charts */
 .year{padding:20px 24px}
-.year h2{font-size:.9rem;font-weight:600;margin:0 0 16px}
-.ychart{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;align-items:end;height:140px;border-bottom:1px solid var(--line);padding-bottom:0}
+.year h2,.panel h2{font-size:.9rem;font-weight:600;margin:0 0 16px}
+.ychart{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;align-items:end;height:140px;border-bottom:1px solid var(--line)}
 .ybar{position:relative;border:0;background:none;padding:0;cursor:pointer;height:100%;display:flex;align-items:flex-end}
 .ybar-fill{width:100%;background:var(--bar-dim);border-radius:4px 4px 0 0;min-height:2px}
 .ybar.cur .ybar-fill{background:var(--accent)}
 .ybar:hover .ybar-fill,.ybar:focus-visible .ybar-fill{background:var(--accent)}
 .ychart-labels{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;font-size:.68rem;color:var(--muted);text-align:center;margin:6px 0 0;font-variant-numeric:tabular-nums}
 .ychart-labels .cur{color:var(--accent);font-weight:600}
+.dchart{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;align-items:end;height:150px;border-bottom:1px solid var(--line)}
+.dmon{display:flex;align-items:flex-end;gap:2px;height:100%;border:0;background:none;padding:0;cursor:pointer}
+.dbar{flex:1;border-radius:3px 3px 0 0;min-height:2px}
+.dbar.in{background:var(--c-sub)}
+.dbar.ex{background:var(--c-home)}
 .ytable{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:22px}
 .ytable th{font-size:.72rem;color:var(--muted);font-weight:500;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
 .ytable th.num,.ytable td.num{text-align:right;font-variant-numeric:tabular-nums}
 .ytable td{padding:7px 8px;border-bottom:1px solid var(--line)}
 .ytable tr:last-child td{border-bottom:0;font-weight:600}
 .ytip{position:fixed;z-index:30;background:var(--ink);color:var(--bg);font-size:.78rem;padding:6px 10px;border-radius:8px;pointer-events:none;box-shadow:var(--shadow);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* biz + tax panels */
+.panel{padding:20px 24px;margin-bottom:14px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.panel-head h2{margin:0}
+.panel-head .actions{display:flex;gap:6px}
+.btn-sm{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:5px 12px;font-size:.78rem;font-weight:500;cursor:pointer}
+.btn-sm:hover{background:var(--surface2)}
+.group-label{font-size:.72rem;color:var(--muted);letter-spacing:.08em;margin:12px 0 2px}
+.trow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-top:1px dashed var(--line);font-size:.9rem}
+.trow:first-of-type{border-top:0}
+.trow .tlab small{display:block;color:var(--muted);font-size:.71rem;line-height:1.5}
+.trow .tval{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.trow.total{border-top:1px solid var(--line);font-weight:700}
+.trow.total .tval{font-size:1.05rem}
+.notice{border:1px solid var(--line);border-left:3px solid var(--hanko);border-radius:8px;padding:10px 14px;font-size:.75rem;color:var(--muted);margin-top:14px;background:var(--surface)}
+#set-form[data-wm="side"] .wm-free{display:none}
+#set-form[data-wm="free"] .wm-side{display:none}
+.check-line{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ink);padding:6px 0}
+.check-line input{width:auto}
 
 /* empty state */
 .empty{padding:36px 24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px;font-size:.9rem}
@@ -206,14 +238,14 @@ footer{margin-top:26px;display:flex;justify-content:space-between;align-items:ce
 .linklike{border:0;background:none;color:var(--accent);cursor:pointer;font-size:.75rem;padding:0;text-decoration:underline;text-underline-offset:3px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:.85rem;box-shadow:var(--shadow);z-index:40;max-width:90vw}
 @media (prefers-reduced-motion:no-preference){
-  .btn,.icon-btn,.tab,.cat-chip,.nav-btn,.ybar-fill{transition:background-color .15s,color .15s,border-color .15s}
+  .btn,.icon-btn,.tab,.seg,.cat-chip,.nav-btn,.ybar-fill,.btn-sm{transition:background-color .15s,color .15s,border-color .15s}
   .modal{animation:rise .18s ease-out}
   @keyframes rise{from{transform:translateY(10px);opacity:.6}to{transform:none;opacity:1}}
 }
 @media (max-width:560px){
   .day{grid-template-columns:76px 1fr;padding:12px 14px}
   .f-grid{grid-template-columns:1fr}
-  .summary{padding:18px 16px}
+  .summary,.panel{padding:18px 16px}
   .year{padding:16px 14px}
 }
 `;
@@ -252,6 +284,61 @@ const PRESETS = [
   {name:'Spotify',        amount:1080,  day:1,  cat:'sub',  method:'card', freq:'monthly'},
   {name:'Amazonプライム', amount:600,   day:1,  cat:'sub',  method:'card', freq:'monthly'}
 ];
+const BIZ_IN_CATS = [
+  {id:'sales',  label:'売上'},
+  {id:'inother',label:'その他収入'}
+];
+const BIZ_EX_CATS = [
+  {id:'out',    label:'外注費'},
+  {id:'buy',    label:'仕入'},
+  {id:'travel', label:'旅費交通費'},
+  {id:'comm',   label:'通信費'},
+  {id:'supply', label:'消耗品費'},
+  {id:'ad',     label:'広告宣伝費'},
+  {id:'meet',   label:'会議・交際費'},
+  {id:'study',  label:'書籍・研修'},
+  {id:'fee',    label:'支払手数料'},
+  {id:'exother',label:'雑費'}
+];
+const BIZ_CAT_MAP = Object.fromEntries(BIZ_IN_CATS.concat(BIZ_EX_CATS).map(c=>[c.id,c]));
+
+/* ---------- 税制パラメータ（概算用） ----------
+   所得税の基礎控除は令和7・8年分（暫定上乗せ込み）。令和9年分以降は
+   合計所得132万円超〜2,350万円以下が一律58万円に戻る予定。
+   国民年金は令和8年度、国保は東京23区・令和7年度の料率を目安に使用。 */
+const TAX = {
+  brackets: [
+    [1950000,.05,0],[3300000,.10,97500],[6950000,.20,427500],[9000000,.23,636000],
+    [18000000,.33,1536000],[40000000,.40,2796000],[Infinity,.45,4796000]
+  ],
+  basicDed: [
+    [1320000,950000],[3360000,880000],[4890000,680000],[6550000,630000],
+    [23500000,580000],[24000000,480000],[24500000,320000],[25000000,160000],[Infinity,0]
+  ],
+  residentBasic:430000, residentRate:.10, residentFlat:5000, residentAdj:2500, residentMin:450000,
+  pensionMonthly:17920,
+  nhi:{ base:430000, medR:.080, medK:49000, medCap:660000, supR:.028, supK:17000, supCap:260000, careR:.024, careK:17000, careCap:170000 },
+  bizTaxExempt:2900000,
+  salarySocialRate:.146
+};
+function salaryDeduction(sal){
+  if(sal<=1900000) return Math.min(sal,650000);
+  if(sal<=3600000) return sal*.30+80000;
+  if(sal<=6600000) return sal*.20+440000;
+  if(sal<=8500000) return sal*.10+1100000;
+  return 1950000;
+}
+function basicDeduction(totalIncome){
+  for(const [lim,d] of TAX.basicDed) if(totalIncome<=lim) return d;
+  return 0;
+}
+function incomeTaxOn(taxableRaw){
+  const t = Math.floor(Math.max(0,taxableRaw)/1000)*1000;
+  for(const [lim,r,d] of TAX.brackets){
+    if(t<=lim) return Math.floor(Math.max(0, t*r-d)*1.021/100)*100;
+  }
+  return 0;
+}
 
 /* ---------- helpers ---------- */
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -279,12 +366,45 @@ function normalizePayment(p){
     method: METHOD_MAP[p.method] ? p.method : 'other',
     freq: FREQ_MAP[p.freq] ? p.freq : 'monthly',
     month: Math.min(12, Math.max(1, parseInt(p.month,10)||1)),
-    note: String(p.note||'').slice(0,120)
+    note: String(p.note||'').slice(0,120),
+    bizPct: Math.min(100, Math.max(0, Math.round(Number(p.bizPct)||0)))
+  };
+}
+function normalizeBiz(b){
+  const type = b.type==='ex' ? 'ex' : 'in';
+  const cats = type==='in' ? BIZ_IN_CATS : BIZ_EX_CATS;
+  return {
+    id: b.id || uid(),
+    type,
+    name: String(b.name||'').slice(0,60),
+    amount: Math.max(1, Math.round(Number(b.amount)||1)),
+    y: Math.min(2100, Math.max(2000, parseInt(b.y,10)||NOW.getFullYear())),
+    m: Math.min(12, Math.max(1, parseInt(b.m,10)||1)),
+    cat: cats.some(c=>c.id===b.cat) ? b.cat : cats[0].id,
+    note: String(b.note||'').slice(0,120)
+  };
+}
+function normalizeProfile(pr){
+  pr = pr && typeof pr==='object' ? pr : {};
+  return {
+    workMode: pr.workMode==='side' ? 'side' : 'free',
+    filing: ['blue65','blue10','white'].includes(pr.filing) ? pr.filing : 'white',
+    salary: Math.max(0, Math.round(Number(pr.salary)||0)),
+    salarySocial: Math.max(0, Math.round(Number(pr.salarySocial)||0)),
+    care40: !!pr.care40,
+    bizTaxRate: [0,3,4,5].includes(Number(pr.bizTaxRate)) ? Number(pr.bizTaxRate) : 5,
+    invoice: !!pr.invoice,
+    extraDeduction: Math.max(0, Math.round(Number(pr.extraDeduction)||0))
   };
 }
 function migrate(s){
-  if(!s || !Array.isArray(s.payments)) return {v:2, payments:[]};
-  return {v:2, payments: s.payments.map(normalizePayment)};
+  s = s && typeof s==='object' ? s : {};
+  return {
+    v:3,
+    payments: (Array.isArray(s.payments)?s.payments:[]).map(normalizePayment),
+    biz: (Array.isArray(s.biz)?s.biz:[]).map(normalizeBiz),
+    profile: normalizeProfile(s.profile)
+  };
 }
 
 /* ---------- self-publishing document template ---------- */
@@ -299,24 +419,25 @@ function docFor(st){
 }
 
 /* ---------- state ---------- */
+const NOW = new Date();
 function loadEmbedded(){
   try{
     const el = document.getElementById('app-state');
     return migrate(JSON.parse(el ? el.textContent : ''));
-  }catch(e){ return {v:2, payments:[]}; }
+  }catch(e){ return migrate(null); }
 }
 let state = loadEmbedded();
 let art = null, dl = null;
-let saveMode = 'none';   // 'artifact' | 'local' | 'none'
+let saveMode = 'none';
 let readOnly = false;
 
-const NOW = new Date();
 const view = {
+  section: 'pay',       // 'pay' | 'biz' | 'tax'
   y: NOW.getFullYear(), m: NOW.getMonth()+1,
   tab: 'list', q: '', cats: new Set(), method: '',
-  modal: null,          // null | {mode:'add'} | {mode:'edit', id}
-  pendingDelete: null,  // payment id awaiting delete confirmation
-  modalDelete: false    // delete button in modal awaiting confirmation
+  modal: null,          // {kind:'pay'|'biz', mode:'add'|'edit', id?, type?}
+  pendingDelete: null,
+  modalDelete: false
 };
 let lastShownTotal = null;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -332,7 +453,8 @@ document.body.appendChild(root);
     else{
       saveMode = 'local';
       try{
-        const raw = localStorage.getItem(STORE_KEY) || localStorage.getItem(STORE_KEY_V1);
+        let raw = localStorage.getItem(STORE_KEY);
+        if(!raw) for(const k of OLD_KEYS){ raw = localStorage.getItem(k); if(raw) break; }
         if(raw) state = migrate(JSON.parse(raw));
       }catch(e){}
     }
@@ -343,7 +465,7 @@ document.body.appendChild(root);
   .then(ns=>{ dl = ns; render(); }).catch(()=>{});
 
 function persist(next){
-  state = migrate(next);
+  state = migrate(Object.assign({}, state, next));
   try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
   render();
   if(art && !readOnly){
@@ -371,7 +493,7 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.remove(); }, 3500);
 }
 
-/* ---------- derived data ---------- */
+/* ---------- derived data: payments ---------- */
 function paymentsFor(y,m,{filtered=true}={}){
   let ps = state.payments.filter(p=>occursIn(p,y,m));
   if(filtered){
@@ -388,7 +510,75 @@ function monthTotal(y,m){
   return state.payments.filter(p=>occursIn(p,y,m)).reduce((s,p)=>s+p.amount,0);
 }
 
-/* ---------- render ---------- */
+/* ---------- derived data: biz ---------- */
+function bizSum(y,type,m){
+  return state.biz.filter(b=>b.y===y && b.type===type && (m==null || b.m===m))
+    .reduce((s,b)=>s+b.amount,0);
+}
+function apportionMonth(y,m){
+  return state.payments.reduce((s,p)=>
+    s + (p.bizPct>0 && occursIn(p,y,m) ? p.amount*p.bizPct/100 : 0), 0);
+}
+function apportionYear(y){
+  let s=0; for(let m=1;m<=12;m++) s+=apportionMonth(y,m);
+  return Math.round(s);
+}
+
+/* ---------- tax engine ---------- */
+function calcTax(y){
+  const pr = state.profile;
+  const inSum = bizSum(y,'in');
+  const exEntries = bizSum(y,'ex');
+  const ap = apportionYear(y);
+  const expenses = exEntries + ap;
+  const profit = Math.max(0, inSum - expenses);   // 青色控除前の事業利益
+  const extra = pr.extraDeduction;
+
+  if(pr.workMode === 'free'){
+    const blueMax = pr.filing==='blue65' ? 650000 : pr.filing==='blue10' ? 100000 : 0;
+    const blue = Math.min(blueMax, profit);
+    const income = Math.max(0, profit - blue);    // 事業所得（合計所得）
+    const pension = TAX.pensionMonthly*12;
+    const n = TAX.nhi;
+    const nb = Math.max(0, income - n.base);
+    let nhi = Math.min(nb*n.medR + n.medK, n.medCap) + Math.min(nb*n.supR + n.supK, n.supCap);
+    if(pr.care40) nhi += Math.min(nb*n.careR + n.careK, n.careCap);
+    nhi = Math.round(nhi);
+    const social = pension + nhi;
+    const basic = basicDeduction(income);
+    const itTaxable = income - social - extra - basic;
+    const it = incomeTaxOn(itTaxable);
+    const rtTaxable = Math.floor(Math.max(0, income - social - extra - TAX.residentBasic)/1000)*1000;
+    const rt = (rtTaxable>0 ? Math.max(0, Math.round(rtTaxable*TAX.residentRate - TAX.residentAdj)) : 0)
+      + (income > TAX.residentMin ? TAX.residentFlat : 0);
+    const bt = pr.bizTaxRate>0 ? Math.round(Math.max(0, profit - TAX.bizTaxExempt) * pr.bizTaxRate/100) : 0;
+    const ct = pr.invoice ? Math.round(inSum*10/110*0.2) : 0;
+    const taxTotal = it + rt + bt + ct;
+    const net = inSum - expenses - taxTotal - social;
+    return {mode:'free', inSum, exEntries, ap, expenses, profit, blue, income,
+      pension, nhi, social, basic, itTaxable:Math.max(0,itTaxable), it, rt, bt, ct,
+      taxTotal, all: taxTotal+social, net, monthly: Math.ceil((taxTotal+social)/12/1000)*1000};
+  }
+
+  /* 会社員 + 副業（副業は雑所得として概算） */
+  const sideProfit = profit;
+  const sal = pr.salary;
+  const salIncome = Math.max(0, sal - salaryDeduction(sal));
+  const social = pr.salarySocial>0 ? pr.salarySocial : Math.round(sal*TAX.salarySocialRate);
+  const totalIncome = salIncome + sideProfit;
+  const itAll  = incomeTaxOn(totalIncome - social - extra - basicDeduction(totalIncome));
+  const itBase = incomeTaxOn(salIncome  - social - extra - basicDeduction(salIncome));
+  const addIT = Math.max(0, itAll - itBase);
+  const addRT = Math.round(sideProfit*TAX.residentRate);
+  const taxTotal = addIT + addRT;
+  return {mode:'side', inSum, exEntries, ap, expenses, sideProfit, sal, salIncome, social,
+    addIT, addRT, taxTotal, needFiling: sideProfit>200000,
+    net: inSum - expenses - taxTotal, monthly: Math.ceil(taxTotal/12/100)*100};
+}
+
+/* ============================================================
+   render
+   ============================================================ */
 function render(){
   const focused = document.activeElement;
   const focusId = focused && focused.id;
@@ -397,124 +587,64 @@ function render(){
     try{ selS = focused.selectionStart; selE = focused.selectionEnd; }catch(e){}
   }
 
-  const y = view.y, m = view.m;
   const today = new Date();
-  const ty = today.getFullYear(), tm = today.getMonth()+1, td = today.getDate();
-  const isCurrent = y===ty && m===tm;
-  const isPast = y<ty || (y===ty && m<tm);
+  const ctx = { ty: today.getFullYear(), tm: today.getMonth()+1, td: today.getDate() };
 
-  const all = paymentsFor(y,m,{filtered:false});
-  const ps  = paymentsFor(y,m);
-  const filterActive = !!(view.q || view.cats.size || view.method);
-  const total = all.reduce((s,p)=>s+p.amount,0);
-  const equiv = state.payments.reduce((s,p)=>s+monthlyEquiv(p),0);
+  let navLabel, navPrev='prev', navNext='next';
+  if(view.section==='tax'){ navLabel = view.y+'年分'; navPrev='yprev'; navNext='ynext'; }
+  else navLabel = view.y+'年'+view.m+'月';
+  const isCurMonth = view.y===ctx.ty && view.m===ctx.tm;
+  const showToday = view.section==='tax' ? view.y!==ctx.ty : !isCurMonth;
 
-  let heroStats;
-  if(isCurrent){
-    const paid = all.filter(p=>effDay(p,y,m)<td).reduce((s,p)=>s+p.amount,0);
-    heroStats = '<span>支払い済み<b>'+yen(paid)+'</b></span>'
-      + '<span>これから<b>'+yen(total-paid)+'</b></span>'
-      + '<span>月平均<b>'+yen(equiv)+'</b></span>';
-  }else{
-    heroStats = '<span>'+all.length+'件の支払い</span>'
-      + '<span>月平均<b>'+yen(equiv)+'</b></span>'
-      + '<span>年間換算<b>'+yen(equiv*12)+'</b></span>';
-  }
-
-  /* next payment line (current month view only) */
-  let nextLine = '';
-  let highlightDay = null, wraps = false;
-  if(isCurrent && all.length){
-    const dayNums = [...new Set(all.map(p=>effDay(p,y,m)))].sort((a,b)=>a-b);
-    highlightDay = dayNums.find(d=>d>=td);
-    if(highlightDay == null){
-      wraps = true;
-      const nm = m===12 ? 1 : m+1, nyy = m===12 ? y+1 : y;
-      const nAll = paymentsFor(nyy,nm,{filtered:false});
-      if(nAll.length){
-        const nd = Math.min(...nAll.map(p=>effDay(p,nyy,nm)));
-        const items = nAll.filter(p=>effDay(p,nyy,nm)===nd);
-        nextLine = nextLineHtml(nm+'月'+nd+'日', items);
-        highlightDay = null;
-      }
-    }else{
-      const items = all.filter(p=>effDay(p,y,m)===highlightDay);
-      nextLine = nextLineHtml(highlightDay===td ? '今日' : m+'月'+highlightDay+'日', items);
-    }
-  }
-
-  /* category stacked bar + legend */
-  const catTotals = CATS
-    .map(c=>({...c, sum: all.filter(p=>p.cat===c.id).reduce((s,p)=>s+p.amount,0)}))
-    .filter(c=>c.sum>0);
-  const bar = catTotals.map(c=>'<span style="flex:'+c.sum+';background:var(--c-'+c.id+')"></span>').join('');
-  const legend = catTotals.map(c=>'<span><span class="dot" style="background:var(--c-'+c.id+')"></span>'+c.label+'<b>'+yen(c.sum)+'</b></span>').join('');
-
-  const hero = state.payments.length ? (
-    '<section class="card summary">'
-    + '<div class="sum-label">'+(isCurrent ? '今月の支払い' : y+'年'+m+'月の支払い')+'</div>'
-    + '<div class="sum-total" id="hero-total" data-total="'+total+'">'+yen(total)+'</div>'
-    + '<div class="sum-row">'+heroStats+'</div>'
-    + (catTotals.length ? '<div class="bar">'+bar+'</div><div class="legend">'+legend+'</div>' : '')
-    + nextLine
-    + '</section>'
-  ) : '';
-
-  /* tab content */
-  let content = '';
-  if(!state.payments.length){
-    content = '<section class="empty">まだ支払いが登録されていません。<br>家賃やサブスクなど、毎月・隔月・年1回の支払いを登録すると、<br>月ごとの合計やカレンダーがここに表示されます。'
-      + '<div><button class="btn btn-primary" data-act="add">最初の支払いを追加</button></div></section>';
-  }else if(view.tab === 'list'){
-    content = filtersHtml() + listHtml(ps, y, m, {isCurrent, isPast, td, highlightDay});
-  }else if(view.tab === 'cal'){
-    content = filtersHtml() + calendarHtml(ps, y, m, {isCurrent, isPast, td, highlightDay});
-  }else{
-    content = yearHtml(y, {ty, tm});
-  }
-  if(state.payments.length && view.tab!=='year' && filterActive && !ps.length){
-    content += '<section class="empty" style="margin-top:10px">条件に合う支払いがありません。</section>';
-  }
+  let content;
+  if(view.section==='pay') content = renderPay(ctx);
+  else if(view.section==='biz') content = renderBiz(ctx);
+  else content = renderTax(ctx);
 
   const saveNote = saveMode === 'artifact' ? '変更は自動で保存されます'
     : saveMode === 'local' ? 'この端末（ブラウザ）に保存されます' : '';
 
   root.innerHTML =
     '<header class="masthead">'
-    + '<div><div class="eyebrow">毎月の支払いをひと目で</div><h1>まいつき帳</h1></div>'
+    + '<div><div class="eyebrow">毎月の支払いと税金をひと目で</div><h1>まいつき帳</h1></div>'
     + '<div><div class="monthnav">'
-    + '<button class="nav-btn" data-act="prev" aria-label="前の月">‹</button>'
-    + '<span class="month-label">'+y+'年'+m+'月</span>'
-    + '<button class="nav-btn" data-act="next" aria-label="次の月">›</button>'
+    + '<button class="nav-btn" data-act="'+navPrev+'" aria-label="前へ">‹</button>'
+    + '<span class="month-label">'+navLabel+'</span>'
+    + '<button class="nav-btn" data-act="'+navNext+'" aria-label="次へ">›</button>'
     + '</div>'
-    + (isCurrent ? '' : '<div style="text-align:center"><button class="today-chip" data-act="today">今月に戻る</button></div>')
+    + (showToday ? '<div style="text-align:center"><button class="today-chip" data-act="today">今月に戻る</button></div>' : '')
     + '</div>'
     + '</header>'
-    + hero
-    + (state.payments.length ?
-      '<div class="tabs" role="tablist">'
-      + tabBtn('list','リスト') + tabBtn('cal','カレンダー') + tabBtn('year','年間')
-      + '</div>' : '')
+    + '<nav class="seg-nav">'
+    + segBtn('pay','支払い') + segBtn('biz','仕事の収支') + segBtn('tax','税金の目安')
+    + '</nav>'
     + content
-    + '<footer><span>全'+state.payments.length+'件を登録中　'+saveNote+'</span>'
-    + (dl && state.payments.length ? '<button class="linklike" data-act="csv">CSVで書き出す</button>' : '')
-    + '</footer>'
+    + '<footer><span>固定費'+state.payments.length+'件・収支'+state.biz.length+'件　'+saveNote+'</span>'
+    + '<span>'
+    + (dl && state.payments.length ? '<button class="linklike" data-act="csv">固定費CSV</button>　' : '')
+    + (dl && state.biz.length ? '<button class="linklike" data-act="bizcsv">収支CSV</button>' : '')
+    + '</span></footer>'
     + (view.modal ? modalHtml() : '');
 
-  if(!view.modal){
-    let fab = document.getElementById('fab');
-    if(!fab && state.payments.length){
+  /* fab */
+  const fabDef = view.modal ? null
+    : view.section==='pay' && state.payments.length ? {label:'＋ 支払いを追加', act:'add'}
+    : view.section==='biz' && state.biz.length ? {label:'＋ 収支を記録', act:'addbiz-in'}
+    : null;
+  let fab = document.getElementById('fab');
+  if(fabDef){
+    if(!fab){
       fab = document.createElement('button');
-      fab.id='fab'; fab.className='fab'; fab.dataset.act='add'; fab.textContent='＋ 支払いを追加';
+      fab.id='fab'; fab.className='fab';
       document.body.appendChild(fab);
-      fab.addEventListener('click',()=>openModal({mode:'add'}));
+      fab.addEventListener('click',()=>{
+        if(fab.dataset.act==='add') openModal({kind:'pay', mode:'add'});
+        else openModal({kind:'biz', mode:'add', type:'in'});
+      });
     }
-    if(fab && !state.payments.length){ fab.remove(); }
-  }else{
-    const fab = document.getElementById('fab'); if(fab) fab.remove();
-  }
+    fab.textContent = fabDef.label; fab.dataset.act = fabDef.act;
+  }else if(fab){ fab.remove(); }
 
-  /* restore focus lost to re-render */
   if(focusId){
     const el = document.getElementById(focusId);
     if(el){
@@ -524,12 +654,93 @@ function render(){
       }
     }
   }
-
-  animateHero(total);
 }
 
+function segBtn(id,label){
+  return '<button class="seg'+(view.section===id?' active':'')+'" data-act="section" data-sec="'+id+'">'+label+'</button>';
+}
 function tabBtn(id,label){
   return '<button class="tab'+(view.tab===id?' active':'')+'" role="tab" aria-selected="'+(view.tab===id)+'" data-act="tab" data-tab="'+id+'">'+label+'</button>';
+}
+
+/* ---------- section: pay ---------- */
+function renderPay(c){
+  const y = view.y, m = view.m;
+  const isCurrent = y===c.ty && m===c.tm;
+  const isPast = y<c.ty || (y===c.ty && m<c.tm);
+  const all = paymentsFor(y,m,{filtered:false});
+  const ps  = paymentsFor(y,m);
+  const filterActive = !!(view.q || view.cats.size || view.method);
+  const total = all.reduce((s,p)=>s+p.amount,0);
+  const equiv = state.payments.reduce((s,p)=>s+monthlyEquiv(p),0);
+
+  let heroStats;
+  if(isCurrent){
+    const paid = all.filter(p=>effDay(p,y,m)<c.td).reduce((s,p)=>s+p.amount,0);
+    heroStats = '<span>支払い済み<b>'+yen(paid)+'</b></span>'
+      + '<span>これから<b>'+yen(total-paid)+'</b></span>'
+      + '<span>月平均<b>'+yen(equiv)+'</b></span>';
+  }else{
+    heroStats = '<span>'+all.length+'件の支払い</span>'
+      + '<span>月平均<b>'+yen(equiv)+'</b></span>'
+      + '<span>年間換算<b>'+yen(equiv*12)+'</b></span>';
+  }
+
+  let nextLine = '';
+  let highlightDay = null;
+  if(isCurrent && all.length){
+    const dayNums = [...new Set(all.map(p=>effDay(p,y,m)))].sort((a,b)=>a-b);
+    highlightDay = dayNums.find(d=>d>=c.td);
+    if(highlightDay == null){
+      const nm = m===12 ? 1 : m+1, nyy = m===12 ? y+1 : y;
+      const nAll = paymentsFor(nyy,nm,{filtered:false});
+      if(nAll.length){
+        const nd = Math.min(...nAll.map(p=>effDay(p,nyy,nm)));
+        nextLine = nextLineHtml(nm+'月'+nd+'日', nAll.filter(p=>effDay(p,nyy,nm)===nd));
+      }
+    }else{
+      nextLine = nextLineHtml(highlightDay===c.td ? '今日' : m+'月'+highlightDay+'日',
+        all.filter(p=>effDay(p,y,m)===highlightDay));
+    }
+  }
+
+  const catTotals = CATS
+    .map(cc=>({...cc, sum: all.filter(p=>p.cat===cc.id).reduce((s,p)=>s+p.amount,0)}))
+    .filter(cc=>cc.sum>0);
+  const bar = catTotals.map(cc=>'<span style="flex:'+cc.sum+';background:var(--c-'+cc.id+')"></span>').join('');
+  const legend = catTotals.map(cc=>'<span><span class="dot" style="background:var(--c-'+cc.id+')"></span>'+cc.label+'<b>'+yen(cc.sum)+'</b></span>').join('');
+
+  const hero = state.payments.length ? (
+    '<section class="card summary">'
+    + '<div class="sum-label">'+(isCurrent ? '今月の支払い' : y+'年'+m+'月の支払い')+'</div>'
+    + '<div class="sum-total">'+yen(total)+'</div>'
+    + '<div class="sum-row">'+heroStats+'</div>'
+    + (catTotals.length ? '<div class="bar">'+bar+'</div><div class="legend">'+legend+'</div>' : '')
+    + nextLine
+    + '</section>'
+  ) : '';
+
+  let content = '';
+  if(!state.payments.length){
+    content = '<section class="empty">まだ支払いが登録されていません。<br>家賃やサブスクなど、毎月・隔月・年1回の支払いを登録すると、<br>月ごとの合計やカレンダーがここに表示されます。'
+      + '<div><button class="btn btn-primary" data-act="add">最初の支払いを追加</button></div></section>';
+  }else if(view.tab === 'list'){
+    content = filtersHtml() + listHtml(ps, y, m, {isCurrent, isPast, td:c.td, highlightDay});
+  }else if(view.tab === 'cal'){
+    content = filtersHtml() + calendarHtml(ps, y, m, {isCurrent, isPast, td:c.td, highlightDay});
+  }else{
+    content = yearHtml(y, c);
+  }
+  if(state.payments.length && view.tab!=='year' && filterActive && !ps.length){
+    content += '<section class="empty" style="margin-top:10px">条件に合う支払いがありません。</section>';
+  }
+
+  return hero
+    + (state.payments.length ?
+      '<div class="tabs" role="tablist">'
+      + tabBtn('list','リスト') + tabBtn('cal','カレンダー') + tabBtn('year','年間')
+      + '</div>' : '')
+    + content;
 }
 
 function nextLineHtml(when, items){
@@ -556,8 +767,15 @@ function itemMeta(p){
   const bits = [];
   if(p.freq==='yearly') bits.push('年1回（'+p.month+'月）');
   bits.push(METHOD_MAP[p.method].label);
+  if(p.bizPct>0) bits.push('経費'+p.bizPct+'%');
   if(p.note) bits.push(esc(p.note));
   return bits.join('　');
+}
+
+function payDelBtn(id){
+  return view.pendingDelete === id
+    ? '<button type="button" class="icon-btn del confirm" data-act="del2" data-id="'+id+'">本当に削除？</button>'
+    : '<button type="button" class="icon-btn del" data-act="del" data-id="'+id+'">削除</button>';
 }
 
 function listHtml(ps, y, m, ctx){
@@ -578,9 +796,6 @@ function listHtml(ps, y, m, ctx){
     const eom = groups.get(d).some(p=>p.day>dim) ? '<span class="eom-note">（月末扱い）</span>' : '';
     const items = groups.get(d).map(p=>{
       const cat = CAT_MAP[p.cat];
-      const delBtn = view.pendingDelete === p.id
-        ? '<button type="button" class="icon-btn del confirm" data-act="del2" data-id="'+p.id+'">本当に削除？</button>'
-        : '<button type="button" class="icon-btn del" data-act="del" data-id="'+p.id+'">削除</button>';
       return '<div class="item">'
         + '<div class="item-main"><span class="item-name">'+esc(p.name)
         + (p.freq!=='monthly' ? '<span class="freq-badge">'+(p.freq==='yearly'?'年1回':'隔月')+'</span>' : '')
@@ -589,7 +804,7 @@ function listHtml(ps, y, m, ctx){
         + '<span class="amt">'+yen(p.amount)+'</span>'
         + '<span class="item-actions">'
         + '<button type="button" class="icon-btn" data-act="edit" data-id="'+p.id+'">編集</button>'
-        + delBtn
+        + payDelBtn(p.id)
         + '</span></div>';
     }).join('');
     return '<div class="'+cls+'"><div class="day-col"><span class="day-num">'+d+'<small>日</small></span>'+mark+eom+'</div><div class="items">'+items+'</div></div>';
@@ -599,7 +814,7 @@ function listHtml(ps, y, m, ctx){
 
 function calendarHtml(ps, y, m, ctx){
   const dim = daysInMonth(y,m);
-  const first = new Date(y, m-1, 1).getDay(); // 0=Sun
+  const first = new Date(y, m-1, 1).getDay();
   const byDay = new Map();
   ps.forEach(p=>{ const d = effDay(p,y,m); if(!byDay.has(d)) byDay.set(d,[]); byDay.get(d).push(p); });
   const wd = ['日','月','火','水','木','金','土']
@@ -626,26 +841,26 @@ function calendarHtml(ps, y, m, ctx){
   return '<section class="card cal"><div class="cal-grid">'+wd+cells+'</div></section>';
 }
 
-function yearHtml(y, ctx){
+function yearHtml(y, c){
   const totals = Array.from({length:12},(_,i)=>monthTotal(y,i+1));
   const max = Math.max(...totals, 1);
   const bars = totals.map((t,i)=>{
     const m = i+1;
-    const cur = y===ctx.ty && m===ctx.tm;
+    const cur = y===c.ty && m===c.tm;
     const h = Math.round(t/max*100);
     return '<button type="button" class="ybar'+(cur?' cur':'')+'" data-act="goto" data-m="'+m+'"'
       + ' data-tip="'+y+'年'+m+'月　'+yen(t)+'" aria-label="'+y+'年'+m+'月 '+yen(t)+'">'
       + '<span class="ybar-fill" style="height:'+Math.max(h, t>0?3:1)+'%"></span></button>';
   }).join('');
-  const labels = totals.map((t,i)=>'<span class="'+(y===ctx.ty && i+1===ctx.tm?'cur':'')+'">'+(i+1)+'月</span>').join('');
+  const labels = totals.map((t,i)=>'<span class="'+(y===c.ty && i+1===c.tm?'cur':'')+'">'+(i+1)+'月</span>').join('');
   const annual = totals.reduce((s,t)=>s+t,0);
-  const catRows = CATS.map(c=>{
+  const catRows = CATS.map(cc=>{
     let sum = 0;
-    for(let m=1;m<=12;m++) sum += state.payments.filter(p=>p.cat===c.id && occursIn(p,y,m)).reduce((s,p)=>s+p.amount,0);
-    return {c, sum};
+    for(let m=1;m<=12;m++) sum += state.payments.filter(p=>p.cat===cc.id && occursIn(p,y,m)).reduce((s,p)=>s+p.amount,0);
+    return {cc, sum};
   }).filter(r=>r.sum>0)
     .sort((a,b)=>b.sum-a.sum)
-    .map(r=>'<tr><td><span class="dot" style="background:var(--c-'+r.c.id+')"></span>'+r.c.label+'</td>'
+    .map(r=>'<tr><td><span class="dot" style="background:var(--c-'+r.cc.id+')"></span>'+r.cc.label+'</td>'
       + '<td class="num">'+yen(r.sum/12)+'</td><td class="num">'+yen(r.sum)+'</td></tr>').join('');
   return '<section class="card year">'
     + '<h2>'+y+'年の月別合計</h2>'
@@ -658,9 +873,208 @@ function yearHtml(y, ctx){
     + '</section>';
 }
 
+/* ---------- section: biz ---------- */
+function renderBiz(c){
+  const y = view.y, m = view.m;
+  const inY = bizSum(y,'in'), exY = bizSum(y,'ex'), apY = apportionYear(y);
+  const profit = inY - exY - apY;
+
+  if(!state.biz.length && !apY){
+    return '<section class="empty">仕事の収入と経費を月ごとに記録すると、<br>月別の収支グラフと「税金の目安」が使えるようになります。<br><br>'
+      + '固定費の一部（家賃・通信費など）を経費にする場合は、<br>「支払い」の編集画面で「経費にする割合」を設定してください。'
+      + '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'
+      + '<button class="btn btn-primary" data-act="addbiz" data-type="in">収入を記録</button>'
+      + '<button class="btn btn-ghost" data-act="addbiz" data-type="ex">経費を記録</button>'
+      + '</div></section>';
+  }
+
+  const hero =
+    '<section class="card summary">'
+    + '<div class="sum-label">'+y+'年の仕事の収支</div>'
+    + '<div class="sum-total">'+(profit<0?'−':'')+yen(Math.abs(profit))+'<small>　利益</small></div>'
+    + '<div class="sum-row">'
+    + '<span>収入<b>'+yen(inY)+'</b></span>'
+    + '<span>経費<b>'+yen(exY)+'</b></span>'
+    + '<span>固定費の按分<b>'+yen(apY)+'</b></span>'
+    + '</div>'
+    + '</section>';
+
+  /* monthly paired bars */
+  const months = Array.from({length:12},(_,i)=>{
+    const mm=i+1;
+    return {m:mm, inV:bizSum(y,'in',mm), exV:bizSum(y,'ex',mm)+Math.round(apportionMonth(y,mm))};
+  });
+  const max = Math.max(1, ...months.map(o=>Math.max(o.inV,o.exV)));
+  const bars = months.map(o=>{
+    const hi = Math.round(o.inV/max*100), he = Math.round(o.exV/max*100);
+    return '<button type="button" class="dmon" data-act="bizgoto" data-m="'+o.m+'"'
+      + ' data-tip="'+o.m+'月　収入'+yen(o.inV)+'　経費'+yen(o.exV)+'"'
+      + ' aria-label="'+o.m+'月 収入'+yen(o.inV)+' 経費'+yen(o.exV)+'">'
+      + '<span class="dbar in" style="height:'+Math.max(hi,o.inV>0?3:1)+'%"></span>'
+      + '<span class="dbar ex" style="height:'+Math.max(he,o.exV>0?3:1)+'%"></span>'
+      + '</button>';
+  }).join('');
+  const labels = months.map(o=>'<span class="'+(y===c.ty&&o.m===c.tm?'cur':'')+'">'+o.m+'月</span>').join('');
+  const chart =
+    '<section class="card panel"><h2>'+y+'年の月別収支</h2>'
+    + '<div class="dchart">'+bars+'</div>'
+    + '<div class="ychart-labels">'+labels+'</div>'
+    + '<div class="legend" style="margin-top:10px">'
+    + '<span><span class="dot" style="background:var(--c-sub)"></span>収入</span>'
+    + '<span><span class="dot" style="background:var(--c-home)"></span>経費（按分込み）</span>'
+    + '</div></section>';
+
+  /* selected month entries */
+  const ins = state.biz.filter(b=>b.y===y&&b.m===m&&b.type==='in').sort((a,b)=>b.amount-a.amount);
+  const exs = state.biz.filter(b=>b.y===y&&b.m===m&&b.type==='ex').sort((a,b)=>b.amount-a.amount);
+  const apM = Math.round(apportionMonth(y,m));
+  const row = b=>'<div class="item">'
+    + '<div class="item-main"><span class="item-name">'+esc(b.name)+'</span>'
+    + '<span class="item-sub">'+BIZ_CAT_MAP[b.cat].label+(b.note?'　'+esc(b.note):'')+'</span></div>'
+    + '<span class="amt">'+(b.type==='in'?'＋':'−')+yen(b.amount)+'</span>'
+    + '<span class="item-actions">'
+    + '<button type="button" class="icon-btn" data-act="editbiz" data-id="'+b.id+'">編集</button>'
+    + (view.pendingDelete===b.id
+      ? '<button type="button" class="icon-btn del confirm" data-act="bizdel2" data-id="'+b.id+'">本当に削除？</button>'
+      : '<button type="button" class="icon-btn del" data-act="bizdel" data-id="'+b.id+'">削除</button>')
+    + '</span></div>';
+  const monthCard =
+    '<section class="card panel">'
+    + '<div class="panel-head"><h2>'+y+'年'+m+'月の記録</h2><div class="actions">'
+    + '<button class="btn-sm" data-act="addbiz" data-type="in">＋ 収入</button>'
+    + '<button class="btn-sm" data-act="addbiz" data-type="ex">＋ 経費</button>'
+    + '</div></div>'
+    + (ins.length ? '<div class="group-label">収入</div>'+ins.map(row).join('') : '')
+    + (exs.length ? '<div class="group-label">経費</div>'+exs.map(row).join('') : '')
+    + (apM>0 ? '<div class="group-label">固定費からの経費按分</div>'
+        + '<div class="item"><div class="item-main"><span class="item-name">按分合計</span>'
+        + '<span class="item-sub">「支払い」で経費割合を設定した固定費の今月分</span></div>'
+        + '<span class="amt">−'+yen(apM)+'</span></div>' : '')
+    + (!ins.length && !exs.length && !apM
+      ? '<div style="color:var(--muted);font-size:.85rem;padding:8px 0">この月の記録はまだありません。</div>' : '')
+    + '</section>';
+
+  return hero + chart + monthCard;
+}
+
+/* ---------- section: tax ---------- */
+function renderTax(c){
+  const pr = state.profile;
+  const t = calcTax(view.y);
+
+  const settings =
+    '<section class="card panel"><h2>計算の設定</h2>'
+    + '<form id="set-form" data-wm="'+pr.workMode+'">'
+    + '<div class="f-grid">'
+    + '<div><label for="s-workmode">働き方</label><select id="s-workmode">'
+    + '<option value="free"'+(pr.workMode==='free'?' selected':'')+'>個人事業主・フリーランス</option>'
+    + '<option value="side"'+(pr.workMode==='side'?' selected':'')+'>会社員＋副業</option>'
+    + '</select></div>'
+    + '<div class="wm-free"><label for="s-filing">確定申告の区分</label><select id="s-filing">'
+    + '<option value="white"'+(pr.filing==='white'?' selected':'')+'>白色申告</option>'
+    + '<option value="blue10"'+(pr.filing==='blue10'?' selected':'')+'>青色申告（10万円控除）</option>'
+    + '<option value="blue65"'+(pr.filing==='blue65'?' selected':'')+'>青色申告（65万円控除）</option>'
+    + '</select></div>'
+    + '<div class="wm-free"><label for="s-biztax">個人事業税の税率</label><select id="s-biztax">'
+    + '<option value="5"'+(pr.bizTaxRate===5?' selected':'')+'>5%（多くの業種）</option>'
+    + '<option value="4"'+(pr.bizTaxRate===4?' selected':'')+'>4%</option>'
+    + '<option value="3"'+(pr.bizTaxRate===3?' selected':'')+'>3%</option>'
+    + '<option value="0"'+(pr.bizTaxRate===0?' selected':'')+'>非課税の業種（文筆業など）</option>'
+    + '</select></div>'
+    + '<div class="wm-side"><label for="s-salary">給与収入（年・額面）</label><input id="s-salary" type="number" min="0" step="10000" inputmode="numeric" value="'+(pr.salary||'')+'" placeholder="例：4500000"></div>'
+    + '<div class="wm-side"><label for="s-salsoc">給与の社会保険料（年・任意）</label><input id="s-salsoc" type="number" min="0" step="1000" inputmode="numeric" value="'+(pr.salarySocial||'')+'" placeholder="空欄なら給与の14.6%で概算"></div>'
+    + '<div><label for="s-extra">その他の所得控除（年・任意）</label><input id="s-extra" type="number" min="0" step="1000" inputmode="numeric" value="'+(pr.extraDeduction||'')+'" placeholder="生命保険料控除・iDeCoなど"></div>'
+    + '<div class="f-full">'
+    + '<div class="check-line wm-free"><input type="checkbox" id="s-care40"'+(pr.care40?' checked':'')+'><label for="s-care40" style="margin:0">40〜64歳（国保の介護分を含める）</label></div>'
+    + '<div class="check-line wm-free"><input type="checkbox" id="s-invoice"'+(pr.invoice?' checked':'')+'><label for="s-invoice" style="margin:0">インボイス登録済み（消費税を2割特例で概算）</label></div>'
+    + '</div>'
+    + '</div>'
+    + '<div class="f-actions"><button class="btn btn-primary" type="submit">設定を保存</button></div>'
+    + '</form></section>';
+
+  if(t.inSum===0){
+    return settings
+      + '<section class="empty">「仕事の収支」で'+view.y+'年の収入を記録すると、<br>ここに税金と社会保険料の目安が表示されます。'
+      + '<div><button class="btn btn-primary" data-act="addbiz" data-type="in">収入を記録</button></div></section>'
+      + disclaimerHtml();
+  }
+
+  if(t.mode==='free'){
+    const segs = [
+      {label:'手取り', v:Math.max(0,t.net), color:'sub'},
+      {label:'所得税', v:t.it, color:'home'},
+      {label:'住民税', v:t.rt, color:'util'},
+      {label:'社会保険', v:t.social, color:'net'},
+      {label:'事業税ほか', v:t.bt+t.ct, color:'ins'}
+    ].filter(s=>s.v>0);
+    const bar = segs.map(s=>'<span style="flex:'+s.v+';background:var(--c-'+s.color+')"></span>').join('');
+    const legend = segs.map(s=>'<span><span class="dot" style="background:var(--c-'+s.color+')"></span>'+s.label+'<b>'+yen(s.v)+'</b></span>').join('');
+    return settings
+      + '<section class="card summary">'
+      + '<div class="sum-label">'+view.y+'年分の税金・社会保険の目安</div>'
+      + '<div class="sum-total">'+yen(t.all)+'</div>'
+      + '<div class="sum-row">'
+      + '<span>手取りの目安<b>'+yen(t.net)+'</b></span>'
+      + '<span>毎月の積立目安<b>'+yen(t.monthly)+'</b></span>'
+      + '</div>'
+      + (segs.length>1 ? '<div class="bar">'+bar+'</div><div class="legend">'+legend+'</div>' : '')
+      + '</section>'
+      + '<section class="card panel"><h2>内訳</h2>'
+      + trow('事業の利益', yen(t.profit), '収入 '+yen(t.inSum)+' − 経費 '+yen(t.expenses)+'（記録 '+yen(t.exEntries)+'＋固定費按分 '+yen(t.ap)+'）')
+      + (t.blue>0 ? trow('青色申告特別控除', '−'+yen(t.blue), '') : '')
+      + trow('所得税（復興特別所得税込み）', yen(t.it), '課税所得 '+yen(t.itTaxable)+'（基礎控除 '+yen(t.basic)+'・社会保険料控除 '+yen(t.social)+(state.profile.extraDeduction?'・その他 '+yen(state.profile.extraDeduction):'')+'）')
+      + trow('住民税', yen(t.rt), '所得割10%＋均等割（自治体で多少変わります）')
+      + (t.bt>0 ? trow('個人事業税', yen(t.bt), '（利益 − 290万円）× '+state.profile.bizTaxRate+'%') : '')
+      + (t.ct>0 ? trow('消費税（2割特例の目安）', yen(t.ct), '売上に含まれる消費税 × 20%') : '')
+      + trow('国民年金（令和8年度）', yen(t.pension), '月額 '+yen(TAX.pensionMonthly)+' × 12ヶ月')
+      + trow('国民健康保険（概算）', yen(t.nhi), '東京23区の料率目安。市区町村で大きく変わります')
+      + '<div class="trow total"><span class="tlab">合計</span><span class="tval">'+yen(t.all)+'</span></div>'
+      + '</section>'
+      + disclaimerHtml();
+  }
+
+  /* side mode */
+  return settings
+    + '<section class="card summary">'
+    + '<div class="sum-label">'+view.y+'年分・副業にかかる税金の目安</div>'
+    + '<div class="sum-total">'+yen(t.taxTotal)+'</div>'
+    + '<div class="sum-row">'
+    + '<span>副業の手取り目安<b>'+yen(t.net)+'</b></span>'
+    + '<span>毎月の積立目安<b>'+yen(t.monthly)+'</b></span>'
+    + '</div>'
+    + '<div class="next-line">'
+    + (t.needFiling
+      ? '<span class="tag warn">確定申告が必要</span>　副業の所得（利益）が20万円を超えています'
+      : '<span class="tag ok">所得税の確定申告は不要の見込み</span>　副業所得20万円以下（住民税の申告は別途必要な場合があります）')
+    + '</div>'
+    + '</section>'
+    + '<section class="card panel"><h2>内訳</h2>'
+    + trow('副業の所得（利益）', yen(t.sideProfit), '収入 '+yen(t.inSum)+' − 経費 '+yen(t.expenses)+'（記録 '+yen(t.exEntries)+'＋固定費按分 '+yen(t.ap)+'）')
+    + trow('給与所得', yen(t.salIncome), '給与収入 '+yen(t.sal)+' − 給与所得控除')
+    + trow('追加の所得税（復興特別所得税込み）', yen(t.addIT), '給与に副業所得を合算したときの増加分')
+    + trow('追加の住民税', yen(t.addRT), '副業所得 × 10%')
+    + '<div class="trow total"><span class="tlab">副業による追加負担の合計</span><span class="tval">'+yen(t.taxTotal)+'</span></div>'
+    + '</section>'
+    + disclaimerHtml();
+}
+
+function trow(label, val, note){
+  return '<div class="trow"><span class="tlab">'+label
+    + (note?'<small>'+note+'</small>':'')+'</span><span class="tval">'+val+'</span></div>';
+}
+function disclaimerHtml(){
+  return '<div class="notice">この金額は<b>概算</b>です。令和7・8年分の税制（基礎控除の特例を含む）・令和8年度の国民年金・東京23区の国民健康保険料率を目安に計算しており、実際の税額はお住まいの自治体、各種控除、所得の内容などによって変わります。確定申告や納付の際は、税務署・自治体・税理士の案内で必ずご確認ください。</div>';
+}
+
+/* ---------- modal ---------- */
 function modalHtml(){
+  if(view.modal.kind==='biz') return bizModalHtml();
+  return payModalHtml();
+}
+
+function payModalHtml(){
   const editing = view.modal.mode==='edit' ? state.payments.find(p=>p.id===view.modal.id) : null;
-  const v = editing || {name:'', amount:'', day:27, cat:'sub', method:'card', freq:'monthly', month:(new Date()).getMonth()+1, note:''};
+  const v = editing || {name:'', amount:'', day:27, cat:'sub', method:'card', freq:'monthly', month:NOW.getMonth()+1, note:'', bizPct:0};
   const dayOpts = Array.from({length:31},(_,i)=>i+1)
     .map(d=>'<option value="'+d+'"'+(v.day===d?' selected':'')+'>'+d+'日'+(d>=29?'（ない月は月末）':'')+'</option>').join('');
   const catOpts = CATS.map(c=>'<option value="'+c.id+'"'+(v.cat===c.id?' selected':'')+'>'+c.label+'</option>').join('');
@@ -668,6 +1082,8 @@ function modalHtml(){
   const freqOpts = FREQS.map(f=>'<option value="'+f.id+'"'+(v.freq===f.id?' selected':'')+'>'+f.label+'</option>').join('');
   const monthOpts = Array.from({length:12},(_,i)=>i+1)
     .map(mm=>'<option value="'+mm+'"'+(v.month===mm?' selected':'')+'>'+mm+'月</option>').join('');
+  const pctOpts = [0,10,20,30,40,50,60,70,80,90,100]
+    .map(p=>'<option value="'+p+'"'+(v.bizPct===p?' selected':'')+'>'+(p===0?'経費にしない':p+'%')+'</option>').join('');
   const presets = editing ? '' :
     '<div class="presets">'
     + PRESETS.map((p,i)=>'<button type="button" class="preset" data-act="preset" data-i="'+i+'">'+esc(p.name)+'</button>').join('')
@@ -689,6 +1105,7 @@ function modalHtml(){
     + '<div id="m-month-wrap" class="'+(v.freq==='monthly'?'hidden':'')+'"><label for="m-month" id="m-month-label">'+(v.freq==='yearly'?'支払月':'支払月（基準）')+'</label><select id="m-month">'+monthOpts+'</select></div>'
     + '<div><label for="m-cat">カテゴリ</label><select id="m-cat">'+catOpts+'</select></div>'
     + '<div><label for="m-method">支払い方法</label><select id="m-method">'+methodOpts+'</select></div>'
+    + '<div class="f-full"><label for="m-bizpct">経費にする割合（家事按分）</label><select id="m-bizpct">'+pctOpts+'</select></div>'
     + '<div class="f-full"><label for="m-note">メモ（任意）</label><input id="m-note" maxlength="120" placeholder="例：更新は4月、解約検討中" value="'+esc(v.note)+'"></div>'
     + '</div>'
     + '<div class="f-actions">'
@@ -699,35 +1116,58 @@ function modalHtml(){
     + '</form></div></div>';
 }
 
-/* hero count-up */
-function animateHero(target){
-  const el = document.getElementById('hero-total');
-  if(!el){ lastShownTotal = null; return; }
-  if(reducedMotion || lastShownTotal === null || lastShownTotal === target){
-    lastShownTotal = target; return;
-  }
-  const from = lastShownTotal, dur = 400, t0 = performance.now();
-  lastShownTotal = target;
-  (function tick(t){
-    const k = Math.min(1,(t-t0)/dur), e = 1-Math.pow(1-k,3);
-    el.textContent = yen(from + (target-from)*e);
-    if(k<1) requestAnimationFrame(tick);
-  })(t0);
+function bizModalHtml(){
+  const editing = view.modal.mode==='edit' ? state.biz.find(b=>b.id===view.modal.id) : null;
+  const type = editing ? editing.type : (view.modal.type||'in');
+  const v = editing || {name:'', amount:'', y:view.y, m:view.m, cat:(type==='in'?'sales':'exother'), note:''};
+  const cats = type==='in' ? BIZ_IN_CATS : BIZ_EX_CATS;
+  const catOpts = cats.map(c=>'<option value="'+c.id+'"'+(v.cat===c.id?' selected':'')+'>'+c.label+'</option>').join('');
+  const yOpts = [view.y-1, view.y, view.y+1]
+    .map(yy=>'<option value="'+yy+'"'+(v.y===yy?' selected':'')+'>'+yy+'年</option>').join('');
+  const mOpts = Array.from({length:12},(_,i)=>i+1)
+    .map(mm=>'<option value="'+mm+'"'+(v.m===mm?' selected':'')+'>'+mm+'月</option>').join('');
+  const title = editing ? (type==='in'?'収入を編集':'経費を編集') : (type==='in'?'収入を記録':'経費を記録');
+  const delBtn = editing
+    ? (view.modalDelete
+      ? '<button type="button" class="btn btn-danger confirm" data-act="bmdel2">本当に削除する</button>'
+      : '<button type="button" class="btn btn-danger" data-act="bmdel">削除</button>')
+    : '';
+  return '<div class="overlay" data-act="overlay"><div class="modal" role="dialog" aria-modal="true" aria-label="'+title+'">'
+    + '<h2>'+title+'</h2>'
+    + '<form id="biz-form" data-type="'+type+'">'
+    + '<div class="f-grid">'
+    + '<div class="f-full"><label for="b-name">'+(type==='in'?'内容（取引先・案件など）':'内容')+'</label>'
+    + '<input id="b-name" required maxlength="60" placeholder="'+(type==='in'?'例：〇〇社 制作費':'例：サーバー代、打ち合わせ交通費')+'" value="'+esc(v.name)+'"></div>'
+    + '<div><label for="b-amount">金額（円）</label><input id="b-amount" type="number" min="1" step="1" inputmode="numeric" required value="'+v.amount+'"></div>'
+    + '<div><label for="b-cat">科目</label><select id="b-cat">'+catOpts+'</select></div>'
+    + '<div><label for="b-y">年</label><select id="b-y">'+yOpts+'</select></div>'
+    + '<div><label for="b-m">月</label><select id="b-m">'+mOpts+'</select></div>'
+    + '<div class="f-full"><label for="b-note">メモ（任意）</label><input id="b-note" maxlength="120" value="'+esc(v.note)+'"></div>'
+    + '</div>'
+    + '<div class="f-actions">'
+    + '<button class="btn btn-primary" type="submit">'+(editing?'保存する':'記録する')+'</button>'
+    + '<button class="btn btn-ghost" type="button" data-act="close">キャンセル</button>'
+    + delBtn
+    + '</div>'
+    + '</form></div></div>';
 }
 
-/* year-bar tooltip */
+/* ---------- tooltip ---------- */
 let tipEl = null;
 function showTip(text,x,yy){
   if(!tipEl){ tipEl = document.createElement('div'); tipEl.className='ytip'; document.body.appendChild(tipEl); }
   tipEl.textContent = text;
-  tipEl.style.left = Math.min(x+12, innerWidth-140)+'px';
+  tipEl.style.left = Math.min(x+12, innerWidth-180)+'px';
   tipEl.style.top = (yy-36)+'px';
 }
 function hideTip(){ if(tipEl){ tipEl.remove(); tipEl = null; } }
 
 /* ---------- actions ---------- */
-function openModal(mo){ view.modal = mo; view.modalDelete = false; render();
-  const f = document.getElementById('m-name'); if(f) f.focus(); }
+function openModal(mo){
+  view.modal = mo; view.modalDelete = false; render();
+  const f = document.getElementById(mo.kind==='biz' ? 'b-name' : 'm-name');
+  if(f) f.focus();
+}
 function closeModal(){ view.modal = null; view.modalDelete = false; render(); }
 function shiftMonth(d){
   let m = view.m + d, y = view.y;
@@ -737,14 +1177,26 @@ function shiftMonth(d){
 function exportCsv(){
   if(!dl) return;
   const q = s => '"'+String(s).replace(/"/g,'""')+'"';
-  const head = ['名前','金額','頻度','支払日','支払月','カテゴリ','支払い方法','メモ','月換算'];
+  const head = ['名前','金額','頻度','支払日','支払月','カテゴリ','支払い方法','経費割合%','メモ','月換算'];
   const rows = state.payments.map(p=>[
     p.name, p.amount, FREQ_MAP[p.freq].label, p.day+'日',
     p.freq==='monthly'?'':p.month+'月',
-    CAT_MAP[p.cat].label, METHOD_MAP[p.method].label, p.note, Math.round(monthlyEquiv(p))
+    CAT_MAP[p.cat].label, METHOD_MAP[p.method].label, p.bizPct||'', p.note, Math.round(monthlyEquiv(p))
   ]);
   const csv = '\uFEFF' + [head].concat(rows).map(r=>r.map(q).join(',')).join('\r\n');
   dl.save({filename:'maitsuki-cho.csv', data:csv})
+    .then(()=>toast('CSVを保存しました'))
+    .catch(err=>{ if(err && err.code!=='declined') toast('CSVを保存できませんでした'); });
+}
+function exportBizCsv(){
+  if(!dl) return;
+  const q = s => '"'+String(s).replace(/"/g,'""')+'"';
+  const head = ['種別','年','月','内容','科目','金額','メモ'];
+  const rows = state.biz.slice()
+    .sort((a,b)=>a.y-b.y||a.m-b.m||(a.type<b.type?-1:1))
+    .map(b=>[b.type==='in'?'収入':'経費', b.y, b.m, b.name, BIZ_CAT_MAP[b.cat].label, b.amount, b.note]);
+  const csv = '\uFEFF' + [head].concat(rows).map(r=>r.map(q).join(',')).join('\r\n');
+  dl.save({filename:'maitsuki-cho-shushi.csv', data:csv})
     .then(()=>toast('CSVを保存しました'))
     .catch(err=>{ if(err && err.code!=='declined') toast('CSVを保存できませんでした'); });
 }
@@ -753,8 +1205,11 @@ root.addEventListener('click', e=>{
   const b = e.target.closest('[data-act]');
   if(!b) return;
   const act = b.dataset.act, id = b.dataset.id;
-  if(act==='prev') shiftMonth(-1);
+  if(act==='section'){ view.section=b.dataset.sec; view.pendingDelete=null; render(); }
+  else if(act==='prev') shiftMonth(-1);
   else if(act==='next') shiftMonth(1);
+  else if(act==='yprev'){ view.y--; render(); }
+  else if(act==='ynext'){ view.y++; render(); }
   else if(act==='today'){ view.y=NOW.getFullYear(); view.m=NOW.getMonth()+1; render(); }
   else if(act==='tab'){ view.tab=b.dataset.tab; view.pendingDelete=null; render(); }
   else if(act==='cat'){
@@ -762,20 +1217,31 @@ root.addEventListener('click', e=>{
     if(view.cats.has(c)) view.cats.delete(c); else view.cats.add(c);
     render();
   }
-  else if(act==='add') openModal({mode:'add'});
-  else if(act==='edit') openModal({mode:'edit', id});
-  else if(act==='del'){ view.pendingDelete=id; render(); }
+  else if(act==='add') openModal({kind:'pay', mode:'add'});
+  else if(act==='edit') openModal({kind:'pay', mode:'edit', id});
+  else if(act==='addbiz') openModal({kind:'biz', mode:'add', type:b.dataset.type||'in'});
+  else if(act==='editbiz') openModal({kind:'biz', mode:'edit', id});
+  else if(act==='del' || act==='bizdel'){ view.pendingDelete=id; render(); }
   else if(act==='del2'){
     view.pendingDelete=null;
     persist({payments: state.payments.filter(p=>p.id!==id)});
   }
+  else if(act==='bizdel2'){
+    view.pendingDelete=null;
+    persist({biz: state.biz.filter(x=>x.id!==id)});
+  }
   else if(act==='close') closeModal();
   else if(act==='overlay'){ if(e.target===b) closeModal(); }
-  else if(act==='mdel'){ view.modalDelete=true; render(); }
+  else if(act==='mdel' || act==='bmdel'){ view.modalDelete=true; render(); }
   else if(act==='mdel2'){
     const pid=view.modal && view.modal.id;
     view.modal=null; view.modalDelete=false;
     persist({payments: state.payments.filter(p=>p.id!==pid)});
+  }
+  else if(act==='bmdel2'){
+    const pid=view.modal && view.modal.id;
+    view.modal=null; view.modalDelete=false;
+    persist({biz: state.biz.filter(x=>x.id!==pid)});
   }
   else if(act==='preset'){
     const p = PRESETS[Number(b.dataset.i)];
@@ -788,7 +1254,9 @@ root.addEventListener('click', e=>{
     const amt=document.getElementById('m-amount'); if(amt){ amt.focus(); amt.select(); }
   }
   else if(act==='goto'){ view.m=Number(b.dataset.m); view.tab='list'; hideTip(); render(); }
+  else if(act==='bizgoto'){ view.m=Number(b.dataset.m); hideTip(); render(); }
   else if(act==='csv') exportCsv();
+  else if(act==='bizcsv') exportBizCsv();
 });
 
 root.addEventListener('input', e=>{
@@ -802,44 +1270,72 @@ root.addEventListener('change', e=>{
     if(wrap) wrap.classList.toggle('hidden', e.target.value==='monthly');
     if(lab) lab.textContent = e.target.value==='yearly' ? '支払月' : '支払月（基準）';
   }
+  if(e.target.id==='s-workmode'){
+    const f=document.getElementById('set-form');
+    if(f) f.dataset.wm = e.target.value;
+  }
 });
 root.addEventListener('submit', e=>{
-  if(e.target.id!=='pay-form') return;
-  e.preventDefault();
   const val = id => { const el=document.getElementById(id); return el ? el.value : ''; };
-  const p = normalizePayment({
-    id: view.modal && view.modal.mode==='edit' ? view.modal.id : undefined,
-    name: val('m-name').trim(), amount: val('m-amount'), day: val('m-day'),
-    cat: val('m-cat'), method: val('m-method'), freq: val('m-freq'),
-    month: val('m-month'), note: val('m-note').trim()
-  });
-  if(!p.name || !(Number(val('m-amount'))>0)) return;
-  let next;
-  if(view.modal && view.modal.mode==='edit'){
-    next = state.payments.map(x=>x.id===p.id ? p : x);
-  }else{
-    next = state.payments.concat([p]);
+  const chk = id => { const el=document.getElementById(id); return !!(el && el.checked); };
+  if(e.target.id==='pay-form'){
+    e.preventDefault();
+    const p = normalizePayment({
+      id: view.modal && view.modal.mode==='edit' ? view.modal.id : undefined,
+      name: val('m-name').trim(), amount: val('m-amount'), day: val('m-day'),
+      cat: val('m-cat'), method: val('m-method'), freq: val('m-freq'),
+      month: val('m-month'), note: val('m-note').trim(), bizPct: val('m-bizpct')
+    });
+    if(!p.name || !(Number(val('m-amount'))>0)) return;
+    const next = view.modal && view.modal.mode==='edit'
+      ? state.payments.map(x=>x.id===p.id ? p : x)
+      : state.payments.concat([p]);
+    view.modal=null; view.modalDelete=false; view.pendingDelete=null;
+    persist({payments: next});
   }
-  view.modal=null; view.modalDelete=false; view.pendingDelete=null;
-  persist({payments: next});
+  else if(e.target.id==='biz-form'){
+    e.preventDefault();
+    const type = e.target.dataset.type==='ex' ? 'ex' : 'in';
+    const bz = normalizeBiz({
+      id: view.modal && view.modal.mode==='edit' ? view.modal.id : undefined,
+      type, name: val('b-name').trim(), amount: val('b-amount'),
+      y: val('b-y'), m: val('b-m'), cat: val('b-cat'), note: val('b-note').trim()
+    });
+    if(!bz.name || !(Number(val('b-amount'))>0)) return;
+    const next = view.modal && view.modal.mode==='edit'
+      ? state.biz.map(x=>x.id===bz.id ? bz : x)
+      : state.biz.concat([bz]);
+    view.modal=null; view.modalDelete=false; view.pendingDelete=null;
+    persist({biz: next});
+  }
+  else if(e.target.id==='set-form'){
+    e.preventDefault();
+    persist({profile: {
+      workMode: val('s-workmode'), filing: val('s-filing'),
+      salary: val('s-salary'), salarySocial: val('s-salsoc'),
+      care40: chk('s-care40'), bizTaxRate: Number(val('s-biztax')),
+      invoice: chk('s-invoice'), extraDeduction: val('s-extra')
+    }});
+    toast('設定を保存しました');
+  }
 });
 root.addEventListener('mouseover', e=>{
-  const b = e.target.closest('.ybar');
+  const b = e.target.closest('.ybar,.dmon');
   if(b) showTip(b.dataset.tip, e.clientX, e.clientY);
 });
 root.addEventListener('mousemove', e=>{
-  const b = e.target.closest('.ybar');
+  const b = e.target.closest('.ybar,.dmon');
   if(b && tipEl) showTip(b.dataset.tip, e.clientX, e.clientY);
 });
 root.addEventListener('mouseout', e=>{
-  if(e.target.closest('.ybar')) hideTip();
+  if(e.target.closest('.ybar,.dmon')) hideTip();
 });
 root.addEventListener('focusin', e=>{
-  const b = e.target.closest('.ybar');
+  const b = e.target.closest('.ybar,.dmon');
   if(b){ const r=b.getBoundingClientRect(); showTip(b.dataset.tip, r.left, r.top); }
 });
 root.addEventListener('focusout', e=>{
-  if(e.target.closest('.ybar')) hideTip();
+  if(e.target.closest('.ybar,.dmon')) hideTip();
 });
 document.addEventListener('keydown', e=>{
   if(e.key==='Escape' && view.modal) closeModal();

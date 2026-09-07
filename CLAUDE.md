@@ -4,8 +4,8 @@ Guidance for Claude Code and other AI assistants working in this repository.
 
 ## Project overview
 
-「まいつき帳」— a single-file web app for seeing all of one's monthly
-recurring payments (rent, subscriptions, utilities…) at a glance. Everything
+「まいつき帳」— a single-file web app for monthly recurring payments,
+freelance income/expense records, and Japanese tax estimation. Everything
 lives in `index.html`: markup, styles, and script are inline, with Google
 Fonts as the only external dependency. UI copy is Japanese.
 
@@ -21,6 +21,11 @@ opened directly), it falls back to `localStorage`. Consequences:
   split as `'</scr' + 'ipt>'`), and keep the `docFor()` head template in sync
   with the real `<head>`.
 - The embedded JSON escapes the `<` character as the unicode escape `\u003c` when serialized.
+
+Tax parameters (income-tax brackets, R7/R8 basic deduction table, pension,
+Tokyo-23-ku NHI rates) live in the `TAX` constant near the top of the inline
+script — update them there when fiscal years roll over. State is v3:
+`{payments, biz, profile}`; `migrate()` upgrades older embedded state.
 
 ## Repository structure
 
