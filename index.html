@@ -202,8 +202,10 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .notice{border:1px solid var(--line);border-left:3px solid var(--hanko);border-radius:8px;padding:10px 14px;font-size:.75rem;color:var(--muted);margin-top:14px;background:var(--surface)}
 #set-form[data-wm="side"] .wm-free{display:none}
 #set-form[data-wm="free"] .wm-side{display:none}
-#set-form[data-ht="manual"] .ht-nhi{display:none}
-#set-form[data-ht="nhi"] .ht-manual{display:none}
+#set-form[data-ht="manual"] .ht-nhi{opacity:.45}
+#set-form[data-ht="nhi"] .ht-manual{opacity:.45}
+#set-form[data-ht="nhi"] .ht-note-manual{display:none}
+.info-notice{border-left-color:var(--accent);margin:0 0 14px}
 .check-line{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ink);padding:6px 0}
 .check-line input{width:auto}
 .warn-notice{border-left-color:var(--hanko);color:var(--ink);margin:0 0 14px}
@@ -1146,6 +1148,8 @@ function renderTax(c){
     + '<option value="manual"'+(pr.hiType==='manual'?' selected':'')+'>国保組合・任意継続など（金額を入力）</option>'
     + '</select></div>'
     + '<div class="wm-free ht-manual"><label for="s-himanual">健康保険料（月額・円）</label><input id="s-himanual" type="number" min="0" step="100" inputmode="numeric" value="'+(pr.hiManual||'')+'" placeholder="例：25000（介護分込み）"></div>'
+    + '<div class="f-full hint ht-note-manual">いまは<b>「金額を入力」</b>を使用中です。'
+    + '下の国保の欄は計算に使われません（「健康保険の種類」を戻すと使われます）。</div>'
     + '<div class="wm-free ht-nhi"><label for="s-nhipref">都道府県</label><select id="s-nhipref">'
     + NHI_PREFS.map(p=>'<option value="'+p.id+'"'+(pr.nhiPref===p.id?' selected':'')+'>'+p.label+'</option>').join('')
     + '</select></div>'
@@ -1187,12 +1191,13 @@ function renderTax(c){
       + '「金額を入力」に切り替えてください。</div>'
     : '';
 
-  if(t.inSum===0){
-    return settings + warn
-      + '<section class="empty">「仕事の収支」で'+view.y+'年の収入を記録すると、<br>ここに税金と社会保険料の目安が表示されます。'
-      + '<div><button class="btn btn-primary" data-act="addbiz" data-type="in">収入を記録</button></div></section>'
-      + disclaimerHtml();
-  }
+  const noIncome = t.inSum===0;
+  const incomeCta = noIncome
+    ? '<div class="notice info-notice">'+view.y+'年の収入がまだ登録されていません。'
+      + '下の金額は、収入に関係なくかかる国民年金・健康保険の目安です。'
+      + '「仕事の収支」で収入を記録すると、所得税・住民税や手取りもあわせて計算されます。'
+      + '<div style="margin-top:8px"><button class="btn-sm" data-act="addbiz" data-type="in">収入を記録する</button></div></div>'
+    : '';
 
   if(t.mode==='free'){
     const segs = [
@@ -1204,12 +1209,13 @@ function renderTax(c){
     ].filter(s=>s.v>0);
     const bar = segs.map(s=>'<span style="flex:'+s.v+';background:var(--c-'+s.color+')"></span>').join('');
     const legend = segs.map(s=>'<span><span class="dot" style="background:var(--c-'+s.color+')"></span>'+s.label+'<b>'+yen(s.v)+'</b></span>').join('');
-    return settings + warn
+    return settings + warn + incomeCta
       + '<section class="card summary">'
-      + '<div class="sum-label">'+view.y+'年分の税金・社会保険の目安</div>'
+      + '<div class="sum-label">'+view.y+'年分の税金・社会保険の目安'+(noIncome?'（収入未登録）':'')+'</div>'
       + '<div class="sum-total">'+yen(t.all)+'</div>'
       + '<div class="sum-row">'
-      + '<span>手取りの目安<b>'+yen(t.net)+'</b></span>'
+      + (noIncome ? '<span>収入を記録すると手取りも表示されます</span>'
+        : '<span>手取りの目安<b>'+yen(t.net)+'</b></span>')
       + '<span>毎月の積立目安<b>'+yen(t.monthly)+'</b></span>'
       + '</div>'
       + (segs.length>1 ? '<div class="bar">'+bar+'</div><div class="legend">'+legend+'</div>' : '')
@@ -1235,12 +1241,13 @@ function renderTax(c){
   }
 
   /* side mode */
-  return settings + warn
+  return settings + warn + incomeCta
     + '<section class="card summary">'
     + '<div class="sum-label">'+view.y+'年分・副業にかかる税金の目安</div>'
     + '<div class="sum-total">'+yen(t.taxTotal)+'</div>'
     + '<div class="sum-row">'
-    + '<span>副業の手取り目安<b>'+yen(t.net)+'</b></span>'
+    + (noIncome ? '<span>副業の収入を記録すると手取りも表示されます</span>'
+      : '<span>副業の手取り目安<b>'+yen(t.net)+'</b></span>')
     + '<span>毎月の積立目安<b>'+yen(t.monthly)+'</b></span>'
     + '</div>'
     + '<div class="next-line">'
