@@ -206,6 +206,9 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 #set-form[data-ht="nhi"] .ht-manual{display:none}
 .check-line{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ink);padding:6px 0}
 .check-line input{width:auto}
+.warn-notice{border-left-color:var(--hanko);color:var(--ink);margin:0 0 14px}
+.hint{font-size:.72rem;color:var(--muted);line-height:1.6;margin:2px 0 4px}
+.hint b{color:var(--ink)}
 .rate-grid{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:8px;align-items:center;margin-top:6px}
 .rate-grid .rg-head{font-size:.68rem;color:var(--muted)}
 .rate-grid .rg-lab{font-size:.78rem;color:var(--muted);white-space:nowrap}
@@ -382,6 +385,8 @@ const NHI_STD = {
   kochi:{year:'R8',med:{r:7.69,k:47864},sup:{r:2.78,k:17198},care:{r:2.22,k:16233}},
   fukuokaken:{year:'R8',med:{r:7.68,k:47854},sup:{r:2.97,k:18359},care:{r:2.46,k:17961}},
   miyazaki:{year:'R8',med:{r:7.83,k:48677},sup:{r:2.82,k:17423},care:{r:2.49,k:17743}},
+  kyoto:{year:'R8',med:{r:8.58,k:53497},sup:{r:2.85,k:17664},care:{r:2.68,k:19581}},
+  kagoshima:{year:'R8',med:{r:7.43,k:46316},sup:{r:2.91,k:18034},care:{r:2.43,k:17462}},
   saga:{year:'R8',med:{r:9.20,k:57325},sup:{r:2.86,k:17683},care:{r:2.26,k:16547}},
   nagasaki:{year:'R8',med:{r:7.94,k:49045},sup:{r:3.08,k:18901},care:{r:2.48,k:17752}},
   kumamoto:{year:'R7',med:{r:7.49,k:45529},sup:{r:2.86,k:17166},care:{r:2.38,k:17248}},
@@ -1149,7 +1154,12 @@ function renderTax(c){
     + Array.from({length:6},(_,i)=>i+1).map(n=>'<option value="'+n+'"'+(pr.nhiMembers===n?' selected':'')+'>'+n+'人</option>').join('')
     + '</select></div>'
     + '<div class="f-full wm-free ht-nhi'+(pr.nhiCity==='custom'?'':' hidden')+'" id="nhi-custom">'
-    + '<label>国保の料率を入力（お住まいの自治体サイトの「国民健康保険料の計算方法」に記載。子ども・子育て支援金分がある場合は医療分に合算してください）</label>'
+    + '<label>お住まいの市区町村の国保料率を入力</label>'
+    + '<div class="hint">'
+    + (NHI_PREF_MAP[pr.nhiPref] && !NHI_PREF_MAP[pr.nhiPref].std
+        ? '<b>'+NHI_PREF_MAP[pr.nhiPref].label+'は標準料率が未収録です。</b>下に料率を入力すると正しく計算できます。<br>' : '')
+    + '市区町村の公式サイトで「国民健康保険料（税）の計算方法」を検索すると、下の3区分の料率が載っています。'
+    + '子ども・子育て支援金分がある場合は医療分に合算してください。介護分は40〜64歳の方のみ必要です。</div>'
     + '<div class="rate-grid">'
     + '<span></span><span class="rg-head">所得割（%）</span><span class="rg-head">均等割（円/人）</span><span class="rg-head">平等割（円/世帯）</span>'
     + rateRow('医療分','med', pr.nhiCustom.medR, pr.nhiCustom.medK, pr.nhiCustom.medH)
@@ -1167,8 +1177,18 @@ function renderTax(c){
     + '<div class="f-actions"><button class="btn btn-primary" type="submit">設定を保存</button></div>'
     + '</form></section>';
 
+  const nhiUnset = pr.workMode==='free' && pr.hiType==='nhi' && pr.nhiCity==='custom'
+    && !(pr.nhiCustom.medR||pr.nhiCustom.medK||pr.nhiCustom.medH
+      || pr.nhiCustom.supR||pr.nhiCustom.supK||pr.nhiCustom.supH);
+  const warn = nhiUnset
+    ? '<div class="notice warn-notice"><b>国民健康保険の料率が未入力です。</b>'
+      + 'このままだと国保が0円として計算され、目安が実際より少なく表示されます。'
+      + '上の「市区町村・料率」で料率を入力するか、国保組合などの方は「健康保険の種類」を'
+      + '「金額を入力」に切り替えてください。</div>'
+    : '';
+
   if(t.inSum===0){
-    return settings
+    return settings + warn
       + '<section class="empty">「仕事の収支」で'+view.y+'年の収入を記録すると、<br>ここに税金と社会保険料の目安が表示されます。'
       + '<div><button class="btn btn-primary" data-act="addbiz" data-type="in">収入を記録</button></div></section>'
       + disclaimerHtml();
@@ -1184,7 +1204,7 @@ function renderTax(c){
     ].filter(s=>s.v>0);
     const bar = segs.map(s=>'<span style="flex:'+s.v+';background:var(--c-'+s.color+')"></span>').join('');
     const legend = segs.map(s=>'<span><span class="dot" style="background:var(--c-'+s.color+')"></span>'+s.label+'<b>'+yen(s.v)+'</b></span>').join('');
-    return settings
+    return settings + warn
       + '<section class="card summary">'
       + '<div class="sum-label">'+view.y+'年分の税金・社会保険の目安</div>'
       + '<div class="sum-total">'+yen(t.all)+'</div>'
@@ -1215,7 +1235,7 @@ function renderTax(c){
   }
 
   /* side mode */
-  return settings
+  return settings + warn
     + '<section class="card summary">'
     + '<div class="sum-label">'+view.y+'年分・副業にかかる税金の目安</div>'
     + '<div class="sum-total">'+yen(t.taxTotal)+'</div>'
