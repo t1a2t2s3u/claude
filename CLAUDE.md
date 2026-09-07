@@ -4,7 +4,7 @@ Guidance for Claude Code and other AI assistants working in this repository.
 
 ## Project overview
 
-「まいつき帳」— a single-file web app for monthly recurring payments,
+「Sonae」(そなえ) — a single-file web app for monthly recurring payments,
 freelance income/expense records, and Japanese tax estimation. Everything
 lives in `index.html`: markup, styles, and script are inline, with Google
 Fonts as the only external dependency. UI copy is Japanese.

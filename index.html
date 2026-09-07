@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>まいつき帳</title>
+<title>Sonae</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,8 +15,8 @@
 <script>
 'use strict';
 const SRC = document.currentScript.textContent;
-const STORE_KEY = 'maitsuki-cho:v3';
-const OLD_KEYS = ['maitsuki-cho:v2','maitsuki-cho:v1'];
+const STORE_KEY = 'sonae:v3';
+const OLD_KEYS = ['maitsuki-cho:v3','maitsuki-cho:v2','maitsuki-cho:v1'];
 
 const FONT_LINKS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">';
 const BOOT_STYLE = '<style>body{margin:0;background:#f3f2ed}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:#14161d}}:root[data-theme="dark"] body{background:#14161d}</style>';
@@ -605,7 +605,7 @@ function docFor(st){
   const json = JSON.stringify(st).replace(/</g,'\\u003c');
   return '<!doctype html>\n<html lang="ja">\n<head>\n'
     + '<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-    + '<meta name="color-scheme" content="light dark">\n<title>まいつき帳</title>\n'
+    + '<meta name="color-scheme" content="light dark">\n<title>Sonae</title>\n'
     + FONT_LINKS + '\n' + BOOT_STYLE + '\n</head>\n<body>\n'
     + '<script type="application/json" id="app-state">' + json + '</scr' + 'ipt>\n'
     + '<script>' + SRC + '</scr' + 'ipt>\n</body>\n</html>';
@@ -829,7 +829,7 @@ function render(){
 
   root.innerHTML =
     '<header class="masthead">'
-    + '<div><div class="eyebrow">毎月の支払いと税金をひと目で</div><h1>まいつき帳</h1></div>'
+    + '<div><div class="eyebrow">毎月の支払いと税金に、そなえる</div><h1>Sonae</h1></div>'
     + '<div><div class="monthnav">'
     + '<button class="nav-btn" data-act="'+navPrev+'" aria-label="前へ">‹</button>'
     + '<span class="month-label">'+navLabel+'</span>'
@@ -1510,7 +1510,7 @@ function exportCsv(){
     CAT_MAP[p.cat].label, METHOD_MAP[p.method].label, p.bizPct||'', p.note, Math.round(monthlyEquiv(p))
   ]);
   const csv = '\uFEFF' + [head].concat(rows).map(r=>r.map(q).join(',')).join('\r\n');
-  dl.save({filename:'maitsuki-cho.csv', data:csv})
+  dl.save({filename:'sonae-kotehi.csv', data:csv})
     .then(()=>toast('CSVを保存しました'))
     .catch(err=>{ if(err && err.code!=='declined') toast('CSVを保存できませんでした'); });
 }
@@ -1524,7 +1524,7 @@ function exportBizCsv(){
     .map(b=>[b.type==='in'?'収入':'経費', b.y+'/'+pad(b.m)+'/'+pad(b.d),
       b.name, BIZ_CAT_MAP[b.cat].label, b.amount, b.note]);
   const csv = '\uFEFF' + [head].concat(rows).map(r=>r.map(q).join(',')).join('\r\n');
-  dl.save({filename:'maitsuki-cho-shushi.csv', data:csv})
+  dl.save({filename:'sonae-shushi.csv', data:csv})
     .then(()=>toast('CSVを保存しました'))
     .catch(err=>{ if(err && err.code!=='declined') toast('CSVを保存できませんでした'); });
 }
@@ -1574,7 +1574,7 @@ function exportJournalCsv(){
   const head = ['取引日','借方勘定科目','借方金額','借方税区分',
     '貸方勘定科目','貸方金額','貸方税区分','摘要'];
   const csv = '\uFEFF' + [head].concat(rows).map(r=>r.map(q).join(',')).join('\r\n');
-  dl.save({filename:'maitsuki-cho-shiwake-'+y+'.csv', data:csv})
+  dl.save({filename:'sonae-shiwake-'+y+'.csv', data:csv})
     .then(()=>toast(y+'年の仕訳CSVを保存しました（'+rows.length+'行）'))
     .catch(err=>{ if(err && err.code!=='declined') toast('CSVを保存できませんでした'); });
 }
