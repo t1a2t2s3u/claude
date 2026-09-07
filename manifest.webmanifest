@@ -1,0 +1,23 @@
+{
+  "name": "星よみ手帳",
+  "short_name": "星よみ手帳",
+  "description": "生年月日と血液型から、今日のタロット・パーソナル運勢・四柱推命鑑定・ふたりの相性診断がわかる占いアプリ",
+  "lang": "ja",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#1b1a3a",
+  "theme_color": "#1b1a3a",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,1091 @@
+:root {
+  --bg-top: #1b1a3a;
+  --bg-bottom: #2d1b4e;
+  --card-bg: rgba(255, 255, 255, 0.07);
+  --card-border: rgba(255, 255, 255, 0.14);
+  --text: #f2effa;
+  --text-muted: #b9b2d8;
+  --accent: #f6c453;
+  --accent-soft: rgba(246, 196, 83, 0.16);
+  --star-filled: #f6c453;
+  --star-empty: rgba(255, 255, 255, 0.22);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+select,
+input {
+  font-family: inherit;
+}
+
+/* display指定のある要素でも hidden 属性を必ず効かせる */
+[hidden] {
+  display: none !important;
+}
+
+/* しっぽり明朝: 静謐で神秘的なトーンの明朝体。Cinzel: 石碑刻印風のローマン体 */
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Shippori Mincho', 'Hiragino Mincho ProN', 'Yu Mincho',
+    'Noto Serif JP', serif;
+  font-weight: 500;
+  color: var(--text);
+  /* fixed アタッチメントは長いページやモバイルで背景が途切れるため使わない */
+  background-color: var(--bg-bottom);
+  background-image: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100vh);
+  background-repeat: no-repeat;
+  line-height: 1.7;
+}
+
+/* 夜空の星の瞬き */
+.stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 28% 68%, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 41% 12%, #ffe9b0 50%, transparent 51%),
+    radial-gradient(1px 1px at 57% 44%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 66% 82%, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 78% 28%, #ffe9b0 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 60%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 8% 86%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 94% 8%, #fff 50%, transparent 51%);
+  opacity: 0.7;
+  animation: twinkle 4s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.45; }
+  to { opacity: 0.85; }
+}
+
+.site-header {
+  text-align: center;
+  padding: 48px 16px 8px;
+}
+
+.site-title {
+  margin: 0;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  text-shadow: 0 0 24px rgba(246, 196, 83, 0.4);
+}
+
+.site-subtitle {
+  letter-spacing: 0.06em;
+}
+
+.site-subtitle {
+  margin: 12px auto 0;
+  max-width: 34em;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 8px 16px 48px;
+  position: relative;
+}
+
+/* --- タブ --- */
+.tab-nav {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 24px 16px 0;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--card-border);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.tab-button.is-active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.tab-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 24px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.card h2 {
+  margin: 0 0 16px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+/* --- 入力フォーム --- */
+.date-fields {
+  display: flex;
+  gap: 12px;
+}
+
+.date-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.date-field select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.blood-fieldset {
+  margin: 20px 0 0;
+  padding: 0;
+  border: none;
+}
+
+.blood-fieldset legend {
+  padding: 0;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.blood-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.blood-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.blood-option span {
+  display: block;
+  padding: 10px 0;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.blood-option input:checked + span {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.blood-option input:focus-visible + span {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.submit-button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f6c453, #e88f4c);
+  color: #2a1c04;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(246, 196, 83, 0.35);
+}
+
+/* --- 結果表示 --- */
+.result {
+  animation: rise 0.5s ease both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- タロット --- */
+.tarot-note {
+  margin: 0 0 16px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.tarot-spread {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  min-height: 220px;
+  perspective: 900px;
+}
+
+.tarot-pick {
+  width: 82px;
+  height: 132px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transform: var(--fan, none);
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+/* 扇状に少しずつ傾けて並べる */
+.tarot-pick:nth-child(1) { --fan: rotate(-9deg) translateY(14px); }
+.tarot-pick:nth-child(2) { --fan: rotate(-4.5deg) translateY(4px); }
+.tarot-pick:nth-child(3) { --fan: rotate(0deg) translateY(0); }
+.tarot-pick:nth-child(4) { --fan: rotate(4.5deg) translateY(4px); }
+.tarot-pick:nth-child(5) { --fan: rotate(9deg) translateY(14px); }
+
+.tarot-spread:not(.has-picked) .tarot-pick:hover,
+.tarot-spread:not(.has-picked) .tarot-pick:focus-visible {
+  transform: var(--fan, none) translateY(-10px);
+}
+
+.tarot-pick:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+/* 選ばれなかったカードは静かに退場する */
+.tarot-spread.has-picked .tarot-pick:not(.is-chosen) {
+  opacity: 0;
+  transform: var(--fan, none) translateY(18px) scale(0.9);
+  pointer-events: none;
+}
+
+/* 選んだカードは中央で大きくめくれる */
+.tarot-spread.has-picked .tarot-pick.is-chosen {
+  transform: rotate(0deg) scale(1.5);
+  z-index: 1;
+}
+
+.tarot-inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.4, 0.1, 0.2, 1);
+}
+
+.tarot-pick.is-flipped .tarot-inner {
+  transform: rotateY(180deg);
+}
+
+.tarot-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 10px;
+  backface-visibility: hidden;
+  border: 1px solid rgba(246, 196, 83, 0.5);
+}
+
+.tarot-back {
+  font-size: 1.5rem;
+  color: var(--accent);
+  background:
+    radial-gradient(circle at 50% 32%, rgba(246, 196, 83, 0.22), transparent 55%),
+    repeating-linear-gradient(45deg, rgba(246, 196, 83, 0.12) 0 4px, transparent 4px 10px),
+    linear-gradient(160deg, #241f4d, #33205a);
+}
+
+.tarot-front {
+  transform: rotateY(180deg);
+  background: linear-gradient(165deg, #3a2a63, #241f4d);
+  padding: 3px;
+}
+
+.tarot-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 7px;
+  display: block;
+}
+
+/* 逆位置のときは絵柄をさかさまに見せる */
+.tarot-front.is-reversed img {
+  transform: rotate(180deg);
+}
+
+.tarot-result-image {
+  display: block;
+  width: 150px;
+  margin: 0 auto 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(246, 196, 83, 0.5);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+}
+
+.tarot-result-image.is-reversed {
+  transform: rotate(180deg);
+}
+
+.tarot-result {
+  margin-top: 20px;
+  animation: rise 0.5s ease both;
+}
+
+.tarot-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.tarot-orientation {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--accent);
+  border: 1px solid rgba(246, 196, 83, 0.5);
+  border-radius: 999px;
+  padding: 2px 10px;
+  margin-left: 6px;
+  vertical-align: 2px;
+}
+
+.tarot-keywords {
+  margin: 8px 0 12px;
+  text-align: center;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.tarot-message {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+}
+
+.tarot-advice {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 12px;
+}
+
+.tarot-advice dt {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.tarot-advice dd {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarot-inner,
+  .tarot-pick {
+    transition: none;
+  }
+  .result,
+  .tarot-result {
+    animation: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .tarot-spread { gap: 5px; min-height: 200px; }
+  .tarot-pick { width: 64px; height: 104px; }
+}
+
+/* --- ゴーストボタン(シェア・3枚引き) --- */
+.ghost-button {
+  display: block;
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(246, 196, 83, 0.5);
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.ghost-button:hover {
+  background: var(--accent-soft);
+}
+
+.ghost-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.ghost-button-tight {
+  margin: -8px 0 20px;
+}
+
+/* --- 3枚引き --- */
+.three-card-result {
+  margin-top: 18px;
+  display: grid;
+  gap: 14px;
+  animation: rise 0.5s ease both;
+}
+
+.spread-card {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  grid-template-rows: auto auto 1fr;
+  column-gap: 14px;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.spread-card-image {
+  grid-row: 1 / 4;
+  width: 72px;
+  border-radius: 8px;
+  border: 1px solid rgba(246, 196, 83, 0.4);
+  align-self: start;
+}
+
+.spread-card-image.is-reversed {
+  transform: rotate(180deg);
+}
+
+.spread-position {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+
+.spread-name {
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.spread-text {
+  margin: 6px 0 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+/* --- 季節のひとこと・トースト --- */
+.seasonal-note {
+  margin: 16px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  max-width: min(92vw, 420px);
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: rgba(20, 16, 45, 0.95);
+  border: 1px solid rgba(246, 196, 83, 0.5);
+  color: var(--text);
+  font-size: 0.85rem;
+  text-align: center;
+  z-index: 10;
+  animation: rise 0.3s ease both;
+}
+
+/* --- 運勢カテゴリ --- */
+.total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  margin-bottom: 14px;
+}
+
+.total-label {
+  font-weight: 700;
+}
+
+.total-stars,
+.category-stars {
+  letter-spacing: 0.15em;
+  font-size: 1.05rem;
+}
+
+.total-stars .filled,
+.category-stars .filled { color: var(--star-filled); }
+.total-stars .empty,
+.category-stars .empty { color: var(--star-empty); }
+
+.category-list {
+  display: grid;
+  gap: 12px;
+}
+
+.category-block {
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.category-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.category-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.category-advice {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+/* --- 四柱推命 --- */
+.pillar-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.pillar-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.pillar-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.pillar-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.day-stem-title {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.day-stem-description {
+  margin: 0;
+}
+
+.fourpillars-note {
+  margin: 14px 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* --- 相性診断 --- */
+.aishou-lead {
+  margin: -8px 0 16px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.person-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.person-fieldset {
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+}
+
+.person-fieldset legend {
+  padding: 0 6px;
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.person-fieldset .date-fields {
+  flex-direction: column;
+  gap: 8px;
+}
+
+.blood-options-compact {
+  margin-top: 10px;
+}
+
+.aishou-pair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.pair-person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.pair-role {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.pair-profile {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.pair-heart {
+  font-size: 1.4rem;
+}
+
+.aishou-score {
+  text-align: center;
+  margin: 12px 0 4px;
+}
+
+.aishou-score-number {
+  font-family: 'Cinzel', 'Shippori Mincho', serif;
+  font-size: 3.2rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-shadow: 0 0 24px rgba(246, 196, 83, 0.35);
+  font-variant-numeric: tabular-nums;
+}
+
+.aishou-score-unit {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+.aishou-overall {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+}
+
+.axis-list {
+  margin: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.axis-row {
+  display: grid;
+  gap: 6px;
+}
+
+.axis-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.axis-relation {
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  border: 1px solid rgba(246, 196, 83, 0.45);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+
+.axis-head .axis-score {
+  margin-left: auto;
+}
+
+.aishou-highlights {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(246, 196, 83, 0.35);
+}
+
+.highlights-title {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.highlights-list {
+  margin: 0;
+  padding-left: 1.3em;
+  display: grid;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+.axis-score {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.axis-bar {
+  margin: 0;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.axis-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e88f4c, #f6c453);
+}
+
+.axis-comment {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* --- 複合プロフィール --- */
+.profile-badges {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.profile-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 14px 8px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.profile-badge-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid rgba(246, 196, 83, 0.4);
+}
+
+.profile-badge-blood {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.profile-badge-name {
+  margin-top: 6px;
+  font-weight: 700;
+}
+
+.profile-badge-meta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.composite-catch {
+  margin: 20px 0 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+.composite-sections {
+  display: grid;
+  gap: 14px;
+}
+
+.composite-section {
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.composite-label {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+
+.composite-label::before {
+  content: '― ';
+  color: rgba(246, 196, 83, 0.5);
+}
+
+.composite-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.9;
+}
+
+.profile-details {
+  margin-top: 16px;
+}
+
+.profile-details summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.trait-list {
+  margin: 12px 0 0;
+}
+
+.trait-list dt {
+  font-weight: 700;
+  margin-top: 12px;
+}
+
+.trait-list dd {
+  margin: 4px 0 0;
+  color: var(--text);
+}
+
+.fortune-note,
+.ranking-note {
+  margin: -8px 0 16px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.fortune-date {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 8px;
+}
+
+.fortune-message {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+}
+
+.lucky-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.lucky-box {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.lucky-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.lucky-value {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* --- 数秘術 --- */
+.life-path {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.life-path-number {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-family: 'Cinzel', 'Shippori Mincho', serif;
+  font-size: 1.7rem;
+  font-weight: 600;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid rgba(246, 196, 83, 0.4);
+}
+
+.life-path-title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.life-path-description {
+  margin: 0;
+  color: var(--text);
+}
+
+/* --- ランキング --- */
+.ranking-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.ranking-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.ranking-list li.is-you {
+  background: var(--accent-soft);
+  border: 1px solid rgba(246, 196, 83, 0.45);
+}
+
+.rank-number {
+  width: 2.8em;
+  text-align: right;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.ranking-list li:nth-child(-n + 3) .rank-number {
+  color: var(--accent);
+}
+
+.rank-sign {
+  flex: 1;
+}
+
+.rank-stars {
+  letter-spacing: 0.1em;
+  font-size: 0.9rem;
+}
+
+.rank-stars .filled { color: var(--star-filled); }
+.rank-stars .empty { color: var(--star-empty); }
+
+.site-footer {
+  text-align: center;
+  padding: 0 16px 32px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .card { padding: 18px; }
+  .lucky-row { flex-direction: column; }
+  .person-grid { grid-template-columns: 1fr; }
+  .aishou-pair { flex-direction: column; }
+  .pair-heart { transform: rotate(90deg); }
+}

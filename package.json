@@ -1,0 +1,11 @@
+{
+  "name": "hoshiyomi-techo",
+  "version": "0.1.0",
+  "description": "生年月日から12星座の今日の運勢と数秘術診断を表示する占いWebアプリ",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test 'test/**/*.test.mjs'",
+    "start": "npx serve . -l 3000"
+  }
+}

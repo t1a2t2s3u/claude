@@ -2,51 +2,82 @@
 
 Guidance for Claude Code and other AI assistants working in this repository.
 
-## Current repository state
-
-**This repository is empty.** As of the creation of this file it contains no
-source code, no build configuration, no tests, and no commit history — this
-file is the initial commit.
-
-Everything below is therefore a scaffold. Do not treat any section as
-describing real, existing behaviour until it has been filled in against
-actual code. If you are the first assistant to work here after code has been
-added, replace the placeholder sections with what you find in the tree, and
-delete this notice.
-
 ## Project overview
 
-_To be filled in._ Record here: what the project does, who it is for, and the
-one or two design decisions a newcomer would otherwise get wrong.
+「星よみ手帳」— 生年月日と血液型を入力すると、今日の一枚(タロット)、
+恋愛・仕事・金運のパーソナル運勢、星座×干支×血液型の複合鑑定、四柱推命
+(簡易命式)、数秘術診断、ふたりの相性診断を表示する日本語の占いWebアプリ。
+ビルド工程も実行時依存もない静的サイトとして動く。
+
+設計上の要点:
+
+- 日替わり要素(運勢・タロット・3枚引き)は乱数ではなく「日付 + 星座ID +
+  干支ID + 血液型」をシードにした決定的生成(`js/fortune.js` /
+  `js/tarot.js`)。同じ日・同じ人は必ず同じ結果になることが仕様であり、
+  `Math.random()` に置き換えてはいけない。12星座ランキングは星座のみの
+  シード(パーソナルシードなし)、相性診断は日付に依存しない決定的スコアで
+  生成する。
+- タロットはウェイト版フルデッキ78枚。日替わりメッセージは
+  `js/fortune.js` のプール(MESSAGES / CATEGORY_ADVICE / SEASONAL_NOTES)に
+  追記するだけで増える設計で、体裁は `npm test` が検証する。毎月1日に
+  追記を促すIssueをGitHub Actionsが作成する。
+- 占いロジック(zodiac / eto / bloodtype / composite / numerology /
+  fourpillars / tarot / compatibility / fortune)はDOM非依存のESモジュール。
+  ブラウザとNodeテストの両方から同一コードを読み込むため、これらの
+  ファイルにDOM APIやブラウザ専用APIを入れないこと。
+- 干支・年柱は元日切り替えの暦年で判定する(旧暦・立春は考慮しない)。
+  日柱はユリウス通日から算出し、2024/1/1=甲子・2000/1/1=戊午をテストで
+  固定している。月柱・時柱は扱わない(節入り・出生時刻が必要なため)。
 
 ## Repository structure
 
-_To be filled in._ Once directories exist, describe the top-level layout and
-what belongs in each part — enough that an assistant can guess correctly
-where a new file should go.
+```
+index.html          画面構造(タブ構成のエントリポイント)
+manifest.webmanifest PWAマニフェスト(ホーム画面追加用)
+assets/tarot/       ウェイト版タロットの絵柄(パブリックドメイン、78枚)
+assets/icons/       PWA・apple-touch用アイコン
+.github/workflows/  Pagesデプロイと月次コンテンツ追加リマインダー
+css/style.css       全スタイル(夜空テーマ、レスポンシブ)
+js/zodiac.js        12星座データ・星座判定
+js/eto.js           干支(十二支)データ・判定
+js/bloodtype.js     血液型の性質データ
+js/composite.js     星座×干支×血液型の複合プロフィール生成
+js/numerology.js    運命数の計算・意味データ
+js/fourpillars.js   四柱推命(年柱・日柱・日干・五行)の計算と意味データ
+js/tarot.js         タロット(大アルカナ22枚)データ・今日の一枚の選択
+js/compatibility.js ふたりの相性診断(星座/血液型/干支/五行の4軸)
+js/fortune.js       日替わり運勢とランキングの生成
+js/main.js          フォームと結果表示のDOM制御(ここだけDOMに触れる)
+test/*.test.mjs     ロジックのユニットテスト(node --test)
+```
+
+新しい占いロジックは `js/` にDOM非依存モジュールとして追加し、表示は
+`main.js` に、テストは `test/` に置く。
 
 ## Development workflow
 
 ### Setup
 
-_To be filled in._ The exact commands to get from a fresh clone to a working
-environment.
+クローンするだけ。npm install は不要(依存パッケージなし)。Node 22系で
+動作確認済み。
 
 ### Build, test, lint
 
-_To be filled in._ Record the canonical commands, not approximations — an
-assistant will run these verbatim. Note which are fast enough to run on every
-change and which are slow.
+- ビルド: なし(静的ファイルのみ)
+- テスト: `npm test`(= `node --test 'test/**/*.test.mjs'`)。数秒で終わる
+  ので、ロジック変更のたびに実行する。
+- リント: 未導入。
 
 ### Running the application
 
-_To be filled in._
+`python3 -m http.server 3000` などでルートを配信し、ブラウザで開く。
+`file://` 直開きはESモジュールがブロックされることがあるので使わない。
 
 ## Conventions
 
-_To be filled in._ Language and formatting rules, naming patterns, error
-handling style, testing approach, and anything that is enforced in review but
-not by tooling.
+- UI文言・コメントは日本語。コードの識別子は英語。
+- インデントは2スペース、文字列はシングルクォート。
+- 占い結果のテキストは断定的な不安を煽る表現を避け、前向きなトーンで書く。
 
 ## Git workflow
 
