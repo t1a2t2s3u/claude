@@ -352,8 +352,37 @@ const NHI_PREFS = [
   {id:'kagoshima',label:'鹿児島県'},{id:'okinawa',label:'沖縄県'}
 ];
 const NHI_PREF_MAP = Object.fromEntries(NHI_PREFS.map(p=>[p.id,p]));
-/* 都道府県標準保険料率 {year, med:{r,k}, sup:{r,k}, care:{r,k}} — データ取得できた県のみ */
-const NHI_STD = {};
+/* 都道府県標準保険料率 {year, med:{r,k}, sup:{r,k}, care:{r,k}} — 各都道府県の公式公表資料より。
+   データ取得できた都道府県のみ（未収録の県は「料率を自分で入力」で対応） */
+const NHI_STD = {
+  hokkaido:{year:'R8',med:{r:7.92,k:49048},sup:{r:2.46,k:15153},care:{r:2.13,k:15210}},
+  aomori:{year:'R8',med:{r:7.03,k:43350},sup:{r:3.07,k:18831},care:{r:2.99,k:21490}},
+  akita:{year:'R8',med:{r:5.60,k:35205},sup:{r:3.00,k:18751},care:{r:2.55,k:18412}},
+  fukushima:{year:'R8',med:{r:5.84,k:36499},sup:{r:2.84,k:17658},care:{r:2.31,k:16709}},
+  tochigi:{year:'R8',med:{r:7.01,k:43592},sup:{r:2.93,k:18074},care:{r:2.42,k:17367}},
+  saitama:{year:'R8',med:{r:8.11,k:49305},sup:{r:2.83,k:17074},care:{r:2.48,k:17565}},
+  chiba:{year:'R8',med:{r:7.56,k:46657},sup:{r:2.82,k:17313},care:{r:2.54,k:18381}},
+  tokyo:{year:'R8',med:{r:7.90,k:49255},sup:{r:3.01,k:18609},care:{r:2.56,k:18712}},
+  niigata:{year:'R8',med:{r:6.72,k:41440},sup:{r:2.93,k:17960},care:{r:2.39,k:17043}},
+  ishikawa:{year:'R8',med:{r:9.18,k:56598},sup:{r:2.81,k:17215},care:{r:2.48,k:18122}},
+  fukui:{year:'R8',med:{r:6.14,k:38289},sup:{r:2.80,k:17334},care:{r:2.46,k:18011}},
+  nagano:{year:'R8',med:{r:6.69,k:41574},sup:{r:2.78,k:17145},care:{r:2.34,k:17086}},
+  gifu:{year:'R7',med:{r:7.84,k:47957},sup:{r:2.82,k:17005},care:{r:2.29,k:16651}},
+  mie:{year:'R7',med:{r:7.62,k:46615},sup:{r:2.87,k:17300},care:{r:2.56,k:18608}},
+  shiga:{year:'R8',med:{r:7.71,k:47234},sup:{r:2.82,k:17282},care:{r:2.41,k:17629}},
+  osakafu:{year:'R8',med:{r:9.47,k:58316},sup:{r:3.05,k:18652},care:{r:2.58,k:18682}},
+  hyogo:{year:'R8',med:{r:7.61,k:46901},sup:{r:3.14,k:19245},care:{r:2.79,k:20045}},
+  wakayama:{year:'R8',med:{r:8.24,k:51105},sup:{r:2.71,k:16720},care:{r:2.43,k:17643}},
+  tottori:{year:'R8',med:{r:7.15,k:44054},sup:{r:2.94,k:17981},care:{r:2.59,k:19028}},
+  shimane:{year:'R8',med:{r:8.01,k:49853},sup:{r:2.84,k:17541},care:{r:2.60,k:18500}},
+  hiroshima:{year:'R7',med:{r:8.85,k:54133},sup:{r:2.88,k:17342},care:{r:2.35,k:17082}},
+  yamaguchi:{year:'R7',med:{r:7.21,k:44259},sup:{r:2.96,k:17888},care:{r:2.57,k:18453}},
+  tokushima:{year:'R7',med:{r:8.38,k:51267},sup:{r:2.91,k:17540},care:{r:2.56,k:18617}},
+  kagawa:{year:'R8',med:{r:8.92,k:54769},sup:{r:2.82,k:17195},care:{r:2.50,k:18014}},
+  kochi:{year:'R8',med:{r:7.69,k:47864},sup:{r:2.78,k:17198},care:{r:2.22,k:16233}},
+  fukuokaken:{year:'R8',med:{r:7.68,k:47854},sup:{r:2.97,k:18359},care:{r:2.46,k:17961}},
+  miyazaki:{year:'R8',med:{r:7.83,k:48677},sup:{r:2.82,k:17423},care:{r:2.49,k:17743}}
+};
 NHI_PREFS.forEach(p=>{ p.std = NHI_STD[p.id] || null; });
 
 function nhiWard(label, o){
