@@ -68,6 +68,16 @@ database (via the Artifact tool's `write_db`) at the end of a run:
 `office/stats` (secretary only) for task-board counts. Reporting is
 best-effort — sessions without the Artifact tool skip it.
 
+## Delivery board
+
+A copy-ready page of the SNS employee's unposted drafts (X and Threads
+versions, each with a copy button):
+https://claude.ai/code/artifact/57204c23-dcaa-4df7-93db-6d67648fb985
+
+The sns skill refreshes it at the end of each run from `sns/queue.md`
+(read the published HTML, swap the post data and header counts, republish
+to the same URL). Best-effort, like the office board.
+
 ## Conventions
 
 - User-facing content (task board, reports, skill instructions) is written in
