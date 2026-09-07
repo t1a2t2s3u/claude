@@ -520,10 +520,10 @@ if (storedAishou) {
   }
 }
 
-form.addEventListener('submit', (event) => {
-  event.preventDefault();
+function runDailyFortune({ scroll } = { scroll: true }) {
   const { year, month, day } = myDate.read();
   const bloodId = new FormData(form).get('blood');
+  if (!bloodId) return;
   saveStored(STORAGE_KEYS.daily, { year, month, day, blood: bloodId });
 
   const sign = getZodiacSign(month, day);
@@ -542,8 +542,22 @@ form.addEventListener('submit', (event) => {
   renderRanking(sign.id);
 
   result.hidden = false;
-  result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (scroll) {
+    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  runDailyFortune({ scroll: true });
 });
+
+// プロフィールを記憶済みの人は、開いた瞬間に今日の結果まで自動表示する
+// (タロットはお楽しみのため、カードを選ぶところから)
+if (storedDaily && storedDaily.blood) {
+  runDailyFortune({ scroll: false });
+  showToast('記憶したプロフィールで、今日の運勢を表示しています');
+}
 
 aishouForm.addEventListener('submit', (event) => {
   event.preventDefault();
