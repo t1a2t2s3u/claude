@@ -1208,7 +1208,7 @@ function renderTax(c){
       {label:'所得税', v:t.it, color:'home'},
       {label:'住民税', v:t.rt, color:'util'},
       {label:'社会保険', v:t.social, color:'net'},
-      {label:'事業税ほか', v:t.bt+t.ct, color:'ins'}
+      {label:(t.bt>0&&t.ct>0?'事業税・消費税':t.bt>0?'個人事業税':'消費税'), v:t.bt+t.ct, color:'ins'}
     ].filter(s=>s.v>0);
     const bar = segs.map(s=>'<span style="flex:'+s.v+';background:var(--c-'+s.color+')"></span>').join('');
     const legend = segs.map(s=>'<span><span class="dot" style="background:var(--c-'+s.color+')"></span>'+s.label+'<b>'+yen(s.v)+'</b></span>').join('');
@@ -1232,8 +1232,16 @@ function renderTax(c){
       + (t.blue>0 ? trow('青色申告特別控除', '−'+yen(t.blue), '') : '')
       + trow('所得税（復興特別所得税込み）', yen(t.it), '課税所得 '+yen(t.itTaxable)+'（基礎控除 '+yen(t.basic)+'・社会保険料控除 '+yen(t.social)+(state.profile.extraDeduction?'・その他 '+yen(state.profile.extraDeduction):'')+'）')
       + trow('住民税', yen(t.rt), '所得割10%＋均等割（自治体で多少変わります）')
-      + (t.bt>0 ? trow('個人事業税', yen(t.bt), '（利益 − 290万円）× '+state.profile.bizTaxRate+'%') : '')
-      + (t.ct>0 ? trow('消費税（2割特例の目安）', yen(t.ct), '売上に含まれる消費税 × 20%') : '')
+      + trow('個人事業税', yen(t.bt),
+        state.profile.bizTaxRate===0
+          ? '非課税の業種を選択中のため0円です（設定で変更できます）'
+          : t.bt>0
+            ? '（利益 '+yen(t.profit)+' − 事業主控除 290万円）× '+state.profile.bizTaxRate+'%'
+            : '利益 '+yen(t.profit)+' が事業主控除290万円以下のため0円です')
+      + trow('消費税（2割特例の目安）', yen(t.ct),
+        state.profile.invoice
+          ? '売上 '+yen(t.inSum)+' に含まれる消費税 × 20%'
+          : 'インボイス未登録のため0円です（登録済みなら設定でチェック）')
       + trow('国民年金（令和8年度）', yen(t.pension), '月額 '+yen(TAX.pensionMonthly)+' × 12ヶ月')
       + (t.nhiCfg.manual
         ? trow('健康保険（国保組合・任意継続など）', yen(t.nhi), '入力した月額 '+yen(state.profile.hiManual)+' × 12ヶ月')
