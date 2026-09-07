@@ -26,7 +26,14 @@ Tax parameters (income-tax brackets, R7/R8 basic deduction table, pension)
 live in the `TAX` constant near the top of the inline script; NHI rates are
 in `NHI_STD` (33 prefectures' standard rates) and `NHI_PRESETS` (exact city
 rates) — update them when fiscal years roll over. State is v3:
-`{payments, biz, profile}`; `migrate()` upgrades older embedded state.
+`{payments, biz, saves, invoices, taxPaid, profile}`; `migrate()` upgrades older
+embedded state (v3 income becomes `paid:true`, since it predates 入金管理).
+
+The iOS/PWA head tags live in `APP_META` (including a base64 apple-touch-icon)
+and are emitted both in the real `<head>` and by `docFor()` — change them in
+one place only by editing `APP_META` and the head to match. `release/` holds
+the manifest and service worker for self-hosting; the script registers them
+only when `window.claude` is absent, so the Artifact is unaffected.
 
 `taxTips()` builds the 節税 advice from `calcTax()`'s output and
 `marginalRates()`. It hard-codes filing deadlines and the 2026 end of the
