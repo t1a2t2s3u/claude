@@ -6,6 +6,7 @@ import {
   formatDateKey,
   LUCKY_COLORS,
   LUCKY_ITEMS,
+  MESSAGE_POOLS,
 } from '../js/fortune.js';
 import { ZODIAC_SIGNS } from '../js/zodiac.js';
 
@@ -57,6 +58,30 @@ test('スコアは1〜5、ラッキー要素は候補リストから選ばれる
     assert.equal(typeof f.message, 'string');
     assert.ok(f.message.length > 0);
   }
+});
+
+test('メッセージプールの体裁(最低本数・空文字なし)が保たれている', () => {
+  const { MESSAGES, CATEGORY_ADVICE, SEASONAL_NOTES } = MESSAGE_POOLS;
+  for (const score of [1, 2, 3, 4, 5]) {
+    assert.ok(MESSAGES[score].length >= 5, `総合運スコア${score}のメッセージが5本未満`);
+    for (const m of MESSAGES[score]) assert.ok(m.length >= 15, `短すぎる: ${m}`);
+  }
+  for (const category of ['love', 'work', 'money']) {
+    for (const band of ['high', 'mid', 'low']) {
+      const pool = CATEGORY_ADVICE[category][band];
+      assert.ok(pool.length >= 3, `${category}/${band} のアドバイスが3本未満`);
+      for (const m of pool) assert.ok(m.length >= 15, `短すぎる: ${m}`);
+    }
+  }
+  for (let month = 1; month <= 12; month++) {
+    assert.ok(SEASONAL_NOTES[month]?.length >= 2, `${month}月の季節のひとことが2本未満`);
+  }
+});
+
+test('季節のひとことは月に応じたものが選ばれる', () => {
+  const { SEASONAL_NOTES } = MESSAGE_POOLS;
+  const f = getDailyFortune('aries', new Date(2026, 11, 24)); // 12月
+  assert.ok(SEASONAL_NOTES[12].includes(f.seasonal));
 });
 
 test('恋愛・仕事・金運のカテゴリ別アドバイスが含まれる', () => {

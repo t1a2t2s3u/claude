@@ -1,0 +1,37 @@
+# 毎月1日に「鑑定メッセージを増やす」リマインダーIssueを自動作成する。
+# メッセージは js/fortune.js のプールに追記するだけで反映され、
+# npm test がプールの体裁(最低本数・空文字なし)を自動検証する。
+name: Monthly content reminder
+
+on:
+  schedule:
+    - cron: '0 0 1 * *' # 毎月1日 00:00 UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  open-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const now = new Date();
+            const month = now.getUTCMonth() + 1;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `【定期】${month}月分の鑑定メッセージを増やす`,
+              body: [
+                '毎月の定期タスクです。ユーザーを飽きさせないよう、鑑定文のプールに追記しましょう。',
+                '',
+                '- [ ] `js/fortune.js` の `MESSAGES`(総合運)に各スコア帯1本以上追加',
+                '- [ ] `js/fortune.js` の `CATEGORY_ADVICE`(恋愛/仕事/金運)に数本追加',
+                `- [ ] \`SEASONAL_NOTES\` の${month}月・${month % 12 + 1}月の季節のひとことを見直し・追加`,
+                '- [ ] `npm test` でプールの体裁チェックが通ることを確認',
+                '',
+                '追記するだけで日替わり抽選の母数が自動的に増えます(コード変更は不要)。',
+              ].join('\n'),
+            });

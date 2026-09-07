@@ -11,11 +11,16 @@ Guidance for Claude Code and other AI assistants working in this repository.
 
 設計上の要点:
 
-- 日替わり要素(運勢・タロット)は乱数ではなく「日付 + 星座ID + 干支ID +
-  血液型」をシードにした決定的生成(`js/fortune.js` / `js/tarot.js`)。
-  同じ日・同じ人は必ず同じ結果になることが仕様であり、`Math.random()` に
-  置き換えてはいけない。12星座ランキングは星座のみのシード(パーソナル
-  シードなし)、相性診断は日付に依存しない決定的スコアで生成する。
+- 日替わり要素(運勢・タロット・3枚引き)は乱数ではなく「日付 + 星座ID +
+  干支ID + 血液型」をシードにした決定的生成(`js/fortune.js` /
+  `js/tarot.js`)。同じ日・同じ人は必ず同じ結果になることが仕様であり、
+  `Math.random()` に置き換えてはいけない。12星座ランキングは星座のみの
+  シード(パーソナルシードなし)、相性診断は日付に依存しない決定的スコアで
+  生成する。
+- タロットはウェイト版フルデッキ78枚。日替わりメッセージは
+  `js/fortune.js` のプール(MESSAGES / CATEGORY_ADVICE / SEASONAL_NOTES)に
+  追記するだけで増える設計で、体裁は `npm test` が検証する。毎月1日に
+  追記を促すIssueをGitHub Actionsが作成する。
 - 占いロジック(zodiac / eto / bloodtype / composite / numerology /
   fourpillars / tarot / compatibility / fortune)はDOM非依存のESモジュール。
   ブラウザとNodeテストの両方から同一コードを読み込むため、これらの
@@ -28,7 +33,10 @@ Guidance for Claude Code and other AI assistants working in this repository.
 
 ```
 index.html          画面構造(タブ構成のエントリポイント)
-assets/tarot/       ウェイト版タロットの絵柄(パブリックドメイン、22枚)
+manifest.webmanifest PWAマニフェスト(ホーム画面追加用)
+assets/tarot/       ウェイト版タロットの絵柄(パブリックドメイン、78枚)
+assets/icons/       PWA・apple-touch用アイコン
+.github/workflows/  Pagesデプロイと月次コンテンツ追加リマインダー
 css/style.css       全スタイル(夜空テーマ、レスポンシブ)
 js/zodiac.js        12星座データ・星座判定
 js/eto.js           干支(十二支)データ・判定

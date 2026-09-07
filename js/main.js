@@ -4,7 +4,7 @@ import { BLOOD_TYPES } from './bloodtype.js';
 import { getCompositeProfile } from './composite.js';
 import { getLifePathNumber, LIFE_PATH_MEANINGS } from './numerology.js';
 import { getDailyFortune, getDailyRanking } from './fortune.js';
-import { getDailyTarot } from './tarot.js';
+import { getDailyTarot, getThreeCardSpread, getTarotAdvice } from './tarot.js';
 import { getFourPillars } from './fourpillars.js';
 import { getCompatibility } from './compatibility.js';
 
@@ -181,13 +181,17 @@ function renderTarot(tarot) {
   setText('tarot-note', '5枚の中から、直感で今日の一枚を選んでください。');
 
   const meaning = isReversed ? card.reversed : card.upright;
-  setText('tarot-result-name', `${card.name}(${card.roman})`);
+  const advice = getTarotAdvice(card, isReversed);
+  setText('tarot-result-name', card.roman ? `${card.name}(${card.roman})` : card.name);
   setText('tarot-orientation', isReversed ? '逆位置' : '正位置');
   setText('tarot-keywords', meaning.keywords);
   setText('tarot-message', meaning.message);
-  setText('tarot-love', card.love);
-  setText('tarot-work', card.work);
-  setText('tarot-money', card.money);
+  setText('tarot-love', advice.love);
+  setText('tarot-work', advice.work);
+  setText('tarot-money', advice.money);
+
+  document.getElementById('three-card-button').hidden = false;
+  document.getElementById('three-card-result').hidden = true;
 
   const resultImage = document.getElementById('tarot-result-image');
   resultImage.src = card.image;
@@ -273,6 +277,106 @@ function renderFortune(fortune) {
 
   setText('lucky-color', fortune.luckyColor);
   setText('lucky-item', fortune.luckyItem);
+  setText('seasonal-note', `✦ ${fortune.seasonal}`);
+}
+
+// --- 3枚引きとシェア ---
+
+let currentReading = null; // 直近の占い結果(3枚引きとシェアに使う)
+let currentCompat = null; // 直近の相性診断結果(シェアに使う)
+
+function renderThreeCardSpread() {
+  if (!currentReading) return;
+  const container = document.getElementById('three-card-result');
+  container.innerHTML = '';
+  const spread = getThreeCardSpread(currentReading.spreadSeed);
+  for (const { position, card, isReversed } of spread) {
+    const block = document.createElement('div');
+    block.className = 'spread-card';
+
+    const img = document.createElement('img');
+    img.src = card.image;
+    img.alt = `${card.name}のカード`;
+    img.className = 'spread-card-image';
+    if (isReversed) img.classList.add('is-reversed');
+
+    const position_ = document.createElement('span');
+    position_.className = 'spread-position';
+    position_.textContent = position;
+
+    const name = document.createElement('span');
+    name.className = 'spread-name';
+    name.textContent = `${card.name}(${isReversed ? '逆位置' : '正位置'})`;
+
+    const meaning = isReversed ? card.reversed : card.upright;
+    const text = document.createElement('p');
+    text.className = 'spread-text';
+    text.textContent = `${meaning.keywords} — ${meaning.message}`;
+
+    block.append(position_, img, name, text);
+    container.appendChild(block);
+  }
+  container.hidden = false;
+  document.getElementById('three-card-button').hidden = true;
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.hidden = false;
+  window.clearTimeout(showToast.timer);
+  showToast.timer = window.setTimeout(() => {
+    toast.hidden = true;
+  }, 2400);
+}
+
+async function shareText(text) {
+  if (navigator.share) {
+    try {
+      await navigator.share({ text });
+      return;
+    } catch {
+      // キャンセル時などはクリップボードにフォールバック
+    }
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('結果をコピーしました。SNSに貼り付けてシェアできます');
+  } catch {
+    showToast('コピーできませんでした。スクリーンショットでシェアしてください');
+  }
+}
+
+function stars(n) {
+  return '★'.repeat(n) + '☆'.repeat(5 - n);
+}
+
+function buildDailyShareText() {
+  if (!currentReading) return '';
+  const { sign, eto, blood, fortune, tarot } = currentReading;
+  const today = new Date();
+  return [
+    `【星よみ手帳】${today.getMonth() + 1}/${today.getDate()}の運勢`,
+    `${sign.symbol}${sign.name} × ${eto.emoji}${eto.name} × ${blood.label}`,
+    `総合 ${stars(fortune.scores.total)}`,
+    `恋愛 ${stars(fortune.scores.love)} 仕事 ${stars(fortune.scores.work)} 金運 ${stars(fortune.scores.money)}`,
+    `今日の一枚: ${tarot.card.name}(${tarot.isReversed ? '逆位置' : '正位置'})`,
+    `ラッキーカラー: ${fortune.luckyColor} / アイテム: ${fortune.luckyItem}`,
+    '#星よみ手帳',
+  ].join('\n');
+}
+
+function buildAishouShareText() {
+  if (!currentCompat) return '';
+  const { total, axes, profileA, profileB } = currentCompat;
+  const summary = axes.map((axis) => `${axis.label} ${axis.score}点`).join(' / ');
+  return [
+    '【星よみ手帳】ふたりの相性診断',
+    `${profileA.sign.name}×${profileA.blood.label} と ${profileB.sign.name}×${profileB.blood.label}`,
+    `総合 ${total}点`,
+    summary,
+    '#星よみ手帳',
+  ].join('\n');
 }
 
 function renderFourPillars(year, month, day) {
@@ -387,6 +491,10 @@ function renderCompatibility(compat) {
 
 setupTabs();
 
+document.getElementById('three-card-button').addEventListener('click', renderThreeCardSpread);
+document.getElementById('share-daily').addEventListener('click', () => shareText(buildDailyShareText()));
+document.getElementById('share-aishou').addEventListener('click', () => shareText(buildAishouShareText()));
+
 const myDate = setupDateSelects('input-year', 'input-month', 'input-day', 1995);
 const dateA = setupDateSelects('a-year', 'a-month', 'a-day', 1995);
 const dateB = setupDateSelects('b-year', 'b-month', 'b-day', 1993);
@@ -422,9 +530,12 @@ form.addEventListener('submit', (event) => {
   const eto = getEto(year);
   const blood = BLOOD_TYPES[bloodId];
   const personalSeed = `${eto.id}:${blood.id}`;
+  const tarot = getDailyTarot(`${sign.id}:${personalSeed}`);
+  const fortune = getDailyFortune(sign.id, new Date(), personalSeed);
+  currentReading = { sign, eto, blood, fortune, tarot, spreadSeed: `${sign.id}:${personalSeed}` };
 
-  renderTarot(getDailyTarot(`${sign.id}:${personalSeed}`));
-  renderFortune(getDailyFortune(sign.id, new Date(), personalSeed));
+  renderTarot(tarot);
+  renderFortune(fortune);
   renderProfile(sign, eto, blood);
   renderFourPillars(year, month, day);
   renderNumerology(year, month, day);
@@ -441,7 +552,8 @@ aishouForm.addEventListener('submit', (event) => {
   const personB = { ...dateB.read(), blood: data.get('blood-b') };
   saveStored(STORAGE_KEYS.aishou, { a: personA, b: personB });
 
-  renderCompatibility(getCompatibility(personA, personB));
+  currentCompat = getCompatibility(personA, personB);
+  renderCompatibility(currentCompat);
 
   aishouResult.hidden = false;
   aishouResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
