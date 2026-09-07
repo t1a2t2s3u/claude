@@ -173,6 +173,8 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .ybar:hover .ybar-fill,.ybar:focus-visible .ybar-fill{background:var(--accent)}
 .ychart-labels{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;font-size:.68rem;color:var(--muted);text-align:center;margin:6px 0 0;font-variant-numeric:tabular-nums}
 .ychart-labels .cur{color:var(--accent);font-weight:600}
+.ychart-labels span{white-space:nowrap}
+.ychart-labels i{font-style:normal}
 .dchart{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;align-items:end;height:150px;border-bottom:1px solid var(--line)}
 .dmon{display:flex;align-items:flex-end;gap:2px;height:100%;border:0;background:none;padding:0;cursor:pointer}
 .dbar{flex:1;border-radius:3px 3px 0 0;min-height:2px}
@@ -254,6 +256,8 @@ footer{margin-top:26px;display:flex;justify-content:space-between;align-items:ce
   @keyframes rise{from{transform:translateY(10px);opacity:.6}to{transform:none;opacity:1}}
 }
 @media (max-width:560px){
+  .ychart-labels .mlab{display:none}
+  .ychart-labels{gap:3px}
   .day{grid-template-columns:76px 1fr;padding:12px 14px}
   .f-grid{grid-template-columns:1fr}
   .summary,.panel{padding:18px 16px}
@@ -791,7 +795,6 @@ function render(){
   /* fab */
   const fabDef = view.modal ? null
     : view.section==='pay' && state.payments.length ? {label:'＋ 支払いを追加', act:'add'}
-    : view.section==='biz' && state.biz.length ? {label:'＋ 収支を記録', act:'addbiz-in'}
     : null;
   let fab = document.getElementById('fab');
   if(fabDef){
@@ -1014,7 +1017,7 @@ function yearHtml(y, c){
       + ' data-tip="'+y+'年'+m+'月　'+yen(t)+'" aria-label="'+y+'年'+m+'月 '+yen(t)+'">'
       + '<span class="ybar-fill" style="height:'+Math.max(h, t>0?3:1)+'%"></span></button>';
   }).join('');
-  const labels = totals.map((t,i)=>'<span class="'+(y===c.ty && i+1===c.tm?'cur':'')+'">'+(i+1)+'月</span>').join('');
+  const labels = totals.map((t,i)=>'<span class="'+(y===c.ty && i+1===c.tm?'cur':'')+'">'+(i+1)+'<i class="mlab">月</i></span>').join('');
   const annual = totals.reduce((s,t)=>s+t,0);
   const catRows = CATS.map(cc=>{
     let sum = 0;
@@ -1076,7 +1079,7 @@ function renderBiz(c){
       + '<span class="dbar ex" style="height:'+Math.max(he,o.exV>0?3:1)+'%"></span>'
       + '</button>';
   }).join('');
-  const labels = months.map(o=>'<span class="'+(y===c.ty&&o.m===c.tm?'cur':'')+'">'+o.m+'月</span>').join('');
+  const labels = months.map(o=>'<span class="'+(y===c.ty&&o.m===c.tm?'cur':'')+'">'+o.m+'<i class="mlab">月</i></span>').join('');
   const chart =
     '<section class="card panel"><h2>'+y+'年の月別収支</h2>'
     + '<div class="dchart">'+bars+'</div>'
