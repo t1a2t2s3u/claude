@@ -1215,9 +1215,13 @@ function renderTax(c){
       + '<div class="sum-total">'+yen(t.all)+'</div>'
       + '<div class="sum-row">'
       + (noIncome ? '<span>収入を記録すると手取りも表示されます</span>'
-        : '<span>手取りの目安<b>'+yen(t.net)+'</b></span>')
+        : '<span>手取りの目安<b>'+(t.net<0?'−':'')+yen(Math.abs(t.net))+'</b></span>')
       + '<span>毎月の積立目安<b>'+yen(t.monthly)+'</b></span>'
       + '</div>'
+      + (t.net<0 ? '<div class="hint" style="margin-top:8px">記録済みの収入 '+yen(t.inSum)
+        + ' に対して、国民年金・健康保険の<b>年額</b> '+yen(t.social)
+        + ' の方が大きいため、手取りがマイナスになっています。'
+        + view.y+'年の収入をすべて記録すると正しい目安になります。</div>' : '')
       + (segs.length>1 ? '<div class="bar">'+bar+'</div><div class="legend">'+legend+'</div>' : '')
       + '</section>'
       + '<section class="card panel"><h2>内訳</h2>'
