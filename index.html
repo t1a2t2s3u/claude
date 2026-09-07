@@ -204,6 +204,10 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 #set-form[data-wm="free"] .wm-side{display:none}
 .check-line{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ink);padding:6px 0}
 .check-line input{width:auto}
+.rate-grid{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:8px;align-items:center;margin-top:6px}
+.rate-grid .rg-head{font-size:.68rem;color:var(--muted)}
+.rate-grid .rg-lab{font-size:.78rem;color:var(--muted);white-space:nowrap}
+.rate-grid input{padding:7px 8px;font-size:.85rem}
 
 /* empty state */
 .empty{padding:36px 24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px;font-size:.9rem}
@@ -317,10 +321,72 @@ const TAX = {
   ],
   residentBasic:430000, residentRate:.10, residentFlat:5000, residentAdj:2500, residentMin:450000,
   pensionMonthly:17920,
-  nhi:{ base:430000, medR:.080, medK:49000, medCap:660000, supR:.028, supK:17000, supCap:260000, careR:.024, careK:17000, careCap:170000 },
+  nhiBase:430000,
   bizTaxExempt:2900000,
   salarySocialRate:.146
 };
+
+/* 国民健康保険の料率プリセット（令和8年度・各自治体の公式資料より）
+   med=医療分, sup=後期高齢者支援金分, care=介護納付金分(40〜64歳),
+   kid=子ども・子育て支援金分（令和8年度新設）
+   r=所得割%, k=均等割(円/人), h=平等割(円/世帯), cap=賦課限度額 */
+function nhiWard(label, o){
+  return Object.assign({
+    label, group:'tokyo',
+    med:{r:7.51,k:47600,h:0,cap:670000},
+    sup:{r:2.80,k:17600,h:0,cap:260000},
+    care:{r:2.43,k:17800,h:0,cap:170000},
+    kid:{r:0.27,k:1873,h:0,cap:30000}
+  }, o||{});
+}
+const NHI_PRESETS = {
+  tokyostd: nhiWard('東京23区（標準的な区）'),
+  chiyoda:nhiWard('千代田区'), chuo:nhiWard('中央区'), minato:nhiWard('港区'),
+  shinjuku:nhiWard('新宿区'), bunkyo:nhiWard('文京区'), taito:nhiWard('台東区'),
+  sumida:nhiWard('墨田区'), koto:nhiWard('江東区'), shinagawa:nhiWard('品川区'),
+  meguro:nhiWard('目黒区',{care:{r:2.35,k:17800,h:0,cap:170000}}),
+  ota:nhiWard('大田区'), setagaya:nhiWard('世田谷区'), shibuya:nhiWard('渋谷区'),
+  nakano:nhiWard('中野区',{med:{r:8.03,k:47100,h:0,cap:670000},sup:{r:2.94,k:17400,h:0,cap:260000},care:{r:2.53,k:17700,h:0,cap:170000}}),
+  suginami:nhiWard('杉並区'), toshima:nhiWard('豊島区'), kita:nhiWard('北区'),
+  arakawa:nhiWard('荒川区'), itabashi:nhiWard('板橋区'), nerima:nhiWard('練馬区'),
+  adachi:nhiWard('足立区'), katsushika:nhiWard('葛飾区'),
+  edogawa:nhiWard('江戸川区',{med:{r:7.83,k:48900,h:0,cap:670000},sup:{r:2.84,k:17400,h:0,cap:260000},care:{r:2.45,k:17400,h:0,cap:170000},kid:{r:0.27,k:1870,h:0,cap:30000}}),
+  yokohama:{label:'横浜市',group:'city',
+    med:{r:8.33,k:40870,h:0,cap:670000},sup:{r:2.62,k:13380,h:0,cap:260000},
+    care:{r:2.84,k:16200,h:0,cap:170000},kid:{r:0.34,k:1770,h:0,cap:30000}},
+  osaka:{label:'大阪市',group:'city',
+    med:{r:9.50,k:34990,h:33908,cap:660000},sup:{r:3.06,k:11191,h:10845,cap:260000},
+    care:{r:2.60,k:18682,h:0,cap:170000},kid:{r:0.28,k:1841,h:0,cap:30000}},
+  fukuoka:{label:'福岡市',group:'city',
+    med:{r:5.58,k:19807,h:18664,cap:670000},sup:{r:3.14,k:10441,h:9838,cap:260000},
+    care:{r:2.61,k:10160,h:7751,cap:170000},kid:{r:0.28,k:1039,h:911,cap:30000}}
+};
+function nhiConfig(pr){
+  if(pr.nhiPreset==='custom'){
+    const c = pr.nhiCustom;
+    return {label:'入力した料率', custom:true, comps:{
+      med:{r:c.medR,k:c.medK,h:c.medH,cap:670000},
+      sup:{r:c.supR,k:c.supK,h:c.supH,cap:260000},
+      care:{r:c.careR,k:c.careK,h:c.careH,cap:170000},
+      kid:null
+    }};
+  }
+  const p = NHI_PRESETS[pr.nhiPreset] || NHI_PRESETS.tokyostd;
+  return {label:p.label+'・令和8年度', custom:false, comps:p};
+}
+function nhiAmount(pr, income){
+  const cfg = nhiConfig(pr);
+  const nb = Math.max(0, income - TAX.nhiBase);
+  const mem = pr.nhiMembers;
+  const comp = (c,members)=>{
+    if(!c || (c.r<=0 && c.k<=0 && c.h<=0)) return 0;
+    return Math.min(nb*c.r/100 + c.k*members + c.h, c.cap);
+  };
+  let total = comp(cfg.comps.med, mem) + comp(cfg.comps.sup, mem)
+    + (cfg.comps.kid ? comp(cfg.comps.kid, mem) : 0);
+  if(pr.care40) total += comp(cfg.comps.care, 1);
+  return {amount: Math.round(total), cfg};
+}
 function salaryDeduction(sal){
   if(sal<=1900000) return Math.min(sal,650000);
   if(sal<=3600000) return sal*.30+80000;
@@ -386,6 +452,9 @@ function normalizeBiz(b){
 }
 function normalizeProfile(pr){
   pr = pr && typeof pr==='object' ? pr : {};
+  const c = pr.nhiCustom && typeof pr.nhiCustom==='object' ? pr.nhiCustom : {};
+  const rate = v=>Math.min(20, Math.max(0, Number(v)||0));
+  const amt  = v=>Math.min(200000, Math.max(0, Math.round(Number(v)||0)));
   return {
     workMode: pr.workMode==='side' ? 'side' : 'free',
     filing: ['blue65','blue10','white'].includes(pr.filing) ? pr.filing : 'white',
@@ -394,7 +463,14 @@ function normalizeProfile(pr){
     care40: !!pr.care40,
     bizTaxRate: [0,3,4,5].includes(Number(pr.bizTaxRate)) ? Number(pr.bizTaxRate) : 5,
     invoice: !!pr.invoice,
-    extraDeduction: Math.max(0, Math.round(Number(pr.extraDeduction)||0))
+    extraDeduction: Math.max(0, Math.round(Number(pr.extraDeduction)||0)),
+    nhiPreset: (pr.nhiPreset==='custom' || NHI_PRESETS[pr.nhiPreset]) ? pr.nhiPreset : 'tokyostd',
+    nhiMembers: Math.min(10, Math.max(1, Math.round(Number(pr.nhiMembers)||1))),
+    nhiCustom: {
+      medR:rate(c.medR), medK:amt(c.medK), medH:amt(c.medH),
+      supR:rate(c.supR), supK:amt(c.supK), supH:amt(c.supH),
+      careR:rate(c.careR), careK:amt(c.careK), careH:amt(c.careH)
+    }
   };
 }
 function migrate(s){
@@ -539,11 +615,8 @@ function calcTax(y){
     const blue = Math.min(blueMax, profit);
     const income = Math.max(0, profit - blue);    // 事業所得（合計所得）
     const pension = TAX.pensionMonthly*12;
-    const n = TAX.nhi;
-    const nb = Math.max(0, income - n.base);
-    let nhi = Math.min(nb*n.medR + n.medK, n.medCap) + Math.min(nb*n.supR + n.supK, n.supCap);
-    if(pr.care40) nhi += Math.min(nb*n.careR + n.careK, n.careCap);
-    nhi = Math.round(nhi);
+    const nhiRes = nhiAmount(pr, income);
+    const nhi = nhiRes.amount;
     const social = pension + nhi;
     const basic = basicDeduction(income);
     const itTaxable = income - social - extra - basic;
@@ -556,7 +629,7 @@ function calcTax(y){
     const taxTotal = it + rt + bt + ct;
     const net = inSum - expenses - taxTotal - social;
     return {mode:'free', inSum, exEntries, ap, expenses, profit, blue, income,
-      pension, nhi, social, basic, itTaxable:Math.max(0,itTaxable), it, rt, bt, ct,
+      pension, nhi, nhiCfg:nhiRes.cfg, social, basic, itTaxable:Math.max(0,itTaxable), it, rt, bt, ct,
       taxTotal, all: taxTotal+social, net, monthly: Math.ceil((taxTotal+social)/12/1000)*1000};
   }
 
@@ -981,6 +1054,18 @@ function renderTax(c){
     + '<option value="3"'+(pr.bizTaxRate===3?' selected':'')+'>3%</option>'
     + '<option value="0"'+(pr.bizTaxRate===0?' selected':'')+'>非課税の業種（文筆業など）</option>'
     + '</select></div>'
+    + '<div class="wm-free"><label for="s-nhi">国保の市区町村</label><select id="s-nhi">'+nhiOptions(pr.nhiPreset)+'</select></div>'
+    + '<div class="wm-free"><label for="s-nhimem">国保の加入人数（世帯）</label><select id="s-nhimem">'
+    + Array.from({length:6},(_,i)=>i+1).map(n=>'<option value="'+n+'"'+(pr.nhiMembers===n?' selected':'')+'>'+n+'人</option>').join('')
+    + '</select></div>'
+    + '<div class="f-full wm-free'+(pr.nhiPreset==='custom'?'':' hidden')+'" id="nhi-custom">'
+    + '<label>国保の料率を入力（お住まいの自治体サイトの「国民健康保険料の計算方法」に記載。子ども・子育て支援金分がある場合は医療分に合算してください）</label>'
+    + '<div class="rate-grid">'
+    + '<span></span><span class="rg-head">所得割（%）</span><span class="rg-head">均等割（円/人）</span><span class="rg-head">平等割（円/世帯）</span>'
+    + rateRow('医療分','med', pr.nhiCustom.medR, pr.nhiCustom.medK, pr.nhiCustom.medH)
+    + rateRow('支援分','sup', pr.nhiCustom.supR, pr.nhiCustom.supK, pr.nhiCustom.supH)
+    + rateRow('介護分','care', pr.nhiCustom.careR, pr.nhiCustom.careK, pr.nhiCustom.careH)
+    + '</div></div>'
     + '<div class="wm-side"><label for="s-salary">給与収入（年・額面）</label><input id="s-salary" type="number" min="0" step="10000" inputmode="numeric" value="'+(pr.salary||'')+'" placeholder="例：4500000"></div>'
     + '<div class="wm-side"><label for="s-salsoc">給与の社会保険料（年・任意）</label><input id="s-salsoc" type="number" min="0" step="1000" inputmode="numeric" value="'+(pr.salarySocial||'')+'" placeholder="空欄なら給与の14.6%で概算"></div>'
     + '<div><label for="s-extra">その他の所得控除（年・任意）</label><input id="s-extra" type="number" min="0" step="1000" inputmode="numeric" value="'+(pr.extraDeduction||'')+'" placeholder="生命保険料控除・iDeCoなど"></div>'
@@ -1027,7 +1112,10 @@ function renderTax(c){
       + (t.bt>0 ? trow('個人事業税', yen(t.bt), '（利益 − 290万円）× '+state.profile.bizTaxRate+'%') : '')
       + (t.ct>0 ? trow('消費税（2割特例の目安）', yen(t.ct), '売上に含まれる消費税 × 20%') : '')
       + trow('国民年金（令和8年度）', yen(t.pension), '月額 '+yen(TAX.pensionMonthly)+' × 12ヶ月')
-      + trow('国民健康保険（概算）', yen(t.nhi), '東京23区の料率目安。市区町村で大きく変わります')
+      + trow('国民健康保険（概算）', yen(t.nhi),
+        esc(t.nhiCfg.label)+'・加入'+state.profile.nhiMembers+'人'
+        +(t.nhiCfg.comps.kid?'・子ども・子育て支援金分を含む':'')
+        +(state.profile.care40?'・介護分は本人のみ':''))
       + '<div class="trow total"><span class="tlab">合計</span><span class="tval">'+yen(t.all)+'</span></div>'
       + '</section>'
       + disclaimerHtml();
@@ -1058,12 +1146,28 @@ function renderTax(c){
     + disclaimerHtml();
 }
 
+function nhiOptions(sel){
+  const opt = (id,label)=>'<option value="'+id+'"'+(sel===id?' selected':'')+'>'+label+'</option>';
+  const grp = g=>Object.keys(NHI_PRESETS).filter(k=>NHI_PRESETS[k].group===g && k!=='tokyostd')
+    .map(k=>opt(k, NHI_PRESETS[k].label)).join('');
+  return opt('tokyostd','東京23区（標準的な区）')
+    + '<optgroup label="東京23区（令和8年度）">'+grp('tokyo')+'</optgroup>'
+    + '<optgroup label="政令指定都市（令和8年度）">'+grp('city')+'</optgroup>'
+    + '<optgroup label="その他の市区町村">'+opt('custom','料率を自分で入力')+'</optgroup>';
+}
+function rateRow(label, key, r, k, h){
+  const num = (id,val,step,ph)=>'<input id="'+id+'" type="number" min="0" step="'+step+'" inputmode="decimal" value="'+(val||'')+'" placeholder="'+ph+'">';
+  return '<span class="rg-lab">'+label+'</span>'
+    + num('c-'+key+'r', r, '0.01', '例 8.5')
+    + num('c-'+key+'k', k, '1', '例 30000')
+    + num('c-'+key+'h', h, '1', 'なければ0');
+}
 function trow(label, val, note){
   return '<div class="trow"><span class="tlab">'+label
     + (note?'<small>'+note+'</small>':'')+'</span><span class="tval">'+val+'</span></div>';
 }
 function disclaimerHtml(){
-  return '<div class="notice">この金額は<b>概算</b>です。令和7・8年分の税制（基礎控除の特例を含む）・令和8年度の国民年金・東京23区の国民健康保険料率を目安に計算しており、実際の税額はお住まいの自治体、各種控除、所得の内容などによって変わります。確定申告や納付の際は、税務署・自治体・税理士の案内で必ずご確認ください。</div>';
+  return '<div class="notice">この金額は<b>概算</b>です。令和7・8年分の税制（基礎控除の特例を含む）・令和8年度の国民年金・選択した市区町村の令和8年度国民健康保険料率（一覧にない自治体は入力した料率）をもとに計算しており、実際の税額は各種控除や所得の内容、翌年度の料率改定などによって変わります。確定申告や納付の際は、税務署・自治体・税理士の案内で必ずご確認ください。</div>';
 }
 
 /* ---------- modal ---------- */
@@ -1274,6 +1378,10 @@ root.addEventListener('change', e=>{
     const f=document.getElementById('set-form');
     if(f) f.dataset.wm = e.target.value;
   }
+  if(e.target.id==='s-nhi'){
+    const g=document.getElementById('nhi-custom');
+    if(g) g.classList.toggle('hidden', e.target.value!=='custom');
+  }
 });
 root.addEventListener('submit', e=>{
   const val = id => { const el=document.getElementById(id); return el ? el.value : ''; };
@@ -1314,7 +1422,13 @@ root.addEventListener('submit', e=>{
       workMode: val('s-workmode'), filing: val('s-filing'),
       salary: val('s-salary'), salarySocial: val('s-salsoc'),
       care40: chk('s-care40'), bizTaxRate: Number(val('s-biztax')),
-      invoice: chk('s-invoice'), extraDeduction: val('s-extra')
+      invoice: chk('s-invoice'), extraDeduction: val('s-extra'),
+      nhiPreset: val('s-nhi'), nhiMembers: val('s-nhimem'),
+      nhiCustom: {
+        medR: val('c-medr'), medK: val('c-medk'), medH: val('c-medh'),
+        supR: val('c-supr'), supK: val('c-supk'), supH: val('c-suph'),
+        careR: val('c-carer'), careK: val('c-carek'), careH: val('c-careh')
+      }
     }});
     toast('設定を保存しました');
   }
