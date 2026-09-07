@@ -195,6 +195,9 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .btn-sm{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:5px 12px;font-size:.78rem;font-weight:500;cursor:pointer}
 .btn-sm:hover{background:var(--surface2)}
 .panel-head .cnt{font-size:.72rem;color:var(--muted);font-weight:500}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 4px}
+.chip-row .cat-chip .cnt{color:var(--muted);font-size:.7rem;font-variant-numeric:tabular-nums}
+.chip-row .cat-chip.active .cnt{color:var(--ink)}
 .group-label{font-size:.72rem;color:var(--muted);letter-spacing:.08em;margin:12px 0 2px}
 .trow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-top:1px dashed var(--line);font-size:.9rem}
 .trow:first-of-type{border-top:0}
@@ -631,7 +634,7 @@ const view = {
   section: 'pay',       // 'pay' | 'biz' | 'tax'
   y: NOW.getFullYear(), m: NOW.getMonth()+1,
   tab: 'list', q: '', cats: new Set(), method: '',
-  bizTab: 'month', bizSort: 'desc',
+  bizTab: 'month', bizSort: 'desc', bizFilter: 'all',
   modal: null,          // {kind:'pay'|'biz', mode:'add'|'edit', id?, type?}
   pendingDelete: null,
   modalDelete: false
@@ -1189,16 +1192,35 @@ function renderBiz(c){
       ? '<div style="color:var(--muted);font-size:.85rem;padding:8px 0">この月の記録はまだありません。</div>' : '')
     + '</section>';
 
-  /* 年間の一覧（日付順・その場で編集できる） */
+  /* 年間の一覧（日付順・種別で絞り込み・その場で編集できる） */
   const dir = view.bizSort==='desc' ? -1 : 1;
-  const allEntries = state.biz.filter(b=>b.y===y)
+  const yearAll = state.biz.filter(b=>b.y===y);
+  const nIn = yearAll.filter(b=>b.type==='in').length;
+  const nEx = yearAll.length - nIn;
+  const flt = view.bizFilter;
+  const allEntries = yearAll.filter(b=> flt==='all' || b.type===flt)
     .sort((a,b)=> dir*(a.m-b.m) || dir*(a.d-b.d) || b.amount-a.amount);
+  const fChip = (id,label,n,color)=>
+    '<button class="cat-chip'+(flt===id?' active':'')+'" data-act="bizfilter" data-f="'+id+'"'
+    + ' aria-pressed="'+(flt===id)+'">'
+    + (color ? '<span class="dot" style="background:var(--c-'+color+')"></span>' : '')
+    + label+'<span class="cnt">'+n+'</span></button>';
+  const filterChips = '<div class="chip-row">'
+    + fChip('all','すべて', yearAll.length, null)
+    + fChip('in','収入', nIn, 'sub')
+    + fChip('ex','経費', nEx, 'home')
+    + '</div>';
   let lastM = null;
   const listRows = allEntries.map(b=>{
     let head = '';
     if(b.m !== lastM){ lastM = b.m; head = '<div class="group-label">'+b.m+'月</div>'; }
     return head + row(b);
   }).join('');
+  const emptyMsg = !yearAll.length
+    ? y+'年の記録はまだありません。'
+    : flt==='in' ? y+'年の収入の記録はまだありません。'
+    : flt==='ex' ? y+'年の経費の記録はまだありません。'
+    : y+'年の記録はまだありません。';
   const allCard =
     '<section class="card panel">'
     + '<div class="panel-head"><h2>'+y+'年の記録　<span class="cnt">'+allEntries.length+'件</span></h2>'
@@ -1207,9 +1229,10 @@ function renderBiz(c){
     + '<button class="btn-sm" data-act="addbiz" data-type="in">＋ 収入</button>'
     + '<button class="btn-sm" data-act="addbiz" data-type="ex">＋ 経費</button>'
     + '</div></div>'
+    + filterChips
     + (allEntries.length ? listRows
-      : '<div style="color:var(--muted);font-size:.85rem;padding:8px 0">'+y+'年の記録はまだありません。</div>')
-    + (apY>0 ? '<div class="hint" style="margin-top:12px">このほかに、固定費からの経費按分 '
+      : '<div style="color:var(--muted);font-size:.85rem;padding:8px 0">'+emptyMsg+'</div>')
+    + (apY>0 && flt!=='in' ? '<div class="hint" style="margin-top:12px">このほかに、固定費からの経費按分 '
       + yen(apY)+' が自動で計上されています（「支払い」の編集画面で設定）。</div>' : '')
     + '</section>';
 
@@ -1481,6 +1504,18 @@ function payModalHtml(){
     + '</form></div></div>';
 }
 
+/* 前に入力した取引先・内容を新しい順に集める（同じ種別のものだけ） */
+function bizNameSuggestions(type){
+  const seen = new Map();
+  state.biz.forEach(b=>{
+    if(b.type!==type || !b.name) return;
+    const key = b.y*10000 + b.m*100 + b.d;
+    const cur = seen.get(b.name);
+    if(!cur || key>=cur.key) seen.set(b.name, {key, cat:b.cat});
+  });
+  return [...seen.entries()].sort((a,b)=>b[1].key-a[1].key).slice(0,40);
+}
+
 function bizModalHtml(){
   const editing = view.modal.mode==='edit' ? state.biz.find(b=>b.id===view.modal.id) : null;
   const type = editing ? editing.type : (view.modal.type||'in');
@@ -1489,6 +1524,7 @@ function bizModalHtml(){
     d: sameMonth ? NOW.getDate() : 1, cat:(type==='in'?'sales':'exother'), note:''};
   const cats = type==='in' ? BIZ_IN_CATS : BIZ_EX_CATS;
   const catOpts = cats.map(c=>'<option value="'+c.id+'"'+(v.cat===c.id?' selected':'')+'>'+c.label+'</option>').join('');
+  const sugg = bizNameSuggestions(type);
   const pad = n=>String(n).padStart(2,'0');
   const dateVal = v.y+'-'+pad(v.m)+'-'+pad(v.d);
   const title = editing ? (type==='in'?'収入を編集':'経費を編集') : (type==='in'?'収入を記録':'経費を記録');
@@ -1502,7 +1538,13 @@ function bizModalHtml(){
     + '<form id="biz-form" data-type="'+type+'">'
     + '<div class="f-grid">'
     + '<div class="f-full"><label for="b-name">'+(type==='in'?'内容（取引先・案件など）':'内容')+'</label>'
-    + '<input id="b-name" required maxlength="60" placeholder="'+(type==='in'?'例：〇〇社 制作費':'例：サーバー代、打ち合わせ交通費')+'" value="'+esc(v.name)+'"></div>'
+    + '<input id="b-name" list="b-names" autocomplete="off" required maxlength="60" placeholder="'+(type==='in'?'例：〇〇社 制作費':'例：サーバー代、打ち合わせ交通費')+'" value="'+esc(v.name)+'">'
+    + '<datalist id="b-names">'
+    + sugg.map(([nm,o])=>'<option value="'+esc(nm)+'" data-cat="'+o.cat+'" label="'+esc(BIZ_CAT_MAP[o.cat]?BIZ_CAT_MAP[o.cat].label:'')+'"></option>').join('')
+    + '</datalist>'
+    + (sugg.length ? '<div class="hint">'+(type==='in'?'前に入力した取引先':'前に入力した内容')
+      + 'が候補に出ます（'+sugg.length+'件）。選ぶと科目も前回のものになります。</div>' : '')
+    + '</div>'
     + '<div><label for="b-amount">金額（円）</label><input id="b-amount" type="number" min="1" step="1" inputmode="numeric" required value="'+v.amount+'"></div>'
     + '<div><label for="b-cat">科目</label><select id="b-cat">'+catOpts+'</select></div>'
     + '<div class="f-full"><label for="b-date">日付</label><input id="b-date" type="date" required value="'+dateVal+'"></div>'
@@ -1673,6 +1715,7 @@ root.addEventListener('click', e=>{
   else if(act==='bizgoto'){ view.m=Number(b.dataset.m); view.bizTab='month'; hideTip(); render(); }
   else if(act==='biztab'){ view.bizTab=b.dataset.tab; view.pendingDelete=null; render(); }
   else if(act==='bizsort'){ view.bizSort = view.bizSort==='desc' ? 'asc' : 'desc'; render(); }
+  else if(act==='bizfilter'){ view.bizFilter = b.dataset.f; view.pendingDelete=null; render(); }
   else if(act==='csv') exportCsv();
   else if(act==='bizcsv') exportBizCsv();
   else if(act==='jrncsv') exportJournalCsv();
@@ -1688,6 +1731,16 @@ root.addEventListener('change', e=>{
     const lab=document.getElementById('m-month-label');
     if(wrap) wrap.classList.toggle('hidden', e.target.value==='monthly');
     if(lab) lab.textContent = e.target.value==='yearly' ? '支払月' : '支払月（基準）';
+  }
+  if(e.target.id==='b-name'){
+    const dlist = document.getElementById('b-names');
+    const catSel = document.getElementById('b-cat');
+    if(dlist && catSel){
+      const hit = [...dlist.options].find(o=>o.value===e.target.value);
+      if(hit && hit.dataset.cat && [...catSel.options].some(o=>o.value===hit.dataset.cat)){
+        catSel.value = hit.dataset.cat;
+      }
+    }
   }
   if(e.target.id==='s-workmode'){
     const f=document.getElementById('set-form');
