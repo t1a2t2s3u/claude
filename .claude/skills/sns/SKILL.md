@@ -36,7 +36,13 @@ description: SNS担当。note記事の告知文やアカウント育成用のX�
 4. 書いた投稿を `sns/queue.md` の先頭に「# YYYY-MM-DD（曜日）」の
    日次セクションとして追加する。
 5. コミットして push する（`sns: <内容>` のプレフィックス）。
-6. オフィスボードへの報告 — Artifact ツールの write_db で
+6. **納品ボードの更新** — オーナーがコピーして投稿するためのページ
+   （URL は CLAUDE.md の「Delivery board」参照）を、`sns/queue.md` の
+   **未投稿の投稿案すべて**で更新する。Artifact ツールの `read` で現在の
+   HTML を取得し、投稿データの配列（`POSTS_*`）と見出しの日付・件数を
+   差し替えて、同じ URL に republish する（`url` を渡すこと）。
+   Artifact ツールが使えないセッションではスキップしてよい。
+7. オフィスボードへの報告 — Artifact ツールの write_db で
    オフィスボード（URL は CLAUDE.md の「Office board」参照）を更新する。
    使えないセッションではスキップしてよい。
    - `employees/sns` を set:
