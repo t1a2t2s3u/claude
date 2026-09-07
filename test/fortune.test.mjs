@@ -60,6 +60,13 @@ test('スコアは1〜5、ラッキー要素は候補リストから選ばれる
   }
 });
 
+test('ラッキーカラー・アイテムは十分な種類があり重複しない', () => {
+  assert.ok(LUCKY_COLORS.length >= 15, `カラーが少ない: ${LUCKY_COLORS.length}`);
+  assert.ok(LUCKY_ITEMS.length >= 50, `アイテムが少ない: ${LUCKY_ITEMS.length}`);
+  assert.equal(new Set(LUCKY_COLORS).size, LUCKY_COLORS.length, 'カラーに重複あり');
+  assert.equal(new Set(LUCKY_ITEMS).size, LUCKY_ITEMS.length, 'アイテムに重複あり');
+});
+
 test('メッセージプールの体裁(最低本数・空文字なし)が保たれている', () => {
   const { MESSAGES, CATEGORY_ADVICE, SEASONAL_NOTES } = MESSAGE_POOLS;
   for (const score of [1, 2, 3, 4, 5]) {
