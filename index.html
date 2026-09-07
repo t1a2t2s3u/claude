@@ -545,13 +545,16 @@ function normalizePayment(p){
 function normalizeBiz(b){
   const type = b.type==='ex' ? 'ex' : 'in';
   const cats = type==='in' ? BIZ_IN_CATS : BIZ_EX_CATS;
+  const yy = Math.min(2100, Math.max(2000, parseInt(b.y,10)||NOW.getFullYear()));
+  const mm = Math.min(12, Math.max(1, parseInt(b.m,10)||1));
   return {
     id: b.id || uid(),
     type,
     name: String(b.name||'').slice(0,60),
     amount: Math.max(1, Math.round(Number(b.amount)||1)),
-    y: Math.min(2100, Math.max(2000, parseInt(b.y,10)||NOW.getFullYear())),
-    m: Math.min(12, Math.max(1, parseInt(b.m,10)||1)),
+    y: yy,
+    m: mm,
+    d: Math.min(daysInMonth(yy,mm), Math.max(1, parseInt(b.d,10) || daysInMonth(yy,mm))),
     cat: cats.some(c=>c.id===b.cat) ? b.cat : cats[0].id,
     note: String(b.note||'').slice(0,120)
   };
@@ -1145,12 +1148,13 @@ function renderBiz(c){
     + '</div></section>';
 
   /* selected month entries */
-  const ins = state.biz.filter(b=>b.y===y&&b.m===m&&b.type==='in').sort((a,b)=>b.amount-a.amount);
-  const exs = state.biz.filter(b=>b.y===y&&b.m===m&&b.type==='ex').sort((a,b)=>b.amount-a.amount);
+  const byDate = (a,b)=>a.d-b.d || b.amount-a.amount;
+  const ins = state.biz.filter(b=>b.y===y&&b.m===m&&b.type==='in').sort(byDate);
+  const exs = state.biz.filter(b=>b.y===y&&b.m===m&&b.type==='ex').sort(byDate);
   const apM = Math.round(apportionMonth(y,m));
   const row = b=>'<div class="item">'
     + '<div class="item-main"><span class="item-name">'+esc(b.name)+'</span>'
-    + '<span class="item-sub">'+BIZ_CAT_MAP[b.cat].label+(b.note?'　'+esc(b.note):'')+'</span></div>'
+    + '<span class="item-sub">'+b.m+'/'+b.d+'　'+BIZ_CAT_MAP[b.cat].label+(b.note?'　'+esc(b.note):'')+'</span></div>'
     + '<span class="amt">'+(b.type==='in'?'＋':'−')+yen(b.amount)+'</span>'
     + '<span class="item-actions">'
     + '<button type="button" class="icon-btn" data-act="editbiz" data-id="'+b.id+'">編集</button>'
@@ -1442,13 +1446,13 @@ function payModalHtml(){
 function bizModalHtml(){
   const editing = view.modal.mode==='edit' ? state.biz.find(b=>b.id===view.modal.id) : null;
   const type = editing ? editing.type : (view.modal.type||'in');
-  const v = editing || {name:'', amount:'', y:view.y, m:view.m, cat:(type==='in'?'sales':'exother'), note:''};
+  const sameMonth = view.y===NOW.getFullYear() && view.m===NOW.getMonth()+1;
+  const v = editing || {name:'', amount:'', y:view.y, m:view.m,
+    d: sameMonth ? NOW.getDate() : 1, cat:(type==='in'?'sales':'exother'), note:''};
   const cats = type==='in' ? BIZ_IN_CATS : BIZ_EX_CATS;
   const catOpts = cats.map(c=>'<option value="'+c.id+'"'+(v.cat===c.id?' selected':'')+'>'+c.label+'</option>').join('');
-  const yOpts = [view.y-1, view.y, view.y+1]
-    .map(yy=>'<option value="'+yy+'"'+(v.y===yy?' selected':'')+'>'+yy+'年</option>').join('');
-  const mOpts = Array.from({length:12},(_,i)=>i+1)
-    .map(mm=>'<option value="'+mm+'"'+(v.m===mm?' selected':'')+'>'+mm+'月</option>').join('');
+  const pad = n=>String(n).padStart(2,'0');
+  const dateVal = v.y+'-'+pad(v.m)+'-'+pad(v.d);
   const title = editing ? (type==='in'?'収入を編集':'経費を編集') : (type==='in'?'収入を記録':'経費を記録');
   const delBtn = editing
     ? (view.modalDelete
@@ -1463,8 +1467,7 @@ function bizModalHtml(){
     + '<input id="b-name" required maxlength="60" placeholder="'+(type==='in'?'例：〇〇社 制作費':'例：サーバー代、打ち合わせ交通費')+'" value="'+esc(v.name)+'"></div>'
     + '<div><label for="b-amount">金額（円）</label><input id="b-amount" type="number" min="1" step="1" inputmode="numeric" required value="'+v.amount+'"></div>'
     + '<div><label for="b-cat">科目</label><select id="b-cat">'+catOpts+'</select></div>'
-    + '<div><label for="b-y">年</label><select id="b-y">'+yOpts+'</select></div>'
-    + '<div><label for="b-m">月</label><select id="b-m">'+mOpts+'</select></div>'
+    + '<div class="f-full"><label for="b-date">日付</label><input id="b-date" type="date" required value="'+dateVal+'"></div>'
     + '<div class="f-full"><label for="b-note">メモ（任意）</label><input id="b-note" maxlength="120" value="'+esc(v.note)+'"></div>'
     + '</div>'
     + '<div class="f-actions">'
@@ -1514,10 +1517,12 @@ function exportCsv(){
 function exportBizCsv(){
   if(!dl) return;
   const q = s => '"'+String(s).replace(/"/g,'""')+'"';
-  const head = ['種別','年','月','内容','科目','金額','メモ'];
+  const pad = n=>String(n).padStart(2,'0');
+  const head = ['種別','日付','内容','科目','金額','メモ'];
   const rows = state.biz.slice()
-    .sort((a,b)=>a.y-b.y||a.m-b.m||(a.type<b.type?-1:1))
-    .map(b=>[b.type==='in'?'収入':'経費', b.y, b.m, b.name, BIZ_CAT_MAP[b.cat].label, b.amount, b.note]);
+    .sort((a,b)=>a.y-b.y||a.m-b.m||a.d-b.d||(a.type<b.type?-1:1))
+    .map(b=>[b.type==='in'?'収入':'経費', b.y+'/'+pad(b.m)+'/'+pad(b.d),
+      b.name, BIZ_CAT_MAP[b.cat].label, b.amount, b.note]);
   const csv = '\uFEFF' + [head].concat(rows).map(r=>r.map(q).join(',')).join('\r\n');
   dl.save({filename:'maitsuki-cho-shushi.csv', data:csv})
     .then(()=>toast('CSVを保存しました'))
@@ -1533,13 +1538,14 @@ function exportJournalCsv(){
   const salesTx = state.profile.invoice ? '課税売上10%' : '対象外';
   const rows = [];
 
-  state.biz.filter(b=>b.y===y).sort((a,b)=>a.m-b.m).forEach(b=>{
+  const dstr = b => y+'/'+pad(b.m)+'/'+pad(b.d);
+  state.biz.filter(b=>b.y===y).sort((a,b)=>a.m-b.m||a.d-b.d).forEach(b=>{
     const memo = b.name + (b.note ? '　'+b.note : '');
     if(b.type==='in'){
-      rows.push([eom(y,b.m), '事業主貸', b.amount, '対象外',
+      rows.push([dstr(b), '事業主貸', b.amount, '対象外',
         ACC_IN[b.cat]||'売上高', b.amount, salesTx, memo]);
     }else{
-      rows.push([eom(y,b.m), ACC_EX[b.cat]||'雑費', b.amount, '課税仕入10%',
+      rows.push([dstr(b), ACC_EX[b.cat]||'雑費', b.amount, '課税仕入10%',
         '事業主借', b.amount, '対象外', memo]);
     }
   });
@@ -1693,10 +1699,13 @@ root.addEventListener('submit', e=>{
   else if(e.target.id==='biz-form'){
     e.preventDefault();
     const type = e.target.dataset.type==='ex' ? 'ex' : 'in';
+    const dparts = (val('b-date')||'').split('-').map(Number);
+    if(dparts.length!==3 || !dparts[0]) return;
     const bz = normalizeBiz({
       id: view.modal && view.modal.mode==='edit' ? view.modal.id : undefined,
       type, name: val('b-name').trim(), amount: val('b-amount'),
-      y: val('b-y'), m: val('b-m'), cat: val('b-cat'), note: val('b-note').trim()
+      y: dparts[0], m: dparts[1], d: dparts[2],
+      cat: val('b-cat'), note: val('b-note').trim()
     });
     if(!bz.name || !(Number(val('b-amount'))>0)) return;
     const next = view.modal && view.modal.mode==='edit'
