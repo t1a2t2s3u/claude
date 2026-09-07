@@ -1513,10 +1513,11 @@ function monthlyDues(t){
   if(t.mode!=='free') return [];
   const out = [{label:'国民年金', amount:TAX.pensionMonthly, note:'毎月末が納期限。まとめて前納すると割引があります。'}];
   if(t.nhi>0){
+    /* 国保は6月〜翌3月の10回払いが一般的。入力した金額はそのまま月額 */
     out.push({label: t.nhiCfg.manual ? '健康保険' : '国民健康保険',
-      amount: Math.round(t.nhi/10),
+      amount: t.nhiCfg.manual ? Math.round(t.nhi/12) : Math.round(t.nhi/10),
       note: t.nhiCfg.manual ? '入力した月額です。'
-        : '6月から翌3月の10回払いが一般的です（自治体によって回数が違います）。'});
+        : '年額 '+yen(t.nhi)+' を6月から翌3月の10回で納めるのが一般的です（自治体によって回数が違います）。'});
   }
   return out;
 }
