@@ -194,6 +194,7 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .panel-head .actions{display:flex;gap:6px}
 .btn-sm{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:5px 12px;font-size:.78rem;font-weight:500;cursor:pointer}
 .btn-sm:hover{background:var(--surface2)}
+.panel-head .cnt{font-size:.72rem;color:var(--muted);font-weight:500}
 .group-label{font-size:.72rem;color:var(--muted);letter-spacing:.08em;margin:12px 0 2px}
 .trow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-top:1px dashed var(--line);font-size:.9rem}
 .trow:first-of-type{border-top:0}
@@ -260,6 +261,8 @@ footer{margin-top:26px;display:flex;justify-content:space-between;align-items:ce
   @keyframes rise{from{transform:translateY(10px);opacity:.6}to{transform:none;opacity:1}}
 }
 @media (max-width:560px){
+  .panel .item{align-items:flex-start}
+  .panel .item .item-actions{flex:0 0 100%;justify-content:flex-end;margin-left:0;margin-top:2px}
   .ychart-labels .mlab{display:none}
   .ychart-labels{gap:3px}
   .day{grid-template-columns:76px 1fr;padding:12px 14px}
@@ -628,6 +631,7 @@ const view = {
   section: 'pay',       // 'pay' | 'biz' | 'tax'
   y: NOW.getFullYear(), m: NOW.getMonth()+1,
   tab: 'list', q: '', cats: new Set(), method: '',
+  bizTab: 'month', bizSort: 'desc',
   modal: null,          // {kind:'pay'|'biz', mode:'add'|'edit', id?, type?}
   pendingDelete: null,
   modalDelete: false
@@ -814,10 +818,13 @@ function render(){
   const ctx = { ty: today.getFullYear(), tm: today.getMonth()+1, td: today.getDate() };
 
   let navLabel, navPrev='prev', navNext='next';
+  const yearOnly = view.section==='tax'
+    || (view.section==='biz' && view.bizTab==='all');
   if(view.section==='tax'){ navLabel = view.y+'年分'; navPrev='yprev'; navNext='ynext'; }
+  else if(yearOnly){ navLabel = view.y+'年'; navPrev='yprev'; navNext='ynext'; }
   else navLabel = view.y+'年'+view.m+'月';
   const isCurMonth = view.y===ctx.ty && view.m===ctx.tm;
-  const showToday = view.section==='tax' ? view.y!==ctx.ty : !isCurMonth;
+  const showToday = yearOnly ? view.y!==ctx.ty : !isCurMonth;
 
   let content;
   if(view.section==='pay') content = renderPay(ctx);
@@ -881,6 +888,10 @@ function render(){
 
 function segBtn(id,label){
   return '<button class="seg'+(view.section===id?' active':'')+'" data-act="section" data-sec="'+id+'">'+label+'</button>';
+}
+function bizTabBtn(id,label){
+  return '<button class="tab'+(view.bizTab===id?' active':'')+'" role="tab" aria-selected="'
+    + (view.bizTab===id)+'" data-act="biztab" data-tab="'+id+'">'+label+'</button>';
 }
 function tabBtn(id,label){
   return '<button class="tab'+(view.tab===id?' active':'')+'" role="tab" aria-selected="'+(view.tab===id)+'" data-act="tab" data-tab="'+id+'">'+label+'</button>';
@@ -1178,7 +1189,34 @@ function renderBiz(c){
       ? '<div style="color:var(--muted);font-size:.85rem;padding:8px 0">この月の記録はまだありません。</div>' : '')
     + '</section>';
 
-  return hero + chart + monthCard;
+  /* 年間の一覧（日付順・その場で編集できる） */
+  const dir = view.bizSort==='desc' ? -1 : 1;
+  const allEntries = state.biz.filter(b=>b.y===y)
+    .sort((a,b)=> dir*(a.m-b.m) || dir*(a.d-b.d) || b.amount-a.amount);
+  let lastM = null;
+  const listRows = allEntries.map(b=>{
+    let head = '';
+    if(b.m !== lastM){ lastM = b.m; head = '<div class="group-label">'+b.m+'月</div>'; }
+    return head + row(b);
+  }).join('');
+  const allCard =
+    '<section class="card panel">'
+    + '<div class="panel-head"><h2>'+y+'年の記録　<span class="cnt">'+allEntries.length+'件</span></h2>'
+    + '<div class="actions">'
+    + '<button class="btn-sm" data-act="bizsort">'+(view.bizSort==='desc'?'新しい順':'古い順')+'</button>'
+    + '<button class="btn-sm" data-act="addbiz" data-type="in">＋ 収入</button>'
+    + '<button class="btn-sm" data-act="addbiz" data-type="ex">＋ 経費</button>'
+    + '</div></div>'
+    + (allEntries.length ? listRows
+      : '<div style="color:var(--muted);font-size:.85rem;padding:8px 0">'+y+'年の記録はまだありません。</div>')
+    + (apY>0 ? '<div class="hint" style="margin-top:12px">このほかに、固定費からの経費按分 '
+      + yen(apY)+' が自動で計上されています（「支払い」の編集画面で設定）。</div>' : '')
+    + '</section>';
+
+  const bizTabs = '<div class="tabs" role="tablist">'
+    + bizTabBtn('month','月別') + bizTabBtn('all','年間の一覧') + '</div>';
+
+  return hero + chart + bizTabs + (view.bizTab==='all' ? allCard : monthCard);
 }
 
 /* ---------- section: tax ---------- */
@@ -1632,7 +1670,9 @@ root.addEventListener('click', e=>{
     const amt=document.getElementById('m-amount'); if(amt){ amt.focus(); amt.select(); }
   }
   else if(act==='goto'){ view.m=Number(b.dataset.m); view.tab='list'; hideTip(); render(); }
-  else if(act==='bizgoto'){ view.m=Number(b.dataset.m); hideTip(); render(); }
+  else if(act==='bizgoto'){ view.m=Number(b.dataset.m); view.bizTab='month'; hideTip(); render(); }
+  else if(act==='biztab'){ view.bizTab=b.dataset.tab; view.pendingDelete=null; render(); }
+  else if(act==='bizsort'){ view.bizSort = view.bizSort==='desc' ? 'asc' : 'desc'; render(); }
   else if(act==='csv') exportCsv();
   else if(act==='bizcsv') exportBizCsv();
   else if(act==='jrncsv') exportJournalCsv();
