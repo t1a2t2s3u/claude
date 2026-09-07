@@ -223,7 +223,6 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .prog{height:10px;border-radius:5px;background:var(--surface2);overflow:hidden;margin-top:8px}
 .prog span{display:block;height:100%;background:var(--accent);border-radius:5px;min-width:2px}
 .warn-dot{color:var(--hanko);font-weight:600}
-.jobchip{display:inline-block;border:1px solid var(--line);border-radius:4px;padding:0 5px;font-size:.68rem;color:var(--muted)}
 .item-name .tag{margin-left:6px;vertical-align:1px}
 .tabs{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tab{white-space:nowrap}
@@ -639,7 +638,6 @@ function normalizeBiz(b){
     d: Math.min(daysInMonth(yy,mm), Math.max(1, parseInt(b.d,10) || daysInMonth(yy,mm))),
     cat: cats.some(c=>c.id===b.cat) ? b.cat : cats[0].id,
     note: String(b.note||'').slice(0,120),
-    job: String(b.job||'').slice(0,40),
     /* 入金管理は収入のみ。売上は請求時に計上し、入金日はあとから確定する */
     due: type==='in' ? dateStr(b.due) : '',
     paid: type==='in' ? (b.paid===undefined ? true : !!b.paid) : true
@@ -1332,7 +1330,6 @@ function renderBiz(c){
     return '<div class="item">'
     + '<div class="item-main"><span class="item-name">'+esc(b.name)+badge+'</span>'
     + '<span class="item-sub">'+b.m+'/'+b.d+'　'+BIZ_CAT_MAP[b.cat].label
-    + (b.job?'　<span class="jobchip">'+esc(b.job)+'</span>':'')
     + (b.note?'　'+esc(b.note):'')+'</span></div>'
     + '<span class="amt">'+(b.type==='in'?'＋':'−')+yen(b.amount)+'</span>'
     + '<span class="item-actions">'
@@ -1404,32 +1401,6 @@ function renderBiz(c){
       + yen(apY)+' が自動で計上されています（「支払い」の編集画面で設定）。</div>' : '')
     + '</section>';
 
-  /* ---- 現場別 ---- */
-  const jobs = jobSummary();
-  const jobCard =
-    '<section class="card panel">'
-    + '<div class="panel-head"><h2>現場・案件ごとの収支</h2>'
-    + '<span class="cnt">'+jobs.length+'件</span></div>'
-    + (jobs.length
-      ? '<div class="hint">収入と経費に同じ現場名を入れると、現場ごとの粗利が出ます。'
-        + '按分した固定費はここには入りません。</div>'
-        + '<div style="overflow-x:auto"><table class="ytable"><thead><tr>'
-        + '<th>現場・案件</th><th class="num">売上</th><th class="num">経費</th>'
-        + '<th class="num">粗利</th><th class="num">率</th></tr></thead><tbody>'
-        + jobs.map(o=>'<tr><td>'+esc(o.job)
-          + (o.unpaid>0 ? '<br><span class="tag warn">未入金 '+yen(o.unpaid)+'</span>' : '')
-          + '</td>'
-          + '<td class="num">'+yen(o.inV)+'</td><td class="num">'+yen(o.exV)+'</td>'
-          + '<td class="num"'+(o.profit<0?' style="color:var(--hanko)"':'')+'>'
-          + (o.profit<0?'−':'')+yen(Math.abs(o.profit))+'</td>'
-          + '<td class="num">'+(o.inV>0 ? Math.round(o.rate)+'%' : '—')+'</td></tr>').join('')
-        + '</tbody></table></div>'
-      : '<div class="hint">まだ現場名の入った記録がありません。'
-        + '収入や経費を登録するときに「現場・案件」を入れると、'
-        + '<b>その現場でいくら残ったか</b>が分かるようになります。'
-        + '同じ名前でそろえるのがコツです。</div>')
-    + '</section>';
-
   /* ---- 未入金 ---- */
   const unpRow = b=>{
     const dd = b.due ? daysUntil(b.due) : null;
@@ -1441,7 +1412,7 @@ function renderBiz(c){
       + '<div class="item-main"><span class="item-name">'+esc(b.name)+'　'+state2+'</span>'
       + '<span class="item-sub">売上 '+b.y+'/'+b.m+'/'+b.d
       + (b.due ? '　入金予定 '+b.due.replace(/-/g,'/') : '　入金予定日は未設定')
-      + (b.job?'　<span class="jobchip">'+esc(b.job)+'</span>':'')+'</span></div>'
+      + '</span></div>'
       + '<span class="amt">'+yen(b.amount)+'</span>'
       + '<span class="item-actions">'
       + '<button type="button" class="icon-btn" data-act="markpaid" data-id="'+b.id+'">入金済みに</button>'
@@ -1463,12 +1434,11 @@ function renderBiz(c){
 
   const bizTabs = '<div class="tabs" role="tablist">'
     + bizTabBtn('month','月別') + bizTabBtn('all','年間の一覧')
-    + bizTabBtn('job','現場別') + bizTabBtn('unpaid','未入金'+(unp.length?'('+unp.length+')':''))
+    + bizTabBtn('unpaid','未入金'+(unp.length?'('+unp.length+')':''))
     + bizTabBtn('inv','請求書')
     + '</div>';
 
   const body = view.bizTab==='all' ? allCard
-    : view.bizTab==='job' ? jobCard
     : view.bizTab==='unpaid' ? unpaidCard
     : view.bizTab==='inv' ? renderInvoices()
     : monthCard;
@@ -1671,7 +1641,7 @@ function invoiceModalHtml(){
   const names = [...new Set(state.biz.filter(b=>b.type==='in'&&b.name).map(b=>b.name))].slice(0,40);
   const itemRows = items.map((it,i)=>
     '<div class="inv-row" style="display:contents">'
-    + '<input class="iv-name" maxlength="60" value="'+esc(it.name)+'" placeholder="工事名・品目" aria-label="品目'+(i+1)+'">'
+    + '<input class="iv-name" maxlength="60" value="'+esc(it.name)+'" placeholder="品目・作業内容" aria-label="品目'+(i+1)+'">'
     + '<input class="iv-qty" type="number" step="0.1" min="0" inputmode="decimal" value="'+it.qty+'" aria-label="数量'+(i+1)+'">'
     + '<input class="iv-unit" maxlength="10" value="'+esc(it.unit)+'" aria-label="単位'+(i+1)+'">'
     + '<input class="iv-price" type="number" step="1" inputmode="numeric" value="'+it.price+'" aria-label="単価'+(i+1)+'">'
@@ -1689,10 +1659,10 @@ function invoiceModalHtml(){
     + meWarn
     + '<form id="inv-form" data-id="'+(editing?editing.id:'')+'"><div class="f-grid">'
     + '<div class="f-full"><label for="iv-to">請求先</label>'
-    + '<input id="iv-to" list="iv-tos" autocomplete="off" required maxlength="60" value="'+esc(v.to)+'" placeholder="例：（有）美工舎塗装工業">'
+    + '<input id="iv-to" list="iv-tos" autocomplete="off" required maxlength="60" value="'+esc(v.to)+'" placeholder="会社名・お名前">'
     + '<datalist id="iv-tos">'+names.map(n=>'<option value="'+esc(n)+'"></option>').join('')+'</datalist></div>'
-    + '<div class="f-full"><label for="iv-subject">件名（現場・案件）</label>'
-    + '<input id="iv-subject" maxlength="60" value="'+esc(v.subject)+'" placeholder="例：〇〇様邸 外壁塗装工事"></div>'
+    + '<div class="f-full"><label for="iv-subject">件名（任意）</label>'
+    + '<input id="iv-subject" maxlength="60" value="'+esc(v.subject)+'" placeholder="例：〇月分 制作費"></div>'
     + '<div><label for="iv-no">請求書番号</label><input id="iv-no" maxlength="30" value="'+esc(v.no)+'"></div>'
     + '<div><label for="iv-date">請求日</label><input id="iv-date" type="date" required value="'+v.date+'"></div>'
     + '<div class="f-full"><label for="iv-due">入金予定日</label><input id="iv-due" type="date" value="'+(v.due||'')+'"></div>'
@@ -2117,7 +2087,8 @@ function taxTips(t, y){
     tips.push({t:'自宅や車の費用を按分して経費にする', dep:'expense',
       save: 120000*mg.expense, hot:true,
       b:'家賃・電気・水道・スマホ・ネット・車の維持費は、仕事に使っている割合だけ経費にできます。'
-        +'塗装や建設なら<b>作業場としての自宅、通勤以外の車、工具の保管</b>あたりが対象になりやすいところです。'
+        +'自宅の一室を仕事場にしている、私用と兼用の車で移動している、'
+        +'といった<b>「私生活と共用しているもの」</b>がねらい目です。'
         +(state.payments.length
           ? '「支払い」に登録済みの固定費を開いて<b>経費にする割合</b>を決めると、ここに自動で反映されます。'
           : 'まず「支払い」に家賃や光熱費を登録し、<b>経費にする割合</b>を決めてください。')
@@ -2130,7 +2101,8 @@ function taxTips(t, y){
       save: 0,
       b:'青色申告なら<b>1個30万円未満</b>の工具・機械・車両などを、買った年に全額経費にできます（年間300万円まで）。'
         +'白色だと10万円以上は数年に分けて経費にするので、同じ買い物でもその年に落とせる額が変わります。'
-        +'足場・コンプレッサー・高圧洗浄機・軽トラなど、買い替え時期が近いものは年内に前倒しする価値があります。'
+        +'機械・車両・パソコン・カメラ・厨房機器など、買い替えの時期が近いものは'
+        +'年内に前倒しすると、その年の利益を圧縮できます。'
         +'なおこの特例には<b>適用期限</b>があり、これまで延長が繰り返されてきました。'
         +'年をまたぐ買い物のときは、そのときの期限を確認してください。',
       when:'12月31日までに買って、<b>実際に使い始めている</b>ことが条件です'});
@@ -2502,7 +2474,7 @@ function meModalHtml(){
     + '<h2>自分の情報</h2>'
     + '<div class="hint">請求書に印字されます。この端末の中だけに保存されます。</div>'
     + '<form id="me-form"><div class="f-grid" style="margin-top:12px">'
-    + '<div><label for="me-biz">屋号</label><input id="me-biz" maxlength="60" value="'+esc(pr.bizName)+'" placeholder="例：〇〇塗装"></div>'
+    + '<div><label for="me-biz">屋号</label><input id="me-biz" maxlength="60" value="'+esc(pr.bizName)+'" placeholder="屋号がなければ空欄で"></div>'
     + '<div><label for="me-owner">氏名</label><input id="me-owner" maxlength="40" value="'+esc(pr.ownerName)+'"></div>'
     + '<div class="f-full"><label for="me-addr">住所</label><input id="me-addr" maxlength="120" value="'+esc(pr.address)+'"></div>'
     + '<div><label for="me-tel">電話番号</label><input id="me-tel" maxlength="30" value="'+esc(pr.tel)+'"></div>'
@@ -2636,33 +2608,6 @@ function payModalHtml(){
     + '</form></div></div>';
 }
 
-/* 使ったことのある現場名を新しい順に */
-function jobNames(){
-  const seen = new Map();
-  state.biz.forEach(b=>{
-    if(!b.job) return;
-    const key = b.y*10000 + b.m*100 + b.d;
-    if(!seen.has(b.job) || key > seen.get(b.job)) seen.set(b.job, key);
-  });
-  return [...seen.entries()].sort((a,b)=>b[1]-a[1]).map(e=>e[0]).slice(0,40);
-}
-/* 現場ごとの収支 */
-function jobSummary(){
-  const map = new Map();
-  state.biz.forEach(b=>{
-    if(!b.job) return;
-    const o = map.get(b.job) || {job:b.job, inV:0, exV:0, n:0, last:0, unpaid:0};
-    if(b.type==='in'){ o.inV += b.amount; if(!b.paid) o.unpaid += b.amount; }
-    else o.exV += b.amount;
-    o.n++;
-    o.last = Math.max(o.last, b.y*10000+b.m*100+b.d);
-    map.set(b.job, o);
-  });
-  return [...map.values()].map(o=>Object.assign(o, {
-    profit: o.inV-o.exV,
-    rate: o.inV>0 ? (o.inV-o.exV)/o.inV*100 : 0
-  })).sort((a,b)=>b.last-a.last);
-}
 /* 未入金の売上（期日が古い順） */
 function unpaidList(){
   return state.biz.filter(b=>b.type==='in' && !b.paid)
@@ -2690,11 +2635,10 @@ function bizModalHtml(){
   const sameMonth = view.y===NOW.getFullYear() && view.m===NOW.getMonth()+1;
   const v = editing || {name:'', amount:'', y:view.y, m:view.m,
     d: sameMonth ? NOW.getDate() : 1, cat:(type==='in'?'sales':'exother'), note:'',
-    job:'', due:'', paid:true};
+    due:'', paid:true};
   const cats = type==='in' ? BIZ_IN_CATS : BIZ_EX_CATS;
   const catOpts = cats.map(c=>'<option value="'+c.id+'"'+(v.cat===c.id?' selected':'')+'>'+c.label+'</option>').join('');
   const sugg = bizNameSuggestions(type);
-  const jobs = jobNames();
   const pad = n=>String(n).padStart(2,'0');
   const dateVal = v.y+'-'+pad(v.m)+'-'+pad(v.d);
   const title = editing ? (type==='in'?'収入を編集':'経費を編集') : (type==='in'?'収入を記録':'経費を記録');
@@ -2726,10 +2670,6 @@ function bizModalHtml(){
         + '<option value="0"'+(v.paid===false?' selected':'')+'>未入金</option>'
         + '</select></div>'
       : '')
-    + '<div class="f-full"><label for="b-job">現場・案件（任意）</label>'
-    + '<input id="b-job" list="b-jobs" autocomplete="off" maxlength="40" value="'+esc(v.job||'')+'" placeholder="例：〇〇様邸 外壁塗装">'
-    + '<datalist id="b-jobs">'+jobs.map(j=>'<option value="'+esc(j)+'"></option>').join('')+'</datalist>'
-    + '<div class="hint">同じ名前でそろえると、現場ごとの利益が出せます。</div></div>'
     + '<div class="f-full"><label for="b-note">メモ（任意）</label><input id="b-note" maxlength="120" value="'+esc(v.note)+'"></div>'
     + '</div>'
     + '<div class="f-actions">'
@@ -3233,7 +3173,7 @@ root.addEventListener('submit', e=>{
       id: view.modal && view.modal.mode==='edit' ? view.modal.id : undefined,
       type, name: val('b-name').trim(), amount: val('b-amount'),
       y: dparts[0], m: dparts[1], d: dparts[2],
-      cat: val('b-cat'), note: val('b-note').trim(), job: val('b-job').trim(),
+      cat: val('b-cat'), note: val('b-note').trim(),
       due: document.getElementById('b-due') ? val('b-due') : '',
       paid: document.getElementById('b-paid') ? val('b-paid')==='1' : true
     });
@@ -3303,8 +3243,8 @@ root.addEventListener('submit', e=>{
     const existing = inv.bizId ? state.biz.find(x=>x.id===inv.bizId) : null;
     const bz = normalizeBiz(Object.assign({}, existing || {type:'in', cat:'sales', paid:false}, {
       id: inv.bizId || undefined, type:'in', name: inv.to, amount: tot.total,
-      y: dp[0], m: dp[1], d: dp[2], due: inv.due, job: inv.subject || (existing?existing.job:''),
-      note: '請求書 '+inv.no
+      y: dp[0], m: dp[1], d: dp[2], due: inv.due,
+      note: '請求書 '+inv.no + (inv.subject ? '　'+inv.subject : '')
     }));
     inv.bizId = bz.id;
     view.modal=null; view.modalDelete=false; view.invDraft=null;

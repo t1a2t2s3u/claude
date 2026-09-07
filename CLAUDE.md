@@ -77,3 +77,10 @@ extract the `<script>` body and run `node --check` on it.
 - Prefer reading the code over trusting this file where the two disagree, and
   fix this file when you find a discrepancy.
 - Keep this document short and specific.
+
+## Audience
+
+Sonae is for sole proprietors of any trade. Keep UI copy free of
+occupation-specific vocabulary (現場, 工事, 塗装 and the like) — a job-site
+grouping feature was removed for exactly this reason. Statutory wording such as
+the 簡易課税 第3種「製造業・建設業など」 label is not copy and stays as written.
