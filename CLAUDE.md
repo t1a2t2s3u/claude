@@ -32,6 +32,22 @@ Current employees:
   weekly reports and idea memos under `product/`. Separate from the note team:
   the researcher hunts article topics, the scout hunts products to sell.
 
+SEO/MEO team for the owner's real business, 辰弥塗装工業 (exterior wall and
+roof painting; Akita City, Katagami City, Minamiakita District):
+
+- **seo-director** (`.claude/skills/seo-director/`) — weekly SEO/MEO research,
+  prioritised action list, and blog briefs.
+- **seo-writer** (`.claude/skills/seo-writer/`) — two blog articles a month
+  from those briefs.
+- **meo** (`.claude/skills/meo/`) — Google Business Profile post drafts,
+  profile audits, and review-reply drafts. The owner posts manually.
+
+This team writes about a REAL company: `seo/business-profile.md` is the only
+source of facts about it. Inventing credentials, prices, past jobs, or
+customer voices is forbidden (mark gaps `【要確認】`), as is anything touching
+fake reviews — Japan's stealth-marketing rules make that a legal risk, not
+just a quality one.
+
 The note team's boundary: AI staff research, plan, and draft; the owner
 personally publishes to note, sets prices, and supplies real personal
 experiences (drafts contain placeholders for these — fabricating
@@ -54,6 +70,9 @@ experiences or earnings figures is forbidden).
   and the analyst's weekly reports (`reports/`).
 - `product/` — the app-idea pipeline (`pipeline.md`), the scout's weekly
   research (`reports/`), and per-idea planning memos (`ideas/`).
+- `seo/` — the painting business's SEO/MEO workspace: `business-profile.md`
+  (the fact base), `tasks.md` (action list), `reports/`, `briefs/`,
+  `articles/`, and `gbp/queue.md` (Business Profile post drafts).
 - `.claude/skills/` — one directory per AI employee. New employees get a new
   skill directory here, not more sections in existing skills.
 
