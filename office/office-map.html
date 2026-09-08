@@ -124,7 +124,7 @@
     <div class="map-scroll"><canvas id="map"></canvas></div>
     <div class="legend">
       <span><i style="background:var(--on)"></i>稼働中（自席で作業）</span>
-      <span><i style="background:var(--off)"></i>待機中（部屋を歩き回る）</span>
+      <span><i style="background:var(--off)"></i>待機中（部屋を歩き回り、たまに休憩室へ ☕）</span>
       <span>👆 キャラをタップで詳細</span>
     </div>
   </section>
@@ -234,36 +234,67 @@
   // キャラの状態
   const anim = {};
   MEMBERS.forEach((m) => {
-    anim[m.id] = { x: m.desk.x + 1, y: m.desk.y + 1.2, tx: null, ty: null, wait: Math.random() * 3, step: 0, dir: 1 };
+    anim[m.id] = { x: m.desk.x + 1, y: m.desk.y + 1.2, path: null, inBreak: false, trip: null, wait: Math.random() * 3, step: 0, dir: 1 };
   });
   const working = (id) => (liveData[id] || {}).status === "working";
   const seatOf = (m) => ({ x: m.desk.x + 1, y: m.desk.y + 1.2 });
 
-  function pickTarget(m) {
+  // 廊下の経路：各部屋のドア → 休憩室の入口（上側のドア）まで
+  const BRK_ENTRY = { x: 25, y: 14.9 };
+  const ROUTE_TO_BREAK = {
+    main:  [{ x: 7, y: 10.7 }, { x: 9.5, y: 10.7 }, { x: 9.5, y: 19.3 }, { x: 19.5, y: 19.3 }, { x: 19.5, y: 13 }, { x: 25, y: 13 }, BRK_ENTRY],
+    side:  [{ x: 22, y: 12.7 }, { x: 25, y: 12.9 }, BRK_ENTRY],
+    admin: [{ x: 5, y: 19.3 }, { x: 19.5, y: 19.3 }, { x: 19.5, y: 13 }, { x: 25, y: 13 }, BRK_ENTRY],
+    new:   [{ x: 15, y: 19.3 }, { x: 19.5, y: 19.3 }, { x: 19.5, y: 13 }, { x: 25, y: 13 }, BRK_ENTRY],
+  };
+  const BREAK_SPOTS = [{ x: 22.5, y: 17.4 }, { x: 23.5, y: 17.4 }, { x: 24.5, y: 17.4 }, { x: 25.8, y: 17.1 }, { x: 27.3, y: 17.6 }];
+  const BREAK_CHANCE = 0.18;
+
+  function roomSpot(m) {
     const r = ROOMS[m.room];
     for (let i = 0; i < 20; i++) {
       const x = r.x + 1 + Math.random() * (r.w - 2), y = r.y + 1.6 + Math.random() * (r.h - 2.6);
-      // 机の上は避ける
       const onDesk = MEMBERS.some((o) => o.room === m.room && x >= o.desk.x - .3 && x <= o.desk.x + 2.3 && y >= o.desk.y - .3 && y <= o.desk.y + 1.4);
       if (!onDesk) return { x, y };
     }
     return seatOf(m);
+  }
+  function plan(m) {
+    const a = anim[m.id];
+    if (a.inBreak) { // 休憩室から自室へ戻る（経路を逆順に）
+      a.path = [BRK_ENTRY, ...[...ROUTE_TO_BREAK[m.room]].reverse().slice(1), roomSpot(m)];
+      a.trip = "back"; return;
+    }
+    if (Math.random() < BREAK_CHANCE) {
+      a.path = [...ROUTE_TO_BREAK[m.room], BREAK_SPOTS[Math.floor(Math.random() * BREAK_SPOTS.length)]];
+      a.trip = "break"; return;
+    }
+    a.path = [roomSpot(m)]; a.trip = null;
   }
 
   function update(dt) {
     MEMBERS.forEach((m) => {
       const a = anim[m.id];
       if (working(m.id)) {
-        const s = seatOf(m); a.x += (s.x - a.x) * .2; a.y += (s.y - a.y) * .2; a.tx = null; a.step += dt * 6; return;
+        const s = seatOf(m); a.x += (s.x - a.x) * .2; a.y += (s.y - a.y) * .2;
+        a.path = null; a.inBreak = false; a.trip = null; a.step += dt * 6; return;
       }
       if (reduced) return;
-      if (a.tx == null) {
+      if (!a.path || a.path.length === 0) {
         a.wait -= dt;
-        if (a.wait <= 0) { const t = pickTarget(m); a.tx = t.x; a.ty = t.y; }
+        if (a.wait <= 0) plan(m);
         return;
       }
-      const dx = a.tx - a.x, dy = a.ty - a.y, dist = Math.hypot(dx, dy), sp = 1.1 * dt;
-      if (dist < sp) { a.x = a.tx; a.y = a.ty; a.tx = null; a.wait = 2 + Math.random() * 5; a.step = 0; return; }
+      const t = a.path[0], dx = t.x - a.x, dy = t.y - a.y, dist = Math.hypot(dx, dy), sp = 1.1 * dt;
+      if (dist < sp) {
+        a.x = t.x; a.y = t.y; a.path.shift(); a.step = 0;
+        if (a.path.length === 0) {
+          if (a.trip === "break") { a.inBreak = true; a.wait = 8 + Math.random() * 10; }
+          else { a.inBreak = false; a.wait = 2 + Math.random() * 5; }
+          a.trip = null;
+        }
+        return;
+      }
       a.x += dx / dist * sp; a.y += dy / dist * sp; a.dir = dx < 0 ? -1 : 1; a.step += dt * 8;
     });
   }
@@ -286,7 +317,7 @@
   function drawSprite(m, a, on, t) {
     const u = T / 8, ox = (a.x - .5) * T, oy = (a.y - 1.5) * T;
     const pal = { h: m.hair, s: "#f2cfa8", b: cssVar(ROOMS[m.room].cvar), p: "#34405a", k: "#222", e: "#222" };
-    const walk = a.tx != null && !on, legPhase = Math.floor(a.step) % 2, armPhase = on ? Math.floor(a.step) % 2 : 0;
+    const walk = !!(a.path && a.path.length) && !on, legPhase = Math.floor(a.step) % 2, armPhase = on ? Math.floor(a.step) % 2 : 0;
     SPRITE.forEach((row, ry) => {
       for (let rx = 0; rx < 8; rx++) {
         let c = row[rx];
@@ -300,9 +331,11 @@
         ctx.fillRect(Math.round(ox + px * u), Math.round(oy + ry * u), Math.ceil(u), Math.ceil(u));
       }
     });
-    if (!on && !walk && Math.floor(t / 900) % 3 === 0) { // 待機中の吹き出し「…」
+    if (!on && !walk) { // 待機中の吹き出し：休憩室では☕、それ以外はたまに「…」
       ctx.fillStyle = cssVar("--ink-soft"); ctx.font = `${Math.max(9, T * .5)}px "DotGothic16", monospace`;
-      ctx.textAlign = "left"; ctx.fillText("…", ox + T * .9, oy);
+      ctx.textAlign = "left";
+      if (a.inBreak) ctx.fillText("☕", ox + T * .9, oy);
+      else if (Math.floor(t / 900) % 3 === 0) ctx.fillText("…", ox + T * .9, oy);
     }
   }
 
@@ -331,9 +364,10 @@
       ctx.fillStyle = r.floor[dark ? 1 : 0]; ctx.fillRect(r.x * T, r.y * T, r.w * T, r.h * T);
       ctx.strokeStyle = dark ? "#0b1112" : "#6f7d76"; ctx.lineWidth = Math.max(2, T * .12);
       ctx.strokeRect(r.x * T, r.y * T, r.w * T, r.h * T);
-      // ドア（下辺の切れ目）
+      // ドア（休憩室だけ上辺、それ以外は下辺の切れ目）
       ctx.fillStyle = r.floor[dark ? 1 : 0];
-      ctx.fillRect((r.x + r.w / 2 - .6) * T, (r.y + r.h) * T - T * .12, T * 1.2, T * .24);
+      const doorY = r === ROOMS.brk ? r.y * T - T * .12 : (r.y + r.h) * T - T * .12;
+      ctx.fillRect((r.x + r.w / 2 - .6) * T, doorY, T * 1.2, T * .24);
       // 窓（上辺）
       for (let i = 1; i < r.w - 1; i += 3) { ctx.fillStyle = dark ? "#2d4a5c" : "#bfe0f2"; ctx.fillRect((r.x + i) * T, r.y * T - T * .08, T * 1.4, T * .18); }
       // 部屋名プレート
