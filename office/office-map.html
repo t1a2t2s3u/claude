@@ -1,0 +1,454 @@
+<title>AI社員オフィス</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #d9e0d8;
+    --bg-line: rgba(50, 70, 60, .08);
+    --panel: #fbfaf6;
+    --panel-alt: #f2f1eb;
+    --ink: #2b3630;
+    --ink-soft: #6a7a72;
+    --line: #cfd8d2;
+    --wall: #b6c2ba;
+    --on: #2f9e6b; --on-bg: #ddf2e6;
+    --off: #93a099; --off-bg: #e9edea;
+    --d-main: #c2622f; --d-side: #2f7d6b; --d-new: #4a6fb5; --d-admin: #7a6aa8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141b1d; --bg-line: rgba(255,255,255,.04);
+      --panel: #212c2e; --panel-alt: #1a2426;
+      --ink: #e6ede9; --ink-soft: #94a5a0; --line: #33433f; --wall: #0e1516;
+      --on: #4dc48c; --on-bg: #1c3a2c; --off: #78877f; --off-bg: #253130;
+      --d-main: #e08a5a; --d-side: #4dbfa4; --d-new: #7c9fe0; --d-admin: #ab9ad8;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141b1d; --bg-line: rgba(255,255,255,.04);
+    --panel: #212c2e; --panel-alt: #1a2426;
+    --ink: #e6ede9; --ink-soft: #94a5a0; --line: #33433f; --wall: #0e1516;
+    --on: #4dc48c; --on-bg: #1c3a2c; --off: #78877f; --off-bg: #253130;
+    --d-main: #e08a5a; --d-side: #4dbfa4; --d-new: #7c9fe0; --d-admin: #ab9ad8;
+  }
+
+  body {
+    background: var(--bg);
+    background-image: linear-gradient(90deg, var(--bg-line) 1px, transparent 1px), linear-gradient(var(--bg-line) 1px, transparent 1px);
+    background-size: 18px 18px;
+    color: var(--ink);
+    font-family: "Noto Sans JP", "Hiragino Sans", sans-serif;
+    line-height: 1.6; padding: 14px 10px 44px;
+  }
+  .pixel { font-family: "DotGothic16", "Noto Sans JP", monospace; }
+  .wrap { max-width: 960px; margin: 0 auto; display: grid; gap: 14px; }
+
+  .bar {
+    background: var(--panel); border: 2px solid var(--wall); border-radius: 4px;
+    box-shadow: 0 3px 0 var(--wall); padding: 10px 14px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .bar h1 { font-family: "DotGothic16", monospace; font-size: 1.3rem; margin: 0; }
+  .gauges { margin-left: auto; display: flex; gap: 6px; }
+  .gauge {
+    font-family: "DotGothic16", monospace; border: 2px solid var(--line); border-radius: 3px;
+    background: var(--panel-alt); padding: 2px 9px; text-align: center; min-width: 54px;
+  }
+  .gauge b { display: block; font-size: 1.1rem; line-height: 1.2; }
+  .gauge span { font-size: .62rem; color: var(--ink-soft); }
+  .gauge.on b { color: var(--on); }
+  .clock { font-family: "DotGothic16", monospace; font-size: .76rem; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; }
+  .led { width: 9px; height: 9px; background: var(--off); border-radius: 2px; }
+  .led.live { background: var(--on); animation: blink 1.8s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+
+  /* ===== マップ ===== */
+  .map-frame {
+    background: var(--panel); border: 2px solid var(--wall); border-radius: 4px;
+    box-shadow: 0 3px 0 var(--wall); padding: 6px; overflow-x: auto;
+  }
+  .map-scroll { min-width: 720px; }
+  canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; cursor: pointer; border-radius: 2px; }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; font-family: "DotGothic16", monospace; font-size: .7rem; color: var(--ink-soft); padding: 6px 4px 0; }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+
+  /* ===== 詳細 ===== */
+  .detail {
+    background: var(--panel); border: 2px solid var(--wall); border-radius: 4px;
+    box-shadow: 0 3px 0 var(--wall); padding: 12px 14px;
+    display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start;
+  }
+  .detail .face {
+    width: 52px; height: 52px; display: grid; place-items: center; font-size: 26px;
+    background: var(--panel-alt); border: 2px solid var(--dc, var(--line)); border-radius: 3px;
+  }
+  .detail .name { font-family: "DotGothic16", monospace; font-size: 1rem; }
+  .detail .role { font-size: .72rem; color: var(--ink-soft); }
+  .detail .msg { font-size: .84rem; margin: 6px 0; }
+  .detail .meta { font-family: "DotGothic16", monospace; font-size: .7rem; color: var(--ink-soft); display: flex; gap: 12px; flex-wrap: wrap; }
+  .tag { font-family: "DotGothic16", monospace; font-size: .66rem; padding: 2px 7px; border-radius: 3px; background: var(--off-bg); color: var(--off); }
+  .tag.on { background: var(--on-bg); color: var(--on); }
+  .hint { color: var(--ink-soft); font-size: .8rem; }
+
+  /* ===== 下段 ===== */
+  .lower { display: grid; grid-template-columns: 1fr 1.25fr; gap: 14px; align-items: start; }
+  @media (max-width: 720px) { .lower { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 2px solid var(--wall); border-radius: 4px; box-shadow: 0 3px 0 var(--wall); padding: 0 12px 12px; }
+  .panel h3 { font-family: "DotGothic16", monospace; font-size: .88rem; margin: -1px -12px 10px; padding: 7px 12px 8px; background: var(--panel-alt); border-bottom: 2px dashed var(--line); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .stat { background: var(--panel-alt); border: 2px solid var(--line); border-radius: 3px; padding: 5px 7px; }
+  .stat b { font-family: "DotGothic16", monospace; font-size: 1.15rem; display: block; line-height: 1.2; }
+  .stat span { font-size: .64rem; color: var(--ink-soft); }
+  .note { font-size: .68rem; color: var(--ink-soft); margin: 9px 0 0; }
+  .feed { list-style: none; margin: 0; padding: 0; }
+  .feed li { display: grid; grid-template-columns: 4.2em 1.5em 1fr; gap: 7px; align-items: baseline; padding: 6px 2px; font-size: .8rem; border-top: 1px dashed var(--line); }
+  .feed li:first-child { border-top: none; }
+  .feed time { font-family: "DotGothic16", monospace; font-size: .68rem; color: var(--ink-soft); white-space: nowrap; }
+  .feed b { font-family: "DotGothic16", monospace; font-weight: 400; }
+  .empty { color: var(--ink-soft); font-size: .8rem; padding: 6px 2px; }
+  footer { font-size: .68rem; color: var(--ink-soft); text-align: center; }
+  @media (prefers-reduced-motion: reduce) { .led.live { animation: none; } }
+</style>
+
+<div class="wrap">
+  <header class="bar">
+    <h1>🏢 AI社員オフィス</h1>
+    <div class="gauges">
+      <div class="gauge on"><b id="g-on">0</b><span>稼働中</span></div>
+      <div class="gauge"><b id="g-off">0</b><span>待機中</span></div>
+      <div class="gauge"><b id="g-next">–</b><span>次の出勤</span></div>
+    </div>
+    <div class="clock"><span class="led" id="led"></span><span id="conn">接続中…</span><span id="clock"></span></div>
+  </header>
+
+  <section class="map-frame" aria-label="オフィスマップ">
+    <div class="map-scroll"><canvas id="map"></canvas></div>
+    <div class="legend">
+      <span><i style="background:var(--on)"></i>稼働中（自席で作業）</span>
+      <span><i style="background:var(--off)"></i>待機中（部屋を歩き回る）</span>
+      <span>👆 キャラをタップで詳細</span>
+    </div>
+  </section>
+
+  <section class="detail" id="detail">
+    <div class="face">🏢</div>
+    <div>
+      <div class="name">オフィスへようこそ</div>
+      <p class="hint">マップ上の社員をタップすると、いまの報告・担当・次の出勤がここに出ます。</p>
+    </div>
+  </section>
+
+  <div class="lower">
+    <section class="panel">
+      <h3>📋 タスクボード</h3>
+      <div class="stats" id="stats"></div>
+      <p class="note" id="stats-note">秘書が稼働時に更新します。</p>
+    </section>
+    <section class="panel">
+      <h3>📌 掲示板 ─ 最近の動き</h3>
+      <ul class="feed" id="feed"><li class="empty">まだ記録がありません。</li></ul>
+    </section>
+  </div>
+  <footer>各AI社員が稼働のたびに自席から状況を報告します。ページは開いたまま自動更新されます。</footer>
+</div>
+
+<script>
+  // ===================== データ =====================
+  const DOW = ["日","月","火","水","木","金","土"];
+  const ROOMS = {
+    main:  { x: 1,  y: 2,  w: 12, h: 8,  tag: "本業",   name: "辰弥塗装工業 Web集客部", cvar: "--d-main",  floor: ["#f1e5d9", "#3b2f27"] },
+    side:  { x: 15, y: 2,  w: 14, h: 10, tag: "副業",   name: "note × SNS 編集部",       cvar: "--d-side",  floor: ["#e0eee7", "#21332c"] },
+    admin: { x: 1,  y: 12, w: 8,  h: 7,  tag: "管理",   name: "管理部",                  cvar: "--d-admin", floor: ["#e9e5f2", "#2a2636"] },
+    new:   { x: 11, y: 12, w: 8,  h: 7,  tag: "新規",   name: "プロダクト開発室",        cvar: "--d-new",   floor: ["#e0e8f5", "#233040"] },
+    brk:   { x: 21, y: 14, w: 8,  h: 5,  tag: "休憩",   name: "休憩スペース",            cvar: "--ink-soft", floor: ["#efe8d5", "#332f24"] },
+  };
+  // desk: 机の左上タイル（机は幅2×高1）。座席はその下。
+  const MEMBERS = [
+    { id: "seo-director", room: "main", emoji: "🔧", name: "SEOディレクター", role: "施策の調査・優先順位付け・指示出し", days: [1], hour: 9, desk: { x: 2, y: 5 },  hair: "#3a2a1e" },
+    { id: "seo-writer",   room: "main", emoji: "🖌️", name: "塗装ブログ",     role: "ホームページ記事（月2本）",           days: [2], hour: 9, desk: { x: 6, y: 5 },  hair: "#8a5a2b" },
+    { id: "meo",          room: "main", emoji: "📍", name: "MEO担当",        role: "ビジネスプロフィール運用",             days: [4], hour: 9, desk: { x: 10, y: 5 }, hair: "#1f1f1f" },
+    { id: "editor",       room: "side", emoji: "📰", name: "編集長",         role: "戦略・企画・ブリーフ作成",             days: [1], hour: 8, desk: { x: 16, y: 5 }, hair: "#2c2c2c" },
+    { id: "researcher",   room: "side", emoji: "🔎", name: "リサーチャー",   role: "トレンド調査・週次レポート",           days: [0], hour: 8, desk: { x: 20, y: 5 }, hair: "#c9a24d" },
+    { id: "writer",       room: "side", emoji: "✍️", name: "ライター",       role: "note記事の下書き執筆",                 days: [2,4], hour: 8, desk: { x: 24, y: 5 }, hair: "#6b3e2a" },
+    { id: "reviewer",     room: "side", emoji: "🧐", name: "校閲",           role: "下書きの校閲・投稿待ちへ送出",         days: [3,5], hour: 8, desk: { x: 16, y: 8 }, hair: "#444444" },
+    { id: "sns",          room: "side", emoji: "📣", name: "SNS担当",        role: "X・Threads投稿（1日3本）",             days: [0,1,2,3,4,5,6], hour: 8, desk: { x: 20, y: 8 }, hair: "#7b4b3a" },
+    { id: "analyst",      room: "side", emoji: "📊", name: "アナリスト",     role: "KPI記録・週次分析",                    days: [6], hour: 8, desk: { x: 24, y: 8 }, hair: "#5a3d33" },
+    { id: "product-scout",room: "new",  emoji: "🧭", name: "企画リサーチャー", role: "アプリ需要の調査・企画メモ",         days: [3], hour: 8, desk: { x: 14, y: 15 }, hair: "#9c6b4a" },
+    { id: "secretary",    room: "admin",emoji: "🗂️", name: "秘書",           role: "タスク管理・朝のブリーフィング",       days: [1,2,3,4,5], hour: 9, desk: { x: 4, y: 15 }, hair: "#333333" },
+  ];
+  const STATS_DEF = [["inbox","Inbox"],["today","Today"],["doing","進行中"],["waiting","待ち"],["drafts","note下書き"],["published","note投稿済"]];
+
+  const $ = (s) => document.querySelector(s);
+  const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+  const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const isDark = () => document.documentElement.dataset.theme === "dark" ||
+    (document.documentElement.dataset.theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function ago(iso) {
+    if (!iso) return "";
+    const m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+    if (isNaN(m)) return "";
+    if (m < 1) return "たった今"; if (m < 60) return m + "分前";
+    const h = Math.round(m / 60); if (h < 24) return h + "時間前";
+    return Math.round(h / 24) + "日前";
+  }
+  function feedTime(iso) {
+    const d = new Date(iso); if (isNaN(d)) return "";
+    return d.toDateString() === new Date().toDateString()
+      ? d.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })
+      : d.toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" });
+  }
+  function nextShift(m) {
+    const now = new Date();
+    for (let i = 0; i < 8; i++) {
+      const d = new Date(now); d.setDate(now.getDate() + i); d.setHours(m.hour, 0, 0, 0);
+      if (m.days.includes(d.getDay()) && d > now) {
+        const when = i === 0 ? "今日" : i === 1 ? "明日" : DOW[d.getDay()] + "曜";
+        return { label: when + " " + m.hour + ":00", hours: Math.round((d - now) / 3600000) };
+      }
+    }
+    return { label: "—", hours: Infinity };
+  }
+  function schedLabel(m) {
+    if (m.days.length === 7) return "毎日 " + m.hour + ":00";
+    if (m.days.length === 5 && !m.days.includes(0) && !m.days.includes(6)) return "平日 " + m.hour + ":00";
+    return m.days.map((d) => DOW[d]).join("・") + " " + m.hour + ":00";
+  }
+
+  // ===================== マップ描画 =====================
+  const COLS = 30, ROWS = 20;
+  const canvas = $("#map"), ctx = canvas.getContext("2d");
+  let T = 24, dpr = 1;
+  let liveData = {}, selected = null;
+
+  function resize() {
+    const w = canvas.parentElement.clientWidth;
+    T = w / COLS; dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(T * ROWS * dpr);
+    canvas.style.height = (T * ROWS) + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+  }
+  addEventListener("resize", resize);
+
+  // キャラの状態
+  const anim = {};
+  MEMBERS.forEach((m) => {
+    anim[m.id] = { x: m.desk.x + 1, y: m.desk.y + 1.2, tx: null, ty: null, wait: Math.random() * 3, step: 0, dir: 1 };
+  });
+  const working = (id) => (liveData[id] || {}).status === "working";
+  const seatOf = (m) => ({ x: m.desk.x + 1, y: m.desk.y + 1.2 });
+
+  function pickTarget(m) {
+    const r = ROOMS[m.room];
+    for (let i = 0; i < 20; i++) {
+      const x = r.x + 1 + Math.random() * (r.w - 2), y = r.y + 1.6 + Math.random() * (r.h - 2.6);
+      // 机の上は避ける
+      const onDesk = MEMBERS.some((o) => o.room === m.room && x >= o.desk.x - .3 && x <= o.desk.x + 2.3 && y >= o.desk.y - .3 && y <= o.desk.y + 1.4);
+      if (!onDesk) return { x, y };
+    }
+    return seatOf(m);
+  }
+
+  function update(dt) {
+    MEMBERS.forEach((m) => {
+      const a = anim[m.id];
+      if (working(m.id)) {
+        const s = seatOf(m); a.x += (s.x - a.x) * .2; a.y += (s.y - a.y) * .2; a.tx = null; a.step += dt * 6; return;
+      }
+      if (reduced) return;
+      if (a.tx == null) {
+        a.wait -= dt;
+        if (a.wait <= 0) { const t = pickTarget(m); a.tx = t.x; a.ty = t.y; }
+        return;
+      }
+      const dx = a.tx - a.x, dy = a.ty - a.y, dist = Math.hypot(dx, dy), sp = 1.1 * dt;
+      if (dist < sp) { a.x = a.tx; a.y = a.ty; a.tx = null; a.wait = 2 + Math.random() * 5; a.step = 0; return; }
+      a.x += dx / dist * sp; a.y += dy / dist * sp; a.dir = dx < 0 ? -1 : 1; a.step += dt * 8;
+    });
+  }
+
+  // 8×12 のドット絵。h=髪 s=肌 b=服 p=ズボン k=靴 e=目 .=透明
+  const SPRITE = [
+    ".hhhhhh.",
+    "hhhhhhhh",
+    "hsssssh.",
+    "hsesses.",
+    ".ssssss.",
+    ".bbbbbb.",
+    "bbbbbbbb",
+    "bbbbbbbb",
+    ".bbbbbb.",
+    ".pppppp.",
+    ".pp..pp.",
+    ".kk..kk.",
+  ];
+  function drawSprite(m, a, on, t) {
+    const u = T / 8, ox = (a.x - .5) * T, oy = (a.y - 1.5) * T;
+    const pal = { h: m.hair, s: "#f2cfa8", b: cssVar(ROOMS[m.room].cvar), p: "#34405a", k: "#222", e: "#222" };
+    const walk = a.tx != null && !on, legPhase = Math.floor(a.step) % 2, armPhase = on ? Math.floor(a.step) % 2 : 0;
+    SPRITE.forEach((row, ry) => {
+      for (let rx = 0; rx < 8; rx++) {
+        let c = row[rx];
+        if (c === ".") continue;
+        // 歩行：脚を交互に、作業：腕を上下
+        if (walk && ry >= 10 && ((legPhase === 0 && rx < 4) || (legPhase === 1 && rx >= 4))) { if (ry === 11) continue; }
+        if (on && ry === 6 && (rx === 0 || rx === 7) && armPhase === 1) continue;
+        if (on && ry === 7 && (rx === 0 || rx === 7) && armPhase === 0) continue;
+        ctx.fillStyle = pal[c];
+        const px = a.dir < 0 ? 7 - rx : rx;
+        ctx.fillRect(Math.round(ox + px * u), Math.round(oy + ry * u), Math.ceil(u), Math.ceil(u));
+      }
+    });
+    if (!on && !walk && Math.floor(t / 900) % 3 === 0) { // 待機中の吹き出し「…」
+      ctx.fillStyle = cssVar("--ink-soft"); ctx.font = `${Math.max(9, T * .5)}px "DotGothic16", monospace`;
+      ctx.textAlign = "left"; ctx.fillText("…", ox + T * .9, oy);
+    }
+  }
+
+  function label(text, x, y, size, color, align = "center", bg = null) {
+    ctx.font = `${size}px "DotGothic16", "Noto Sans JP", monospace`; ctx.textAlign = align; ctx.textBaseline = "middle";
+    if (bg) {
+      const w = ctx.measureText(text).width + 8;
+      const bx = align === "center" ? x - w / 2 : x - 4;
+      ctx.fillStyle = bg; ctx.fillRect(Math.round(bx), Math.round(y - size * .7), Math.round(w), Math.round(size * 1.4));
+    }
+    ctx.fillStyle = color; ctx.fillText(text, x, y);
+  }
+
+  function draw(t) {
+    const dark = isDark(), W = T * COLS, H = T * ROWS;
+    const ink = cssVar("--ink"), inkSoft = cssVar("--ink-soft"), panel = cssVar("--panel");
+    // 廊下
+    ctx.fillStyle = dark ? "#1b2426" : "#cdd6cd"; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = dark ? "rgba(255,255,255,.05)" : "rgba(0,0,0,.06)"; ctx.lineWidth = 1;
+    for (let i = 0; i <= COLS; i++) { ctx.beginPath(); ctx.moveTo(i * T, 0); ctx.lineTo(i * T, H); ctx.stroke(); }
+    for (let j = 0; j <= ROWS; j++) { ctx.beginPath(); ctx.moveTo(0, j * T); ctx.lineTo(W, j * T); ctx.stroke(); }
+
+    // 部屋
+    Object.values(ROOMS).forEach((r) => {
+      const c = cssVar(r.cvar);
+      ctx.fillStyle = r.floor[dark ? 1 : 0]; ctx.fillRect(r.x * T, r.y * T, r.w * T, r.h * T);
+      ctx.strokeStyle = dark ? "#0b1112" : "#6f7d76"; ctx.lineWidth = Math.max(2, T * .12);
+      ctx.strokeRect(r.x * T, r.y * T, r.w * T, r.h * T);
+      // ドア（下辺の切れ目）
+      ctx.fillStyle = r.floor[dark ? 1 : 0];
+      ctx.fillRect((r.x + r.w / 2 - .6) * T, (r.y + r.h) * T - T * .12, T * 1.2, T * .24);
+      // 窓（上辺）
+      for (let i = 1; i < r.w - 1; i += 3) { ctx.fillStyle = dark ? "#2d4a5c" : "#bfe0f2"; ctx.fillRect((r.x + i) * T, r.y * T - T * .08, T * 1.4, T * .18); }
+      // 部屋名プレート
+      label(`${r.tag}｜${r.name}`, (r.x + .5) * T, (r.y + .55) * T, Math.max(10, T * .46), "#fff", "left", c);
+      // 観葉植物
+      const pl = (px, py) => {
+        ctx.fillStyle = "#8a5a2b"; ctx.fillRect(px * T + T * .3, py * T + T * .55, T * .4, T * .35);
+        ctx.fillStyle = dark ? "#3f8a5a" : "#4caf6e"; ctx.fillRect(px * T + T * .15, py * T + T * .15, T * .7, T * .45);
+        ctx.fillRect(px * T + T * .35, py * T, T * .3, T * .25);
+      };
+      pl(r.x + r.w - 1, r.y + r.h - 1); if (r.w > 8) pl(r.x, r.y + r.h - 1);
+    });
+
+    // 休憩スペースの家具
+    const b = ROOMS.brk;
+    ctx.fillStyle = dark ? "#6b4a6a" : "#c98b9c"; ctx.fillRect((b.x + 1) * T, (b.y + 2) * T, 3 * T, T * .9); // ソファ
+    ctx.fillStyle = dark ? "#4a3348" : "#a86f80"; ctx.fillRect((b.x + 1) * T, (b.y + 1.55) * T, 3 * T, T * .45);
+    ctx.fillStyle = "#555"; ctx.fillRect((b.x + 5.2) * T, (b.y + 1.4) * T, T * .8, T * 1.2); // コーヒーマシン
+    label("☕", (b.x + 5.6) * T, (b.y + 2.6) * T, Math.max(10, T * .55), ink);
+
+    // 机
+    MEMBERS.forEach((m) => {
+      const d = m.desk, on = working(m.id);
+      ctx.fillStyle = dark ? "#6b4a2e" : "#b98a5a"; ctx.fillRect(d.x * T, d.y * T + T * .1, 2 * T, T * .8);
+      ctx.fillStyle = dark ? "#4a3220" : "#8a5f3a"; ctx.fillRect(d.x * T, d.y * T + T * .9, 2 * T, T * .12);
+      ctx.fillStyle = "#2b2b2b"; ctx.fillRect(d.x * T + T * .6, d.y * T + T * .12, T * .8, T * .55); // モニター
+      ctx.fillStyle = on ? (dark ? "#9fe0ff" : "#7fd0ff") : (dark ? "#3a4652" : "#556"); ctx.fillRect(d.x * T + T * .66, d.y * T + T * .18, T * .68, T * .42);
+      if (on) { ctx.fillStyle = dark ? "rgba(159,224,255,.12)" : "rgba(127,208,255,.25)"; ctx.fillRect(d.x * T + T * .3, d.y * T + T * .7, T * 1.4, T * .5); }
+      ctx.fillStyle = dark ? "#3a3f45" : "#6d7580"; ctx.fillRect(d.x * T + T * .7, d.y * T + T * 1.05, T * .6, T * .3); // 椅子
+    });
+
+    // キャラ（yの順に）
+    const order = [...MEMBERS].sort((p, q) => anim[p.id].y - anim[q.id].y);
+    order.forEach((m) => {
+      const a = anim[m.id], on = working(m.id);
+      drawSprite(m, a, on, t);
+      const nameSize = Math.max(9, T * .42);
+      label(m.name, a.x * T, (a.y + .45) * T, nameSize, ink, "center", dark ? "rgba(0,0,0,.45)" : "rgba(255,255,255,.75)");
+      if (on || selected === m.id) {
+        const msg = (liveData[m.id] || {}).message || "…";
+        const short = msg.length > 16 ? msg.slice(0, 16) + "…" : msg;
+        label(short, a.x * T, (a.y - 1.95) * T, Math.max(9, T * .4), ink, "center", panel);
+      }
+      if (selected === m.id) {
+        ctx.strokeStyle = cssVar("--on"); ctx.lineWidth = 2;
+        ctx.strokeRect((a.x - .7) * T, (a.y - 1.6) * T, 1.4 * T, 2.2 * T);
+      }
+    });
+  }
+
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    update(dt); draw(now);
+    requestAnimationFrame(loop);
+  }
+
+  // ===================== 操作 =====================
+  canvas.addEventListener("pointerdown", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / T, y = (e.clientY - rect.top) / T;
+    let best = null, bd = 1.2;
+    MEMBERS.forEach((m) => { const a = anim[m.id]; const d = Math.hypot(a.x - x, a.y - (y + .6)); if (d < bd) { bd = d; best = m; } });
+    selected = best ? best.id : null;
+    renderDetail();
+  });
+
+  function renderDetail() {
+    const el = $("#detail");
+    const m = MEMBERS.find((x) => x.id === selected);
+    if (!m) { el.innerHTML = `<div class="face">🏢</div><div><div class="name">オフィスへようこそ</div><p class="hint">マップ上の社員をタップすると、いまの報告・担当・次の出勤がここに出ます。</p></div>`; return; }
+    const d = liveData[m.id] || {}, on = d.status === "working", r = ROOMS[m.room], ns = nextShift(m);
+    el.innerHTML = `
+      <div class="face" style="--dc:${cssVar(r.cvar)}">${m.emoji}</div>
+      <div>
+        <div class="name">${m.name} <span class="tag ${on ? "on" : ""}">${on ? "作業中" : "待機中"}</span></div>
+        <div class="role">${r.tag}｜${r.name} ─ ${m.role}</div>
+        <p class="msg">💬 ${esc(d.message || "（まだ報告がありません）")}</p>
+        <div class="meta"><span>🕘 ${schedLabel(m)}</span><span>次の出勤: ${ns.label}</span>${d.updated_at ? `<span>最終稼働: ${ago(d.updated_at)}</span>` : ""}</div>
+      </div>`;
+  }
+
+  function renderGauges() {
+    const on = MEMBERS.filter((m) => working(m.id)).length;
+    $("#g-on").textContent = on; $("#g-off").textContent = MEMBERS.length - on;
+    const soonest = MEMBERS.map(nextShift).sort((a, b) => a.hours - b.hours)[0];
+    $("#g-next").textContent = soonest && soonest.hours < 100 ? soonest.hours + "h" : "–";
+  }
+  function renderStats(data) {
+    $("#stats").innerHTML = STATS_DEF.map(([k, l]) => `<div class="stat"><b>${Number.isFinite(data?.[k]) ? data[k] : "–"}</b><span>${l}</span></div>`).join("");
+    if (data?.updated_at) $("#stats-note").textContent = "秘書による更新: " + ago(data.updated_at);
+  }
+  function renderFeed(snap) {
+    if (snap.empty) return;
+    $("#feed").innerHTML = snap.docs.map((doc) => { const e = doc.data();
+      return `<li><time>${feedTime(e.at)}</time><span>${esc(e.emoji || "•")}</span><span><b>${esc(e.who || "")}</b>　${esc(e.text || "")}</span></li>`; }).join("");
+  }
+  function tick() { $("#clock").textContent = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" }); }
+
+  // ===================== 起動 =====================
+  tick(); setInterval(tick, 15000);
+  resize(); renderGauges(); renderStats(null);
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(loop));
+  setInterval(renderGauges, 60000);
+
+  (async () => {
+    const db = await claude.use("db");
+    if (!db) { $("#conn").textContent = "ライブ接続なし"; return; }
+    $("#conn").textContent = "ライブ"; $("#led").classList.add("live");
+    const dead = () => { $("#conn").textContent = "接続切れ（再読込で復帰）"; $("#led").classList.remove("live"); };
+    db.collection("employees").onSnapshot((snap) => {
+      liveData = {}; snap.docs.forEach((d) => { liveData[d.id] = d.data(); });
+      renderGauges(); renderDetail();
+    }, dead);
+    db.doc("office/stats").onSnapshot((snap) => { if (snap.exists) renderStats(snap.data()); }, dead);
+    db.collection("activity").orderBy("at", "desc").limit(14).onSnapshot(renderFeed, dead);
+  })();
+</script>

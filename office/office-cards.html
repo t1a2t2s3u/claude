@@ -1,0 +1,401 @@
+<title>AI社員オフィス</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --floor: #dfe7dd;
+    --floor-line: rgba(60, 80, 70, .07);
+    --room: #fbfaf6;
+    --room-alt: #f3f2ec;
+    --ink: #2b3630;
+    --ink-soft: #6a7a72;
+    --line: #cfd8d2;
+    --wall: #b9c5bd;
+    --shadow: 0 3px 0 var(--wall);
+
+    --on: #2f9e6b;
+    --on-bg: #ddf2e6;
+    --off: #93a099;
+    --off-bg: #e9edea;
+
+    --d-main: #c2622f;
+    --d-side: #2f7d6b;
+    --d-new: #4a6fb5;
+    --d-admin: #7a6aa8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --floor: #161e20;
+      --floor-line: rgba(255, 255, 255, .04);
+      --room: #212c2e;
+      --room-alt: #1a2426;
+      --ink: #e6ede9;
+      --ink-soft: #94a5a0;
+      --line: #33433f;
+      --wall: #0e1516;
+      --shadow: 0 3px 0 var(--wall);
+      --on: #4dc48c;
+      --on-bg: #1c3a2c;
+      --off: #78877f;
+      --off-bg: #253130;
+      --d-main: #e08a5a;
+      --d-side: #4dbfa4;
+      --d-new: #7c9fe0;
+      --d-admin: #ab9ad8;
+    }
+  }
+  :root[data-theme="dark"] {
+    --floor: #161e20; --floor-line: rgba(255,255,255,.04);
+    --room: #212c2e; --room-alt: #1a2426;
+    --ink: #e6ede9; --ink-soft: #94a5a0; --line: #33433f; --wall: #0e1516;
+    --shadow: 0 3px 0 var(--wall);
+    --on: #4dc48c; --on-bg: #1c3a2c; --off: #78877f; --off-bg: #253130;
+    --d-main: #e08a5a; --d-side: #4dbfa4; --d-new: #7c9fe0; --d-admin: #ab9ad8;
+  }
+
+  body {
+    background: var(--floor);
+    background-image:
+      linear-gradient(90deg, var(--floor-line) 1px, transparent 1px),
+      linear-gradient(var(--floor-line) 1px, transparent 1px);
+    background-size: 18px 18px;
+    color: var(--ink);
+    font-family: "Noto Sans JP", "Hiragino Sans", sans-serif;
+    line-height: 1.6;
+    padding: 16px 12px 44px;
+  }
+  .pixel { font-family: "DotGothic16", "Noto Sans JP", monospace; font-weight: 400; }
+  .wrap { max-width: 940px; margin: 0 auto; display: grid; gap: 16px; }
+
+  /* ===== 受付（ヘッダー） ===== */
+  .reception {
+    background: var(--room); border: 2px solid var(--wall);
+    border-radius: 4px; box-shadow: var(--shadow);
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .reception h1 {
+    font-family: "DotGothic16", monospace; font-size: 1.35rem;
+    margin: 0; letter-spacing: .04em;
+  }
+  .reception .mission { font-size: .74rem; color: var(--ink-soft); flex-basis: 100%; margin: -6px 0 0; }
+  .gauges { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+  .gauge {
+    font-family: "DotGothic16", monospace;
+    border: 2px solid var(--line); border-radius: 3px;
+    background: var(--room-alt); padding: 2px 9px; text-align: center;
+    min-width: 54px;
+  }
+  .gauge b { display: block; font-size: 1.1rem; line-height: 1.2; }
+  .gauge span { font-size: .62rem; color: var(--ink-soft); }
+  .gauge.on b { color: var(--on); }
+  .clock { font-family: "DotGothic16", monospace; font-size: .78rem; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; }
+  .led { width: 9px; height: 9px; background: var(--off); border-radius: 2px; }
+  .led.live { background: var(--on); animation: blink 1.8s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+
+  /* ===== 部屋 ===== */
+  .rooms { display: grid; gap: 14px; }
+  .room {
+    background: var(--room);
+    border: 2px solid var(--wall);
+    border-top: 6px solid var(--rc);
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+    padding: 0 12px 12px;
+  }
+  .plate {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin: -1px -12px 12px; padding: 7px 12px 8px;
+    background: var(--room-alt); border-bottom: 2px dashed var(--line);
+  }
+  .plate .badge {
+    font-family: "DotGothic16", monospace; font-size: .68rem;
+    background: var(--rc); color: #fff; padding: 2px 8px; border-radius: 3px;
+  }
+  .plate h2 { font-family: "DotGothic16", monospace; font-size: 1rem; margin: 0; color: var(--rc); }
+  .plate .count { font-family: "DotGothic16", monospace; font-size: .7rem; color: var(--ink-soft); }
+  .plate .mission { font-size: .72rem; color: var(--ink-soft); flex-basis: 100%; margin: 0; }
+
+  .desks { display: grid; grid-template-columns: repeat(auto-fit, minmax(238px, 1fr)); gap: 10px; }
+
+  .desk {
+    background: var(--room-alt);
+    border: 2px solid var(--line); border-radius: 3px;
+    padding: 9px; display: grid; gap: 7px; align-content: start;
+    position: relative;
+  }
+  .desk.on { border-color: var(--on); }
+  .who { display: flex; align-items: center; gap: 8px; }
+  .sprite {
+    width: 40px; height: 40px; flex-shrink: 0;
+    display: grid; place-items: center; font-size: 21px;
+    background: var(--room); border: 2px solid var(--rc); border-radius: 3px;
+    box-shadow: 0 2px 0 var(--line);
+    position: relative;
+  }
+  .desk:not(.on) .sprite { filter: grayscale(.5) opacity(.85); }
+  .sprite .st {
+    position: absolute; right: -4px; top: -4px;
+    width: 10px; height: 10px; border-radius: 2px;
+    background: var(--off); border: 1px solid var(--room);
+  }
+  .desk.on .sprite .st { background: var(--on); animation: blink 1.8s steps(1) infinite; }
+  .name { font-family: "DotGothic16", monospace; font-size: .92rem; line-height: 1.25; }
+  .role { font-size: .68rem; color: var(--ink-soft); line-height: 1.35; }
+  .tag {
+    margin-left: auto; font-family: "DotGothic16", monospace; font-size: .66rem;
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap;
+    background: var(--off-bg); color: var(--off);
+  }
+  .desk.on .tag { background: var(--on-bg); color: var(--on); }
+
+  .say {
+    position: relative; background: var(--room);
+    border: 2px solid var(--line); border-radius: 3px;
+    padding: 7px 9px; font-size: .78rem; min-height: 3.4em;
+  }
+  .say::before {
+    content: ""; position: absolute; top: -7px; left: 14px;
+    width: 10px; height: 10px; background: var(--room);
+    border-left: 2px solid var(--line); border-top: 2px solid var(--line);
+    transform: rotate(45deg);
+  }
+  .shift {
+    font-family: "DotGothic16", monospace; font-size: .68rem; color: var(--ink-soft);
+    display: flex; justify-content: space-between; gap: 8px; font-variant-numeric: tabular-nums;
+  }
+
+  /* ===== 下段 ===== */
+  .lower { display: grid; grid-template-columns: 1fr 1.25fr; gap: 14px; align-items: start; }
+  @media (max-width: 720px) { .lower { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: var(--room); border: 2px solid var(--wall); border-radius: 4px;
+    box-shadow: var(--shadow); padding: 0 12px 12px;
+  }
+  .panel h3 {
+    font-family: "DotGothic16", monospace; font-size: .88rem; margin: -1px -12px 10px;
+    padding: 7px 12px 8px; background: var(--room-alt); border-bottom: 2px dashed var(--line);
+  }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .stat { background: var(--room-alt); border: 2px solid var(--line); border-radius: 3px; padding: 5px 7px; }
+  .stat b { font-family: "DotGothic16", monospace; font-size: 1.15rem; display: block; line-height: 1.2; }
+  .stat span { font-size: .64rem; color: var(--ink-soft); }
+  .note { font-size: .68rem; color: var(--ink-soft); margin: 9px 0 0; }
+
+  .feed { list-style: none; margin: 0; padding: 0; }
+  .feed li {
+    display: grid; grid-template-columns: 4.2em 1.5em 1fr; gap: 7px;
+    align-items: baseline; padding: 6px 2px; font-size: .8rem;
+    border-top: 1px dashed var(--line);
+  }
+  .feed li:first-child { border-top: none; }
+  .feed time { font-family: "DotGothic16", monospace; font-size: .68rem; color: var(--ink-soft); white-space: nowrap; }
+  .feed b { font-family: "DotGothic16", monospace; font-weight: 400; }
+  .empty { color: var(--ink-soft); font-size: .8rem; padding: 6px 2px; }
+
+  footer { font-size: .68rem; color: var(--ink-soft); text-align: center; }
+  @media (prefers-reduced-motion: reduce) { .led.live, .desk.on .sprite .st { animation: none; } }
+</style>
+
+<div class="wrap">
+  <header class="reception">
+    <h1>🏢 AI社員オフィス</h1>
+    <p class="mission">MISSION ─ 本業の塗装業を伸ばし、副業で稼ぎ、新しい事業の種を探す</p>
+    <div class="gauges">
+      <div class="gauge on"><b id="g-on">0</b><span>稼働中</span></div>
+      <div class="gauge"><b id="g-off">0</b><span>待機中</span></div>
+      <div class="gauge"><b id="g-next">–</b><span>次の出勤</span></div>
+    </div>
+    <div class="clock"><span class="led" id="led"></span><span id="conn">接続中…</span><span id="clock"></span></div>
+  </header>
+
+  <div class="rooms" id="rooms"></div>
+
+  <div class="lower">
+    <section class="panel">
+      <h3>📋 タスクボード</h3>
+      <div class="stats" id="stats"></div>
+      <p class="note" id="stats-note">秘書が稼働時に更新します。</p>
+    </section>
+    <section class="panel">
+      <h3>📌 掲示板 ─ 最近の動き</h3>
+      <ul class="feed" id="feed"><li class="empty">まだ記録がありません。</li></ul>
+    </section>
+  </div>
+
+  <footer>各AI社員が稼働のたびに自席から状況を報告します。ページは開いたまま自動更新されます。</footer>
+</div>
+
+<script>
+  // days: 0=日 … 6=土 / hour: JST の出勤時刻
+  const DEPARTMENTS = [
+    {
+      id: "main", tag: "本業", color: "var(--d-main)",
+      name: "辰弥塗装工業 Web集客部",
+      mission: "秋田市・潟上市・南秋田郡で、外壁／屋根塗装の問い合わせを増やす",
+      members: [
+        { id: "seo-director", emoji: "🔧", name: "SEOディレクター", role: "施策の調査・優先順位付け・指示出し", days: [1], hour: 9 },
+        { id: "seo-writer",   emoji: "🖌️", name: "塗装ブログ",     role: "ホームページ記事（月2本）",           days: [2], hour: 9 },
+        { id: "meo",          emoji: "📍", name: "MEO担当",        role: "ビジネスプロフィール運用",             days: [4], hour: 9 },
+      ],
+    },
+    {
+      id: "side", tag: "副業", color: "var(--d-side)",
+      name: "note × SNS 編集部",
+      mission: "AI社員運用の一次情報を記事とSNSにして、note で収益化する",
+      members: [
+        { id: "editor",     emoji: "📰", name: "編集長",       role: "戦略・企画・ブリーフ作成",     days: [1], hour: 8 },
+        { id: "researcher", emoji: "🔎", name: "リサーチャー", role: "トレンド調査・週次レポート",   days: [0], hour: 8 },
+        { id: "writer",     emoji: "✍️", name: "ライター",     role: "note記事の下書き執筆",         days: [2, 4], hour: 8 },
+        { id: "reviewer",   emoji: "🧐", name: "校閲",         role: "下書きの校閲・投稿待ちへ送出", days: [3, 5], hour: 8 },
+        { id: "sns",        emoji: "📣", name: "SNS担当",      role: "X・Threads投稿（1日3本）",     days: [0,1,2,3,4,5,6], hour: 8 },
+        { id: "analyst",    emoji: "📊", name: "アナリスト",   role: "KPI記録・週次分析",            days: [6], hour: 8 },
+      ],
+    },
+    {
+      id: "new", tag: "新規事業", color: "var(--d-new)",
+      name: "プロダクト開発室",
+      mission: "Claude Code で作れて売れるアプリ・ツールの案件を発掘する",
+      members: [
+        { id: "product-scout", emoji: "🧭", name: "企画リサーチャー", role: "アプリ需要の調査・企画メモ", days: [3], hour: 8 },
+      ],
+    },
+    {
+      id: "admin", tag: "管理", color: "var(--d-admin)",
+      name: "管理部",
+      mission: "全部署のタスクを横断で管理し、毎朝の状況を報告する",
+      members: [
+        { id: "secretary", emoji: "🗂️", name: "秘書", role: "タスク管理・朝のブリーフィング", days: [1,2,3,4,5], hour: 9 },
+      ],
+    },
+  ];
+
+  const DOW = ["日", "月", "火", "水", "木", "金", "土"];
+  const STATS_DEF = [
+    ["inbox", "Inbox"], ["today", "Today"], ["doing", "進行中"],
+    ["waiting", "待ち"], ["drafts", "note下書き"], ["published", "note投稿済"],
+  ];
+
+  const $ = (s) => document.querySelector(s);
+  const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  function ago(iso) {
+    if (!iso) return "";
+    const ms = Date.now() - new Date(iso).getTime();
+    if (isNaN(ms)) return "";
+    const m = Math.round(ms / 60000);
+    if (m < 1) return "たった今";
+    if (m < 60) return m + "分前";
+    const h = Math.round(m / 60);
+    if (h < 24) return h + "時間前";
+    return Math.round(h / 24) + "日前";
+  }
+  function feedTime(iso) {
+    const d = new Date(iso);
+    if (isNaN(d)) return "";
+    return d.toDateString() === new Date().toDateString()
+      ? d.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })
+      : d.toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" });
+  }
+  // 次の出勤（閲覧端末のローカル時刻で計算。想定はJST）
+  function nextShift(m) {
+    const now = new Date();
+    for (let i = 0; i < 8; i++) {
+      const d = new Date(now);
+      d.setDate(now.getDate() + i);
+      d.setHours(m.hour, 0, 0, 0);
+      if (m.days.includes(d.getDay()) && d > now) {
+        const h = Math.round((d - now) / 3600000);
+        const when = i === 0 ? "今日" : i === 1 ? "明日" : DOW[d.getDay()] + "曜";
+        return { label: when + " " + m.hour + ":00", hours: h };
+      }
+    }
+    return { label: "—", hours: Infinity };
+  }
+  function schedLabel(m) {
+    if (m.days.length === 7) return "毎日 " + m.hour + ":00";
+    if (m.days.length === 5 && !m.days.includes(0) && !m.days.includes(6)) return "平日 " + m.hour + ":00";
+    return m.days.map((d) => DOW[d]).join("・") + " " + m.hour + ":00";
+  }
+
+  let liveData = {};
+  function deskHTML(m) {
+    const d = liveData[m.id] || {};
+    const on = d.status === "working";
+    const ns = nextShift(m);
+    return `
+      <article class="desk ${on ? "on" : ""}">
+        <div class="who">
+          <div class="sprite">${m.emoji}<span class="st"></span></div>
+          <div>
+            <div class="name">${m.name}</div>
+            <div class="role">${m.role}</div>
+          </div>
+          <span class="tag">${on ? "作業中" : "待機中"}</span>
+        </div>
+        <div class="say">${esc(d.message || "（まだ報告がありません）")}</div>
+        <div class="shift">
+          <span>🕘 ${schedLabel(m)}</span>
+          <span>${d.updated_at ? "最終 " + ago(d.updated_at) : "次 " + ns.label}</span>
+        </div>
+      </article>`;
+  }
+
+  function render() {
+    $("#rooms").innerHTML = DEPARTMENTS.map((dept) => `
+      <section class="room" style="--rc:${dept.color}" aria-label="${dept.name}">
+        <div class="plate">
+          <span class="badge">${dept.tag}</span>
+          <h2>${dept.name}</h2>
+          <span class="count">${dept.members.length}名</span>
+          <p class="mission">${dept.mission}</p>
+        </div>
+        <div class="desks">${dept.members.map(deskHTML).join("")}</div>
+      </section>`).join("");
+
+    const all = DEPARTMENTS.flatMap((d) => d.members);
+    const on = all.filter((m) => (liveData[m.id] || {}).status === "working").length;
+    $("#g-on").textContent = on;
+    $("#g-off").textContent = all.length - on;
+    const soonest = all.map(nextShift).sort((a, b) => a.hours - b.hours)[0];
+    $("#g-next").textContent = soonest && soonest.hours < 100 ? soonest.hours + "h" : "–";
+  }
+
+  function renderStats(data) {
+    $("#stats").innerHTML = STATS_DEF.map(([k, lbl]) =>
+      `<div class="stat"><b>${Number.isFinite(data?.[k]) ? data[k] : "–"}</b><span>${lbl}</span></div>`
+    ).join("");
+    if (data?.updated_at) $("#stats-note").textContent = "秘書による更新: " + ago(data.updated_at);
+  }
+
+  function renderFeed(snap) {
+    if (snap.empty) return;
+    $("#feed").innerHTML = snap.docs.map((doc) => {
+      const e = doc.data();
+      return `<li><time>${feedTime(e.at)}</time><span>${esc(e.emoji || "•")}</span>
+        <span><b>${esc(e.who || "")}</b>　${esc(e.text || "")}</span></li>`;
+    }).join("");
+  }
+
+  function tick() { $("#clock").textContent = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" }); }
+  tick(); setInterval(tick, 15000);
+  render();
+  renderStats(null);
+
+  (async () => {
+    const db = await claude.use("db");
+    if (!db) { $("#conn").textContent = "ライブ接続なし"; return; }
+    $("#conn").textContent = "ライブ";
+    $("#led").classList.add("live");
+    const dead = () => { $("#conn").textContent = "接続切れ（再読込で復帰）"; $("#led").classList.remove("live"); };
+    db.collection("employees").onSnapshot((snap) => {
+      liveData = {};
+      snap.docs.forEach((d) => { liveData[d.id] = d.data(); });
+      render();
+    }, dead);
+    db.doc("office/stats").onSnapshot((snap) => { if (snap.exists) renderStats(snap.data()); }, dead);
+    db.collection("activity").orderBy("at", "desc").limit(14).onSnapshot(renderFeed, dead);
+    setInterval(render, 60000);
+  })();
+</script>
