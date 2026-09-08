@@ -26,7 +26,7 @@ Tax parameters (income-tax brackets, R7/R8 basic deduction table, pension)
 live in the `TAX` constant near the top of the inline script; NHI rates are
 in `NHI_STD` (33 prefectures' standard rates) and `NHI_PRESETS` (exact city
 rates) — update them when fiscal years roll over. State is v3:
-`{payments, biz, saves, invoices, taxPaid, profile}`; `migrate()` upgrades older
+`{payments, biz, saves, invoices, taxPaid, profile}` (`profile.ded` holds the 所得控除); `migrate()` upgrades older
 embedded state (v3 income becomes `paid:true`, since it predates 入金管理).
 
 The iOS/PWA head tags live in `APP_META` (including a base64 apple-touch-icon)
@@ -34,6 +34,13 @@ and are emitted both in the real `<head>` and by `docFor()` — change them in
 one place only by editing `APP_META` and the head to match. `release/` holds
 the manifest and service worker for self-hosting; the script registers them
 only when `window.claude` is absent, so the Artifact is unaffected.
+
+`calcDeductions()` returns every 所得控除 with separate `it` and `rt` amounts —
+they genuinely differ (生命保険料 12万/7万, 扶養 38万/33万 …), so never collapse
+them into one number. It also returns `human`, the sum of the 人的控除の差, which
+`residentAdjust()` needs; a flat 調整控除 is wrong once there are dependents.
+`furusato()` handles ふるさと納税, which is an 所得控除 for 所得税 but a 税額控除
+for 住民税, and derives the 実質2,000円 ceiling from the 住民税所得割.
 
 `taxTips()` builds the 節税 advice from `calcTax()`'s output and
 `marginalRates()`. It hard-codes filing deadlines and the 2026 end of the
