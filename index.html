@@ -235,6 +235,9 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .setup-next ol{margin:8px 0 12px;padding-left:1.3em}
 .setup-next li{margin-bottom:4px}
 .setup-next b{color:var(--ink)}
+.yoy{margin-left:4px}
+.yoy.up{color:var(--c-util)}
+.yoy.down{color:var(--hanko)}
 .tabs{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tab{white-space:nowrap}
 /* 請求書 */
@@ -429,7 +432,11 @@ const TAX = {
   pensionMonthly:17920,
   nhiBase:430000,
   bizTaxExempt:2900000,
-  salarySocialRate:.146
+  salarySocialRate:.146,
+  /* この計算の元になっている年度。年度が変わったら必ず見直す */
+  basisYear:2026,
+  basisLabel:'令和7・8年分の税制／令和8年度の国民年金・国民健康保険料率',
+  prepayThreshold:150000
 };
 
 /* 国民健康保険の料率プリセット（令和8年度・各自治体の公式資料より）
@@ -1054,8 +1061,32 @@ function furusato(pr, income, itRate, rtIncomeTax){
   return {itDed, rtCredit: Math.round(base+special), limit, over: specialRaw > cap+1};
 }
 
+/* 年ごとの事業の利益（青色控除前・按分込み） */
+function yearProfit(y){
+  return bizSum(y,'in') - bizSum(y,'ex') - apportionYear(y);
+}
+/* 純損失の繰越控除。青色申告なら赤字を3年間繰り越して、黒字の年から引ける。
+   古い年のぶんから順に使い、使い切れなかったものは4年目で消える。 */
+function lossCarry(y){
+  if(state.profile.filing === 'white') return {avail:0, pool:[]};
+  const years = state.biz.map(b=>b.y);
+  if(!years.length) return {avail:0, pool:[]};
+  let pool = [];
+  for(let yy = Math.max(Math.min(...years), y-3); yy < y; yy++){
+    pool = pool.filter(o=>o.y >= yy-3);          // 期限切れを落とす
+    const p = yearProfit(yy);
+    if(p < 0){ pool.push({y:yy, amount:-p}); continue; }
+    let rest = p;
+    pool.forEach(o=>{ const use = Math.min(o.amount, rest); o.amount -= use; rest -= use; });
+    pool = pool.filter(o=>o.amount > 0);
+  }
+  pool = pool.filter(o=>o.y >= y-3);
+  return {avail: pool.reduce((s,o)=>s+o.amount, 0), pool};
+}
+
 /* ---------- tax engine ---------- */
-function calcTax(y){
+function calcTax(y, opts){
+  opts = opts || {};
   const pr = state.profile;
   const inSum = bizSum(y,'in');
   const exEntries = bizSum(y,'ex');
@@ -1067,7 +1098,10 @@ function calcTax(y){
   if(pr.workMode === 'free'){
     const blueMax = pr.filing==='blue65' ? 650000 : pr.filing==='blue10' ? 100000 : 0;
     const blue = Math.min(blueMax, profit);
-    const income = Math.max(0, profit - blue);    // 事業所得（合計所得）
+    /* 繰り越した赤字は、青色申告特別控除のあとの所得から引く */
+    const carry = lossCarry(y);
+    const carryUsed = Math.min(carry.avail, Math.max(0, profit - blue));
+    const income = Math.max(0, profit - blue - carryUsed);   // 総所得金額等
     const pension = TAX.pensionMonthly*12;
     let nhi, nhiRes;
     if(pr.hiType==='manual'){
@@ -1092,7 +1126,9 @@ function calcTax(y){
     const adj = residentAdjust(rtTaxable, ded.human);
     const rt = (rtTaxable>0 ? Math.max(0, rtIncomeTax - adj - fs.rtCredit) : 0)
       + (income > TAX.residentMin ? TAX.residentFlat : 0);
-    const bt = pr.bizTaxRate>0 ? Math.round(Math.max(0, profit - TAX.bizTaxExempt) * pr.bizTaxRate/100) : 0;
+    /* 個人事業税は青色申告特別控除を足し戻すが、損失の繰越は同じように使える */
+    const btBase = Math.max(0, profit - carryUsed);
+    const bt = pr.bizTaxRate>0 ? Math.round(Math.max(0, btBase - TAX.bizTaxExempt) * pr.bizTaxRate/100) : 0;
     const salesTax = Math.floor(inSum*10/110);
     let ct = 0, purchaseTax = 0, ctLabel = 'インボイス未登録';
     if(pr.invoice){
@@ -1110,11 +1146,23 @@ function calcTax(y){
         ctLabel = '2割特例';
       }
     }
+    /* 予定納税：前年の所得税が15万円以上なら、その3分の1を7月と11月に前払いしている */
+    let prepaid = 0, prepayEach = 0, prevIt = 0;
+    if(!opts.noPrev){
+      prevIt = calcTax(y-1, {noPrev:true}).it;
+      if(prevIt >= TAX.prepayThreshold){
+        prepayEach = Math.floor(prevIt/3/100)*100;
+        prepaid = prepayEach*2;
+      }
+    }
+    const itDue = it - prepaid;                  // 確定申告で納める額（マイナスなら還付）
     const taxTotal = it + rt + bt + ct;
     const net = inSum - expenses - taxTotal - social;
     return {mode:'free', inSum, exEntries, ap, expenses, rawProfit, profit, blue, blueMax, income,
       pension, nhi, nhiCfg:nhiRes.cfg, social, basic, itTaxable:Math.max(0,itTaxable), rtTaxable,
-      ded, fs, adj, it, rt, bt, ct, salesTax, purchaseTax, ctLabel,
+      ded, fs, adj, carry, carryUsed, prevIt, prepaid, prepayEach, itDue,
+      itTaxableRounded: Math.floor(Math.max(0,itTaxable)/1000)*1000,
+      it, rt, bt, ct, salesTax, purchaseTax, ctLabel,
       taxTotal, all: taxTotal+social, net, monthly: Math.ceil((taxTotal+social)/12/1000)*1000};
   }
 
@@ -1486,6 +1534,27 @@ function yearHtml(y, c){
     + '</section>';
 }
 
+/* 前年と比べる。前年の記録が無いときは何も出さない */
+function yoyLine(y){
+  const prev = state.biz.filter(b=>b.y===y-1);
+  if(!prev.length) return '';
+  const pin = bizSum(y-1,'in'), pex = bizSum(y-1,'ex') + apportionYear(y-1);
+  const cin = bizSum(y,'in'),   cex = bizSum(y,'ex')   + apportionYear(y);
+  const part = (label, cur, old0)=>{
+    if(!old0) return '';
+    const d = cur - old0;
+    const pct = Math.round(d/old0*100);
+    const sign = d>0 ? '＋' : d<0 ? '−' : '±';
+    const cls = label==='経費' ? (d>0?'down':'up') : (d>0?'up':'down');
+    return '<span>'+label+'<b class="yoy '+(d===0?'':cls)+'">'+sign+yen(Math.abs(d))
+      + (Math.abs(pct)<1000 ? '（'+sign+Math.abs(pct)+'%）' : '')+'</b></span>';
+  };
+  const body = part('収入', cin, pin) + part('経費', cex, pex)
+    + part('利益', cin-cex, pin-pex);
+  if(!body) return '';
+  return '<div class="next-line">'+(y-1)+'年と比べて　'+body+'</div>';
+}
+
 /* ---------- section: biz ---------- */
 function renderBiz(c){
   const y = view.y, m = view.m;
@@ -1513,6 +1582,7 @@ function renderBiz(c){
     + '<span>経費<b>'+yen(exY)+'</b></span>'
     + '<span>固定費の按分<b>'+yen(apY)+'</b></span>'
     + '</div>'
+    + yoyLine(y)
     + (unp.length ? '<div class="next-line">未入金：<b>'+unp.length+'件　'+yen(unpSum)+'</b>'
       + (overdue.length ? '　<span class="tag warn">期日超過 '+overdue.length+'件</span>' : '')
       + '　<button class="linklike" data-act="biztab" data-tab="unpaid">確認する</button></div>' : '')
@@ -1686,8 +1756,17 @@ function taxSchedule(t, y){
       '申告のとき「自分で納付（普通徴収）」を選ぶと、勤務先を通さず自分で納められます。');
     return rows;
   }
-  add('it','所得税', (y+1)+'-03-15', t.it,
-    '確定申告の期限と同じ日です。振替納税にすると4月中旬の口座引き落としになります。');
+  if(t.prepaid>0){
+    add('pre1','予定納税　第1期', y+'-07-31', t.prepayEach,
+      (y-1)+'年分の所得税 '+yen(t.prevIt)+' の3分の1を先に納めます（'+y+'年分の前払い）。');
+    add('pre2','予定納税　第2期', y+'-11-30', t.prepayEach, '');
+  }
+  add('it', t.prepaid>0 ? '所得税（確定申告で精算）' : '所得税', (y+1)+'-03-15',
+    Math.max(0, t.itDue),
+    (t.prepaid>0
+      ? '所得税 '+yen(t.it)+' から予定納税 '+yen(t.prepaid)+' を差し引いた残りです。'
+      : '')
+    + '確定申告の期限と同じ日です。振替納税にすると4月中旬の口座引き落としになります。');
   add('ct','消費税', (y+1)+'-03-31', t.ct,
     '所得税より2週間ほどあとです。振替納税なら4月下旬の引き落とし。');
   if(t.rt>0){
@@ -1697,13 +1776,20 @@ function taxSchedule(t, y){
     add('rt3','住民税　第3期', (y+1)+'-10-31', q, '');
     add('rt4','住民税　第4期', (y+2)+'-01-31', t.rt-q*3, '');
   }
+  if(t.it >= TAX.prepayThreshold){
+    const each = Math.floor(t.it/3/100)*100;
+    rows.push({key:y+':nextpre', label:'（参考）'+(y+1)+'年分の予定納税', date:(y+1)+'-07-31',
+      amount:each, note:y+'年分の所得税が15万円以上なので、'+(y+1)+'年は7月と11月に各 '
+        + yen(each)+' を先に納めることになります。'+(y+2)+'年3月の確定申告で精算します。',
+      info:true});
+  }
   if(t.bt>0){
     const h = Math.round(t.bt/2/100)*100;
     add('bt1','個人事業税　第1期', (y+1)+'-08-31', h,
       '都道府県から通知が届きます。納めた年の必要経費になります。');
     add('bt2','個人事業税　第2期', (y+1)+'-11-30', t.bt-h, '');
   }
-  return rows;
+  return rows.sort((a,b)=> a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
 }
 /* 毎月かかるもの */
 function monthlyDues(t){
@@ -1724,8 +1810,9 @@ function savedBalance(){
 
 function renderTaxCal(t, y){
   const rows = taxSchedule(t, y);
-  const done = rows.filter(r=>state.taxPaid[r.key]);
-  const left = rows.filter(r=>!state.taxPaid[r.key]);
+  const real = rows.filter(r=>!r.info);
+  const done = real.filter(r=>state.taxPaid[r.key]);
+  const left = real.filter(r=>!state.taxPaid[r.key]);
   const leftSum = left.reduce((s,r)=>s+r.amount, 0);
   const monthly = monthlyDues(t);
   const monthlySum = monthly.reduce((s,o)=>s+o.amount, 0);
@@ -1744,20 +1831,28 @@ function renderTaxCal(t, y){
       + '<div class="due-main"><div class="due-head"><span class="due-label">'+r.label+'</span>'+when+'</div>'
       + (r.note ? '<div class="due-note">'+r.note+'</div>' : '')+'</div>'
       + '<div class="due-right"><span class="amt">'+yen(r.amount)+'</span>'
-      + '<button type="button" class="icon-btn" data-act="taxpaid" data-key="'+r.key+'">'
-      + (paid?'取り消す':'納付済みに')+'</button></div>'
+      + (r.info ? ''
+        : '<button type="button" class="icon-btn" data-act="taxpaid" data-key="'+r.key+'">'
+          + (paid?'取り消す':'納付済みに')+'</button>')
+      + '</div>'
       + '</div>';
   };
 
+  const refund = t.mode==='free' && t.itDue < 0
+    ? '<div class="notice info-notice" style="margin:14px 0 0">予定納税 '+yen(t.prepaid)
+      + ' が所得税 '+yen(t.it)+' を上回っているので、確定申告で <b>'+yen(-t.itDue)
+      + '</b> ほど還付される見込みです。</div>'
+    : '';
   const schedCard = rows.length
     ? '<section class="card panel">'
       + '<div class="panel-head"><h2>'+y+'年分の納付スケジュール</h2>'
-      + '<span class="cnt">'+done.length+'／'+rows.length+'件 納付済み</span></div>'
+      + '<span class="cnt">'+done.length+'／'+real.length+'件 納付済み</span></div>'
       + '<div class="hint">'+y+'年分の税金は、'+(y+1)+'年に入ってから納めます。'
       + '納期限は自治体によって数日ずれることがあります。通知書が届いたら実際の期限で確認してください。</div>'
       + '<div class="dues">'+rows.map(rowHtml).join('')+'</div>'
       + (leftSum>0 ? '<div class="trow total"><span class="tlab">これから納める分</span>'
         + '<span class="tval">'+yen(leftSum)+'</span></div>' : '')
+      + refund
       + '</section>'
     : '<section class="card panel"><h2>'+y+'年分の納付スケジュール</h2>'
       + '<div class="hint">'+y+'年分は、いまの記録では納める税金がありません。'
@@ -2228,7 +2323,7 @@ function renderTax(c){
     ].filter(s=>s.v>0);
     const bar = segs.map(s=>'<span style="flex:'+s.v+';background:var(--c-'+s.color+')"></span>').join('');
     const legend = segs.map(s=>'<span><span class="dot" style="background:var(--c-'+s.color+')"></span>'+s.label+'<b>'+yen(s.v)+'</b></span>').join('');
-    return tabs + settings + dedCard(t) + warn + incomeCta
+    return tabs + basisWarn() + settings + dedCard(t) + warn + incomeCta
       + '<section class="card summary">'
       + '<div class="sum-label">'+view.y+'年分の税金・社会保険の目安'+(noIncome?'（収入未登録）':'')+'</div>'
       + '<div class="sum-total">'+yen(t.all)+'</div>'
@@ -2246,7 +2341,10 @@ function renderTax(c){
       + '<section class="card panel"><h2>内訳</h2>'
       + trow('事業の利益', yen(t.profit), '収入 '+yen(t.inSum)+' − 経費 '+yen(t.expenses)+'（記録 '+yen(t.exEntries)+'＋固定費按分 '+yen(t.ap)+'）')
       + (t.blue>0 ? trow('青色申告特別控除', '−'+yen(t.blue), '') : '')
-      + trow('所得税（復興特別所得税込み）', yen(t.it), '課税所得 '+yen(t.itTaxable)
+      + (t.carryUsed>0 ? trow('前年までの赤字の繰越', '−'+yen(t.carryUsed),
+          '青色申告なら赤字を3年間繰り越せます'
+          + (t.carry.avail>t.carryUsed ? '（残り '+yen(t.carry.avail-t.carryUsed)+' は翌年以降へ）' : '')) : '')
+      + trow('所得税（復興特別所得税込み）', yen(t.it), '課税所得 '+yen(t.itTaxableRounded)
         + '（基礎控除 '+yen(t.basic)+'・社会保険料控除 '+yen(t.social)
         + (t.ded.it>0?'・所得控除 '+yen(t.ded.it):'')
         + (t.fs.itDed>0?'・ふるさと納税 '+yen(t.fs.itDed):'')+'）')
@@ -2275,7 +2373,7 @@ function renderTax(c){
   }
 
   /* side mode */
-  return tabs + settings + dedCard(t) + warn + incomeCta
+  return tabs + basisWarn() + settings + dedCard(t) + warn + incomeCta
     + '<section class="card summary">'
     + '<div class="sum-label">'+view.y+'年分・副業にかかる税金の目安</div>'
     + '<div class="sum-total">'+yen(t.taxTotal)+'</div>'
@@ -2342,8 +2440,20 @@ function trow(label, val, note){
   return '<div class="trow"><span class="tlab">'+label
     + (note?'<small>'+note+'</small>':'')+'</span><span class="tval">'+val+'</span></div>';
 }
+function basisWarn(){
+  const cur = NOW.getFullYear();
+  if(cur <= TAX.basisYear) return '';
+  return '<div class="notice warn-notice" style="margin:0 0 14px">'
+    + '<b>税率・料率が'+TAX.basisYear+'年度のままです。</b>'
+    + 'このアプリは'+esc(TAX.basisLabel)+'をもとに計算しています。'
+    + 'いまは'+cur+'年なので、そのあとの改正や料率の改定が反映されていません。'
+    + '金額は目安として見て、申告の前に必ず最新の税率でご確認ください。</div>';
+}
 function disclaimerHtml(){
-  return '<div class="notice">この金額は<b>概算</b>です。令和7・8年分の税制（基礎控除の特例を含む）・令和8年度の国民年金・選択した市区町村の令和8年度国民健康保険料率（一覧にない自治体は入力した料率）をもとに計算しており、実際の税額は各種控除や所得の内容、翌年度の料率改定などによって変わります。確定申告や納付の際は、税務署・自治体・税理士の案内で必ずご確認ください。</div>';
+  return '<div class="notice">この金額は<b>概算</b>です。'+esc(TAX.basisLabel)
+    + '（国民健康保険は選択した市区町村の料率、一覧にない自治体は入力した料率）をもとに計算しており、'
+    + '実際の税額は各種控除や所得の内容、翌年度の料率改定などによって変わります。'
+    + '確定申告や納付の際は、税務署・自治体・税理士の案内で必ずご確認ください。</div>';
 }
 
 /* ---------- 節税のヒント ----------
@@ -3141,9 +3251,10 @@ function bizModalHtml(){
   const editing = view.modal.mode==='edit' ? state.biz.find(b=>b.id===view.modal.id) : null;
   const type = editing ? editing.type : (view.modal.type||'in');
   const sameMonth = view.y===NOW.getFullYear() && view.m===NOW.getMonth()+1;
-  const v = editing || {name:'', amount:'', y:view.y, m:view.m,
+  const keep = view.modal.keep;
+  const v = editing || Object.assign({name:'', amount:'', y:view.y, m:view.m,
     d: sameMonth ? NOW.getDate() : 1, cat:(type==='in'?'sales':'exother'), note:'',
-    due:'', paid:true};
+    due:'', paid:true}, keep || {});
   const cats = type==='in' ? BIZ_IN_CATS : BIZ_EX_CATS;
   const catOpts = cats.map(c=>'<option value="'+c.id+'"'+(v.cat===c.id?' selected':'')+'>'+c.label+'</option>').join('');
   const sugg = bizNameSuggestions(type);
@@ -3182,6 +3293,7 @@ function bizModalHtml(){
     + '</div>'
     + '<div class="f-actions">'
     + '<button class="btn btn-primary" type="submit">'+(editing?'保存する':'記録する')+'</button>'
+    + (editing ? '' : '<button class="btn btn-ghost" type="submit" name="again" value="1">記録して次へ</button>')
     + '<button class="btn btn-ghost" type="button" data-act="close">キャンセル</button>'
     + delBtn
     + '</div>'
@@ -3698,8 +3810,19 @@ root.addEventListener('submit', e=>{
     const next = view.modal && view.modal.mode==='edit'
       ? state.biz.map(x=>x.id===bz.id ? bz : x)
       : state.biz.concat([bz]);
-    view.modal=null; view.modalDelete=false; view.pendingDelete=null;
-    persist({biz: next});
+    /* 「記録して次へ」なら、日付と種別を引き継いだ空の入力に戻す */
+    const again = e.submitter && e.submitter.name==='again';
+    view.modalDelete=false; view.pendingDelete=null;
+    if(again){
+      view.modal = {kind:'biz', mode:'add', type, keep:{y:bz.y, m:bz.m, d:bz.d, cat:bz.cat}};
+      persist({biz: next});
+      const f = document.getElementById('b-name');
+      if(f) f.focus();
+      toast(yen(bz.amount)+' を記録しました');
+    }else{
+      view.modal=null;
+      persist({biz: next});
+    }
   }
   else if(e.target.id==='save-form'){
     e.preventDefault();

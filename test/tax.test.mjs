@@ -234,6 +234,64 @@ group('決算書の集計（家事按分を科目に合流させる）', ()=>{
   eq('税金の計算と一致', st.diff, a.calcTax(2026).profit);
 });
 
+group('純損失の繰越控除（青色・3年）', ()=>{
+  const mk = (biz, filing) => boot({ v:4, payments:[], biz,
+    profile: Object.assign({}, base, {filing: filing||'blue65', hiType:'manual', hiManual:0}) });
+  const yr = (y, inV, exV) => [
+    {id:'i'+y, type:'in', name:'収入', amount:inV, y, m:6, d:30, cat:'sales'},
+    {id:'e'+y, type:'ex', name:'経費', amount:exV, y, m:6, d:15, cat:'buy'}];
+
+  // 2024に100万の赤字、2025は記録なし、2026は300万の黒字
+  const a = mk([...yr(2024, 1000000, 2000000), ...yr(2026, 4000000, 1000000)]);
+  eq('繰り越せる赤字',   a.lossCarry(2026).avail, 1000000);
+  const t = a.calcTax(2026);
+  eq('赤字を使った額',   t.carryUsed, 1000000);
+  eq('所得は繰越後',     t.income, 3000000 - 650000 - 1000000);
+
+  // 白色は繰り越せない
+  const w = mk([...yr(2024, 1000000, 2000000), ...yr(2026, 4000000, 1000000)], 'white');
+  eq('白色は繰越なし',   w.calcTax(2026).carryUsed, 0);
+
+  // 4年前の赤字は消える（2022の赤字は2026では使えない）
+  const old4 = mk([...yr(2022, 1000000, 2000000), ...yr(2026, 4000000, 1000000)]);
+  eq('4年前の赤字は期限切れ', old4.calcTax(2026).carryUsed, 0);
+
+  // 途中の黒字が赤字を食う
+  const eaten = mk([...yr(2024, 1000000, 2000000), ...yr(2025, 2400000, 2000000),
+                    ...yr(2026, 4000000, 1000000)]);
+  eq('間の黒字40万が赤字を消費', eaten.calcTax(2026).carryUsed, 600000);
+
+  // 個人事業税にも効く
+  const bt = mk([...yr(2024, 1000000, 6000000), ...yr(2026, 9000000, 1000000)]);
+  const tb = bt.calcTax(2026);
+  eq('事業税も繰越後で計算', tb.bt,
+    Math.round(Math.max(0, 8000000 - tb.carryUsed - 2900000) * 5/100));
+});
+
+group('予定納税（前年の所得税が15万円以上）', ()=>{
+  const mk = (prevIn, curIn) => boot({ v:4, payments:[], biz:[
+      {id:'p', type:'in', name:'前年', amount:prevIn, y:2025, m:6, d:30, cat:'sales'},
+      {id:'c', type:'in', name:'今年', amount:curIn,  y:2026, m:6, d:30, cat:'sales'}],
+    profile: Object.assign({}, base, {filing:'white', hiType:'manual', hiManual:0}) });
+
+  const small = mk(2000000, 2000000);
+  eq('前年の所得税が少なければ予定納税なし', small.calcTax(2026).prepaid, 0);
+
+  const big = mk(9000000, 9000000);
+  const t = big.calcTax(2026);
+  eq('前年の所得税を拾えている', t.prevIt > 150000, true);
+  eq('1期あたりは3分の1',       t.prepayEach, Math.floor(t.prevIt/3/100)*100);
+  eq('2回ぶん前払い',           t.prepaid, t.prepayEach*2);
+  eq('確定申告は差額だけ',       t.itDue, t.it - t.prepaid);
+
+  // 前年が多く今年が少なければ還付
+  const refund = mk(9000000, 2000000);
+  eq('還付になる', refund.calcTax(2026).itDue < 0, true);
+
+  const sched = big.taxSchedule(big.calcTax(2026), 2026).map(r=>r.date);
+  eq('納付スケジュールは日付順', sched.slice().sort().join('|'), sched.join('|'));
+});
+
 /* ---------- 結果 ---------- */
 console.log('\n' + '─'.repeat(48));
 if(fail){

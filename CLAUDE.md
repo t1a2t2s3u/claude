@@ -25,7 +25,8 @@ opened directly), it falls back to `localStorage`. Consequences:
 Tax parameters (income-tax brackets, R7/R8 basic deduction table, pension)
 live in the `TAX` constant near the top of the inline script; NHI rates are
 in `NHI_STD` (33 prefectures' standard rates) and `NHI_PRESETS` (exact city
-rates) — update them when fiscal years roll over. State is v3:
+rates) — update them when fiscal years roll over, and move `TAX.basisYear`
+with them: past it the app warns that its rates are stale. State is v3:
 `{payments, biz, saves, invoices, taxPaid, profile}` (`profile.ded` holds the 所得控除); `migrate()` upgrades older
 embedded state (v3 income becomes `paid:true`, since it predates 入金管理).
 
@@ -41,6 +42,10 @@ them into one number. It also returns `human`, the sum of the 人的控除の差
 `residentAdjust()` needs; a flat 調整控除 is wrong once there are dependents.
 `furusato()` handles ふるさと納税, which is an 所得控除 for 所得税 but a 税額控除
 for 住民税, and derives the 実質2,000円 ceiling from the 住民税所得割.
+
+`calcTax(y)` calls itself once for `y-1` to find 予定納税 — pass
+`{noPrev:true}` to stop that recursing further. `lossCarry()` walks the years
+forward so intervening profits consume a loss before it expires.
 
 `taxTips()` builds the 節税 advice from `calcTax()`'s output and
 `marginalRates()`. It hard-codes filing deadlines and the 2026 end of the
