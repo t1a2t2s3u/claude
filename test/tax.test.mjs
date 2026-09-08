@@ -199,6 +199,41 @@ group('通し：会社員＋副業', ()=>{
   eq('追加の住民税',    t.addRT, 75000);
 });
 
+group('決算書の集計（家事按分を科目に合流させる）', ()=>{
+  const a = boot({ v:4,
+    payments:[
+      {id:'p1', name:'家賃',   amount:80000, day:27, cat:'home', method:'bank', freq:'monthly', bizPct:30},
+      {id:'p2', name:'スマホ', amount:9000,  day:10, cat:'net',  method:'card', freq:'monthly', bizPct:50},
+      {id:'p3', name:'電気',   amount:12000, day:25, cat:'util', method:'bank', freq:'monthly', bizPct:20}],
+    biz:[
+      {id:'i1', type:'in', name:'A', amount:4200000, y:2026, m:3, d:31, cat:'sales'},
+      {id:'i2', type:'in', name:'B', amount:1800000, y:2026, m:9, d:30, cat:'sales'},
+      {id:'i3', type:'in', name:'補助金', amount:200000, y:2026, m:5, d:10, cat:'inother'},
+      {id:'e1', type:'ex', name:'仕入', amount:900000, y:2026, m:3,  d:10, cat:'buy'},
+      {id:'e2', type:'ex', name:'外注', amount:600000, y:2026, m:4,  d:20, cat:'out'},
+      {id:'e3', type:'ex', name:'高速', amount:48000,  y:2026, m:6,  d:1,  cat:'travel'},
+      {id:'e4', type:'ex', name:'備品', amount:72000,  y:2026, m:7,  d:3,  cat:'supply'},
+      {id:'e5', type:'ex', name:'会食', amount:33000,  y:2026, m:8,  d:9,  cat:'meet'},
+      {id:'e6', type:'ex', name:'手数料', amount:4400, y:2026, m:9,  d:1,  cat:'fee'}],
+    profile: Object.assign({}, base, {filing:'blue65'}) });
+  const st = a.statement(2026);
+  const acc = n => (st.expRows.find(r=>r.acc===n) || {amount:0}).amount;
+  eq('売上',            st.inRows[0].amount, 6000000);
+  eq('雑収入',          st.inRows[1].amount, 200000);
+  eq('収入計',          st.income, 6200000);
+  eq('仕入は売上原価へ', st.cost, 900000);
+  eq('外注費→外注工賃',  acc('外注工賃'), 600000);
+  eq('家賃30%→地代家賃', acc('地代家賃'), 288000);
+  eq('スマホ50%→通信費', acc('通信費'), 54000);
+  eq('電気20%→水道光熱費', acc('水道光熱費'), 28800);
+  eq('会議交際費→接待交際費', acc('接待交際費'), 33000);
+  eq('経費計',          st.expTotal, 1128200);
+  eq('差引金額',        st.diff, 4171800);
+  eq('青色申告特別控除', st.blue, 650000);
+  eq('所得金額',        st.net, 3521800);
+  eq('税金の計算と一致', st.diff, a.calcTax(2026).profit);
+});
+
 /* ---------- 結果 ---------- */
 console.log('\n' + '─'.repeat(48));
 if(fail){

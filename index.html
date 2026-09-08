@@ -224,6 +224,17 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .prog span{display:block;height:100%;background:var(--accent);border-radius:5px;min-width:2px}
 .warn-dot{color:var(--hanko);font-weight:600}
 .item-name .tag{margin-left:6px;vertical-align:1px}
+.ytable tr.sec td{background:var(--surface2);font-size:.72rem;color:var(--muted);font-weight:600;padding:5px 8px}
+.ytable tr.sum td{font-weight:700;border-bottom:2px solid var(--line)}
+.ytable tr:last-child td{font-weight:700}
+.sub-note{font-size:.68rem;color:var(--muted)}
+.setup{padding:26px 24px}
+.setup-lead{font-size:.75rem;letter-spacing:.14em;color:var(--muted)}
+.setup-title{font-family:"Shippori Mincho","Noto Sans JP",serif;font-size:1.35rem;font-weight:600;margin:4px 0 12px}
+.setup-next{margin-top:24px;padding-top:18px;border-top:1px dashed var(--line);font-size:.8rem;color:var(--muted);line-height:1.8}
+.setup-next ol{margin:8px 0 12px;padding-left:1.3em}
+.setup-next li{margin-bottom:4px}
+.setup-next b{color:var(--ink)}
 .tabs{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tab{white-space:nowrap}
 /* 請求書 */
@@ -763,7 +774,8 @@ function normalizeProfile(pr){
     closingDay: Math.min(31, Math.max(0, parseInt(pr.closingDay,10)||0)),   // 締め日（0=未設定）
     payMonths: Math.min(3, Math.max(0, parseInt(pr.payMonths,10)||1)),      // 何ヶ月後に入金
     payDay: Math.min(31, Math.max(0, parseInt(pr.payDay,10)||0)),           // 入金日
-    lastBackup: dateStr(pr.lastBackup)
+    lastBackup: dateStr(pr.lastBackup),
+    setupDone: !!pr.setupDone
   };
 }
 function migrate(s){
@@ -1148,8 +1160,10 @@ function render(){
   const isCurMonth = view.y===ctx.ty && view.m===ctx.tm;
   const showToday = yearOnly ? view.y!==ctx.ty : !isCurMonth;
 
+  const setup = needsSetup();
   let content;
-  if(view.section==='pay') content = renderPay(ctx);
+  if(setup) content = renderSetup();
+  else if(view.section==='pay') content = renderPay(ctx);
   else if(view.section==='biz') content = renderBiz(ctx);
   else content = renderTax(ctx);
 
@@ -1159,17 +1173,17 @@ function render(){
   root.innerHTML =
     '<header class="masthead">'
     + '<div><div class="eyebrow">毎月の支払いと税金に、そなえる</div><h1>Sonae</h1></div>'
-    + '<div><div class="monthnav">'
+    + (setup ? '' : '<div><div class="monthnav">'
     + '<button class="nav-btn" data-act="'+navPrev+'" aria-label="前へ">‹</button>'
     + '<span class="month-label">'+navLabel+'</span>'
     + '<button class="nav-btn" data-act="'+navNext+'" aria-label="次へ">›</button>'
     + '</div>'
     + (showToday ? '<div style="text-align:center"><button class="today-chip" data-act="today">今月に戻る</button></div>' : '')
-    + '</div>'
+    + '</div>')
     + '</header>'
-    + '<nav class="seg-nav">'
-    + segBtn('pay','支払い') + segBtn('biz','仕事の収支') + segBtn('tax','税金の目安')
-    + '</nav>'
+    + (setup ? '' : '<nav class="seg-nav">'
+      + segBtn('pay','支払い') + segBtn('biz','仕事の収支') + segBtn('tax','税金の目安')
+      + '</nav>')
     + content
     + '<footer><span>固定費'+state.payments.length+'件・収支'+state.biz.length+'件　'+saveNote+backupWarn()+'</span>'
     + '<span><button class="linklike" data-act="data">データと設定</button>　'
@@ -1218,6 +1232,48 @@ function bizTabBtn(id,label){
 }
 function tabBtn(id,label){
   return '<button class="tab'+(view.tab===id?' active':'')+'" role="tab" aria-selected="'+(view.tab===id)+'" data-act="tab" data-tab="'+id+'">'+label+'</button>';
+}
+
+/* ---------- 最初の設定 ----------
+   記録がひとつも無く、まだ設定を済ませていない人にだけ出す。
+   ここで働き方・地域・申告区分が決まらないと、税金の目安がその人の数字にならない。 */
+function needsSetup(){
+  return !state.profile.setupDone && !state.payments.length && !state.biz.length;
+}
+function renderSetup(){
+  const pr = state.profile;
+  return '<section class="card panel setup">'
+    + '<div class="setup-lead">はじめまして</div>'
+    + '<h2 class="setup-title">3つだけ教えてください</h2>'
+    + '<div class="hint">税金の目安をあなたの数字で出すために必要です。'
+    + 'あとから「税金の目安」の設定でいつでも変えられます。</div>'
+    + '<form id="setup-form"><div class="f-grid" style="margin-top:18px">'
+    + '<div class="f-full"><label for="su-work">1. 働き方</label><select id="su-work">'
+    + '<option value="free"'+(pr.workMode==='free'?' selected':'')+'>個人事業主・フリーランス</option>'
+    + '<option value="side"'+(pr.workMode==='side'?' selected':'')+'>会社員をしながら副業</option>'
+    + '</select></div>'
+    + '<div class="f-full"><label for="su-pref">2. お住まいの都道府県</label><select id="su-pref">'
+    + NHI_PREFS.map(p=>'<option value="'+p.id+'"'+(pr.nhiPref===p.id?' selected':'')+'>'+p.label+'</option>').join('')
+    + '</select><div class="hint">国民健康保険の料率と住民税の目安に使います。</div></div>'
+    + '<div class="f-full"><label for="su-filing">3. 確定申告のしかた</label><select id="su-filing">'
+    + '<option value="blue65"'+(pr.filing==='blue65'?' selected':'')+'>青色申告（65万円控除）</option>'
+    + '<option value="blue10"'+(pr.filing==='blue10'?' selected':'')+'>青色申告（10万円控除）</option>'
+    + '<option value="white"'+(pr.filing==='white'?' selected':'')+'>白色申告</option>'
+    + '<option value="unknown">まだ決めていない・わからない</option>'
+    + '</select><div class="hint">わからなければ「まだ決めていない」で大丈夫です。'
+    + '白色として計算し、青色にしたときいくら得かをあとで教えます。</div></div>'
+    + '</div>'
+    + '<div class="f-actions"><button class="btn btn-primary" type="submit">はじめる</button>'
+    + '<button class="btn btn-ghost" type="button" data-act="skipsetup">あとで</button></div>'
+    + '</form>'
+    + '<div class="setup-next">このあとやること'
+    + '<ol><li><b>支払い</b>に家賃やサブスクなど毎月の固定費を登録する'
+    + '（「経費にする割合」を決めると、そのぶん税金が下がります）</li>'
+    + '<li><b>仕事の収支</b>に入金と経費を記録する</li>'
+    + '<li><b>税金の目安</b>で、1年でいくら備えればいいかを確かめる</li></ol>'
+    + 'データはこの端末の中だけに保存されます。'
+    + '<b>ときどき「データと設定」からバックアップ</b>を取ってください。</div>'
+    + '</section>';
 }
 
 /* ---------- section: pay ---------- */
@@ -1950,15 +2006,132 @@ function renderInvoices(){
     + '</section>';
 }
 
+/* ---------- 決算書・収支内訳書の数字 ----------
+   記録した収支と家事按分を、申告書に書く科目ごとにまとめる。
+   棚卸と減価償却はこのアプリで扱っていないので、そのぶんは注記で伝える。 */
+function statement(y){
+  const inRows = [
+    {label:'売上（収入）金額', amount: state.biz.filter(b=>b.y===y&&b.type==='in'&&b.cat==='sales')
+      .reduce((s,b)=>s+b.amount,0)},
+    {label:'雑収入', amount: state.biz.filter(b=>b.y===y&&b.type==='in'&&b.cat==='inother')
+      .reduce((s,b)=>s+b.amount,0)}
+  ];
+  const income = inRows.reduce((s,r)=>s+r.amount,0);
+
+  const cost = state.biz.filter(b=>b.y===y&&b.type==='ex'&&b.cat==='buy')
+    .reduce((s,b)=>s+b.amount,0);
+
+  /* 経費は決算書の科目名にまとめる。家事按分も同じ科目に合流させる */
+  const exp = new Map();
+  const bump = (acc, amt, from)=>{
+    if(amt<=0) return;
+    const o = exp.get(acc) || {acc, amount:0, ap:0};
+    o.amount += amt;
+    if(from==='ap') o.ap += amt;
+    exp.set(acc, o);
+  };
+  state.biz.filter(b=>b.y===y && b.type==='ex' && b.cat!=='buy')
+    .forEach(b=>bump(ACC_EX[b.cat] || '雑費', b.amount, 'rec'));
+  for(let m=1;m<=12;m++){
+    state.payments.filter(p=>p.bizPct>0 && occursIn(p,y,m)).forEach(p=>{
+      bump(ACC_FIX[p.cat] || '雑費', Math.round(p.amount*p.bizPct/100), 'ap');
+    });
+  }
+  const expRows = [...exp.values()].sort((a,b)=>b.amount-a.amount);
+  const expTotal = expRows.reduce((s,r)=>s+r.amount,0);
+
+  const gross = income - cost;
+  const diff = gross - expTotal;
+  const blueMax = state.profile.filing==='blue65' ? 650000
+    : state.profile.filing==='blue10' ? 100000 : 0;
+  const blue = Math.min(blueMax, Math.max(0, diff));
+  return {inRows, income, cost, expRows, expTotal, gross, diff, blue,
+    net: diff - blue, hasCost: cost>0};
+}
+
+function renderStatement(y){
+  const st = statement(y);
+  const filingLabel = state.profile.filing==='white' ? '収支内訳書' : '青色申告決算書';
+  if(!st.income && !st.expTotal && !st.cost){
+    return '<section class="card panel"><h2>'+y+'年の'+filingLabel+'</h2>'
+      + '<div class="hint">'+y+'年の記録がまだありません。'
+      + '収入と経費を登録すると、確定申告のときに<b>そのまま書き写せる科目別の合計</b>が'
+      + 'ここに並びます。</div></section>';
+  }
+  const money = n => '<td class="num">'+yen(n)+'</td>';
+  const row = (label, amount, cls) =>
+    '<tr'+(cls?' class="'+cls+'"':'')+'><td>'+label+'</td>'+money(amount)+'</tr>';
+  const expHtml = st.expRows.map(r=>
+    '<tr><td>'+esc(r.acc)
+    + (r.ap>0 ? '<br><span class="sub-note">うち家事按分 '+yen(r.ap)+'</span>' : '')
+    + '</td>'+money(r.amount)+'</tr>').join('');
+
+  return '<section class="card panel">'
+    + '<div class="panel-head"><h2>'+y+'年の'+filingLabel+'</h2><div class="actions">'
+    + (dl ? '<button class="btn-sm" data-act="stmtcsv">CSVで書き出す</button>' : '')
+    + '</div></div>'
+    + '<div class="hint">確定申告のときに、'+filingLabel+'へ<b>そのまま書き写せる</b>形にまとめました。'
+    + '経費は申告書の科目名に置きかえてあります。</div>'
+    + '<table class="ytable" style="margin-top:14px"><tbody>'
+    + '<tr class="sec"><td colspan="2">収入</td></tr>'
+    + st.inRows.filter(r=>r.amount>0).map(r=>row(r.label, r.amount)).join('')
+    + row('収入計', st.income, 'sum')
+    + (st.hasCost
+      ? '<tr class="sec"><td colspan="2">売上原価</td></tr>'
+        + row('仕入金額', st.cost)
+        + row('差引金額', st.gross, 'sum')
+      : '')
+    + '<tr class="sec"><td colspan="2">経費</td></tr>'
+    + expHtml
+    + row('経費計', st.expTotal, 'sum')
+    + '<tr class="sec"><td colspan="2">まとめ</td></tr>'
+    + row('差引金額（収入 − 原価 − 経費）', st.diff)
+    + (st.blue>0 ? row('青色申告特別控除', st.blue) : '')
+    + row('所得金額', st.net, 'sum')
+    + '</tbody></table>'
+    + '<div class="notice" style="margin-top:16px">この集計に<b>入っていないもの</b>があります。'
+    + '<br>・<b>減価償却費</b>：10万円以上の道具や車両を買った場合、その年に全額を経費にできないことがあります'
+    + '（青色申告なら30万円未満は一括にできます）。該当するものは申告書で足してください。'
+    + (st.hasCost ? '<br>・<b>期首・期末の棚卸</b>：売上原価は「仕入金額」だけで計算しています。在庫がある場合は調整が必要です。' : '')
+    + '<br>・<b>専従者給与</b>や、このアプリに登録していない経費。'
+    + '</div>'
+    + '</section>';
+}
+
+function exportStatementCsv(){
+  if(!dl) return;
+  const y = view.y;
+  const st = statement(y);
+  const q = v => '"'+String(v).replace(/"/g,'""')+'"';
+  const rows = [['区分','科目','金額']];
+  st.inRows.filter(r=>r.amount>0).forEach(r=>rows.push(['収入', r.label, r.amount]));
+  rows.push(['収入', '収入計', st.income]);
+  if(st.hasCost){
+    rows.push(['売上原価', '仕入金額', st.cost]);
+    rows.push(['売上原価', '差引金額', st.gross]);
+  }
+  st.expRows.forEach(r=>rows.push(['経費', r.acc, r.amount]));
+  rows.push(['経費', '経費計', st.expTotal]);
+  rows.push(['まとめ', '差引金額', st.diff]);
+  if(st.blue>0) rows.push(['まとめ', '青色申告特別控除', st.blue]);
+  rows.push(['まとめ', '所得金額', st.net]);
+  const csv = '\uFEFF' + rows.map(r=>r.map(q).join(',')).join('\r\n');
+  dl.save({filename:'sonae-kessansho-'+y+'.csv', data:csv})
+    .then(()=>toast(y+'年の決算書の数字を書き出しました'))
+    .catch(err=>{ if(err && err.code!=='declined') toast('書き出せませんでした'); });
+}
+
 /* ---------- section: tax ---------- */
 function renderTax(c){
   const pr = state.profile;
   const t = calcTax(view.y);
   const tabs = '<div class="tabs" role="tablist">'
-    + taxTabBtn('est','目安') + taxTabBtn('cal','納付と積立') + taxTabBtn('tips','節税のヒント')
+    + taxTabBtn('est','目安') + taxTabBtn('cal','納付と積立')
+    + taxTabBtn('tips','節税のヒント') + taxTabBtn('stmt','決算書')
     + '</div>';
   if(view.taxTab==='cal') return tabs + renderTaxCal(t, view.y);
   if(view.taxTab==='tips') return tabs + renderTips(t, view.y);
+  if(view.taxTab==='stmt') return tabs + renderStatement(view.y);
 
   const settings =
     '<section class="card panel"><h2>計算の設定</h2>'
@@ -2708,7 +2881,8 @@ function dataModalHtml(){
     + (dl && state.payments.length ? '<button class="btn-sm" type="button" data-act="csv">固定費CSV</button>' : '')
     + (dl && state.biz.length ? '<button class="btn-sm" type="button" data-act="bizcsv">収支CSV</button>' : '')
     + (dl && (state.biz.length || state.payments.some(p=>p.bizPct>0))
-        ? '<button class="btn-sm" type="button" data-act="jrncsv">仕訳CSV（'+view.y+'年）</button>' : '')
+        ? '<button class="btn-sm" type="button" data-act="jrncsv">仕訳CSV（'+view.y+'年）</button>'
+          + '<button class="btn-sm" type="button" data-act="stmtcsv">決算書CSV（'+view.y+'年）</button>' : '')
     + (!dl ? '<span class="hint">このブラウザでは書き出しが使えません。</span>' : '')
     + '</div>'
     + '<div class="group-label" style="margin-top:20px">取り込み（CSV）</div>'
@@ -3085,7 +3259,7 @@ function restoreBackup(){
 function parseCsv(text){
   const rows = [];
   let row = [], cell = '', q = false;
-  const src = text.replace(/^﻿/, '');
+  const src = text.replace(/^\uFEFF/, '');
   for(let i=0;i<src.length;i++){
     const ch = src[i];
     if(q){
@@ -3322,6 +3496,9 @@ root.addEventListener('click', e=>{
   else if(act==='tipsall'){ view.tipsAll = !view.tipsAll; render(); }
   else if(act==='taxtab'){ view.taxTab=b.dataset.tab; view.pendingDelete=null; render(); }
   /* データと設定 */
+  else if(act==='skipsetup'){
+    persist({profile: Object.assign({}, state.profile, {setupDone:true})});
+  }
   else if(act==='ded') openModal({kind:'ded'});
   else if(act==='data') openModal({kind:'data'});
   else if(act==='about') openModal({kind:'about'});
@@ -3406,6 +3583,7 @@ root.addEventListener('click', e=>{
   else if(act==='csv') exportCsv();
   else if(act==='bizcsv') exportBizCsv();
   else if(act==='jrncsv') exportJournalCsv();
+  else if(act==='stmtcsv') exportStatementCsv();
 });
 
 root.addEventListener('input', e=>{
@@ -3538,6 +3716,19 @@ root.addEventListener('submit', e=>{
       : state.saves.concat([sv]);
     view.modal=null; view.modalDelete=false; view.pendingDelete=null;
     persist({saves: next});
+  }
+  if(e.target.id==='setup-form'){
+    e.preventDefault();
+    const filing = val('su-filing');
+    persist({profile: Object.assign({}, state.profile, {
+      setupDone: true,
+      workMode: val('su-work'),
+      nhiPref: val('su-pref'),
+      nhiCity: 'std',
+      filing: filing==='unknown' ? 'white' : filing
+    })});
+    toast('設定しました。まずは固定費か収入を登録してみてください');
+    return;
   }
   else if(e.target.id==='ded-form'){
     e.preventDefault();
