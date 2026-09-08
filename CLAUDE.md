@@ -61,6 +61,13 @@ No build, no dependencies. Open `index.html` in a browser to run it.
 Quick syntax check after editing the inline script:
 extract the `<script>` body and run `node --check` on it.
 
+**Run `node test/tax.test.mjs` after touching anything the tax engine reads.**
+It boots `index.html` inside `node:vm` on a stub DOM (no browser, no packages)
+and checks ~90 hand-verified amounts. A failure means the tax numbers moved:
+confirm the new figure by hand before updating the expected value, never the
+other way round. `let`/`const` bindings are not context properties — reach
+`state`, `view` and `TAX` through the harness's `$('expr')`.
+
 ## Conventions
 
 - Keep it a single self-contained file; inline any new CSS/JS.
