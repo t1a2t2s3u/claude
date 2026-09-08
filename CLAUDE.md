@@ -9,49 +9,50 @@ sessions act as staff members with defined roles, driven by skills in
 `.claude/skills/` and scheduled Routines. There is no application code to
 build or run.
 
-Current employees:
+The 11 employees are organised into four departments. Keep this structure when
+adding staff: a new employee joins a department (or a new one is declared here
+and on the office board), it does not just get appended to a flat list.
 
-- **secretary** (`.claude/skills/secretary/`) — task management. Any
-  task-related request from the user (adding, checking, or reorganizing
-  tasks) goes through that skill.
-- **editor-in-chief** (`.claude/skills/editor-in-chief/`) — strategy,
-  planning, and writing briefs for the note monetization team.
-- **researcher** (`.claude/skills/researcher/`) — weekly trend research
-  reports (`strategy/research/`) feeding the editor's Monday meeting.
-- **writer** (`.claude/skills/writer/`) — drafts note articles from the
-  editor's briefs into `articles/drafts/`.
-- **reviewer** (`.claude/skills/reviewer/`) — proofreads drafts and promotes
-  passing ones to `articles/ready/` with a review memo.
-- **sns** (`.claude/skills/sns/`) — drafts X (Twitter) and Threads promo
-  posts into the `sns/queue.md` posting queue; the owner posts them manually.
-- **analyst** (`.claude/skills/analyst/`) — records owner-supplied metrics in
-  `analytics/` and writes improvement proposals for the editor. Never invents
-  numbers.
-- **product-scout** (`.claude/skills/product-scout/`) — hunts for app/tool
-  ideas the owner could actually build with Claude Code and monetize; writes
-  weekly reports and idea memos under `product/`. Separate from the note team:
-  the researcher hunts article topics, the scout hunts products to sell.
+### 本業 — 辰弥塗装工業 Web集客部 (`seo/`)
 
-SEO/MEO team for the owner's real business, 辰弥塗装工業 (exterior wall and
-roof painting; Akita City, Katagami City, Minamiakita District):
+The owner's REAL painting business (exterior wall and roof; Akita City,
+Katagami City, Minamiakita District; https://tatsumi-tosou.com/).
 
-- **seo-director** (`.claude/skills/seo-director/`) — weekly SEO/MEO research,
-  prioritised action list, and blog briefs.
-- **seo-writer** (`.claude/skills/seo-writer/`) — two blog articles a month
-  from those briefs.
-- **meo** (`.claude/skills/meo/`) — Google Business Profile post drafts,
-  profile audits, and review-reply drafts. The owner posts manually.
+- **seo-director** — weekly SEO/MEO research, prioritised action list, blog
+  briefs. Mondays.
+- **seo-writer** — two blog articles a month from those briefs. Tuesdays.
+- **meo** — Google Business Profile posts, profile audits, review replies.
+  Thursdays. The owner posts manually.
 
-This team writes about a REAL company: `seo/business-profile.md` is the only
-source of facts about it. Inventing credentials, prices, past jobs, or
-customer voices is forbidden (mark gaps `【要確認】`), as is anything touching
-fake reviews — Japan's stealth-marketing rules make that a legal risk, not
-just a quality one.
+`seo/business-profile.md` is the only source of facts about the company.
+Inventing credentials, prices, past jobs, or customer voices is forbidden
+(mark gaps `【要確認】`). Fake, incentivised, or scripted reviews are out of
+bounds — Japan's stealth-marketing rules make that a legal risk; asking real
+customers for honest reviews is fine.
 
-The note team's boundary: AI staff research, plan, and draft; the owner
-personally publishes to note, sets prices, and supplies real personal
-experiences (drafts contain placeholders for these — fabricating
-experiences or earnings figures is forbidden).
+### 副業 — note × SNS 編集部 (`strategy/`, `articles/`, `sns/`, `analytics/`)
+
+- **editor-in-chief** — strategy, planning, briefs. Mondays.
+- **researcher** — weekly trend reports (`strategy/research/`). Sundays.
+- **writer** — note drafts into `articles/drafts/`. Tue/Thu.
+- **reviewer** — proofreads and promotes to `articles/ready/`. Wed/Fri.
+- **sns** — X and Threads drafts into `sns/queue.md`, three a day. Daily.
+- **analyst** — owner-supplied metrics into `analytics/`. Saturdays.
+
+Boundary: AI staff research, plan, and draft; the owner publishes to note,
+sets prices, and supplies real personal experiences (drafts carry
+placeholders for these — fabricating experiences or earnings is forbidden).
+
+### 新規事業 — プロダクト開発室 (`product/`)
+
+- **product-scout** — hunts app/tool ideas the owner could build with Claude
+  Code and monetize. Wednesdays. Distinct from the note researcher: that one
+  hunts article topics, this one hunts products to sell.
+
+### 管理 — 管理部 (`TASKS.md`, `reports/`)
+
+- **secretary** — cross-department task board and the morning briefing.
+  Weekday mornings. Any task-related request from the user goes through it.
 
 ## Repository structure
 
