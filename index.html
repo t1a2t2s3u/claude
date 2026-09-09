@@ -184,9 +184,17 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .ychart-labels .cur{color:var(--accent);font-weight:600}
 .ychart-labels span{white-space:nowrap}
 .ychart-labels i{font-style:normal}
-.dchart{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;align-items:end;height:150px;border-bottom:1px solid var(--line)}
-.dmon{display:flex;align-items:flex-end;gap:2px;height:100%;border:0;background:none;padding:0;cursor:pointer}
-.dbar{flex:1;border-radius:3px 3px 0 0;min-height:2px}
+/* 月別収支：左に目盛り、いちばん高い月にだけ数字 */
+.dwrap{padding-left:44px}
+.dgline{position:absolute;left:0;right:0;height:0;border-top:1px solid var(--line);pointer-events:none}
+.dgline i{position:absolute;right:100%;top:0;transform:translateY(-50%);padding-right:7px;
+  font-style:normal;font-size:.62rem;line-height:1;color:var(--muted);white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.dchart{position:relative;display:grid;grid-template-columns:repeat(12,1fr);gap:6px;align-items:end;height:150px;border-bottom:1px solid var(--line)}
+.dmon{position:relative;display:flex;align-items:flex-end;gap:2px;height:100%;border:0;background:none;padding:0;cursor:pointer}
+.dlab{position:absolute;font-size:.62rem;line-height:1;white-space:nowrap;pointer-events:none;
+  color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.dbar{flex:1;border-radius:3px 3px 0 0;min-height:0}
 .dbar.in{background:var(--c-sub)}
 .dbar.ex{background:var(--c-home)}
 .ytable{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:22px}
@@ -614,6 +622,32 @@ function incomeTaxOn(taxableRaw){
 /* ---------- helpers ---------- */
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function yen(n){return '¥' + Math.round(Number(n)||0).toLocaleString('ja-JP');}
+/* グラフの目盛り用。1万円以上は「万」でまとめる */
+function yenShort(n){
+  n = Math.round(Number(n)||0);
+  if(Math.abs(n) >= 100000000){
+    const oku = n/100000000;
+    return '¥' + (Number.isInteger(oku) ? oku : oku.toFixed(1)) + '億';
+  }
+  if(Math.abs(n) >= 10000){
+    const man = n/10000;
+    return '¥' + (Number.isInteger(man) ? man : man.toFixed(1)) + '万';
+  }
+  return yen(n);
+}
+/* きりのいい目盛りを作る。3本くらいになる刻みを選ぶ */
+function niceScale(v, ticks){
+  ticks = ticks || 4;
+  if(!(v>0)) return {max:1, step:1, lines:[]};
+  const raw = v/ticks;
+  const pow = Math.pow(10, Math.floor(Math.log10(raw)));
+  const n = raw/pow;
+  const step = (n<=1 ? 1 : n<=1.5 ? 1.5 : n<=2 ? 2 : n<=2.5 ? 2.5 : n<=5 ? 5 : 10) * pow;
+  const max = Math.ceil(v/step)*step;
+  const lines = [];
+  for(let t=step; t<=max+step/2; t+=step) lines.push(Math.round(t));
+  return {max, step, lines};
+}
 function uid(){return Math.random().toString(36).slice(2,8) + Date.now().toString(36);}
 function daysInMonth(y,m){return new Date(y, m, 0).getDate();}
 function pad2(n){return String(n).padStart(2,'0');}
@@ -1609,25 +1643,43 @@ function renderBiz(c){
     const mm=i+1;
     return {m:mm, inV:bizSum(y,'in',mm), exV:bizSum(y,'ex',mm)+Math.round(apportionMonth(y,mm))};
   });
-  const max = Math.max(1, ...months.map(o=>Math.max(o.inV,o.exV)));
+  const peak = Math.max(...months.map(o=>Math.max(o.inV,o.exV)));
+  const sc = niceScale(peak);
+  /* 数字は目盛りで読ませる。直接の数字はいちばん高い月だけに付ける */
+  const topIn = months.reduce((a,o)=> o.inV>a.inV ? o : a, months[0]);
+  const topEx = months.reduce((a,o)=> o.exV>a.exV ? o : a, months[0]);
   const bars = months.map(o=>{
-    const hi = Math.round(o.inV/max*100), he = Math.round(o.exV/max*100);
+    const hi = o.inV>0 ? Math.max(2, o.inV/sc.max*100) : 0;
+    const he = o.exV>0 ? Math.max(2, o.exV/sc.max*100) : 0;
+    /* 端の月はラベルがはみ出さないように寄せる */
+    const anchor = o.m<=2 ? 'left:0' : o.m>=11 ? 'right:0' : 'left:50%;transform:translateX(-50%)';
+    const peakLabel = (v, h, cls) => '<span class="dlab '+cls+'" style="'+anchor
+      + ';bottom:calc('+h.toFixed(1)+'% + 4px)">'+yenShort(v)+'</span>';
     return '<button type="button" class="dmon" data-act="bizgoto" data-m="'+o.m+'"'
       + ' data-tip="'+o.m+'月　収入'+yen(o.inV)+'　経費'+yen(o.exV)+'"'
       + ' aria-label="'+o.m+'月 収入'+yen(o.inV)+' 経費'+yen(o.exV)+'">'
-      + '<span class="dbar in" style="height:'+Math.max(hi,o.inV>0?3:1)+'%"></span>'
-      + '<span class="dbar ex" style="height:'+Math.max(he,o.exV>0?3:1)+'%"></span>'
+      + (o===topIn && o.inV>0 ? peakLabel(o.inV, hi, 'in') : '')
+      + (o===topEx && o.exV>0 && o!==topIn ? peakLabel(o.exV, he, 'ex') : '')
+      + '<span class="dbar in" style="height:'+hi.toFixed(1)+'%"></span>'
+      + '<span class="dbar ex" style="height:'+he.toFixed(1)+'%"></span>'
       + '</button>';
   }).join('');
+  const glines = sc.lines.map(v=>'<span class="dgline" style="bottom:'
+    + (v/sc.max*100).toFixed(2)+'%"><i>'+yenShort(v)+'</i></span>').join('');
   const labels = months.map(o=>'<span class="'+(y===c.ty&&o.m===c.tm?'cur':'')+'">'+o.m+'<i class="mlab">月</i></span>').join('');
   const chart =
     '<section class="card panel"><h2>'+y+'年の月別収支</h2>'
-    + '<div class="dchart">'+bars+'</div>'
+    + '<div class="dwrap">'
+    + '<div class="dchart">'+(peak>0 ? glines : '')+bars+'</div>'
     + '<div class="ychart-labels">'+labels+'</div>'
-    + '<div class="legend" style="margin-top:10px">'
+    + '</div>'
+    + '<div class="legend" style="margin-top:12px">'
     + '<span><span class="dot" style="background:var(--c-sub)"></span>収入</span>'
     + '<span><span class="dot" style="background:var(--c-home)"></span>経費（按分込み）</span>'
-    + '</div></section>';
+    + '</div>'
+    + (peak>0 ? '<div class="hint" style="margin-top:8px">'
+        + '棒の高さは左の目盛りが目安です。月を選ぶと、その月の記録に移ります。</div>' : '')
+    + '</section>';
 
   /* selected month entries */
   const byDate = (a,b)=>a.d-b.d || b.amount-a.amount;
