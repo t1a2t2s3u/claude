@@ -235,6 +235,14 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .setup-next ol{margin:8px 0 12px;padding-left:1.3em}
 .setup-next li{margin-bottom:4px}
 .setup-next b{color:var(--ink)}
+.guide-q{border-left:3px solid var(--accent);padding:2px 0 2px 12px;margin:12px 0;font-size:.85rem;line-height:1.7}
+.guide-q>div{color:var(--muted);font-size:.8rem;margin-top:2px}
+.guide-q b{font-weight:600}
+.g-table{font-size:.78rem}
+.g-table td,.g-table th{padding:6px 8px;vertical-align:top}
+.g-table td:nth-child(2){white-space:nowrap}
+.g-table .g-why{color:var(--muted);font-size:.72rem}
+@media (max-width:560px){.g-table .g-why,.g-table th:nth-child(3){display:none}}
 .yoy{margin-left:4px}
 .yoy.up{color:var(--c-util)}
 .yoy.down{color:var(--hanko)}
@@ -1235,6 +1243,7 @@ function render(){
     + content
     + '<footer><span>固定費'+state.payments.length+'件・収支'+state.biz.length+'件　'+saveNote+backupWarn()+'</span>'
     + '<span><button class="linklike" data-act="data">データと設定</button>　'
+    + '<button class="linklike" data-act="guide">支払いと経費の使い分け</button>　'
     + '<button class="linklike" data-act="about">このアプリについて</button></span></footer>'
     + (view.modal ? modalHtml() : '');
 
@@ -1317,6 +1326,8 @@ function renderSetup(){
     + '<div class="setup-next">このあとやること'
     + '<ol><li><b>支払い</b>に家賃やサブスクなど毎月の固定費を登録する'
     + '（「経費にする割合」を決めると、そのぶん税金が下がります）</li>'
+    + '<li>その都度の経費は<b>仕事の収支</b>へ。'
+    + '<button class="linklike" type="button" data-act="guide">使い分けを見る</button></li>'
     + '<li><b>仕事の収支</b>に入金と経費を記録する</li>'
     + '<li><b>税金の目安</b>で、1年でいくら備えればいいかを確かめる</li></ol>'
     + 'データはこの端末の中だけに保存されます。'
@@ -1384,7 +1395,9 @@ function renderPay(c){
   let content = '';
   if(!state.payments.length){
     content = '<section class="empty">まだ支払いが登録されていません。<br>家賃やサブスクなど、毎月・隔月・年1回の支払いを登録すると、<br>月ごとの合計やカレンダーがここに表示されます。'
-      + '<div><button class="btn btn-primary" data-act="add">最初の支払いを追加</button></div></section>';
+      + '<div><button class="btn btn-primary" data-act="add">最初の支払いを追加</button></div>'
+      + '<div style="margin-top:14px;font-size:.8rem">仕事の経費とどう分けるか迷ったら　'
+      + '<button class="linklike" data-act="guide">使い分けを見る</button></div></section>';
   }else if(view.tab === 'list'){
     content = filtersHtml() + listHtml(ps, y, m, {isCurrent, isPast, td:c.td, highlightDay});
   }else if(view.tab === 'cal'){
@@ -1563,11 +1576,14 @@ function renderBiz(c){
 
   if(!state.biz.length && !apY){
     return '<section class="empty">仕事の収入と経費を月ごとに記録すると、<br>月別の収支グラフと「税金の目安」が使えるようになります。<br><br>'
-      + '固定費の一部（家賃・通信費など）を経費にする場合は、<br>「支払い」の編集画面で「経費にする割合」を設定してください。'
+      + '家賃や通信費など<b>毎月決まって出ていくもの</b>は、ここではなく「支払い」に登録し、<br>'
+      + '「経費にする割合」を決めてください（そのぶんは自動で経費になります）。'
       + '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'
       + '<button class="btn btn-primary" data-act="addbiz" data-type="in">収入を記録</button>'
       + '<button class="btn btn-ghost" data-act="addbiz" data-type="ex">経費を記録</button>'
-      + '</div></section>';
+      + '</div>'
+      + '<div style="margin-top:14px;font-size:.8rem">分け方に迷ったら　'
+      + '<button class="linklike" data-act="guide">使い分けを見る</button></div></section>';
   }
 
   const unp = unpaidList();
@@ -2802,6 +2818,7 @@ function modalHtml(){
   if(view.modal.kind==='save') return saveModalHtml();
   if(view.modal.kind==='ded') return dedModalHtml();
   if(view.modal.kind==='data') return dataModalHtml();
+  if(view.modal.kind==='guide') return guideModalHtml();
   if(view.modal.kind==='about') return aboutModalHtml();
   if(view.modal.kind==='import') return importModalHtml();
   if(view.modal.kind==='restore') return restoreModalHtml();
@@ -2818,6 +2835,76 @@ function backupWarn(){
   if(d===null) return '　<b class="warn-dot">バックアップ未実施</b>';
   if(d>=90) return '　<b class="warn-dot">バックアップから'+d+'日</b>';
   return '';
+}
+
+/* ---------- 「支払い」と「仕事の収支」の使い分け ----------
+   ここで迷う人が多いので、判断の順番と具体例をまとめて置いておく。 */
+function guideModalHtml(){
+  const ex = (what, where, why)=>'<tr><td>'+what+'</td><td>'+where+'</td><td class="g-why">'+why+'</td></tr>';
+  return '<div class="overlay" data-act="overlay"><div class="modal" role="dialog" aria-modal="true" aria-label="支払いと経費の使い分け">'
+    + '<h2>「支払い」と「経費」の使い分け</h2>'
+
+    + '<div class="tip-body" style="color:var(--ink)">'
+    + '<b>支払い</b>は「いつ・いくら口座から出ていくか」を見るところです。'
+    + '経費かどうかは二の次で、<b>経費にする割合を0%にして登録してもかまいません</b>。'
+    + 'カレンダーに支払日が並ぶこと自体に意味があります。'
+    + '<br><br>'
+    + '<b>仕事の収支の経費</b>は、確定申告に出す経費を科目つきで積み上げるところです。'
+    + '</div>'
+
+    + '<div class="group-label" style="margin-top:20px">迷ったら、この順に</div>'
+    + '<div class="guide-q"><b>1. 私生活でも使いますか？</b>'
+    + '<div>はい →「<b>支払い</b>」に登録して<b>経費にする割合</b>を決める。'
+    + '按分したぶんが毎月そのまま経費になります。</div></div>'
+    + '<div class="guide-q"><b>2. 100%仕事のもので、毎月（隔月・年1回）決まった額が出ますか？</b>'
+    + '<div>はい →「<b>支払い</b>」に割合100%で登録。毎月入力しなくて済みます。</div></div>'
+    + '<div class="guide-q"><b>3. その都度、金額が変わりますか？</b>'
+    + '<div>はい →「<b>仕事の収支</b>」の経費として、日付と科目をつけて記録。</div></div>'
+
+    + '<div class="group-label" style="margin-top:20px">具体例</div>'
+    + '<div style="overflow-x:auto"><table class="ytable g-table"><thead><tr>'
+    + '<th>何を</th><th>どちらへ</th><th>ひとこと</th></tr></thead><tbody>'
+    + ex('家賃（自宅が仕事場）', '支払い・按分', '私生活と共用')
+    + ex('電気・水道・ガス', '支払い・按分', '同上')
+    + ex('スマホ（私用と兼用）', '支払い・按分', '同上')
+    + ex('自宅のネット回線', '支払い・按分', '同上')
+    + ex('事業用の損害保険', '支払い・100%', '毎月同額')
+    + ex('仕事だけに使う回線', '支払い・100%', '毎月同額')
+    + ex('材料の仕入', '仕事の収支', '都度')
+    + ex('外注費', '仕事の収支', '相手ごとに残る')
+    + ex('ガソリン・交通費', '仕事の収支', '都度')
+    + ex('道具・消耗品', '仕事の収支', '都度')
+    + ex('打ち合わせの飲食', '仕事の収支', '都度')
+    + ex('振込手数料', '仕事の収支', '都度')
+    + ex('生命保険・国民年金・国保', '<b>どちらでもない</b>', '所得控除')
+    + '</tbody></table></div>'
+
+    + '<div class="group-label" style="margin-top:22px">気をつけること</div>'
+
+    + '<div class="tip"><div class="tip-head"><span class="tip-title">① 同じものを二重に入れない</span></div>'
+    + '<div class="tip-body">いちばん大事なところです。家賃を「支払い」に按分30%で登録したら、'
+    + '<b>同じ家賃を「仕事の収支」にも入れないでください</b>。'
+    + '按分したぶんは自動で経費に足されているので、二重に数えると税金が実際より安く出ます。</div></div>'
+
+    + '<div class="tip"><div class="tip-head"><span class="tip-title">② 生命保険・国民年金・国保は経費ではない</span></div>'
+    + '<div class="tip-body">これらは<b>所得控除</b>です。「税金の目安 → 目安 → 所得控除」に入れてください。'
+    + '「支払い」に登録するのは構いませんが、そのときは<b>経費にする割合を0%</b>に。'
+    + '国民年金と国民健康保険は税金の画面で自動計算されるので、こちらも0%のままで大丈夫です。'
+    + '経費になるのは、事業のためにかけた損害保険だけです。</div></div>'
+
+    + '<div class="tip"><div class="tip-head"><span class="tip-title">③ 支払い側は決算書の科目が限られる</span></div>'
+    + '<div class="tip-body">「支払い」に登録したものは、決算書ではこの5つのどれかになります。'
+    + '<br>サブスク・通信 → <b>通信費</b>／住まい → <b>地代家賃</b>／水道・光熱 → <b>水道光熱費</b>／'
+    + '保険 → <b>損害保険料</b>／ローン・カード・その他 → <b>雑費</b>'
+    + '<br>たとえば毎月一定額の広告費を「支払い」に入れると<b>雑費</b>になってしまいます。'
+    + '科目をきちんと出したいものは「仕事の収支」に入れて、科目を選んでください。</div></div>'
+
+    + '<div class="tip"><div class="tip-head"><span class="tip-title">④ 年1回の支払いは、その月にまとめて計上される</span></div>'
+    + '<div class="tip-body">年払いのものは12で割られず、支払った月にまるごと乗ります。'
+    + '年間の合計は変わらないので税金の計算には影響しませんが、月別のグラフではその月だけ跳ねます。</div></div>'
+
+    + '<div class="f-actions"><button class="btn btn-ghost" type="button" data-act="close">閉じる</button></div>'
+    + '</div></div>';
 }
 
 /* ---------- 所得控除の入力 ---------- */
@@ -3156,6 +3243,9 @@ function aboutModalHtml(){
     + '個人事業税：事業主控除290万円。'
     + '消費税：2割特例／簡易課税（みなし仕入率）／本則課税。'
     + '</div>'
+    + '<div class="group-label" style="margin-top:18px">使い方で迷ったら</div>'
+    + '<div class="tip-body">「支払い」と「仕事の収支の経費」の分け方は'
+    + '<button class="linklike" type="button" data-act="guide">こちら</button>にまとめてあります。</div>'
     + '<div class="f-actions"><button class="btn btn-ghost" type="button" data-act="close">閉じる</button></div>'
     + '</div></div>';
 }
@@ -3215,7 +3305,11 @@ function payModalHtml(){
     + '<div id="m-month-wrap" class="'+(v.freq==='monthly'?'hidden':'')+'"><label for="m-month" id="m-month-label">'+(v.freq==='yearly'?'支払月':'支払月（基準）')+'</label><select id="m-month">'+monthOpts+'</select></div>'
     + '<div><label for="m-cat">カテゴリ</label><select id="m-cat">'+catOpts+'</select></div>'
     + '<div><label for="m-method">支払い方法</label><select id="m-method">'+methodOpts+'</select></div>'
-    + '<div class="f-full"><label for="m-bizpct">経費にする割合（家事按分）</label><select id="m-bizpct">'+pctOpts+'</select></div>'
+    + '<div class="f-full"><label for="m-bizpct">経費にする割合（家事按分）</label><select id="m-bizpct">'+pctOpts+'</select>'
+    + '<div class="hint">仕事で使っている割合だけを経費にできます。'
+    + '<b>生命保険・国民年金・国民健康保険は経費ではない</b>ので「経費にしない」のままにしてください'
+    + '（所得控除として税金の画面に入れます）。<br>'
+    + 'ここで割合を決めたものは、<b>「仕事の収支」に重ねて入れないでください</b>。自動で経費に足されます。</div></div>'
     + '<div class="f-full"><label for="m-note">メモ（任意）</label><input id="m-note" maxlength="120" placeholder="例：更新は4月、解約検討中" value="'+esc(v.note)+'"></div>'
     + '</div>'
     + '<div class="f-actions">'
@@ -3290,6 +3384,11 @@ function bizModalHtml(){
         + '</select></div>'
       : '')
     + '<div class="f-full"><label for="b-note">メモ（任意）</label><input id="b-note" maxlength="120" value="'+esc(v.note)+'"></div>'
+    + (type==='ex'
+      ? '<div class="f-full hint">ここはその都度かかる経費を入れるところです。'
+        + '家賃・光熱費・通信費など<b>毎月決まって出ていくもの</b>は「支払い」に登録して'
+        + '「経費にする割合」を決めてください（そのぶんは自動で経費になります）。</div>'
+      : '')
     + '</div>'
     + '<div class="f-actions">'
     + '<button class="btn btn-primary" type="submit">'+(editing?'保存する':'記録する')+'</button>'
@@ -3614,6 +3713,7 @@ root.addEventListener('click', e=>{
   else if(act==='ded') openModal({kind:'ded'});
   else if(act==='data') openModal({kind:'data'});
   else if(act==='about') openModal({kind:'about'});
+  else if(act==='guide') openModal({kind:'guide'});
   else if(act==='me'){
     if(view.modal && view.modal.kind==='invoice'){
       view.invDraft = readInvForm();
