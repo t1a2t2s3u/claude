@@ -1,0 +1,258 @@
+<title>辰弥塗装工業 ブログ記事ボード</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=BIZ+UDPGothic:wght@400;700&display=swap">
+<style>
+  :root {
+    --bg: #eef1f0; --paper: #fbfbf9; --paper-alt: #f1f3f1;
+    --ink: #1f2a33; --ink-soft: #5d6b74; --line: #d3d9d8; --rule: #24507a;
+    --accent: #24507a; --accent-bg: #e1eaf3;
+    --review: #9a5b0f; --review-bg: #fbeed6;
+    --sched: #24507a; --sched-bg: #e1eaf3;
+    --pub: #2b6b4a; --pub-bg: #dcefe3;
+    --draft: #5d6b74; --draft-bg: #e6e9e8;
+    --marker: #ffe08a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #151b1f; --paper: #1f272c; --paper-alt: #182024;
+      --ink: #e7ecee; --ink-soft: #98a6ad; --line: #34424a; --rule: #7fa8d0;
+      --accent: #7fa8d0; --accent-bg: #21354a;
+      --review: #e8b56a; --review-bg: #3d2d14;
+      --sched: #7fa8d0; --sched-bg: #21354a;
+      --pub: #7fcaa0; --pub-bg: #1c3a2b;
+      --draft: #98a6ad; --draft-bg: #2a343a;
+      --marker: #6b5a1c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #151b1f; --paper: #1f272c; --paper-alt: #182024;
+    --ink: #e7ecee; --ink-soft: #98a6ad; --line: #34424a; --rule: #7fa8d0;
+    --accent: #7fa8d0; --accent-bg: #21354a;
+    --review: #e8b56a; --review-bg: #3d2d14;
+    --sched: #7fa8d0; --sched-bg: #21354a;
+    --pub: #7fcaa0; --pub-bg: #1c3a2b;
+    --draft: #98a6ad; --draft-bg: #2a343a;
+    --marker: #6b5a1c;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif; font-size: 15px; line-height: 1.8; padding-block: 20px 64px; padding-inline: 16px; }
+  .wrap { max-width: 720px; margin: 0 auto; display: grid; gap: 18px; }
+  h1, h2, h3, .pill, .stat b, .kicker { font-family: "Zen Kaku Gothic New", "Hiragino Sans", sans-serif; }
+
+  .mast { background: var(--paper); border-top: 6px solid var(--rule); padding: 18px 20px 16px; }
+  .kicker { font-size: .74rem; letter-spacing: .12em; color: var(--ink-soft); text-transform: uppercase; margin: 0 0 2px; }
+  h1 { font-size: 1.45rem; font-weight: 900; margin: 0; line-height: 1.3; text-wrap: balance; }
+  .mast p { margin: 8px 0 0; font-size: .86rem; color: var(--ink-soft); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); margin-top: 14px; }
+  .stat { padding: 10px 12px; border-right: 1px solid var(--line); }
+  .stat:last-child { border-right: 0; }
+  .stat b { display: block; font-size: 1.5rem; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: .74rem; color: var(--ink-soft); }
+  .stat.review b { color: var(--review); }
+  .stat.sched b { color: var(--sched); }
+  .stat.pub b { color: var(--pub); }
+
+  .howto { background: var(--accent-bg); color: var(--ink); padding: 12px 16px; font-size: .88rem; display: grid; gap: 4px; }
+  .howto b { color: var(--accent); }
+  .howto code { background: var(--paper); padding: 1px 6px; border: 1px solid var(--line); font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: .84rem; }
+
+  .card { background: var(--paper); border: 1px solid var(--line); padding: 16px 20px 18px; display: grid; gap: 10px; }
+  .card[data-status="review"] { border-left: 5px solid var(--review); }
+  .card[data-status="scheduled"] { border-left: 5px solid var(--sched); }
+  .card[data-status="published"] { border-left: 5px solid var(--pub); }
+  .card[data-status="draft"] { border-left: 5px solid var(--draft); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: .8rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .pill { font-size: .72rem; font-weight: 700; padding: 2px 10px; letter-spacing: .04em; }
+  .pill.review { background: var(--review-bg); color: var(--review); }
+  .pill.sched { background: var(--sched-bg); color: var(--sched); }
+  .pill.pub { background: var(--pub-bg); color: var(--pub); }
+  .pill.draft { background: var(--draft-bg); color: var(--draft); }
+  .card h2 { font-size: 1.12rem; font-weight: 700; margin: 0; line-height: 1.45; text-wrap: balance; }
+  .card-url { font-size: .8rem; color: var(--ink-soft); word-break: break-all; }
+  .card-url a { color: var(--accent); }
+  .desc { margin: 0; padding: 10px 14px; background: var(--paper-alt); border-left: 3px solid var(--line); font-size: .9rem; }
+  .desc small { display: block; color: var(--ink-soft); font-size: .74rem; margin-bottom: 2px; }
+  .seo { display: grid; grid-template-columns: 7.5em 1fr; gap: 3px 10px; font-size: .84rem; margin: 0; }
+  .seo dt { color: var(--ink-soft); }
+  .seo dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .seo dd .ok { color: var(--pub); }
+  .seo dd .ng { color: var(--review); }
+  h3 { font-size: .86rem; font-weight: 700; margin: 6px 0 0; color: var(--accent); letter-spacing: .04em; }
+  .card ul { margin: 0; padding-left: 1.3em; font-size: .88rem; display: grid; gap: 3px; }
+  .card ol { margin: 0; padding-left: 1.4em; font-size: .88rem; display: grid; gap: 3px; }
+  details { border-top: 1px dashed var(--line); padding-top: 8px; margin-top: 4px; }
+  summary { cursor: pointer; font-weight: 700; color: var(--accent); font-size: .92rem; }
+  summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .body-text { margin-top: 12px; max-width: 40em; }
+  .body-text h4 { font-family: "Zen Kaku Gothic New", sans-serif; font-size: 1.05rem; font-weight: 700; margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--rule); line-height: 1.4; }
+  .body-text h5 { font-family: "Zen Kaku Gothic New", sans-serif; font-size: .96rem; font-weight: 700; margin: 20px 0 6px; }
+  .body-text p { margin: 0 0 12px; }
+  .body-text mark { background: linear-gradient(transparent 55%, var(--marker) 55%); color: inherit; padding: 0 1px; }
+  .body-text ul, .body-text ol { display: block; font-size: inherit; margin: 0 0 12px; }
+  .body-text li { margin: 2px 0; }
+  .body-text a { color: var(--accent); }
+  .tbl { overflow-x: auto; margin: 0 0 12px; }
+  .body-text table { border-collapse: collapse; font-size: .86rem; min-width: 100%; }
+  .body-text th, .body-text td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+  .body-text th { background: var(--paper-alt); }
+  .photo { border: 1px dashed var(--line); background: var(--paper-alt); padding: 10px 12px; font-size: .82rem; color: var(--ink-soft); margin: 0 0 12px; }
+  .list { display: grid; gap: 6px; font-size: .88rem; }
+  .list a { color: var(--accent); }
+  .list .date { color: var(--ink-soft); font-variant-numeric: tabular-nums; margin-right: 8px; }
+  footer { font-size: .74rem; color: var(--ink-soft); text-align: center; }
+  @media (max-width: 480px) {
+    .seo { grid-template-columns: 1fr; gap: 0; }
+    .seo dt { margin-top: 4px; }
+    .stat b { font-size: 1.25rem; }
+  }
+</style>
+
+<!--
+  更新するAIへ（塗装ブログライター seo-writer）:
+  1. このページは Artifact ツールで action:"read" して最新の内容を取得する（ソースは office/blog-board.html）。
+  2. 新しい記事は <!-- ARTICLES:START -- > の直後に <article class="card" data-status="review"> として追加。
+     順番は 確認待ち → 公開予約 → 公開済み（公開済みは末尾の一覧に1行で）。
+  3. 状態の変更: data-status と .pill のクラス／文言を直す（review / scheduled / published / draft）。
+  4. 見出しの3つの数字と「更新」日付を直す。
+  5. url に同じURLを指定して republish。favicon は指定しない。
+-->
+
+<div class="wrap">
+  <header class="mast">
+    <p class="kicker">Tatsumi Tosou Kogyo · Blog</p>
+    <h1>辰弥塗装工業 ブログ記事ボード</h1>
+    <p>ホームページのブログに載せる前の記事を、ここで確認します。OKが出るまで公開はしません。<span>2026-09-10 更新</span></p>
+    <div class="stats">
+      <div class="stat review"><b>0</b><span>確認待ち（あなたの番）</span></div>
+      <div class="stat sched"><b>1</b><span>公開予約（確認済み）</span></div>
+      <div class="stat pub"><b>3</b><span>公開済み</span></div>
+    </div>
+  </header>
+
+  <section class="howto">
+    <div><b>返し方</b>　チャットに <code>ブログ 20nen OK</code> のように書けば公開作業に進みます。</div>
+    <div>直したい所は <code>修正: 段落2の「〜」を「〜」に</code> の形で。事実の間違い（料金・保証・実績）は特に教えてください。</div>
+    <div>本文の「全文を読む」を開くと、サイトに載る形とほぼ同じ見た目で確認できます。</div>
+  </section>
+
+  <!-- ARTICLES:START -->
+
+  <article class="card" data-status="scheduled" id="2026-09-gaiheki-20nen">
+    <div class="card-head"><span class="pill sched">公開予約 9/15（火）</span><span>確認済み・修正があれば9/14までに</span></div>
+    <h2>外壁塗装を20年していないとどうなる？築20年ノーメンテの家に起きていること</h2>
+    <div class="card-url">公開URL（予定）: <a href="https://tatsumi-tosou.com/blog/2026-09-gaiheki-20nen/">https://tatsumi-tosou.com/blog/2026-09-gaiheki-20nen/</a></div>
+    <p class="desc"><small>検索結果に出る説明文（description・129字）</small>築20年、外壁塗装を一度もしていない。そんな家に実際何が起きているのかを、劣化の進む順番にそって塗装屋が説明します。雪と凍害のある秋田では温暖な地域より進行が早いこと、「まだ塗装で済む」と「張り替えになる」の分かれ目、そして今からやるべきことをまとめました。</p>
+    <h3>SEOのねらい</h3>
+    <dl class="seo">
+      <dt>狙う検索語</dt><dd>主「外壁塗装 20年」／副「外壁 築20年 塗装してない」「秋田 外壁 凍害」「外壁塗装 手遅れ」</dd>
+      <dt>タイトル</dt><dd>38字 <span class="ng">（スマホでは末尾が切れる長さ。公開済みURLと同じ扱いで今回は変更なし。次回から34字以内）</span></dd>
+      <dt>説明文</dt><dd>129字 <span class="ok">適正</span></dd>
+      <dt>本文</dt><dd>約2,600字・H2 6本・表1・チェックリスト1</dd>
+      <dt>秋田固有</dt><dd>凍害の仕組み、12月以降は点検も工事も不可、海沿いと内陸の差</dd>
+      <dt>内部リンク</dt><dd>料金表 /services/、塗り替え時期の記事、土崎の施工事例、補助金の記事（4本）</dd>
+      <dt>写真</dt><dd>cover: チョーキングの指先（blog/20nen-chalking.jpg・準備済み）</dd>
+    </dl>
+    <h3>確認してほしい点</h3>
+    <ol>
+      <li>「現地調査とお見積りは無料」「パック料金 84万円〜」はサイトの記載どおりです。今も変わっていませんか。</li>
+      <li>「他社のお見積りの診断だけでも歓迎」— 実際にこの対応をしていますか。していなければこの一文を削ります。</li>
+    </ol>
+    <details>
+      <summary>全文を読む</summary>
+      <div class="body-text">
+        <p>「築20年になるが、外壁塗装は一度もしていない。うちは大丈夫なのか」</p>
+        <p>言いにくいことのように相談される方が多いのですが、<mark><strong>実はとてもよくあるケースです。</strong></mark>外壁は少しずつしか変わらないので、毎日見ている住んでいる方ほど、傷みに気づきにくいものです。</p>
+        <p>この記事では、20年塗装していない外壁に実際何が起きているのかを、劣化の進む順番にそって説明します。怖がらせるためではなく、<strong>「いま自分の家がどの段階か」を知ってもらうため</strong>の記事です。</p>
+
+        <h4>まず前提：塗膜の寿命は、およそ10年</h4>
+        <p>外壁の表面には、新築時に塗られた塗料の膜（塗膜）があります。この塗膜が、紫外線と雨から外壁材を守っています。</p>
+        <p>一般的な塗料の耐用年数は、<strong>グレードにもよりますが7〜15年ほど</strong>です。つまり築20年で一度も塗っていないなら、<mark><strong>塗膜はとっくに役目を終えていて、外壁材が直接風雨を受けている</strong></mark>と考えられます。</p>
+        <p>外壁材そのものは、すぐには壊れません。問題は「守りが無いまま何年経ったか」です。ここから、劣化が進む順番を見ていきます。</p>
+
+        <h4>20年ノーメンテの外壁に起きていること（進む順番）</h4>
+        <h5>段階1：チョーキング — 防水の役目が終わったサイン</h5>
+        <p class="photo">📷 写真: 外壁をこすった指先に、白い粉がついた状態（チョーキング）　/assets/blog/20nen-chalking.jpg</p>
+        <p>外壁を手のひらでこすると、チョークのような白い粉がつく状態です。写真の指先についているのが、その粉です。塗料の樹脂が紫外線で分解された姿で、<strong>塗膜の防水機能が切れかけているサイン</strong>です。多くの家で築10年前後から出はじめます。</p>
+        <p>この段階なら、まだ何の問題もありません。「そろそろ塗り替えの検討時期」というだけです。</p>
+
+        <h5>段階2：ひび割れ・コーキング切れ — 水の入り口ができる</h5>
+        <p>防水が切れた外壁材は、雨水を吸って乾くをくり返し、ひび割れが出てきます。同時に、サイディング外壁の板と板のあいだにあるコーキング（ゴム状の目地）が硬くなり、痩せて、切れてきます。</p>
+        <p>コーキングの寿命は<mark><strong>外壁材より短く、築10年前後</strong></mark>です。20年ノーメンテなら、まず間違いなく傷んでいます。</p>
+        <p>ここまで来ると、外壁に「水の入り口」ができた状態です。</p>
+
+        <h5>段階3：凍害 — 秋田では、ここから一気に進む</h5>
+        <p>入り込んだ水は、温暖な地域ならゆっくり乾きます。秋田は違います。</p>
+        <p><mark><strong>ひびに入った水が夜に凍り、体積を増やしてひびを押し広げます。昼に溶け、また凍る。これを毎冬、何十回とくり返します。</strong></mark></p>
+        <p>凍害と呼ばれるこの現象が、秋田の外壁の劣化を加速させる正体です。外壁材の表面が剥がれたり、ボロボロと崩れたりする症状は、多くがこれです。「20年してない」の20回の冬は、温暖な地域の20年よりずっと重い、と考えてください。</p>
+
+        <h5>段階4：下地・構造材へ — 塗装では直せない領域</h5>
+        <p>外壁材を通り抜けた水は、その裏側の防水紙や下地に届きます。ここまで進むと、次のようなことが起こりえます。</p>
+        <ul>
+          <li>下地の木材が湿気を含み、腐食していく</li>
+          <li>室内側に雨染み・カビが出る（雨漏り）</li>
+          <li>外壁材が反る・浮く・割れる</li>
+        </ul>
+        <p>そして重要なのはここです。<mark><strong>この段階の傷みは、塗装では直せません。</strong></mark>外壁材の張り替えやカバー工法という、別の工事になります。</p>
+
+        <h4>「まだ塗装で済む」と「張り替えになる」の分かれ目</h4>
+        <p>費用の面で、この分かれ目はとても大きいです。</p>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>状態</th><th>できる工事</th><th>費用感</th></tr></thead>
+            <tbody>
+              <tr><td>表面の劣化まで（段階1〜2）</td><td>下地補修＋塗装</td><td>当社のパック料金で 84万円〜（<a href="https://tatsumi-tosou.com/services/">料金表</a>）</td></tr>
+              <tr><td>凍害が部分的に出ている（段階3）</td><td>部分補修＋塗装で対応できることが多い</td><td>補修の量により追加</td></tr>
+              <tr><td>下地まで傷んでいる（段階4）</td><td>張り替え・カバー工法</td><td>塗装とは桁が変わります</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>つまり、<mark><strong>同じ「20年してない家」でも、いま動くのと、あと数年放っておくのとでは、必要な工事も費用も変わりうる</strong></mark>ということです。</p>
+        <p>逆に言えば、築20年でも段階1〜2で止まっている家はたくさんあります。日当たり、風向き、立地（海沿いか内陸か）で進み方が全く違うからです。<strong>築年数だけで「もう手遅れ」は決まりません。</strong></p>
+
+        <h4>よくある2つの誤解</h4>
+        <h5>「今さら塗ってもムダなのでは」</h5>
+        <p>そんなことはありません。下地がまだ健全なら、補修と塗装で外壁の寿命はきちんと延ばせます。むしろ<mark><strong>「もう手遅れだろうから」と何もしないでいることが、いちばん張り替えに近づく道</strong></mark>です。</p>
+        <h5>「訪問販売に『今すぐやらないと危ない』と言われた」</h5>
+        <p>築20年前後のお宅は、訪問販売の営業も受けやすくなります。本当に傷んでいることもありますが、<strong>外壁の劣化は、今日明日でどうにかなるものではありません。</strong>その場で契約する必要はありませんし、慌てて決めた工事ほど後悔が残ります。</p>
+        <p>不安をあおられたら、いったん断って、複数の業者に見てもらってください。当社は他社のお見積りの診断だけでも歓迎です。</p>
+
+        <h4>今からやること：まず、自分の目で見る</h4>
+        <p>ご自身で確かめられるチェックは4つあります。</p>
+        <ol>
+          <li>外壁を手でこすって、白い粉がつくか（チョーキング）</li>
+          <li>はっきり見える幅のひび割れがあるか</li>
+          <li>コーキングが切れたり、痩せて隙間ができていないか</li>
+          <li>北面に藻・カビ、外壁材の剥がれ・浮きがないか</li>
+        </ol>
+        <p>くわしい見分け方は、<a href="https://tatsumi-tosou.com/blog/2026-08-akita-nurikae-jiki/">塗り替え時期の記事</a>にまとめています。</p>
+        <p>そのうえで、複数当てはまる・剥がれや浮きが見えるという場合は、一度点検を受けることをおすすめします。<mark><strong>秋田は12月に入ると点検も工事もできなくなり、傷んだ状態のまま、また一冬分の雪と凍結をくり返すことになります。</strong></mark></p>
+
+        <h4>点検だけでも、無料でお受けしています</h4>
+        <p>辰弥塗装工業では、現地調査とお見積りを無料で行っています。築20年・30年のお宅こそ、<strong>「塗装で済むのか、済まないのか」の見立てがいちばん大事</strong>です。下地の状態まで見たうえで、</p>
+        <ul>
+          <li>まだ塗り替えの必要がなければ、そのようにお伝えします</li>
+          <li>塗装で済むなら、補修の内容と費用を書面でお出しします</li>
+          <li>塗装で済まない状態なら、正直にそうお伝えします</li>
+        </ul>
+        <p>工事を決めていない段階の、点検だけのご依頼でも構いません。「怒られそうで恥ずかしい」という心配は要りません。よくあるケースだと、私たちがいちばん知っています。</p>
+        <ul>
+          <li><a href="https://tatsumi-tosou.com/services/">パック料金と工事の内容を見る</a></li>
+          <li><a href="https://tatsumi-tosou.com/works/akita-tsuchizaki-gaiheki-yane-tosou/">秋田市土崎での施工事例を見る（色褪せのご相談から塗り替えまで）</a></li>
+          <li><a href="https://tatsumi-tosou.com/blog/2026-08-akita-gaiheki-hojokin/">秋田市の外壁塗装に使える補助金の記事を読む</a></li>
+        </ul>
+      </div>
+    </details>
+  </article>
+
+  <!-- ARTICLES:END -->
+
+  <section class="card" data-status="published">
+    <div class="card-head"><span class="pill pub">公開済み</span><span>tatsumi-tosou.com/blog/</span></div>
+    <div class="list">
+      <div><span class="date">2026-09-07</span><a href="https://tatsumi-tosou.com/blog/2026-09-gaiheki-iro-erabi/">外壁塗装の色選びで失敗しないために。人気の色と、秋田で映える色</a></div>
+      <div><span class="date">2026-08-26</span><a href="https://tatsumi-tosou.com/blog/2026-08-akita-gaiheki-hojokin/">秋田市の外壁塗装に補助金は使える？2026年度の制度をまとめました</a></div>
+      <div><span class="date">2026-08-23</span><a href="https://tatsumi-tosou.com/blog/2026-08-akita-nurikae-jiki/">秋田市の外壁塗装はいつがいい？雪と塩害から考える塗り替え時期</a></div>
+    </div>
+  </section>
+
+  <footer>塗装ブログライターが毎週火曜に更新します。次の新規記事は、SEOディレクターのブリーフ（9/14 月曜）を受けて 9/15 以降。</footer>
+</div>

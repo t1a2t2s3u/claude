@@ -20,7 +20,9 @@ Katagami City, Minamiakita District; https://tatsumi-tosou.com/).
 
 - **seo-director** — weekly SEO/MEO research, prioritised action list, blog
   briefs. Mondays.
-- **seo-writer** — two blog articles a month from those briefs. Tuesdays.
+- **seo-writer** — two blog articles a month from those briefs, written in
+  the site's own post format and SEO-checked, delivered to the blog board as
+  確認待ち. Publishes to the site branch only after the owner's OK. Tuesdays.
 - **meo** — Google Business Profile posts, profile audits, review replies.
   Thursdays. The owner posts manually.
 
@@ -30,7 +32,9 @@ The website itself lives on another branch of this same repository:
 of truth; blog posts are `site/posts/*.md`, drafts in `drafts/`, and that
 branch's CLAUDE.md requires the owner's sign-off before publishing). The
 `seo/` workspace here plans and drafts; anything that changes the live site
-goes through that branch and its rules.
+goes through that branch and its rules. **Nothing is published without the
+owner's explicit OK** (given in chat against the blog board below); the
+seo-writer skill holds the publish recipe.
 
 `seo/business-profile.md` is the only source of facts about the company
 (transcribed from `site/company.toml`; the toml wins on any conflict).
@@ -90,7 +94,10 @@ placeholders for these — fabricating experiences or earnings is forbidden).
   research (`reports/`), and per-idea planning memos (`ideas/`).
 - `seo/` — the painting business's SEO/MEO workspace: `business-profile.md`
   (the fact base), `tasks.md` (action list), `reports/`, `briefs/`,
-  `articles/`, and `gbp/queue.md` (Business Profile post drafts).
+  `articles/` (site-format drafts plus `.memo.md` sidecars; see its README),
+  and `gbp/queue.md` (Business Profile post drafts).
+- `office/` — HTML sources of the published boards (office, blog board,
+  finishing sheet).
 - `audit/` — the auditor's weekly reports (`YYYY-MM-DD.md`).
 - `finishing/` — the finisher's living question sheet (`questions.md`).
 - `.claude/skills/` — one directory per AI employee. New employees get a new
@@ -116,6 +123,16 @@ https://claude.ai/code/artifact/57204c23-dcaa-4df7-93db-6d67648fb985
 The sns skill refreshes it at the end of each run from `sns/queue.md`
 (read the published HTML, swap the post data and header counts, republish
 to the same URL). Best-effort, like the office board.
+
+## Blog board
+
+The painting company's pre-publication blog review page (full text, SEO
+targets, owner questions per article; statuses 確認待ち / 公開予約 / 公開済み):
+https://claude.ai/code/artifact/f489999f-7e8e-4453-984a-3a193aab70fd
+
+Source: `office/blog-board.html`. The seo-writer adds a card for every new
+article and flips it to 公開済み after publishing; the owner approves in chat
+(「ブログ <slug> OK」). Best-effort republish, like the other boards.
 
 ## Finishing board
 
