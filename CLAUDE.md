@@ -9,7 +9,7 @@ sessions act as staff members with defined roles, driven by skills in
 `.claude/skills/` and scheduled Routines. There is no application code to
 build or run.
 
-The 11 employees are organised into four departments. Keep this structure when
+The 13 employees are organised into four departments. Keep this structure when
 adding staff: a new employee joins a department (or a new one is declared here
 and on the office board), it does not just get appended to a flat list.
 
@@ -49,10 +49,18 @@ placeholders for these — fabricating experiences or earnings is forbidden).
   Code and monetize. Wednesdays. Distinct from the note researcher: that one
   hunts article topics, this one hunts products to sell.
 
-### 管理 — 管理部 (`TASKS.md`, `reports/`)
+### 管理 — 管理部 (`TASKS.md`, `reports/`, `audit/`, `finishing/`)
 
 - **secretary** — cross-department task board and the morning briefing.
   Weekday mornings. Any task-related request from the user goes through it.
+- **auditor** — spot-checks every department's output for fabrication,
+  puffery, legal risk, and rule violations; reports in `audit/` and files
+  🔴 items on the task board. Saturdays. Flags, does not rewrite (except a
+  `【監査保留】` hold on clear legal risks).
+- **finisher** — turns every owner-only gap (`【要確認】`,
+  `【あなたの体験をここに】`, review memos) into a yes/no question sheet in
+  `finishing/questions.md`, then applies the owner's answers and marks items
+  投稿可. Daily at noon. Never fills a gap without an answer.
 
 ## Repository structure
 
@@ -74,6 +82,8 @@ placeholders for these — fabricating experiences or earnings is forbidden).
 - `seo/` — the painting business's SEO/MEO workspace: `business-profile.md`
   (the fact base), `tasks.md` (action list), `reports/`, `briefs/`,
   `articles/`, and `gbp/queue.md` (Business Profile post drafts).
+- `audit/` — the auditor's weekly reports (`YYYY-MM-DD.md`).
+- `finishing/` — the finisher's living question sheet (`questions.md`).
 - `.claude/skills/` — one directory per AI employee. New employees get a new
   skill directory here, not more sections in existing skills.
 
@@ -97,6 +107,15 @@ https://claude.ai/code/artifact/57204c23-dcaa-4df7-93db-6d67648fb985
 The sns skill refreshes it at the end of each run from `sns/queue.md`
 (read the published HTML, swap the post data and header counts, republish
 to the same URL). Best-effort, like the office board.
+
+## Finishing board
+
+The finisher's question sheet as a page (owner answers by pasting the reply
+template into chat):
+https://claude.ai/code/artifact/a2022666-784a-45e2-b650-c67103b3d4df
+
+The finisher republishes it from `finishing/questions.md` after each run.
+Best-effort, like the other boards.
 
 ## Conventions
 
