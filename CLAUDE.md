@@ -80,7 +80,8 @@ placeholders for these — fabricating experiences or earnings is forbidden).
 - `product/` — the app-idea pipeline (`pipeline.md`), the scout's weekly
   research (`reports/`), and per-idea planning memos (`ideas/`).
 - `seo/` — the painting business's SEO/MEO workspace: `business-profile.md`
-  (the fact base), `tasks.md` (action list), `reports/`, `briefs/`,
+  (the fact base), `tasks.md` (action list), `photo-requests.md` (the
+  standing list of photos the owner needs to shoot), `reports/`, `briefs/`,
   `articles/`, and `gbp/queue.md` (Business Profile post drafts).
 - `audit/` — the auditor's weekly reports (`YYYY-MM-DD.md`).
 - `finishing/` — the finisher's living question sheet (`questions.md`).
