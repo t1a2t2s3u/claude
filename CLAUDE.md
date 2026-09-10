@@ -24,7 +24,16 @@ Katagami City, Minamiakita District; https://tatsumi-tosou.com/).
 - **meo** — Google Business Profile posts, profile audits, review replies.
   Thursdays. The owner posts manually.
 
-`seo/business-profile.md` is the only source of facts about the company.
+The website itself lives on another branch of this same repository:
+`claude/seo-meo-automation-mvntxp` (Cloudflare serves its committed `dist/`;
+`site/company.toml` mirrors the Google Business Profile and is the NAP source
+of truth; blog posts are `site/posts/*.md`, drafts in `drafts/`, and that
+branch's CLAUDE.md requires the owner's sign-off before publishing). The
+`seo/` workspace here plans and drafts; anything that changes the live site
+goes through that branch and its rules.
+
+`seo/business-profile.md` is the only source of facts about the company
+(transcribed from `site/company.toml`; the toml wins on any conflict).
 Inventing credentials, prices, past jobs, or customer voices is forbidden
 (mark gaps `【要確認】`). Fake, incentivised, or scripted reviews are out of
 bounds — Japan's stealth-marketing rules make that a legal risk; asking real
