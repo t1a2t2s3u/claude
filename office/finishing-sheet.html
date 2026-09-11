@@ -38,6 +38,10 @@
   li::marker { color: var(--accent); }
   .tag { font-family: "DotGothic16", monospace; font-size: .68rem; padding: 1px 7px; border-radius: 3px; background: var(--accent-bg); color: var(--accent); margin-right: 4px; }
   .tag.wait { background: var(--warn-bg); color: var(--warn); }
+  .empty { text-align: center; padding: 26px 14px; }
+  .empty .big { font-size: 2rem; }
+  .empty h2 { font-family: "DotGothic16", monospace; font-size: 1rem; margin: 6px 0 4px; }
+  .empty p { font-size: .82rem; color: var(--ink-soft); margin: 0; }
   .muted { font-size: .78rem; color: var(--ink-soft); margin: 0 0 8px; }
   .reply { background: var(--panel); border: 2px solid var(--accent); border-radius: 4px; padding: 12px 14px; }
   .reply h3 { font-family: "DotGothic16", monospace; font-size: .9rem; margin: 0 0 6px; }
@@ -52,18 +56,20 @@
   <header>
     <h1>✅ 仕上げ質問シート</h1>
     <p class="lede">投稿前にあなたにしか答えられない点だけを集めました。答えたら本文に反映して「投稿可」にします。無回答の項目は各問のデフォルトで処理し、事実の創作はしません。</p>
-    <div class="chips"><span class="chip">2026-09-11 更新</span><span class="chip">1案件</span><span class="chip">1問</span><span class="chip">約1分</span></div>
+    <div class="chips"><span class="chip">2026-09-11 更新</span><span class="chip">回答待ち 0件</span></div>
   </header>
 
-  <section class="item">
-    <h2>📍 GBP投稿案：雪が来る前に。秋は外壁・屋根の点検シーズンです<small>投稿待ち / 約1分</small></h2>
-    <div class="q"><b>Q1</b><div>投稿文の末尾に「<strong>点検・お見積もりは無料です</strong>」の一言を入れてよいですか？<div class="ans">→ はい／いいえ</div><div class="def">デフォルト: 該当行を削除して投稿文を確定</div><div class="note">※ business-profile.md には「無料診断・お見積り」と記載があります。「はい」ならその記載どおりの表現で確定します</div></div></div>
+  <section class="item empty">
+    <div class="big">🎉</div>
+    <h2>回答待ちの案件はありません</h2>
+    <p>新しい下書きや校閲メモが出たら、毎日12:00の稼働でここに質問が並びます。</p>
   </section>
 
   <section class="item">
-    <h2>✅ 質問なしで投稿可になったもの<small>2026-09-11</small></h2>
-    <p class="muted">校閲合格・空欄0のため、そのまま投稿できます。投稿したら articles/published/ へ移動してください。</p>
+    <h2>📦 直近の反映（2026-09-11）</h2>
+    <p class="muted">note記事2本は投稿後に articles/published/ へ移動してください。GBP投稿はビジネスプロフィールから手動で投稿してください。</p>
     <ul>
+      <li><span class="tag">投稿可</span>GBP投稿案「雪が来る前に。秋は外壁・屋根の点検シーズンです」— 「点検・お見積もりは無料です」を確定</li>
       <li><span class="tag">投稿可</span>AIに「下書き」を任せ、人間は「編集」に集中する——コンテンツ制作の新しい分業術</li>
       <li><span class="tag">投稿可</span>「AI社員」ブームの正体 — 実際に運用してわかった、できること・まだ幻想なこと</li>
     </ul>
@@ -78,26 +84,5 @@
     </ul>
   </section>
 
-  <section class="reply">
-    <h3>📝 回答テンプレート</h3>
-    <p>コピーしてチャットに貼り、埋めて送ってください。答えない問は空欄のままで大丈夫です。</p>
-    <pre id="tpl">Q1 </pre>
-    <button class="copy" type="button" id="copy">テンプレートをコピー</button>
-  </section>
-
   <footer>仕上げ担当が毎日12:00に更新します。回答済みの案件はシートから消えます。</footer>
 </div>
-
-<script>
-  const btn = document.getElementById("copy"), tpl = document.getElementById("tpl").textContent;
-  btn.addEventListener("click", async () => {
-    let ok = false;
-    try { await navigator.clipboard.writeText(tpl); ok = true; }
-    catch (e) {
-      const ta = document.createElement("textarea"); ta.value = tpl; ta.style.position = "fixed"; ta.style.opacity = "0";
-      document.body.appendChild(ta); ta.select(); try { ok = document.execCommand("copy"); } catch (e2) {} document.body.removeChild(ta);
-    }
-    btn.textContent = ok ? "コピーしました" : "選択してコピーしてください";
-    setTimeout(() => { btn.textContent = "テンプレートをコピー"; }, 2000);
-  });
-</script>
