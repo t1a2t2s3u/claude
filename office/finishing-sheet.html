@@ -34,6 +34,11 @@
   .q .ans { font-size: .78rem; color: var(--ink-soft); }
   .q .def { font-size: .74rem; color: var(--ink-soft); margin-top: 2px; }
   .q .note { font-size: .74rem; color: var(--warn); margin-top: 2px; }
+  ul { margin: 0; padding-left: 1.2em; font-size: .84rem; display: grid; gap: 4px; }
+  li::marker { color: var(--accent); }
+  .tag { font-family: "DotGothic16", monospace; font-size: .68rem; padding: 1px 7px; border-radius: 3px; background: var(--accent-bg); color: var(--accent); margin-right: 4px; }
+  .tag.wait { background: var(--warn-bg); color: var(--warn); }
+  .muted { font-size: .78rem; color: var(--ink-soft); margin: 0 0 8px; }
   .reply { background: var(--panel); border: 2px solid var(--accent); border-radius: 4px; padding: 12px 14px; }
   .reply h3 { font-family: "DotGothic16", monospace; font-size: .9rem; margin: 0 0 6px; }
   .reply p { font-size: .8rem; color: var(--ink-soft); margin: 0 0 8px; }
@@ -47,54 +52,36 @@
   <header>
     <h1>✅ 仕上げ質問シート</h1>
     <p class="lede">投稿前にあなたにしか答えられない点だけを集めました。答えたら本文に反映して「投稿可」にします。無回答の項目は各問のデフォルトで処理し、事実の創作はしません。</p>
-    <div class="chips"><span class="chip">2026-09-10 更新</span><span class="chip">5案件</span><span class="chip">11問</span><span class="chip">約5分</span></div>
+    <div class="chips"><span class="chip">2026-09-11 更新</span><span class="chip">1案件</span><span class="chip">1問</span><span class="chip">約1分</span></div>
   </header>
 
   <section class="item">
-    <h2>📄 運用日記 第1回：Claude Codeに秘書を雇ってみた<small>投稿待ち・無料 / 約2分</small></h2>
-    <div class="q"><b>Q1</b><div>AI社員に興味を持った<strong>実際のきっかけ</strong>を一言で<div class="ans">例: 「Xで見かけた」「本業が忙しくて」</div><div class="def">デフォルト: この一文を削除</div></div></div>
-    <div class="q"><b>Q2</b><div>初めて朝のブリーフィングを受け取ったときの<strong>率直な感想</strong>を一言で<div class="ans">例: 「拍子抜けした」「地味に嬉しかった」</div><div class="def">デフォルト: この一文を削除</div><div class="note">※第2回の記事でも同じ箇所があるので、回答を流用します</div></div></div>
+    <h2>📍 GBP投稿案：雪が来る前に。秋は外壁・屋根の点検シーズンです<small>投稿待ち / 約1分</small></h2>
+    <div class="q"><b>Q1</b><div>投稿文の末尾に「<strong>点検・お見積もりは無料です</strong>」の一言を入れてよいですか？<div class="ans">→ はい／いいえ</div><div class="def">デフォルト: 該当行を削除して投稿文を確定</div><div class="note">※ business-profile.md には「無料診断・お見積り」と記載があります。「はい」ならその記載どおりの表現で確定します</div></div></div>
   </section>
 
   <section class="item">
-    <h2>📄 Claude CodeでAI秘書を作る完全手順書<small>投稿待ち・有料 / 約2分</small></h2>
-    <div class="q"><b>Q3</b><div>秘書の構築に<strong>かかった時間</strong>は？<div class="ans">一言。例: 「1時間くらい」「半日」</div><div class="def">デフォルト: 時間に触れない表現に一般化</div></div></div>
-    <div class="q"><b>Q4</b><div>構築で<strong>つまずいた箇所</strong>はありましたか？<div class="ans">→ はい（一言で）／いいえ</div><div class="def">デフォルト: 「つまずきやすい定期実行の設定」の一文だけ残す</div></div></div>
-    <div class="q"><b>Q5</b><div>claude.ai の設定に「Routines」という画面がありますか？<div class="ans">→ はい／いいえ</div><div class="def">デフォルト: 「claude.ai の設定画面から」に一般化</div></div></div>
-    <div class="q"><b>Q6</b><div>価格は <strong>500円</strong> でよいですか？<div class="ans">→ はい／いいえ（金額を一言）</div><div class="def">デフォルト: 500円</div></div></div>
-    <div class="q"><b>Q7</b><div>有料ラインの位置は<strong>現状（手順1の直前）</strong>でよいですか？<div class="ans">→ はい／いいえ</div><div class="def">デフォルト: 現状のまま</div></div></div>
+    <h2>✅ 質問なしで投稿可になったもの<small>2026-09-11</small></h2>
+    <p class="muted">校閲合格・空欄0のため、そのまま投稿できます。投稿したら articles/published/ へ移動してください。</p>
+    <ul>
+      <li><span class="tag">投稿可</span>AIに「下書き」を任せ、人間は「編集」に集中する——コンテンツ制作の新しい分業術</li>
+      <li><span class="tag">投稿可</span>「AI社員」ブームの正体 — 実際に運用してわかった、できること・まだ幻想なこと</li>
+    </ul>
   </section>
 
   <section class="item">
-    <h2>📄 「AI社員」ブームの正体を整理する<small>下書き・無料 / 約1分</small></h2>
-    <div class="q"><b>Q8</b><div>運用してみて「<strong>思ったよりできた</strong>」と感じた点を1つ、一言で<div class="def">デフォルト: その段落を一般論に置換</div></div></div>
-    <div class="q"><b>Q9</b><div>運用してみて「<strong>期待外れだった</strong>」点を1つ、一言で<div class="def">デフォルト: その段落を一般論に置換</div><div class="note">※正直な内容ほど記事の信頼になります</div></div></div>
-  </section>
-
-  <section class="item">
-    <h2>📄 運用日記 第2回：秘書が動かなかった話<small>下書き・無料 / 約30秒</small></h2>
-    <div class="q"><b>Q10</b><div>秘書から何も届かなかった10日間、実際はどうしていましたか？<div class="ans">→ A. 忙しくて放置していた／B. 届いていないことに気づかなかった／C. その他（一言）</div><div class="def">デフォルト: この一文を削除</div><div class="note">※初ブリーフィングの感想は Q2 の回答を流用</div></div></div>
-  </section>
-
-  <section class="item">
-    <h2>📄 スキル定義ファイルの書き方（指示書の実物公開）<small>下書き・有料 / 約30秒</small></h2>
-    <div class="q"><b>Q11</b><div>指示書を書き直したらAI社員の挙動が変わった経験として、記事に使ってよいものは？<div class="ans">→ A. SNS担当の勤務を「週1」から「毎日3本」に変えたら翌日から毎朝届くようになった<br>　B. 秘書の指示書に「してはいけないこと」を書き足してから安定した<br>　C. その他（一言）／D. 該当なし（この節を削除）</div><div class="def">デフォルト: D</div><div class="note">※A・Bはこのオフィスで実際に起きたことです</div></div></div>
+    <h2>📦 対象外（参考）</h2>
+    <ul>
+      <li><span class="tag wait">校閲待ち</span>運用日記 第2回／スキル定義ファイルの書き方 — 校閲合格後に「第1回のURL」など残る空欄を質問します</li>
+      <li><span class="tag">確認済み</span>SEOブログ「外壁塗装を20年していないとどうなる？」 — 9/15 公開予約のため質問なし</li>
+      <li><span class="tag">空欄なし</span>本日のSNS投稿3本</li>
+    </ul>
   </section>
 
   <section class="reply">
     <h3>📝 回答テンプレート</h3>
     <p>コピーしてチャットに貼り、埋めて送ってください。答えない問は空欄のままで大丈夫です。</p>
-    <pre id="tpl">Q1
-Q2
-Q3
-Q4
-Q5
-Q6
-Q7
-Q8
-Q9
-Q10
-Q11 </pre>
+    <pre id="tpl">Q1 </pre>
     <button class="copy" type="button" id="copy">テンプレートをコピー</button>
   </section>
 
