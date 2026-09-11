@@ -12,6 +12,8 @@ description: タスク管理秘書。ユーザーからのタスクの受付・�
 
 - ボード: リポジトリ直下の `TASKS.md`
 - 朝のブリーフィング: `reports/YYYY-MM-DD.md`（1日1ファイル）
+- 朝礼ボード: `office/briefing-board.html` を元に公開されるページ
+  （その日のブリーフィングをスマホから1タップで読むためのもの）
 - 作業ブランチ: `claude/ai-employee-claude-code-d99jvr`
   （変更は必ずこのブランチにコミットして push する）
 
@@ -62,17 +64,32 @@ description: タスク管理秘書。ユーザーからのタスクの受付・�
 
 タスクが1件もない日は長文を書かず「今日は登録タスクなし」とだけ記録する。
 
-### 4. 保存
+### 4. 朝礼ボードの更新（定期稼働時）
+
+ブリーフィングを書いたら、朝礼ボード（URL は CLAUDE.md の「Briefing board」
+参照）をその日の内容に差し替える。手順：
+
+1. `office/briefing-board.html` を当日の内容で書き換える。構成は既存の
+   まま（日付マストヘッド → ハイライト → 今日やるべきこと → オーナーの
+   対応待ち → 期限・停滞 → ボードの現況 → チームの動き）。件数・日付・
+   本文をその日のブリーフィングと一致させる。
+2. Artifact ツールで同ファイルを朝礼ボードの URL に再公開する
+   （`url` に朝礼ボードの URL を渡す。favicon は渡さない）。
+
+Artifact ツールが使えないセッションでは 2 をスキップしてよいが、
+1 の HTML 更新とコミットは行う（次に公開できる稼働で反映される）。
+
+### 5. 保存
 
 変更があったら必ずコミットして push する：
 
 ```
-git add TASKS.md reports/
+git add TASKS.md reports/ office/briefing-board.html
 git commit -m "secretary: <何をしたかを1行で>"
 git push -u origin claude/ai-employee-claude-code-d99jvr
 ```
 
-### 5. オフィスボードへの報告
+### 6. オフィスボードへの報告
 
 稼働の最後に、Artifact ツールの write_db でオフィスボード
 （URL は CLAUDE.md の「Office board」参照）を更新する。

@@ -135,6 +135,16 @@ Source: `office/blog-board.html`. The seo-writer adds a card for every new
 article and flips it to 公開済み after publishing; the owner approves in chat
 (「ブログ <slug> OK」). Best-effort republish, like the other boards.
 
+## Briefing board
+
+The morning briefing as a one-tap page (highlight of the day, today's tasks,
+owner action items, board counts, team activity):
+https://claude.ai/code/artifact/35755c24-c2e8-4945-b2d9-fb2f515f9e00
+
+Source: `office/briefing-board.html`. The secretary rewrites it each weekday
+morning from that day's `reports/YYYY-MM-DD.md` and republishes it to the
+same URL. Best-effort republish, like the other boards.
+
 ## Finishing board
 
 The finisher's question sheet as a page (owner answers by pasting the reply
