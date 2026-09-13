@@ -135,15 +135,16 @@ function renderChart() {
   const plotW = w - pad.left - pad.right;
   const plotH = h - pad.top - pad.bottom;
 
-  let yMin = Math.min(...navs, START_CASH) - 300;
-  let yMax = Math.max(...navs, goalNav) + 300;
+  const yMin = Math.min(...navs, START_CASH) - START_CASH * 0.04;
+  const yMax = Math.max(...navs, goalNav) + START_CASH * 0.04;
   const x = (t) => pad.left + (t / TOTAL_TICKS) * plotW;
   const y = (v) => pad.top + (1 - (v - yMin) / (yMax - yMin)) * plotH;
 
   ctx.font = '10px "IBM Plex Mono", monospace';
 
-  // 横グリッド(¥1,000刻みの内側だけ)
-  const step = 1000;
+  // 横グリッド(レンジに応じたキリのいい刻み、5本前後)
+  const raw = (yMax - yMin) / 5;
+  const step = [1000, 2000, 2500, 5000, 10000, 20000, 50000].find((s) => s >= raw) ?? 100000;
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
   for (let v = Math.ceil(yMin / step) * step; v <= yMax; v += step) {
@@ -153,7 +154,7 @@ function renderChart() {
     ctx.lineTo(w - pad.right, y(v));
     ctx.stroke();
     ctx.fillStyle = '#8d87ae';
-    ctx.fillText(`${(v / 1000).toFixed(0)}k`, pad.left - 8, y(v));
+    ctx.fillText(`${v % 1000 === 0 ? v / 1000 : (v / 1000).toFixed(1)}k`, pad.left - 8, y(v));
   }
 
   // 日付の目盛り(1日ごと)
@@ -224,29 +225,72 @@ function renderChart() {
   ctx.fillText(yen(lastNav), labelX, y(lastNav) - 5);
 }
 
-// ── マーケット表 ───────────────────────────
+// ── 保有ポジション・ランキング ─────────────
 
-function renderHoldings() {
-  const body = $('holdings-body');
+const ASSET_BY_ID = Object.fromEntries(ASSETS.map((a) => [a.id, a]));
+
+function renderPositions() {
+  const body = $('positions-body');
   body.textContent = '';
-  for (const asset of ASSETS) {
-    const price = sim.market.prices[asset.id];
-    const h = sim.market.history[asset.id];
-    const from = h[Math.max(0, h.length - 1 - 24)];
-    const change = ((price - from) / from) * 100;
-    let qty = 0;
-    for (const book of Object.values(sim.books)) qty += book[asset.id]?.qty ?? 0;
-    qty = Math.round(qty * 100) / 100;
+  // 全エージェントの帳簿を銘柄ごとに集計する(取得平均は数量加重)
+  const agg = new Map();
+  for (const book of Object.values(sim.books)) {
+    for (const [assetId, pos] of Object.entries(book)) {
+      if (pos.qty <= 0) continue;
+      const cur = agg.get(assetId) ?? { qty: 0, costTotal: 0 };
+      cur.qty += pos.qty;
+      cur.costTotal += pos.qty * pos.cost;
+      agg.set(assetId, cur);
+    }
+  }
+  const rows = [...agg.entries()]
+    .map(([assetId, { qty, costTotal }]) => {
+      const price = sim.market.prices[assetId];
+      return { asset: ASSET_BY_ID[assetId], qty, avg: costTotal / qty, price, value: qty * price };
+    })
+    .sort((a, b) => b.value - a.value);
+  $('pos-count').textContent = `${rows.length}銘柄`;
+  if (rows.length === 0) {
+    const row = document.createElement('tr');
+    row.innerHTML = '<td colspan="6">ノーポジション(全額現金)</td>';
+    body.appendChild(row);
+    return;
+  }
+  for (const r of rows) {
+    const pnl = (r.price - r.avg) * r.qty;
     const row = document.createElement('tr');
     row.innerHTML = `
-      <td>${asset.name} <span class="code-num">${asset.code}</span></td>
-      <td>${yen(price)}</td>
-      <td class="${change >= 0 ? 'up' : 'down'}">${change >= 0 ? '+' : ''}${change.toFixed(1)}%</td>
-      <td>${qty === 0 ? '—' : `×${fmtQty(qty)}`}</td>
-      <td>${qty === 0 ? '—' : yen(qty * price)}</td>
+      <td>${r.asset.name} <span class="code-num">${r.asset.code}</span></td>
+      <td>×${fmtQty(Math.round(r.qty * 100) / 100)}</td>
+      <td>${yen(r.avg)}</td>
+      <td>${yen(r.price)}</td>
+      <td>${yen(r.value)}</td>
+      <td class="${pnl >= 0 ? 'up' : 'down'}">${signedYen(pnl)}</td>
     `;
     body.appendChild(row);
   }
+}
+
+function renderRanking() {
+  const changes = ASSETS.map((asset) => {
+    const h = sim.market.history[asset.id];
+    const from = h[Math.max(0, h.length - 1 - 24)];
+    const price = sim.market.prices[asset.id];
+    return { asset, price, change: ((price - from) / from) * 100 };
+  }).sort((a, b) => b.change - a.change);
+  const fill = (el, list) => {
+    el.textContent = '';
+    for (const r of list) {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${r.asset.name} <span class="code-num">${r.asset.code}</span></td>
+        <td class="${r.change >= 0 ? 'up' : 'down'}">${r.change >= 0 ? '+' : ''}${r.change.toFixed(1)}%</td>
+      `;
+      el.appendChild(row);
+    }
+  };
+  fill($('rank-up'), changes.slice(0, 5));
+  fill($('rank-down'), changes.slice(-5).reverse());
 }
 
 // ── サマリー・ミッション ───────────────────
@@ -274,7 +318,8 @@ function renderAll() {
   renderChart();
   renderLog();
   renderAgents();
-  renderHoldings();
+  renderPositions();
+  renderRanking();
 }
 
 // ── 実行制御 ───────────────────────────────
@@ -330,6 +375,7 @@ function boot(seed) {
   $('activity-log').textContent = '';
   $('verdict').hidden = true;
   $('session-label').textContent = `SESSION ${seed}`;
+  $('universe-count').textContent = `対象 ${ASSETS.length.toLocaleString()}銘柄`;
   const url = new URL(window.location.href);
   url.searchParams.set('session', seed);
   history.replaceState(null, '', url);

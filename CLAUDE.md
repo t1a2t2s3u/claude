@@ -48,8 +48,9 @@ js/tarot.js         タロット(大アルカナ22枚)データ・今日の一�
 js/compatibility.js ふたりの相性診断(星座/血液型/干支/五行の4軸)
 js/fortune.js       日替わり運勢とランキングの生成
 js/main.js          フォームと結果表示のDOM制御(ここだけDOMに触れる)
-lab/agent-observatory/ AIエージェント10体が¥7,000からサブスク代を稼ぐ模擬運用
-                    ダッシュボード(実在20銘柄×疑似価格・シード決定的な
+lab/agent-observatory/ AIエージェント10体が¥100,000からサブスク1年分を稼ぐ
+                    模擬運用ダッシュボード(東証上場内国株の全銘柄
+                    [stocks.data.js、JPX一覧由来]×疑似価格・シード決定的な
                     独立ページ。エンジンはDOM非依存、DOM制御は app.js のみ)
 test/*.test.mjs     ロジックのユニットテスト(node --test)
 ```

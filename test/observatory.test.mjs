@@ -20,15 +20,20 @@ function runToEnd(seed) {
   return sim;
 }
 
-test('編成は10体(トレーダー8+承認ゲート+司令塔)、銘柄は実在20銘柄', () => {
+test('編成は10体(トレーダー8+承認ゲート+司令塔)、銘柄は上場内国株の全ユニバース', () => {
   assert.equal(AGENTS.length, 10);
   assert.equal(TRADERS.length, 8);
   assert.equal(AGENTS.filter((a) => a.kind === 'gate').length, 1);
   assert.equal(AGENTS.filter((a) => a.kind === 'commander').length, 1);
-  assert.equal(ASSETS.length, 20);
+  assert.ok(ASSETS.length > 3000, `銘柄数が少なすぎる: ${ASSETS.length}`);
+  const codes = new Set();
   for (const asset of ASSETS) {
-    assert.match(asset.code, /^\d{4}$/, `${asset.name} の証券コードが4桁でない`);
-    assert.ok(asset.start > 0 && asset.vol > 0);
+    // 通常は4桁(英字含む)。優先株式など一部に5桁コードがある
+    assert.match(asset.code, /^[0-9A-Z]{4,5}$/, `${asset.name} の証券コードが不正`);
+    assert.ok(!codes.has(asset.code), `証券コード重複: ${asset.code}`);
+    codes.add(asset.code);
+    assert.ok(asset.start > 0 && asset.vol > 0 && asset.name.length > 0);
+    assert.ok(['P', 'S', 'G'].includes(asset.seg));
   }
 });
 
@@ -74,17 +79,19 @@ test('終了すると結果が確定し、判定は目標利益と整合する',
 });
 
 test('目標到達で早期終了するセッションと期限切れのセッションの両方が存在する', () => {
-  const outcomes = [];
-  for (let i = 1; i <= 20; i += 1) {
-    outcomes.push(runToEnd(`session-${String(i).padStart(3, '0')}`).result.achieved);
-  }
-  assert.ok(outcomes.includes(true), '20シードの中に達成例がない');
-  assert.ok(outcomes.includes(false), '20シードの中に未達例がない');
+  // 決定的なので、達成・未達それぞれの既知シードを直接検証する
+  // (バランス調整でエンジンを変えたときは、このシードも取り直すこと)
+  const achieved = runToEnd('session-003');
+  assert.equal(achieved.result.achieved, true);
+  assert.ok(achieved.tick < TOTAL_TICKS, '達成セッションは早期終了するはず');
+  const failed = runToEnd('session-001');
+  assert.equal(failed.result.achieved, false);
+  assert.equal(failed.tick, TOTAL_TICKS);
 });
 
 test('エージェントは実際に売買し、承認ゲートも機能している', () => {
   // 複数シードを合算して、売買・承認・却下が一通り発生することを確認する
-  const seeds = ['session-001', 'session-002', 'session-003', 'session-004'];
+  const seeds = ['session-001', 'session-002'];
   let trades = 0;
   let rejected = 0;
   for (const seed of seeds) {

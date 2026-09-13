@@ -1,14 +1,14 @@
 // 模擬運用のコアエンジン(DOM非依存)。
-// ¥7,000を元手に、7日間(1 tick = 1時間 × 168)でサブスク代¥3,000の
-// 利益を出せるかをエージェント10体に競わせる。
+// ¥100,000を元手に、7日間(1 tick = 1時間 × 168)でサブスク1年分
+// ¥36,000の利益を出せるかをエージェント10体に競わせる。
 // シードから完全に決定的で、同じセッションIDなら必ず同じ結末になる。
 
 import { createRng } from './rng.js';
 import { ASSETS, createMarket, stepMarket, fmtQty } from './market.js';
 import { TRADERS, decide, reviewOrder } from './agents.js';
 
-export const START_CASH = 7000; // 元手(円)
-export const GOAL_PROFIT = 3000; // ミッション: サブスク月額ぶんの利益
+export const START_CASH = 100000; // 元手(円)
+export const GOAL_PROFIT = 36000; // ミッション: サブスク1年分(月額¥3,000×12)の利益
 export const TOTAL_TICKS = 168; // 7日 × 24時間
 export const FEE_RATE = 0.001; // 売買手数料 0.1%
 
@@ -30,7 +30,7 @@ export function createSim(seed) {
     tradeCounts: Object.fromEntries(TRADERS.map((a) => [a.id, 0])),
     lastAction: {},
     log: [
-      { tick: 0, agentId: 'arcturus', type: 'info', text: `ミッション開始。元手¥${START_CASH.toLocaleString()}、期限は7日後。目標利益¥${GOAL_PROFIT.toLocaleString()}` },
+      { tick: 0, agentId: 'arcturus', type: 'info', text: `ミッション開始。元手¥${START_CASH.toLocaleString()}、期限は7日後。目標利益¥${GOAL_PROFIT.toLocaleString()}(サブスク1年分)` },
       { tick: 0, agentId: 'arcturus', type: 'info', text: `今週の地合いは「${market.regimeLabel}」と分析。編成10体、配置につけ` },
     ],
     navHistory: [START_CASH],
@@ -167,7 +167,7 @@ export function stepSim(sim) {
     const profit = finalNav - START_CASH;
     sim.result = { finalNav, profit, achieved: true, tick: sim.tick };
     const day = Math.ceil(sim.tick / 24);
-    pushLog(sim, 'arcturus', 'success', `${day}日目、資産¥${finalNav.toLocaleString()}(+¥${profit.toLocaleString()})で目標到達。全員撤収、サブスク代を確保。解約は回避された`);
+    pushLog(sim, 'arcturus', 'success', `${day}日目、資産¥${finalNav.toLocaleString()}(+¥${profit.toLocaleString()})で目標到達。全員撤収、サブスク1年分を確保。解約は回避された`);
     return true;
   }
 

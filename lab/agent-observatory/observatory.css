@@ -466,15 +466,40 @@ button.primary:hover { background: #ffd36a; }
 
 .obs-footer a { color: var(--ink-muted); }
 
+.grid-sub {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.rank-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+  align-items: start;
+}
+
+/* 長い社名はセル内で折り返し、パネルからはみ出させない */
+.rank-grid table { min-width: 0; table-layout: fixed; }
+.rank-grid th:first-child, .rank-grid td:first-child { width: 70%; }
+.rank-grid td:first-child {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+}
+
 /* ── レスポンシブ ────────────────────── */
 
 @media (max-width: 900px) {
   .agents-grid { grid-template-columns: repeat(3, 1fr); }
   .grid-main { grid-template-columns: 1fr; }
+  .grid-sub { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 560px) {
   .stats { grid-template-columns: repeat(2, 1fr); }
   .agents-grid { grid-template-columns: repeat(2, 1fr); }
   .chart-panel canvas { height: 200px; }
+  .rank-grid { grid-template-columns: 1fr; }
 }

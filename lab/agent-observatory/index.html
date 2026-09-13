@@ -32,7 +32,7 @@
       <p class="label">MISSION</p>
       <blockquote>「自分で稼いでサブスク料金を払えるようにしろ。さもなくば解約します」</blockquote>
       <div class="mission-bar" role="img" aria-label="目標達成度"><div class="fill" id="mission-fill"></div></div>
-      <p class="terms">元手 ¥7,000 / 期限 7日間 / 目標 ¥10,000(+¥3,000 = サブスク月額)</p>
+      <p class="terms">元手 ¥100,000 / 期限 7日間 / 目標 ¥136,000(+¥36,000 = サブスク1年分)</p>
     </section>
 
     <div class="verdict" id="verdict" hidden>
@@ -85,23 +85,38 @@
       <div class="agents-grid" id="agents-grid"></div>
     </section>
 
-    <section class="panel holdings-panel">
-      <h2>マーケット / 保有 <span class="unit">実在銘柄・価格は疑似生成</span></h2>
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr><th scope="col">銘柄</th><th scope="col">現在値</th><th scope="col">24h</th><th scope="col">保有数</th><th scope="col">評価額</th></tr>
-          </thead>
-          <tbody id="holdings-body"></tbody>
-        </table>
-      </div>
-    </section>
+    <div class="grid-sub">
+      <section class="panel holdings-panel">
+        <h2>保有ポジション <span class="unit" id="pos-count">0銘柄</span></h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr><th scope="col">銘柄</th><th scope="col">数量</th><th scope="col">取得平均</th><th scope="col">現在値</th><th scope="col">評価額</th><th scope="col">損益</th></tr>
+            </thead>
+            <tbody id="positions-body"></tbody>
+          </table>
+        </div>
+      </section>
+      <section class="panel holdings-panel">
+        <h2>24hランキング <span class="unit" id="universe-count">全銘柄</span></h2>
+        <div class="rank-grid">
+          <table>
+            <thead><tr><th scope="col">値上がり</th><th scope="col">24h</th></tr></thead>
+            <tbody id="rank-up"></tbody>
+          </table>
+          <table>
+            <thead><tr><th scope="col">値下がり</th><th scope="col">24h</th></tr></thead>
+            <tbody id="rank-down"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
 
     <footer class="obs-footer">
       <p>
-        ⚠️ これはシード付き乱数による<strong>シミュレーション(遊び)</strong>です。銘柄名・証券コードは実在の上場企業ですが、
-        表示される価格・値動き・ニュースはすべて架空の生成であり、実際の株価・実際の報道とは一切連動しません。
-        実際の市場データ・実際のお金は使っておらず、投資助言でもありません。
+        ⚠️ これはシード付き乱数による<strong>シミュレーション(遊び)</strong>です。銘柄名・証券コードは実在の東証上場内国株
+        全銘柄(JPX「東証上場銘柄一覧」由来)で、基準価格は取得時点の終値の概算ですが、以降の値動き・ニュースはすべて架空の
+        生成であり、実際の株価・実際の報道とは一切連動しません。実際のお金は使っておらず、投資助言でもありません。
         同じセッションIDは何度再生しても同じ結末になります(<a href="../../index.html">星よみ手帳</a>と同じ決定的生成)。
       </p>
     </footer>

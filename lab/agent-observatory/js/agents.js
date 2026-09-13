@@ -2,7 +2,7 @@
 // トレーダー8体+承認ゲート(SPICA)+司令塔(ARCTURUS)。
 // decide() は市場と自分の帳簿だけを見て注文案を返す純関数で、DOMに触れない。
 
-import { ASSETS, changePct, sma } from './market.js';
+import { ASSETS, changePct, sma, smaAt } from './market.js';
 
 // ボラティリティで銘柄を役割分けする(銘柄リストが変わっても追従する)
 const BY_VOL = [...ASSETS].sort((a, b) => b.vol - a.vol);
@@ -45,10 +45,11 @@ const DECIDERS = {
     if (held) {
       return { side: 'sell', assetId: held, reason: `直近3hで${fmtPct(changePct(view.market, held, 3))}。流れが切れたので手仕舞い` };
     }
+    // 数千銘柄あると常にどれかは動いているので、閾値は高めに置く
     let best = null;
     for (const a of ASSETS) {
       const c = changePct(view.market, a.id, 3);
-      if (c > 1.5 && (!best || c > best.c)) best = { id: a.id, c };
+      if (c > 3 && (!best || c > best.c)) best = { id: a.id, c };
     }
     if (best) {
       return { side: 'buy', assetId: best.id, reason: `直近3hで${fmtPct(best.c)}。上昇の初動に順張り` };
@@ -64,7 +65,7 @@ const DECIDERS = {
     let worst = null;
     for (const a of ASSETS) {
       const c = changePct(view.market, a.id, 24);
-      if (c < -6 && (!worst || c < worst.c)) worst = { id: a.id, c };
+      if (c < -10 && (!worst || c < worst.c)) worst = { id: a.id, c };
     }
     if (worst && !view.book[worst.id]?.qty) {
       return { side: 'buy', assetId: worst.id, reason: `24hで${fmtPct(worst.c)}。売られすぎと判断し逆張り` };
@@ -81,8 +82,8 @@ const DECIDERS = {
       const h = view.market.history[a.id];
       if (h.length < 30 || view.book[a.id]?.qty) continue;
       const now = sma(view.market, a.id, 24);
-      const before = sma({ ...view.market, history: { ...view.market.history, [a.id]: h.slice(0, -6) } }, a.id, 24);
-      if (view.market.prices[a.id] > now * 1.005 && now > before) {
+      const before = smaAt(view.market, a.id, 24, 6);
+      if (view.market.prices[a.id] > now * 1.02 && now > before * 1.005) {
         return { side: 'buy', assetId: a.id, reason: '24h移動平均が上向きで価格が上抜け。トレンド入り' };
       }
     }
@@ -96,7 +97,8 @@ const DECIDERS = {
     if (lose) return { side: 'sell', assetId: lose, reason: '-1%で機械的に損切り' };
     for (const a of ASSETS) {
       const c = changePct(view.market, a.id, 1);
-      if (c > 0.8 && !view.book[a.id]?.qty) {
+      // 急騰しすぎは追わず、ほどよい初速の銘柄を刻む
+      if (c > 1.2 && c < 3 && !view.book[a.id]?.qty) {
         return { side: 'buy', assetId: a.id, sizing: 0.5, reason: `1hで${fmtPct(c)}の初速。小ロットでスキャル` };
       }
     }
@@ -109,7 +111,7 @@ const DECIDERS = {
     let cheapest = null;
     for (const a of ASSETS) {
       const disc = ((view.market.prices[a.id] - a.start) / a.start) * 100;
-      if (disc < -8 && (!cheapest || disc < cheapest.disc)) cheapest = { id: a.id, disc };
+      if (disc < -12 && (!cheapest || disc < cheapest.disc)) cheapest = { id: a.id, disc };
     }
     if (cheapest && !view.book[cheapest.id]?.qty) {
       return { side: 'buy', assetId: cheapest.id, reason: `基準価格から${fmtPct(cheapest.disc)}。割安とみて仕込み` };
