@@ -39,6 +39,8 @@ const CSS = `
   --rule:rgba(51,81,143,.055);
   --c-sub:#2a78d6; --c-home:#eb6834; --c-util:#1baf7a; --c-net:#eda100;
   --c-ins:#e87ba4; --c-loan:#008300; --c-other:#4a3aa7;
+  /* 収支の青／赤。マークは棒とドット、-ink は文字（文字は4.5:1が要る） */
+  --c-in:#2a78d6; --c-ex:#c0392b; --c-in-ink:#1c62b8; --c-ex-ink:#c0392b;
   --bar-dim:#c6cfe2;
   --shadow:0 1px 2px rgba(35,40,56,.06),0 8px 24px rgba(35,40,56,.05);
   --shadow-lg:0 4px 12px rgba(35,40,56,.12),0 20px 48px rgba(35,40,56,.18);
@@ -50,6 +52,7 @@ const CSS = `
     --rule:rgba(147,172,224,.06);
     --c-sub:#3987e5; --c-home:#d95926; --c-util:#199e70; --c-net:#c98500;
     --c-ins:#d55181; --c-loan:#008300; --c-other:#9085e9;
+    --c-in:#3987e5; --c-ex:#dd4b4b; --c-in-ink:#6aa9f5; --c-ex-ink:#f47a78;
     --bar-dim:#3a4356;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
     --shadow-lg:0 4px 12px rgba(0,0,0,.4),0 20px 48px rgba(0,0,0,.45);
@@ -61,6 +64,7 @@ const CSS = `
   --rule:rgba(147,172,224,.06);
   --c-sub:#3987e5; --c-home:#d95926; --c-util:#199e70; --c-net:#c98500;
   --c-ins:#d55181; --c-loan:#008300; --c-other:#9085e9;
+  --c-in:#3987e5; --c-ex:#dd4b4b; --c-in-ink:#6aa9f5; --c-ex-ink:#f47a78;
   --bar-dim:#3a4356;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
   --shadow-lg:0 4px 12px rgba(0,0,0,.4),0 20px 48px rgba(0,0,0,.45);
@@ -142,6 +146,8 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .freq-badge{display:inline-block;font-size:.66rem;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--muted);vertical-align:1px;margin-left:6px}
 .chip{font-size:.72rem;color:var(--muted);display:inline-flex;align-items:center;flex:none}
 .amt{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.amt.in{color:var(--c-in-ink)}
+.amt.ex{color:var(--c-ex-ink)}
 .item-actions{display:flex;gap:2px;margin-left:6px}
 .icon-btn{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.72rem;padding:3px 7px;border-radius:6px}
 .icon-btn:hover{background:var(--surface2);color:var(--ink)}
@@ -195,8 +201,8 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .dlab{position:absolute;font-size:.62rem;line-height:1;white-space:nowrap;pointer-events:none;
   color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
 .dbar{flex:1;border-radius:3px 3px 0 0;min-height:0}
-.dbar.in{background:var(--c-sub)}
-.dbar.ex{background:var(--c-home)}
+.dbar.in{background:var(--c-in)}
+.dbar.ex{background:var(--c-ex)}
 .ytable{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:22px}
 .ytable th{font-size:.72rem;color:var(--muted);font-weight:500;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
 .ytable th.num,.ytable td.num{text-align:right;font-variant-numeric:tabular-nums}
@@ -1674,8 +1680,8 @@ function renderBiz(c){
     + '<div class="ychart-labels">'+labels+'</div>'
     + '</div>'
     + '<div class="legend" style="margin-top:12px">'
-    + '<span><span class="dot" style="background:var(--c-sub)"></span>収入</span>'
-    + '<span><span class="dot" style="background:var(--c-home)"></span>経費（按分込み）</span>'
+    + '<span><span class="dot" style="background:var(--c-in)"></span>収入</span>'
+    + '<span><span class="dot" style="background:var(--c-ex)"></span>経費（按分込み）</span>'
     + '</div>'
     + (peak>0 ? '<div class="hint" style="margin-top:8px">'
         + '棒の高さは左の目盛りが目安です。月を選ぶと、その月の記録に移ります。</div>' : '')
@@ -1696,7 +1702,7 @@ function renderBiz(c){
     + '<div class="item-main"><span class="item-name">'+esc(b.name)+badge+'</span>'
     + '<span class="item-sub">'+b.m+'/'+b.d+'　'+BIZ_CAT_MAP[b.cat].label
     + (b.note?'　'+esc(b.note):'')+'</span></div>'
-    + '<span class="amt">'+(b.type==='in'?'＋':'−')+yen(b.amount)+'</span>'
+    + '<span class="amt '+b.type+'">'+(b.type==='in'?'＋':'−')+yen(b.amount)+'</span>'
     + '<span class="item-actions">'
     + '<button type="button" class="icon-btn" data-act="editbiz" data-id="'+b.id+'">編集</button>'
     + (b.type==='in' && !b.paid
@@ -1717,7 +1723,7 @@ function renderBiz(c){
     + (apM>0 ? '<div class="group-label">固定費からの経費按分</div>'
         + '<div class="item"><div class="item-main"><span class="item-name">按分合計</span>'
         + '<span class="item-sub">「支払い」で経費割合を設定した固定費の今月分</span></div>'
-        + '<span class="amt">−'+yen(apM)+'</span></div>' : '')
+        + '<span class="amt ex">−'+yen(apM)+'</span></div>' : '')
     + (!ins.length && !exs.length && !apM
       ? '<div style="color:var(--muted);font-size:.85rem;padding:8px 0">この月の記録はまだありません。</div>' : '')
     + '</section>';
@@ -1737,8 +1743,8 @@ function renderBiz(c){
     + label+'<span class="cnt">'+n+'</span></button>';
   const filterChips = '<div class="chip-row">'
     + fChip('all','すべて', yearAll.length, null)
-    + fChip('in','収入', nIn, 'sub')
-    + fChip('ex','経費', nEx, 'home')
+    + fChip('in','収入', nIn, 'in')
+    + fChip('ex','経費', nEx, 'ex')
     + '</div>';
   let lastM = null;
   const listRows = allEntries.map(b=>{
