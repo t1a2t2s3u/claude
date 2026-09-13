@@ -1,0 +1,472 @@
+/* AGENT OBSERVATORY — 夜空テーマの監視ダッシュボード。
+   本体(css/style.css)の夜空トークンを引き継ぎつつ、
+   等幅フォント主体の管制室らしい体裁に寄せている。
+   このページはダーク単一テーマ(全色を明示指定)。 */
+
+:root {
+  --ground-top: #12112b;
+  --ground-bottom: #1e1b40;
+  --panel: rgba(255, 255, 255, 0.055);
+  --panel-strong: rgba(255, 255, 255, 0.09);
+  --panel-border: rgba(255, 255, 255, 0.13);
+  --ink: #f2effa;
+  --ink-muted: #b9b2d8;
+  --ink-faint: #8d87ae;
+  --grid-line: rgba(255, 255, 255, 0.08);
+  --accent: #f6c453;
+  --accent-soft: rgba(246, 196, 83, 0.14);
+  --series: #5598e7;
+  --series-soft: rgba(85, 152, 231, 0.16);
+  --good: #35b95f;
+  --good-soft: rgba(53, 185, 95, 0.14);
+  --bad: #e05f5f;
+  --bad-soft: rgba(224, 95, 95, 0.14);
+  --mono: 'IBM Plex Mono', 'Menlo', 'Consolas', monospace;
+  --jp: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic UI', 'Meiryo', sans-serif;
+  --serif: 'Shippori Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+}
+
+* { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background-color: var(--ground-bottom);
+  background-image: linear-gradient(180deg, var(--ground-top) 0%, var(--ground-bottom) 100vh);
+  background-repeat: no-repeat;
+  font-family: var(--jp);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+button {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink);
+  background: var(--panel-strong);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+button:hover { background: rgba(255, 255, 255, 0.14); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #221c05; font-weight: 600; }
+button.primary:hover { background: #ffd36a; }
+
+/* ── ヘッダー ─────────────────────────── */
+
+.obs-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+}
+
+.obs-brand { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+
+.obs-title {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.obs-title .logo { color: var(--accent); margin-right: 6px; }
+
+.obs-subtitle {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.12em;
+}
+
+.obs-session {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+}
+
+.badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  color: var(--ink-muted);
+  letter-spacing: 0.1em;
+}
+
+.badge-live .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+}
+
+.badge-live.running { color: var(--good); border-color: rgba(53, 185, 95, 0.4); }
+.badge-live.running .dot { background: var(--good); animation: pulse 1.6s ease-in-out infinite; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge-live.running .dot { animation: none; }
+}
+
+.controls { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ── ミッション ───────────────────────── */
+
+.mission {
+  border: 1px solid rgba(246, 196, 83, 0.35);
+  background: linear-gradient(180deg, var(--accent-soft), rgba(246, 196, 83, 0.04));
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mission .label {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  margin: 0;
+}
+
+.mission blockquote {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(0.95rem, 2.6vw, 1.2rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-wrap: balance;
+}
+
+.mission .terms {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  font-family: var(--mono);
+}
+
+.mission-bar {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.mission-bar .fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--series), var(--accent));
+  transition: width 0.4s ease;
+}
+
+/* ── ステータスタイル ─────────────────── */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.tile {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tile .k {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+.tile .v {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.05rem, 2.4vw, 1.45rem);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tile .s {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.up { color: var(--good); }
+.down { color: var(--bad); }
+
+/* ── パネル共通 ──────────────────────── */
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  min-width: 0;
+}
+
+.panel h2 {
+  margin: 0 0 10px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 2px 8px;
+}
+
+.panel h2 .unit { color: var(--ink-faint); font-weight: 400; letter-spacing: 0.08em; }
+
+.grid-main {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+/* ── チャート ────────────────────────── */
+
+.chart-panel canvas {
+  display: block;
+  width: 100%;
+  height: 260px;
+}
+
+/* ── 活動ログ ────────────────────────── */
+
+.log-panel ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.76rem;
+}
+
+.log-panel li {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 8px;
+  align-items: baseline;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.log-time {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+.log-tag {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  padding: 1px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+  align-self: center;
+}
+
+.log-tag.buy { background: var(--series-soft); color: #9cc3f0; }
+.log-tag.sell { background: var(--accent-soft); color: var(--accent); }
+.log-tag.reject { background: var(--bad-soft); color: var(--bad); }
+.log-tag.news { background: rgba(255, 255, 255, 0.08); color: var(--ink-muted); }
+.log-tag.info { background: rgba(255, 255, 255, 0.08); color: var(--ink-muted); }
+.log-tag.success { background: var(--good-soft); color: var(--good); }
+.log-tag.fail { background: var(--bad-soft); color: var(--bad); }
+
+.log-text { color: var(--ink); overflow-wrap: anywhere; }
+.log-text .who { font-family: var(--mono); color: var(--ink-muted); margin-right: 4px; }
+
+/* ── エージェント ────────────────────── */
+
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.agent {
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.agent .head { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+
+.agent .code {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.agent .role {
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+.agent .pnl {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.agent .note {
+  font-size: 0.66rem;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2em;
+}
+
+.agent.special { border-color: rgba(246, 196, 83, 0.35); }
+.agent.special .code { color: var(--accent); }
+
+/* ── マーケット表 ────────────────────── */
+
+.table-scroll { overflow-x: auto; }
+
+.holdings-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.holdings-panel th, .holdings-panel td {
+  text-align: right;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.holdings-panel th {
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+.holdings-panel th:first-child, .holdings-panel td:first-child {
+  text-align: left;
+  font-family: var(--jp);
+}
+
+/* ── 判定バナー ──────────────────────── */
+
+.verdict {
+  border-radius: 10px;
+  padding: 16px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+
+.verdict.ok { background: var(--good-soft); border: 1px solid rgba(53, 185, 95, 0.45); }
+.verdict.ng { background: var(--bad-soft); border: 1px solid rgba(224, 95, 95, 0.45); }
+
+.verdict .headline {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.verdict.ok .headline { color: var(--good); }
+.verdict.ng .headline { color: var(--bad); }
+
+.verdict .detail { margin: 0; font-size: 0.8rem; color: var(--ink-muted); }
+
+/* ── フッター ────────────────────────── */
+
+.obs-footer {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  line-height: 1.8;
+}
+
+.obs-footer a { color: var(--ink-muted); }
+
+/* ── レスポンシブ ────────────────────── */
+
+@media (max-width: 900px) {
+  .agents-grid { grid-template-columns: repeat(3, 1fr); }
+  .grid-main { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .agents-grid { grid-template-columns: repeat(2, 1fr); }
+  .chart-panel canvas { height: 200px; }
+}

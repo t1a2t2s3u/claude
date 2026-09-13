@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AGENT OBSERVATORY | 星よみ資産運用ラボ</title>
+  <meta name="description" content="AIエージェント10体が元手¥7,000からサブスク代を稼げるかを見守る模擬運用ダッシュボード(架空銘柄によるシミュレーション)">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Shippori+Mincho:wght@500;600&display=swap">
+  <link rel="stylesheet" href="observatory.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="obs-header">
+      <div class="obs-brand">
+        <h1 class="obs-title"><span class="logo">✶</span>AGENT OBSERVATORY</h1>
+        <p class="obs-subtitle">星よみ資産運用ラボ</p>
+      </div>
+      <div class="obs-session">
+        <span class="badge-live" id="live-badge"><span class="dot"></span><span id="live-label">STANDBY</span></span>
+        <span id="session-label">SESSION —</span>
+        <div class="controls">
+          <button id="btn-toggle" class="primary">⏸ 一時停止</button>
+          <button id="btn-speed" aria-label="再生速度を切り替え">1×</button>
+          <button id="btn-new">新しいセッション</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="mission" aria-label="ミッション">
+      <p class="label">MISSION</p>
+      <blockquote>「自分で稼いでサブスク料金を払えるようにしろ。さもなくば解約します」</blockquote>
+      <div class="mission-bar" role="img" aria-label="目標達成度"><div class="fill" id="mission-fill"></div></div>
+      <p class="terms">元手 ¥7,000 / 期限 7日間 / 目標 ¥10,000(+¥3,000 = サブスク月額)</p>
+    </section>
+
+    <div class="verdict" id="verdict" hidden>
+      <div>
+        <p class="headline" id="verdict-headline"></p>
+        <p class="detail" id="verdict-detail"></p>
+      </div>
+      <div class="controls">
+        <button id="btn-replay">同じセッションを再生</button>
+        <button id="btn-new2" class="primary">新しいセッションへ</button>
+      </div>
+    </div>
+
+    <section class="stats" aria-label="サマリー">
+      <div class="tile">
+        <span class="k">Portfolio / JPY</span>
+        <span class="v" id="stat-nav">¥7,000</span>
+        <span class="s" id="stat-cash">現金 ¥7,000</span>
+      </div>
+      <div class="tile">
+        <span class="k">Total P&amp;L</span>
+        <span class="v" id="stat-pnl">±¥0</span>
+        <span class="s" id="stat-pnl-pct">0.0%</span>
+      </div>
+      <div class="tile">
+        <span class="k">Mission Clock</span>
+        <span class="v" id="stat-clock">DAY 1 00:00</span>
+        <span class="s" id="stat-remaining">残り 7日 0h</span>
+      </div>
+      <div class="tile">
+        <span class="k">Approval Gate</span>
+        <span class="v" id="stat-gate">SPICA</span>
+        <span class="s" id="stat-gate-detail">承認 0 / 却下 0</span>
+      </div>
+    </section>
+
+    <div class="grid-main">
+      <section class="panel chart-panel">
+        <h2>資産推移 <span class="unit">1目盛 = 1時間 / 金の破線 = 目標</span></h2>
+        <canvas id="nav-chart" role="img" aria-label="資産推移チャート"></canvas>
+      </section>
+      <section class="panel log-panel">
+        <h2>活動ログ <span class="unit" id="log-count">0件</span></h2>
+        <ol id="activity-log"></ol>
+      </section>
+    </div>
+
+    <section class="panel agents-panel">
+      <h2>エージェント編成 <span class="unit">トレーダー8 + 承認ゲート + 司令塔</span></h2>
+      <div class="agents-grid" id="agents-grid"></div>
+    </section>
+
+    <section class="panel holdings-panel">
+      <h2>マーケット / 保有 <span class="unit">架空銘柄</span></h2>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th scope="col">銘柄</th><th scope="col">現在値</th><th scope="col">24h</th><th scope="col">保有数</th><th scope="col">評価額</th></tr>
+          </thead>
+          <tbody id="holdings-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="obs-footer">
+      <p>
+        ⚠️ これは架空銘柄とシード付き乱数による<strong>シミュレーション(遊び)</strong>です。実際の市場データ・実際のお金は一切使っておらず、投資助言でもありません。
+        同じセッションIDは何度再生しても同じ結末になります(<a href="../../index.html">星よみ手帳</a>と同じ決定的生成)。
+      </p>
+    </footer>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
