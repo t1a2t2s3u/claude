@@ -1037,6 +1037,20 @@ function spouseDed(ownIncome, spIncome, isOld){
   }
   return {it:0, rt:0, label:'', human:0};
 }
+/* 配偶者控除が0円になる理由を言葉で返す（当てはまるときは空文字）。
+   チェックを入れたのに何も出ない、という迷いをなくすため */
+function spouseReason(ownIncome, spIncome){
+  if(ownIncome > 10000000)
+    return 'あなたの合計所得が '+yen(ownIncome)+'（1,000万円超）のため、'
+      + '配偶者控除・配偶者特別控除は<b>使えません</b>。';
+  if(spIncome > 1330000)
+    return '配偶者の合計所得を '+yen(spIncome)+' と入力しているため、'
+      + '配偶者控除・配偶者特別控除は<b>使えません</b>。対象は合計所得133万円以下'
+      + '（配偶者の収入が給与だけなら、額面で約201万円以下）です。<br>'
+      + 'ここに入れるのは<b>給与の額面そのものではなく「収入 − 給与所得控除」</b>の金額です。'
+      + '額面を入れていた場合は、直すと控除がつくことがあります。';
+  return '';
+}
 
 /* 社会保険料控除・基礎控除以外の所得控除をまとめて出す。
    human は住民税の調整控除に使う「人的控除の差」 */
@@ -1072,11 +1086,14 @@ function calcDeductions(pr, income){
   add('医療費控除', med, med,
     '自己負担 '+yen(d.medical)+(d.medicalIns?' − 補填 '+yen(d.medicalIns):'')+' − '+yen(medBase));
 
+  let spouseNote = '';
   if(d.spouse){
     const sp = spouseDed(income, d.spouseIncome, d.spouseOld);
     if(sp.it>0){
       rows.push({label:sp.label, it:sp.it, rt:sp.rt, note:'配偶者の合計所得 '+yen(d.spouseIncome)});
       it += sp.it; rt += sp.rt; human += sp.human;
+    }else{
+      spouseNote = spouseReason(income, d.spouseIncome);
     }
   }
   add('扶養控除（一般）', d.depGeneral*380000, d.depGeneral*330000, d.depGeneral+'人', true);
@@ -1091,7 +1108,7 @@ function calcDeductions(pr, income){
   if(d.kinro) add('勤労学生控除', 270000, 260000, '', true);
   add('その他の所得控除', d.other, d.other, '入力した額をそのまま適用');
 
-  return {it, rt, rows, human};
+  return {it, rt, rows, human, spouseNote};
 }
 
 /* ふるさと納税。所得税は所得控除、住民税は税額控除（基本分＋特例分） */
@@ -2968,6 +2985,10 @@ function guideModalHtml(){
 /* ---------- 所得控除の入力 ---------- */
 function dedModalHtml(){
   const d = state.profile.ded;
+  /* 入力しながら理由が出せるよう、本人の合計所得をここで一度だけ出しておく */
+  const tx = calcTax(view.y);
+  const ownIncome = tx.mode==='free' ? tx.income : tx.totalIncome;
+  const spNote0 = d.spouse ? spouseReason(ownIncome, d.spouseIncome) : '';
   const num = (id, val, ph, step)=>'<input id="'+id+'" type="number" min="0" step="'+(step||1000)
     + '" inputmode="numeric" value="'+(val||'')+'" placeholder="'+(ph||'')+'">';
   const cntSel = (id, val)=>'<select id="'+id+'">'
@@ -3017,6 +3038,8 @@ function dedModalHtml(){
     + '<div><label for="d-spinc">配偶者の合計所得（年）</label>'+num('d-spinc',d.spouseIncome,'給与なら収入−給与所得控除')+'</div>'
     + '<div class="f-full check-line"><input type="checkbox" id="d-spold"'+(d.spouseOld?' checked':'')+'>'
     + '<label for="d-spold" style="margin:0">配偶者が70歳以上</label></div>'
+    + '<div class="f-full"><div id="d-spouse-note" data-own="'+ownIncome+'"'
+    + ' class="notice warn-notice'+(spNote0?'':' hidden')+'" style="margin:4px 0 0">'+spNote0+'</div></div>'
     + '</div>'
     + '<div class="hint">配偶者の合計所得が58万円以下（給与収入だけなら123万円以下）なら配偶者控除、'
     + 'それを超えて133万円以下なら配偶者特別控除が段階的に使えます。'
@@ -3066,11 +3089,17 @@ function dedCard(t){
   const fs = t.fs || {itDed:0, rtCredit:0, limit:0, over:false};
   const head = '<div class="panel-head"><h2>所得控除</h2><div class="actions">'
     + '<button class="btn-sm" data-act="ded">入力する</button></div></div>';
+  /* 「配偶者がいる」にチェックがあるのに控除が0円のとき、その理由を出す */
+  const spNote = t.ded.spouseNote
+    ? '<div class="notice warn-notice" style="margin:14px 0 0">'
+      + '<b>配偶者控除は計算に入っていません。</b>'+t.ded.spouseNote
+      + '<div style="margin-top:8px"><button class="btn-sm" type="button" data-act="ded">所得控除を見直す</button></div></div>'
+    : '';
   if(!rows.length && !fs.rtCredit){
     return '<section class="card panel">'+head
       + '<div class="hint">小規模企業共済・iDeCo・生命保険料・医療費・扶養家族などを入れると、'
       + 'その分だけ所得税と住民税が下がります。<b>小規模企業共済とiDeCoは掛金が全額</b>引けるので、'
-      + '効き目がいちばん大きいところです。</div></section>';
+      + '効き目がいちばん大きいところです。</div>'+spNote+'</section>';
   }
   const body = rows.map(r=>'<div class="trow"><span class="tlab">'+r.label
     + (r.note?'<small>'+r.note+'</small>':'')+'</span>'
@@ -3098,6 +3127,7 @@ function dedCard(t){
     + '<div class="trow total"><span class="tlab">合計</span>'
     + '<span class="tval">'+yen(t.ded.it)+'<small style="font-weight:400;color:var(--muted)">／住民税 '
     + yen(t.ded.rt)+'</small></span></div>'
+    + spNote
     + fsNote
     + '</section>';
 }
@@ -3858,7 +3888,20 @@ root.addEventListener('click', e=>{
 
 root.addEventListener('input', e=>{
   if(e.target.id==='search'){ view.q=e.target.value; render(); }
+  if(e.target.id==='d-spinc') updateSpouseNote();
 });
+/* 所得控除の入力中、配偶者控除が使えない理由をその場で出す（再描画はしない） */
+function updateSpouseNote(){
+  const box = document.getElementById('d-spouse-note');
+  if(!box) return;
+  const on = document.getElementById('d-spouse');
+  const inc = document.getElementById('d-spinc');
+  const msg = (on && on.checked)
+    ? spouseReason(Number(box.dataset.own)||0, Math.max(0, Math.round(Number(inc && inc.value)||0)))
+    : '';
+  box.innerHTML = msg;
+  box.classList.toggle('hidden', !msg);
+}
 root.addEventListener('change', e=>{
   if(e.target.id==='f-method'){ view.method=e.target.value; render(); }
   if(e.target.id==='m-freq'){
@@ -3903,7 +3946,9 @@ root.addEventListener('change', e=>{
   if(e.target.id==='d-spouse'){
     const box = document.getElementById('d-spouse-box');
     if(box) box.style.display = e.target.checked ? '' : 'none';
+    updateSpouseNote();
   }
+  if(e.target.id==='d-spinc') updateSpouseNote();
   if(e.target.id==='s-workmode'){
     const f=document.getElementById('set-form');
     if(f) f.dataset.wm = e.target.value;
