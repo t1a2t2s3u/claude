@@ -52,6 +52,9 @@ lab/agent-observatory/ AIエージェント10体が¥100,000からサブスク1�
                     模擬運用ダッシュボード(東証上場内国株の全銘柄
                     [stocks.data.js、JPX一覧由来]×疑似価格・シード決定的な
                     独立ページ。エンジンはDOM非依存、DOM制御は app.js のみ)
+simulator/          実在株価(yfinance)によるペーパートレード用の
+                    Python/Streamlitアプリ(独立プロジェクト。詳細は
+                    simulator/README.md。テストは python -m unittest)
 test/*.test.mjs     ロジックのユニットテスト(node --test)
 ```
 

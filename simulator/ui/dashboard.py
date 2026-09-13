@@ -83,6 +83,9 @@ def render(conn, pf) -> None:
         df.columns = ["日時", "ティッカー", "銘柄名", "売買", "数量", "約定価格", "通貨",
                       "適用レート", "手数料(円)", "実現損益(円)", "理由", "タグ"]
         df["売買"] = df["売買"].map({"buy": "買い", "sell": "売り"})
+        df["実現損益(円)"] = df["実現損益(円)"].map(
+            lambda v: "" if v is None else f"{v:+,.0f}"
+        )
         st.dataframe(df, use_container_width=True, hide_index=True)
     else:
         st.caption("まだ取引はありません。")

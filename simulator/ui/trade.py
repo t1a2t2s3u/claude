@@ -5,7 +5,7 @@ from __future__ import annotations
 import streamlit as st
 
 from sim.portfolio import TradeError, execute_trade, get_positions
-from sim.quotes import QuoteError, get_quote
+from sim.quotes import QuoteError, get_history, get_quote
 from ui.common import current_usdjpy, resolve_name, yen
 
 
@@ -17,13 +17,13 @@ def render(conn, pf) -> None:
     )
 
     positions = get_positions(conn, pf["id"])
-    default_ticker = st.session_state.get("trade_ticker", "")
+    st.session_state.setdefault("trade_ticker_input", "")
 
     with st.form("trade_form"):
         col1, col2, col3 = st.columns([2, 1, 1])
         with col1:
             ticker = st.text_input(
-                "ティッカー(例: 7203.T / AAPL)", value=default_ticker, key="trade_ticker_input"
+                "ティッカー(例: 7203.T / AAPL)", key="trade_ticker_input"
             ).strip().upper()
         with col2:
             side = st.radio("売買", ["買い", "売り"], horizontal=True)
@@ -34,6 +34,35 @@ def render(conn, pf) -> None:
 
     if positions:
         st.caption("保有中: " + " / ".join(f"{p['ticker']}×{p['qty']:g}" for p in positions))
+
+    # 日足チャート(発注前の確認用)
+    if ticker:
+        with st.expander(f"📉 {ticker} の日足チャート", expanded=False):
+            period = st.select_slider(
+                "期間", ["1mo", "3mo", "6mo", "1y", "2y"], value="6mo", key="chart_period"
+            )
+            try:
+                hist = get_history(ticker, period=period)
+                import plotly.graph_objects as go
+
+                fig = go.Figure(
+                    go.Candlestick(
+                        x=hist.index,
+                        open=hist["Open"],
+                        high=hist["High"],
+                        low=hist["Low"],
+                        close=hist["Close"],
+                        increasing_line_color="#e05f5f",
+                        decreasing_line_color="#3987e5",
+                    )
+                )
+                fig.update_layout(
+                    height=380, margin=dict(l=10, r=10, t=10, b=10),
+                    xaxis_rangeslider_visible=False,
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            except QuoteError as exc:
+                st.warning(str(exc))
 
     if not submitted:
         return

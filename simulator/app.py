@@ -8,7 +8,7 @@ from __future__ import annotations
 import streamlit as st
 
 from sim.portfolio import TradeError, create_portfolio, list_portfolios
-from ui import dashboard, settings_page, trade
+from ui import ai_page, ai_stats_page, dashboard, master_page, settings_page, trade
 from ui.common import get_conn, yen
 
 st.set_page_config(page_title="株式投資シミュレータ", page_icon="📈", layout="wide")
@@ -62,7 +62,15 @@ with st.sidebar:
     st.divider()
     page = st.radio(
         "ページ",
-        ["📊 ダッシュボード", "💱 取引", "⚙️ 設定"],
+        [
+            "📊 ダッシュボード",
+            "💱 取引",
+            "🔍 銘柄検索・マスタ",
+            "🤖 AI連携",
+            "📈 AI成績",
+            "⚙️ 設定",
+        ],
+        key="page_nav",
         label_visibility="collapsed",
     )
 
@@ -76,9 +84,12 @@ if pf is None:
         "- 「自分の判断」「Claude判断」のように複数ポートフォリオを並走できます"
     )
 else:
-    if page == "📊 ダッシュボード":
-        dashboard.render(conn, pf)
-    elif page == "💱 取引":
-        trade.render(conn, pf)
-    else:
-        settings_page.render(conn, pf)
+    PAGES = {
+        "📊 ダッシュボード": dashboard.render,
+        "💱 取引": trade.render,
+        "🔍 銘柄検索・マスタ": master_page.render,
+        "🤖 AI連携": ai_page.render,
+        "📈 AI成績": ai_stats_page.render,
+        "⚙️ 設定": settings_page.render,
+    }
+    PAGES[page](conn, pf)
