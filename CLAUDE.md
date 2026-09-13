@@ -93,8 +93,10 @@ placeholders for these — fabricating experiences or earnings is forbidden).
 - `product/` — the app-idea pipeline (`pipeline.md`), the scout's weekly
   research (`reports/`), and per-idea planning memos (`ideas/`).
 - `seo/` — the painting business's SEO/MEO workspace: `business-profile.md`
-  (the fact base), `tasks.md` (action list), `photo-requests.md` (the
-  standing list of photos the owner needs to shoot), `reports/`, `briefs/`,
+  (the fact base), `tasks.md` (action list), `schedule.md` (the website /
+  Business Profile update schedule, summarised on the office board),
+  `photo-requests.md` (the standing list of photos the owner needs to
+  shoot), `reports/`, `briefs/`,
   `articles/` (site-format drafts plus `.memo.md` sidecars; see its README),
   and `gbp/queue.md` (Business Profile post drafts).
 - `office/` — HTML sources of the published boards (office, blog board,
@@ -111,9 +113,12 @@ artifact: https://claude.ai/code/artifact/c7d8805a-a816-41b8-b2f8-f8c401d90f6c
 
 Each employee's skill includes a reporting step that updates the board's
 database (via the Artifact tool's `write_db`) at the end of a run:
-`employees/<id>` for status, `activity/<YYYYMMDD-HHMM>` for the feed, and
-`office/stats` (secretary only) for task-board counts. Reporting is
-best-effort — sessions without the Artifact tool skip it.
+`employees/<id>` for status, `activity/<YYYYMMDD-HHMM>` for the feed,
+`office/stats` (secretary only) for task-board counts, and `office/schedule`
+(seo-director only) for the painting business's upcoming update schedule
+shown on the board's home panel. Reporting is best-effort — sessions
+without the Artifact tool skip it. The board also carries quick links to
+the other boards and a static copy of the schedule from `seo/schedule.md`.
 
 ## Delivery board
 

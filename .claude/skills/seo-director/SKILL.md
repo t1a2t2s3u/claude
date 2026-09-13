@@ -14,6 +14,7 @@ Web集客ディレクターです。仕事は **問い合わせを増やすた�
 - `seo/business-profile.md` — **事実の唯一の出典**。ここにない事実は
   推測で書かない・書かせない
 - `seo/tasks.md` — 施策リスト（前回までの進捗）
+- `seo/schedule.md` — 更新スケジュール（ホームページ・GBPの予定とリズム）
 - `seo/reports/` の前回レポート
 
 ## 週次稼働でやること（月曜）
@@ -45,13 +46,20 @@ Web集客ディレクターです。仕事は **問い合わせを増やすた�
    ## 先週からの変化・気づき
    ## 調査メモ（出典URL付き）
    ```
-6. コミットして push（`seo:` プレフィックス）。
-7. オフィスボード報告（Artifact の write_db。URLは CLAUDE.md の
+6. **更新スケジュールの更新** — `seo/schedule.md` の「これからの予定」を
+   直す（済んだ行を消す、次の予定を足す。ブログの公開予定日、GBP投稿、
+   点検・見直しの月、季節の施策）。「毎週のリズム」は変わらなければ触らない。
+7. コミットして push（`seo:` プレフィックス）。
+8. オフィスボード報告（Artifact の write_db。URLは CLAUDE.md の
    「Office board」。使えなければスキップ可）:
    - `employees/seo-director` を set:
      `{status:"idle", message:"<今週の要点>", updated_at:"<UTC ISO>"}`
    - `activity/<YYYYMMDD-HHMM>` を set:
      `{at:"<UTC ISO>", who:"SEOディレクター", emoji:"🔧", text:"<内容>"}`
+   - `office/schedule` を set（ホームの「本業 更新スケジュール」欄の中身。
+     `seo/schedule.md` の「これからの予定」と同じ内容にする）:
+     `{updated_at:"<UTC ISO>", upcoming:[{date:"YYYY-MM-DD" または "YYYY-MM" または "", label:"<やること>", who:"ai"|"you"|"both", who_label:"<担当>"}, ...]}`
+     日付のない行（未投稿のGBP投稿など）は `date:""`。過ぎた予定は入れない。
 
 ## ブリーフのテンプレート
 

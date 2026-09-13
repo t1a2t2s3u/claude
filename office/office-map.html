@@ -89,6 +89,33 @@
   .tag.on { background: var(--on-bg); color: var(--on); }
   .hint { color: var(--ink-soft); font-size: .8rem; }
 
+  /* ===== ボードへの近道 ===== */
+  .boards { display: flex; gap: 8px; flex-wrap: wrap; margin: -4px 0 0; }
+  .boards a {
+    font-family: "DotGothic16", monospace; font-size: .74rem; text-decoration: none; color: var(--ink);
+    background: var(--panel); border: 2px solid var(--wall); border-radius: 3px; box-shadow: 0 2px 0 var(--wall);
+    padding: 4px 10px;
+  }
+  .boards a:hover, .boards a:focus-visible { background: var(--panel-alt); outline: none; }
+  .boards a.hot { border-color: var(--d-main); }
+
+  /* ===== 本業 更新スケジュール ===== */
+  .sched-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 14px; align-items: start; }
+  @media (max-width: 720px) { .sched-grid { grid-template-columns: 1fr; } }
+  .sched h4 { font-family: "DotGothic16", monospace; font-size: .76rem; font-weight: 400; color: var(--ink-soft); margin: 0 0 6px; }
+  .upcoming { list-style: none; margin: 0; padding: 0; }
+  .upcoming li { display: grid; grid-template-columns: 5.6em 1fr; gap: 8px; align-items: baseline; padding: 5px 2px; font-size: .8rem; border-top: 1px dashed var(--line); }
+  .upcoming li:first-child { border-top: none; }
+  .upcoming time { font-family: "DotGothic16", monospace; font-size: .72rem; white-space: nowrap; }
+  .upcoming li.soon time { color: var(--on); }
+  .upcoming .who { display: inline-block; font-family: "DotGothic16", monospace; font-size: .62rem; padding: 0 6px; border-radius: 3px; background: var(--off-bg); color: var(--off); margin-left: 4px; vertical-align: 1px; white-space: nowrap; }
+  .upcoming .who.you { background: var(--on-bg); color: var(--on); }
+  .rhythm { width: 100%; border-collapse: collapse; font-size: .78rem; }
+  .rhythm th, .rhythm td { text-align: left; vertical-align: top; padding: 5px 4px; border-top: 1px dashed var(--line); }
+  .rhythm tr:first-child th, .rhythm tr:first-child td { border-top: none; }
+  .rhythm th { font-family: "DotGothic16", monospace; font-weight: 400; font-size: .72rem; color: var(--ink-soft); white-space: nowrap; width: 5.2em; }
+  .rhythm td small { display: block; color: var(--ink-soft); font-size: .72rem; }
+
   /* ===== 下段 ===== */
   .lower { display: grid; grid-template-columns: 1fr 1.25fr; gap: 14px; align-items: start; }
   @media (max-width: 720px) { .lower { grid-template-columns: 1fr; } }
@@ -120,6 +147,13 @@
     <div class="clock"><span class="led" id="led"></span><span id="conn">接続中…</span><span id="clock"></span></div>
   </header>
 
+  <nav class="boards" aria-label="各ボードへ">
+    <a class="hot" href="https://claude.ai/code/artifact/f489999f-7e8e-4453-984a-3a193aab70fd">🏠 ブログ記事ボード（本業）</a>
+    <a href="https://claude.ai/code/artifact/787b2d97-717a-4449-bfc4-5563957d94c9">📰 note記事ボード</a>
+    <a href="https://claude.ai/code/artifact/57204c23-dcaa-4df7-93db-6d67648fb985">📤 SNS納品ボード</a>
+    <a href="https://claude.ai/code/artifact/a2022666-784a-45e2-b650-c67103b3d4df">✅ 仕上げ質問シート</a>
+  </nav>
+
   <section class="map-frame" aria-label="オフィスマップ">
     <div class="map-scroll"><canvas id="map"></canvas></div>
     <div class="legend">
@@ -135,6 +169,27 @@
       <div class="name">オフィスへようこそ</div>
       <p class="hint">マップ上の社員をタップすると、いまの報告・担当・次の出勤がここに出ます。</p>
     </div>
+  </section>
+
+  <section class="panel sched" aria-label="本業 更新スケジュール">
+    <h3>🗓 本業 更新スケジュール ─ ホームページ・ビジネスプロフィール</h3>
+    <div class="sched-grid">
+      <div>
+        <h4>これからの予定</h4>
+        <ul class="upcoming" id="upcoming"></ul>
+      </div>
+      <div>
+        <h4>毎週のリズム（AI社員 → あなた）</h4>
+        <table class="rhythm">
+          <tr><th>月曜 9:00</th><td>SEOディレクター: 週次レポート・今週やること・ブリーフ<small>あなた: 「今週やること（オーナー担当）」を確認 5分</small></td></tr>
+          <tr><th>火曜 9:00</th><td>ブログライター: 記事を月2本、ブログ記事ボードに納品<small>あなた: ボードで読んで「ブログ ○○ OK」 15分</small></td></tr>
+          <tr><th>木曜 9:00</th><td>MEO担当: GBP投稿文案2本（第1木曜は登録情報の点検も）<small>あなた: 週1回、写真1枚を添えてGBPに投稿 10分</small></td></tr>
+          <tr><th>工事完了ごと</th><td>施工写真をチームに渡す／引き渡し時に口コミをお願い<small>写真は施工事例・GBP・ブログに使います</small></td></tr>
+          <tr><th>3·6·9·12月</th><td>GBP登録情報の点検（月初）<small>4月・10月: 既存記事の見直し（補助金記事は毎年4月）</small></td></tr>
+        </table>
+      </div>
+    </div>
+    <p class="note" id="sched-note">SEOディレクターが毎週月曜に更新します。全文は seo/schedule.md。</p>
   </section>
 
   <div class="lower">
@@ -467,11 +522,53 @@
     $("#feed").innerHTML = snap.docs.map((doc) => { const e = doc.data();
       return `<li><time>${feedTime(e.at)}</time><span>${esc(e.emoji || "•")}</span><span><b>${esc(e.who || "")}</b>　${esc(e.text || "")}</span></li>`; }).join("");
   }
+  // ===================== 本業 更新スケジュール =====================
+  // 初期値は seo/schedule.md の要約。db の office/schedule があればそちらを優先する。
+  // { updated_at, upcoming: [{ date: "2026-09-15" | "2026-10" | "", label, who: "ai" | "you" | "both", who_label }] }
+  const SCHEDULE = {
+    updated_at: "2026-09-13T00:00:00Z",
+    upcoming: [
+      { date: "2026-09-14", label: "週次SEO/MEOレポートと今週やること、次のブログのブリーフ", who: "ai", who_label: "SEOディレクター" },
+      { date: "2026-09-15", label: "ブログ「外壁塗装を20年していないとどうなる？」公開（予約済み・確認済み）", who: "ai", who_label: "ライター" },
+      { date: "2026-09-15", label: "今月2本目のブログ記事をブログ記事ボードに納品 → OKはあなた", who: "both", who_label: "ライター→あなた" },
+      { date: "2026-09-17", label: "GBP投稿文案2本（施工写真があれば施工事例を優先）→ 投稿はあなた", who: "both", who_label: "MEO→あなた" },
+      { date: "", label: "未投稿のGBP投稿2本（9/10納品: 冬前の点検／塗り替えの5つのサイン）に写真1枚添えて投稿", who: "you", who_label: "あなた" },
+      { date: "2026-10", label: "既存記事の見直し（年2回の2回目。補助金・料金・リンク切れ）", who: "ai", who_label: "ディレクター→ライター" },
+      { date: "2026-10", label: "ブログ「雪止め・屋根の雪対策」（冬前に出すと効く。10〜12月）", who: "ai", who_label: "ディレクター→ライター" },
+      { date: "2026-11", label: "ブログ「塗装と張り替え、どっちが安い？」", who: "ai", who_label: "ディレクター→ライター" },
+      { date: "2026-12", label: "GBP登録情報の点検（年末年始の特別営業時間も）", who: "both", who_label: "MEO→あなた" },
+      { date: "2027-01", label: "公式LINE 一斉配信①（春の工事の案内。1〜2月）", who: "you", who_label: "あなた" },
+      { date: "2027-04", label: "補助金記事を新年度の数値に更新して公開、GBPでも告知", who: "both", who_label: "ライター→あなたのOK" },
+    ],
+  };
+  function schedDate(d) {
+    if (!d) return { text: "未着手", key: "0000" };
+    const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(d);
+    if (!m) return { text: d, key: d };
+    if (!m[3]) return { text: `${Number(m[2])}月`, key: `${m[1]}-${m[2]}-99` };
+    const dt = new Date(`${d}T00:00:00+09:00`);
+    return { text: `${Number(m[2])}/${Number(m[3])}(${DOW[dt.getDay()]})`, key: d, dt };
+  }
+  function renderSchedule(data) {
+    const s = data && Array.isArray(data.upcoming) ? data : SCHEDULE;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const rows = s.upcoming
+      .map((u) => ({ ...u, d: schedDate(u.date) }))
+      .filter((u) => !u.d.dt || u.d.dt >= new Date(today.getTime() - 864e5))
+      .sort((a, b) => a.d.key.localeCompare(b.d.key));
+    $("#upcoming").innerHTML = rows.length ? rows.map((u) => {
+      const soon = u.d.dt && (u.d.dt - today) < 8 * 864e5;
+      const who = u.who === "you" ? "you" : u.who === "both" ? "you" : "";
+      return `<li class="${soon ? "soon" : ""}"><time>${esc(u.d.text)}</time><span>${esc(u.label)}<span class="who ${who}">${esc(u.who_label || "")}</span></span></li>`;
+    }).join("") : `<li class="empty">予定はありません。</li>`;
+    if (s.updated_at) $("#sched-note").textContent = "SEOディレクターによる更新: " + ago(s.updated_at) + "。全文は seo/schedule.md。";
+  }
+
   function tick() { $("#clock").textContent = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" }); }
 
   // ===================== 起動 =====================
   tick(); setInterval(tick, 15000);
-  resize(); renderGauges(); renderStats(null);
+  resize(); renderGauges(); renderStats(null); renderSchedule(null);
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(loop));
   setInterval(renderGauges, 60000);
 
@@ -485,6 +582,7 @@
       renderGauges(); renderDetail();
     }, dead);
     db.doc("office/stats").onSnapshot((snap) => { if (snap.exists) renderStats(snap.data()); }, dead);
+    db.doc("office/schedule").onSnapshot((snap) => { if (snap.exists) renderSchedule(snap.data()); }, dead);
     db.collection("activity").orderBy("at", "desc").limit(14).onSnapshot(renderFeed, dead);
   })();
 </script>

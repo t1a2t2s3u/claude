@@ -4,7 +4,9 @@
 ページソース。同じ URL に republish すれば切り替えられる。
 
 - `office-map.html` — 見下ろし型マップ版（現在公開中）。キャラが歩き回り、
-  稼働中は自席で作業。タップで詳細。
+  稼働中は自席で作業。タップで詳細。上部に各ボードへのリンク、マップの下に
+  「本業 更新スケジュール」欄（初期値は `seo/schedule.md` の要約。db の
+  `office/schedule` があればそちらを表示）。
 - `office-cards.html` — 部署別カード版（前バージョン）。スマホでの可読性重視。
 
 どちらも同じ db（employees / activity / office/stats）を読む。
