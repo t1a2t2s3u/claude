@@ -4,6 +4,11 @@
 
 import { ASSETS, changePct, sma } from './market.js';
 
+// ボラティリティで銘柄を役割分けする(銘柄リストが変わっても追従する)
+const BY_VOL = [...ASSETS].sort((a, b) => b.vol - a.vol);
+const HYPE = BY_VOL[0]; // 最も荒い銘柄。DENEBの主戦場
+const CALM_IDS = BY_VOL.slice(-3).map((a) => a.id); // 低ボラ3銘柄。POLARISの積み立て先
+
 export const AGENTS = [
   { id: 'orion', code: 'ORION', role: '順張り', desc: '直近3時間の上昇に乗る', kind: 'trader' },
   { id: 'cassiopeia', code: 'CASSIOPEIA', role: '逆張り', desc: '売られすぎた銘柄を拾う', kind: 'trader' },
@@ -11,7 +16,7 @@ export const AGENTS = [
   { id: 'altair', code: 'ALTAIR', role: 'スキャル', desc: '小さな値動きを高速に刻む', kind: 'trader' },
   { id: 'sirius', code: 'SIRIUS', role: 'バリュー', desc: '基準価格から下げた銘柄を仕込む', kind: 'trader' },
   { id: 'lyra', code: 'LYRA', role: 'イベント', desc: 'ニュース速報に即応する', kind: 'trader' },
-  { id: 'deneb', code: 'DENEB', role: 'ボラ職人', desc: 'ミーム興業の乱高下だけを狙う', kind: 'trader' },
+  { id: 'deneb', code: 'DENEB', role: 'ボラ職人', desc: '最高ボラ銘柄の乱高下だけを狙う', kind: 'trader' },
   { id: 'polaris', code: 'POLARIS', role: '安定運用', desc: '低ボラ銘柄で手堅く積む', kind: 'trader' },
   { id: 'spica', code: 'SPICA', role: '承認ゲート', desc: '全注文をリスク審査する', kind: 'gate' },
   { id: 'arcturus', code: 'ARCTURUS', role: '司令塔', desc: '進捗を監視し日次報告する', kind: 'commander' },
@@ -127,16 +132,16 @@ const DECIDERS = {
   },
 
   deneb(view) {
-    const pos = view.book.meme;
-    const c2 = changePct(view.market, 'meme', 2);
-    if (pos?.qty > 0 && (view.market.prices.meme >= pos.cost * 1.15 || c2 > 9)) {
-      return { side: 'sell', assetId: 'meme', reason: `ミーム興業が急騰(2hで${fmtPct(c2)})。高値に売りつける` };
+    const pos = view.book[HYPE.id];
+    const c2 = changePct(view.market, HYPE.id, 2);
+    if (pos?.qty > 0 && (view.market.prices[HYPE.id] >= pos.cost * 1.15 || c2 > 9)) {
+      return { side: 'sell', assetId: HYPE.id, reason: `${HYPE.name}が急騰(2hで${fmtPct(c2)})。高値に売りつける` };
     }
-    if (pos?.qty > 0 && view.market.prices.meme <= pos.cost * 0.9) {
-      return { side: 'sell', assetId: 'meme', reason: '想定より深い下げ。-10%で撤退' };
+    if (pos?.qty > 0 && view.market.prices[HYPE.id] <= pos.cost * 0.9) {
+      return { side: 'sell', assetId: HYPE.id, reason: '想定より深い下げ。-10%で撤退' };
     }
     if (!pos?.qty && c2 < -5) {
-      return { side: 'buy', assetId: 'meme', reason: `ミーム興業が2hで${fmtPct(c2)}の急落。反発を狙って拾う` };
+      return { side: 'buy', assetId: HYPE.id, reason: `${HYPE.name}が2hで${fmtPct(c2)}の急落。反発を狙って拾う` };
     }
     return null;
   },
@@ -144,7 +149,7 @@ const DECIDERS = {
   polaris(view) {
     const held = findHolding(view.book, (id, pos) => view.market.prices[id] >= pos.cost * 1.05);
     if (held) return { side: 'sell', assetId: held, reason: '+5%を確保。欲張らずに積み上げる' };
-    for (const id of ['hoshi', 'tsuki']) {
+    for (const id of CALM_IDS) {
       const c = changePct(view.market, id, 6);
       if (!view.book[id]?.qty && Math.abs(c) < 1) {
         return { side: 'buy', assetId: id, sizing: 0.7, reason: '値動きが落ち着いた低ボラ銘柄を定期積み立て' };

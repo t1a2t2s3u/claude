@@ -391,7 +391,15 @@ button.primary:hover { background: #ffd36a; }
 
 /* ── マーケット表 ────────────────────── */
 
-.table-scroll { overflow-x: auto; }
+.table-scroll { overflow-x: auto; max-height: 350px; overflow-y: auto; }
+
+.holdings-panel thead th {
+  position: sticky;
+  top: 0;
+  background: #211f45;
+}
+
+.code-num { color: var(--ink-faint); font-family: var(--mono); font-size: 0.66rem; }
 
 .holdings-panel table {
   width: 100%;

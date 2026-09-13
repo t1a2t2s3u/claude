@@ -4,7 +4,7 @@
 
 import { createSim, stepSim, navOf, agentPnl, START_CASH, GOAL_PROFIT, TOTAL_TICKS } from './sim.js';
 import { AGENTS } from './agents.js';
-import { ASSETS } from './market.js';
+import { ASSETS, fmtQty } from './market.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -236,12 +236,13 @@ function renderHoldings() {
     const change = ((price - from) / from) * 100;
     let qty = 0;
     for (const book of Object.values(sim.books)) qty += book[asset.id]?.qty ?? 0;
+    qty = Math.round(qty * 100) / 100;
     const row = document.createElement('tr');
     row.innerHTML = `
-      <td>${asset.name}</td>
+      <td>${asset.name} <span class="code-num">${asset.code}</span></td>
       <td>${yen(price)}</td>
       <td class="${change >= 0 ? 'up' : 'down'}">${change >= 0 ? '+' : ''}${change.toFixed(1)}%</td>
-      <td>${qty === 0 ? '—' : `×${qty}`}</td>
+      <td>${qty === 0 ? '—' : `×${fmtQty(qty)}`}</td>
       <td>${qty === 0 ? '—' : yen(qty * price)}</td>
     `;
     body.appendChild(row);

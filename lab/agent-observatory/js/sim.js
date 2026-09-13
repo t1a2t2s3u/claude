@@ -4,7 +4,7 @@
 // シードから完全に決定的で、同じセッションIDなら必ず同じ結末になる。
 
 import { createRng } from './rng.js';
-import { ASSETS, createMarket, stepMarket } from './market.js';
+import { ASSETS, createMarket, stepMarket, fmtQty } from './market.js';
 import { TRADERS, decide, reviewOrder } from './agents.js';
 
 export const START_CASH = 7000; // 元手(円)
@@ -85,10 +85,11 @@ function executeOrder(sim, agent, order) {
   const book = sim.books[agent.id];
 
   if (order.side === 'buy') {
-    // 1回の買いは現金の30%まで(sizingで縮小可)。端数は切り捨て
+    // 1回の買いは現金の30%まで(sizingで縮小可)。
+    // 単元未満株アプリ風の金額指定買付を想定し、0.01株刻みまで許す
     const budget = sim.cash * 0.3 * (order.sizing ?? 1);
-    const qty = Math.floor(budget / (price * (1 + FEE_RATE)));
-    if (qty < 1) return false;
+    const qty = Math.floor((budget / (price * (1 + FEE_RATE))) * 100) / 100;
+    if (qty < 0.01) return false;
     const cost = qty * price * (1 + FEE_RATE);
     if (cost > sim.cash) return false;
     sim.cash -= cost;
@@ -97,10 +98,10 @@ function executeOrder(sim, agent, order) {
     pos.cost = (pos.qty * pos.cost + qty * unitCost) / (pos.qty + qty);
     pos.qty += qty;
     book[order.assetId] = pos;
-    pushLog(sim, agent.id, 'buy', `${asset.name} ×${qty} @¥${price.toLocaleString()} 買い — ${order.reason}`);
+    pushLog(sim, agent.id, 'buy', `${asset.name} ×${fmtQty(qty)}株 @¥${price.toLocaleString()} 買い — ${order.reason}`);
   } else {
     const pos = book[order.assetId];
-    if (!pos || pos.qty < 1) return false;
+    if (!pos || pos.qty < 0.01) return false;
     const qty = pos.qty;
     const proceeds = qty * price * (1 - FEE_RATE);
     sim.cash += proceeds;
@@ -108,7 +109,7 @@ function executeOrder(sim, agent, order) {
     sim.realized[agent.id] += pnl;
     delete book[order.assetId];
     const sign = pnl >= 0 ? '+' : '−';
-    pushLog(sim, agent.id, 'sell', `${asset.name} ×${qty} @¥${price.toLocaleString()} 売り(${sign}¥${Math.abs(Math.round(pnl)).toLocaleString()})— ${order.reason}`);
+    pushLog(sim, agent.id, 'sell', `${asset.name} ×${fmtQty(qty)}株 @¥${price.toLocaleString()} 売り(${sign}¥${Math.abs(Math.round(pnl)).toLocaleString()})— ${order.reason}`);
   }
   sim.tradeCounts[agent.id] += 1;
   sim.lastAction[agent.id] = order.reason;

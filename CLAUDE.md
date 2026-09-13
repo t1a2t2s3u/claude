@@ -49,8 +49,8 @@ js/compatibility.js ふたりの相性診断(星座/血液型/干支/五行の4�
 js/fortune.js       日替わり運勢とランキングの生成
 js/main.js          フォームと結果表示のDOM制御(ここだけDOMに触れる)
 lab/agent-observatory/ AIエージェント10体が¥7,000からサブスク代を稼ぐ模擬運用
-                    ダッシュボード(架空銘柄・シード決定的な独立ページ。
-                    エンジンはDOM非依存、DOM制御は app.js のみ)
+                    ダッシュボード(実在20銘柄×疑似価格・シード決定的な
+                    独立ページ。エンジンはDOM非依存、DOM制御は app.js のみ)
 test/*.test.mjs     ロジックのユニットテスト(node --test)
 ```
 

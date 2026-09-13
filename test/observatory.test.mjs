@@ -20,12 +20,16 @@ function runToEnd(seed) {
   return sim;
 }
 
-test('編成は10体(トレーダー8+承認ゲート+司令塔)、銘柄は架空5銘柄', () => {
+test('編成は10体(トレーダー8+承認ゲート+司令塔)、銘柄は実在20銘柄', () => {
   assert.equal(AGENTS.length, 10);
   assert.equal(TRADERS.length, 8);
   assert.equal(AGENTS.filter((a) => a.kind === 'gate').length, 1);
   assert.equal(AGENTS.filter((a) => a.kind === 'commander').length, 1);
-  assert.equal(ASSETS.length, 5);
+  assert.equal(ASSETS.length, 20);
+  for (const asset of ASSETS) {
+    assert.match(asset.code, /^\d{4}$/, `${asset.name} の証券コードが4桁でない`);
+    assert.ok(asset.start > 0 && asset.vol > 0);
+  }
 });
 
 test('同じシードなら相場も売買も結末も完全に一致する(決定性)', () => {
