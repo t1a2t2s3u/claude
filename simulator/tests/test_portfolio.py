@@ -129,6 +129,12 @@ class PortfolioTest(unittest.TestCase):
         result = execute_trade(self.conn, self.pid, "AAPL", "Apple", "buy", 1, quote, 150.0)
         self.assertEqual(result.qty, 1)
 
+    def test_バックアップはSQLiteファイルとして書き出される(self):
+        data = db.dump_db_bytes(self.conn)
+        self.assertTrue(data.startswith(b"SQLite format 3"))
+        with self.assertRaises(ValueError):
+            db.restore_db_bytes(b"not a database")
+
     def test_評価はquote取得失敗時に取得単価で代用(self):
         execute_trade(
             self.conn, self.pid, "7203.T", "トヨタ", "buy", 100,

@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import streamlit as st
 
-from sim.db import get_setting, get_setting_float, set_setting
+from datetime import date
+
+from sim.db import dump_db_bytes, get_setting, get_setting_float, restore_db_bytes, set_setting
 
 
 def render(conn, pf) -> None:
@@ -48,6 +50,32 @@ def render(conn, pf) -> None:
         set_setting(conn, "fx_spread", str(spread / 100))
         set_setting(conn, "allow_odd_lot_jp", "1" if odd_lot else "0")
         st.success("設定を保存しました。以後の約定に適用されます。")
+
+    st.divider()
+    st.markdown("##### 💾 データのバックアップ・復元")
+    st.caption(
+        "全データ(ポートフォリオ・取引履歴・スナップショット)を1ファイルで保存/復元します。"
+        "無料クラウド(Streamlit Community Cloud等)で動かす場合はサーバー再起動でデータが"
+        "消えることがあるため、取引後にバックアップをダウンロードしておいてください。"
+    )
+    st.download_button(
+        "⬇️ バックアップをダウンロード",
+        dump_db_bytes(conn),
+        file_name=f"sim-backup-{date.today():%Y%m%d}.db",
+        mime="application/octet-stream",
+    )
+    backup = st.file_uploader("バックアップから復元(.db)", type=["db"])
+    if backup is not None:
+        st.warning("復元すると現在のデータはバックアップの内容で上書きされます。")
+        if st.button("このバックアップで復元する", type="primary"):
+            try:
+                restore_db_bytes(backup.getvalue())
+            except ValueError as exc:
+                st.error(str(exc))
+            else:
+                st.cache_resource.clear()  # 開いていたDB接続を作り直す
+                st.success("復元しました。再読み込みします…")
+                st.rerun()
 
     st.divider()
     st.markdown(

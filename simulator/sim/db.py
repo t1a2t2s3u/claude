@@ -121,6 +121,31 @@ def get_setting_float(conn: sqlite3.Connection, key: str) -> float:
     return float(get_setting(conn, key))
 
 
+def dump_db_bytes(conn: sqlite3.Connection) -> bytes:
+    """DB全体のバックアップをバイト列で返す(sqliteのオンラインバックアップAPI使用)。"""
+    import tempfile
+
+    with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
+        tmp_path = Path(tmp.name)
+    try:
+        dest = sqlite3.connect(tmp_path)
+        with dest:
+            conn.backup(dest)
+        dest.close()
+        return tmp_path.read_bytes()
+    finally:
+        tmp_path.unlink(missing_ok=True)
+
+
+def restore_db_bytes(data: bytes, db_path: Path | str = DB_PATH) -> None:
+    """バックアップファイルの内容でDBを置き換える。SQLiteファイルでなければValueError。"""
+    if not data.startswith(b"SQLite format 3"):
+        raise ValueError("SQLiteのバックアップファイル(.db)ではありません。")
+    path = Path(db_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
+
+
 def set_setting(conn: sqlite3.Connection, key: str, value: str) -> None:
     conn.execute(
         "INSERT INTO settings(key, value) VALUES(?, ?) "
