@@ -99,6 +99,37 @@
   .boards a:hover, .boards a:focus-visible { background: var(--panel-alt); outline: none; }
   .boards a.hot { border-color: var(--d-main); }
 
+  /* ===== あなたの番（本業の確認待ち） ===== */
+  .inbox h3 .cnt { display: inline-block; min-width: 1.4em; text-align: center; margin-left: 6px; padding: 0 6px; border-radius: 3px; background: var(--d-main); color: #fff; font-size: .78rem; }
+  .inbox h3 .cnt.zero { background: var(--off-bg); color: var(--off); }
+  .items { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .item { display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: start; border: 2px solid var(--line); border-left: 5px solid var(--d-main); border-radius: 3px; padding: 9px 10px 9px 8px; background: var(--panel-alt); }
+  .item .face { width: 40px; height: 40px; display: grid; place-items: center; font-size: 20px; background: var(--panel); border: 2px solid var(--line); border-radius: 3px; }
+  .item .ttl { font-weight: 700; font-size: .9rem; line-height: 1.4; }
+  .item .from { font-family: "DotGothic16", monospace; font-size: .68rem; color: var(--ink-soft); margin-top: 1px; }
+  .item .dtl { font-size: .8rem; margin: 5px 0 0; white-space: pre-line; }
+  .item .acts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; align-items: center; }
+  .chip, .item .acts a {
+    font-family: "DotGothic16", monospace; font-size: .76rem; line-height: 1.3; text-decoration: none; color: var(--ink);
+    background: var(--panel); border: 2px solid var(--wall); border-radius: 3px; box-shadow: 0 2px 0 var(--wall);
+    padding: 5px 10px; cursor: pointer;
+  }
+  .chip.reply { border-color: var(--on); }
+  .chip.reply::before { content: "💬 "; }
+  .chip.copy::before { content: "📋 "; }
+  .item .acts a::before { content: "↗ "; }
+  .chip:hover, .chip:focus-visible, .item .acts a:hover { background: var(--panel-alt); outline: none; }
+  .chip:active { transform: translateY(2px); box-shadow: none; }
+  .chip.done { margin-left: auto; color: var(--ink-soft); border-color: var(--line); box-shadow: 0 2px 0 var(--line); }
+  .item details { margin-top: 8px; font-size: .78rem; }
+  .item summary { cursor: pointer; color: var(--ink-soft); font-family: "DotGothic16", monospace; font-size: .72rem; }
+  .item pre { white-space: pre-wrap; word-break: break-word; background: var(--panel); border: 1px dashed var(--line); border-radius: 3px; padding: 8px 10px; margin: 6px 0 0; font-family: inherit; font-size: .78rem; line-height: 1.6; max-height: 260px; overflow: auto; }
+  .howto { font-size: .72rem; color: var(--ink-soft); margin: 0 0 10px; }
+  .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(20px); opacity: 0; transition: .2s; pointer-events: none;
+    font-family: "DotGothic16", monospace; font-size: .8rem; background: var(--ink); color: var(--panel); padding: 8px 14px; border-radius: 3px; z-index: 9; max-width: 90vw; text-align: center; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @media (max-width: 480px) { .item { grid-template-columns: 1fr; } .item .face { display: none; } }
+
   /* ===== 本業 更新スケジュール ===== */
   .sched-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 14px; align-items: start; }
   @media (max-width: 720px) { .sched-grid { grid-template-columns: 1fr; } }
@@ -155,6 +186,12 @@
     <a href="https://claude.ai/code/artifact/a2022666-784a-45e2-b650-c67103b3d4df">✅ 仕上げ質問シート</a>
   </nav>
 
+  <section class="panel inbox" aria-label="あなたの番 ─ 本業の確認待ち">
+    <h3>🔔 あなたの番 ─ 本業（SEO・MEO）からの確認待ち<span class="cnt zero" id="inbox-cnt">0</span></h3>
+    <p class="howto">💬 の札を押すと返事の文がコピーされます。チャットに貼って送るだけで担当者に伝わります。📋 は投稿文のコピー。終わったら「済み」。</p>
+    <ul class="items" id="inbox"><li class="empty">読み込み中…</li></ul>
+  </section>
+
   <section class="map-frame" aria-label="オフィスマップ">
     <div class="map-scroll"><canvas id="map"></canvas></div>
     <div class="legend">
@@ -206,6 +243,7 @@
   </div>
   <footer>各AI社員が稼働のたびに自席から状況を報告します。ページは開いたまま自動更新されます。</footer>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
   // ===================== データ =====================
@@ -523,18 +561,83 @@
     $("#feed").innerHTML = snap.docs.map((doc) => { const e = doc.data();
       return `<li><time>${feedTime(e.at)}</time><span>${esc(e.emoji || "•")}</span><span><b>${esc(e.who || "")}</b>　${esc(e.text || "")}</span></li>`; }).join("");
   }
+  // ===================== あなたの番（本業の確認待ち） =====================
+  // db の inbox/<YYYYMMDD-slug>。SEOディレクター・塗装ブログ・MEO担当が「オーナーの返事や作業が
+  // 必要なもの」を set する。オーナーがこのページで「済み」を押すと status:"done" になる。
+  // { status:"open"|"done", created_at, who, emoji, title, detail,
+  //   replies:[{label,text}]   ← 押すとチャットに貼る返事がコピーされる
+  //   copy:{label,text}        ← 投稿文など、そのまま貼る文章
+  //   links:[{label,url}], done_at }
+  let inboxDb = null;
+  function toast(msg) {
+    const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("show"), 2200);
+  }
+  async function copyText(text, okMsg) {
+    try { await navigator.clipboard.writeText(text); toast(okMsg); }
+    catch (e) {
+      const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); toast(okMsg); } catch (_) { toast("コピーできませんでした。長押しで選択してください"); }
+      ta.remove();
+    }
+  }
+  function renderInbox(items) {
+    const open = items.filter((i) => i.status !== "done").sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")));
+    const cnt = $("#inbox-cnt"); cnt.textContent = open.length; cnt.classList.toggle("zero", open.length === 0);
+    if (!open.length) { $("#inbox").innerHTML = `<li class="empty">いま確認待ちはありません。次の稼働で新しい依頼が来たらここに並びます。</li>`; return; }
+    $("#inbox").innerHTML = open.map((i) => {
+      const replies = (i.replies || []).map((r, k) => `<button type="button" class="chip reply" data-id="${esc(i.id)}" data-reply="${k}" id="r-${esc(i.id)}-${k}">${esc(r.label)}</button>`).join("");
+      const copy = i.copy && i.copy.text ? `<button type="button" class="chip copy" data-id="${esc(i.id)}" data-copy="1" id="c-${esc(i.id)}">${esc(i.copy.label || "コピー")}</button>` : "";
+      const links = (i.links || []).map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join("");
+      const body = i.copy && i.copy.text ? `<details><summary>文章を表示</summary><pre>${esc(i.copy.text)}</pre></details>` : "";
+      return `<li class="item" data-id="${esc(i.id)}">
+        <div class="face">${esc(i.emoji || "📌")}</div>
+        <div>
+          <div class="ttl">${esc(i.title || "")}</div>
+          <div class="from">${esc(i.who || "")}${i.created_at ? " ・ " + esc(feedTime(i.created_at)) : ""}</div>
+          ${i.detail ? `<p class="dtl">${esc(i.detail)}</p>` : ""}
+          <div class="acts">${replies}${copy}${links}<button type="button" class="chip done" data-id="${esc(i.id)}" data-done="1" id="d-${esc(i.id)}">✔ 済み</button></div>
+          ${body}
+        </div></li>`;
+    }).join("");
+  }
+  let inboxItems = [];
+  $("#inbox").addEventListener("click", async (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    const it = inboxItems.find((x) => x.id === b.dataset.id); if (!it) return;
+    if (b.dataset.reply !== undefined) { const r = (it.replies || [])[Number(b.dataset.reply)]; if (r) copyText(r.text, "「" + r.text + "」をコピーしました。チャットに貼って送信してください"); return; }
+    if (b.dataset.copy) { copyText(it.copy.text, "投稿文をコピーしました"); return; }
+    if (b.dataset.done) {
+      if (!inboxDb) { toast("ライブ接続がないため記録できません（再読込してください）"); return; }
+      b.disabled = true;
+      try { await inboxDb.doc("inbox/" + it.id).update({ status: "done", done_at: new Date().toISOString() }); toast("済みにしました"); }
+      catch (err) { b.disabled = false; toast("記録できませんでした: " + (err && err.code || "unknown")); }
+    }
+  });
+  // ライブ接続が無いときの表示（db が読めれば上書きされる）
+  const INBOX_FALLBACK = [
+    { id: "20260914-gbp-autumn-post", status: "open", created_at: "2026-09-14T00:10:00Z", who: "MEO担当 → あなた", emoji: "📍",
+      title: "GBPに「冬前の点検」を投稿する（10分）", detail: "仕上げ済み・投稿可。写真1枚（作業車・道具・現場のどれでも）を添えて「最新情報」で投稿。",
+      copy: { label: "投稿文をコピー", text: "（ライブ接続後に表示されます）" },
+      links: [{ label: "GBPを開く", url: "https://business.google.com/" }] },
+    { id: "20260914-title-choice", status: "open", created_at: "2026-09-14T00:10:00Z", who: "SEOディレクター → あなた", emoji: "🔧",
+      title: "トップページのタイトル案を選ぶ（5分）", detail: "案A（信頼型）／案B（料金型）／現状維持のどれかを返事で。",
+      replies: [{ label: "タイトル 案A", text: "タイトル 案A" }, { label: "タイトル 案B", text: "タイトル 案B" }, { label: "タイトル 現状維持", text: "タイトル 現状維持" }] },
+  ];
+
   // ===================== 本業 更新スケジュール =====================
-  // 初期値は seo/schedule.md の要約。db の office/schedule があればそちらを優先する。
+  // 初期値は seo/schedule.md の要約。db の schedule/<YYYYMMDD>（最新）か office/schedule があればそちらを優先する。
   // { updated_at, upcoming: [{ date: "2026-09-15" | "2026-10" | "", label, who: "ai" | "you" | "both", who_label }] }
   const SCHEDULE = {
-    updated_at: "2026-09-13T00:00:00Z",
+    updated_at: "2026-09-14T00:00:00Z",
     upcoming: [
-      { date: "2026-09-14", label: "週次SEO/MEOレポートと今週やること、次のブログのブリーフ", who: "ai", who_label: "SEOディレクター" },
+      { date: "2026-09-14", label: "週次レポート（今週やること3つ・トップページのタイトル改善案）→ 確認はあなた（5分）", who: "both", who_label: "SEOディレクター→あなた" },
       { date: "2026-09-15", label: "ブログ「外壁塗装を20年していないとどうなる？」公開（予約済み・確認済み）", who: "ai", who_label: "ライター" },
-      { date: "2026-09-15", label: "今月2本目のブログ記事をブログ記事ボードに納品 → OKはあなた", who: "both", who_label: "ライター→あなた" },
-      { date: "2026-09-17", label: "GBP投稿文案2本（施工写真があれば施工事例を優先）→ 投稿はあなた", who: "both", who_label: "MEO→あなた" },
-      { date: "", label: "未投稿のGBP投稿2本（9/10納品: 冬前の点検／塗り替えの5つのサイン）に写真1枚添えて投稿", who: "you", who_label: "あなた" },
-      { date: "2026-10", label: "既存記事の見直し（年2回の2回目。補助金・料金・リンク切れ）", who: "ai", who_label: "ディレクター→ライター" },
+      { date: "2026-09-15", label: "10月前半公開の記事「秋田市の外壁塗装はいくら？」を執筆して確認待ちに", who: "both", who_label: "ライター→あなた" },
+      { date: "2026-09-17", label: "GBP投稿文案2本（屋根の豆知識＋「20年」記事の告知）→ 投稿はあなた", who: "both", who_label: "MEO→あなた" },
+      { date: "", label: "未投稿のGBP投稿2本（9/10納品: 冬前の点検＝投稿可／塗り替えの5つのサイン）に写真1枚添えて投稿", who: "you", who_label: "あなた" },
+      { date: "2026-10", label: "月初: Search Console の再取得（エクスポートをチャットに貼る）→ 分析はディレクター", who: "both", who_label: "あなた→ディレクター" },
+      { date: "2026-10", label: "既存記事の見直し（年2回の2回目。料金・リンク切れ。補助金は9月に先行対応済み）", who: "ai", who_label: "ディレクター→ライター" },
       { date: "2026-10", label: "ブログ「雪止め・屋根の雪対策」（冬前に出すと効く。10〜12月）", who: "ai", who_label: "ディレクター→ライター" },
       { date: "2026-11", label: "ブログ「塗装と張り替え、どっちが安い？」", who: "ai", who_label: "ディレクター→ライター" },
       { date: "2026-12", label: "GBP登録情報の点検（年末年始の特別営業時間も）", who: "both", who_label: "MEO→あなた" },
@@ -550,8 +653,13 @@
     const dt = new Date(`${d}T00:00:00+09:00`);
     return { text: `${Number(m[2])}/${Number(m[3])}(${DOW[dt.getDay()]})`, key: d, dt };
   }
+  let schedSeen = null; // いちばん新しい updated_at のものだけ表示する
   function renderSchedule(data) {
-    const s = data && Array.isArray(data.upcoming) ? data : SCHEDULE;
+    if (data && Array.isArray(data.upcoming)) {
+      if (schedSeen && String(schedSeen.updated_at || "") > String(data.updated_at || "")) return;
+      schedSeen = data;
+    }
+    const s = schedSeen || SCHEDULE;
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const rows = s.upcoming
       .map((u) => ({ ...u, d: schedDate(u.date) }))
@@ -570,6 +678,7 @@
   // ===================== 起動 =====================
   tick(); setInterval(tick, 15000);
   resize(); renderGauges(); renderStats(null); renderSchedule(null);
+  inboxItems = INBOX_FALLBACK; renderInbox(inboxItems);
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(loop));
   setInterval(renderGauges, 60000);
 
@@ -578,12 +687,29 @@
     if (!db) { $("#conn").textContent = "ライブ接続なし"; return; }
     $("#conn").textContent = "ライブ"; $("#led").classList.add("live");
     const dead = () => { $("#conn").textContent = "接続切れ（再読込で復帰）"; $("#led").classList.remove("live"); };
-    db.collection("employees").onSnapshot((snap) => {
-      liveData = {}; snap.docs.forEach((d) => { liveData[d.id] = d.data(); });
+    inboxDb = db;
+    // 社員の状態: employees/<id> に加えて、掲示板（activity）の同じ担当者の新しい報告があればそちらを表示する
+    let empDocs = {}, actLatest = {};
+    const mergeLive = () => {
+      liveData = {};
+      MEMBERS.forEach((m) => {
+        const e = empDocs[m.id] || {}, a = actLatest[m.name];
+        liveData[m.id] = a && String(a.at || "") > String(e.updated_at || "") ? { ...e, message: a.text, updated_at: a.at } : e;
+      });
       renderGauges(); renderDetail();
+    };
+    db.collection("employees").onSnapshot((snap) => {
+      empDocs = {}; snap.docs.forEach((d) => { empDocs[d.id] = d.data(); }); mergeLive();
     }, dead);
     db.doc("office/stats").onSnapshot((snap) => { if (snap.exists) renderStats(snap.data()); }, dead);
     db.doc("office/schedule").onSnapshot((snap) => { if (snap.exists) renderSchedule(snap.data()); }, dead);
-    db.collection("activity").orderBy("at", "desc").limit(14).onSnapshot(renderFeed, dead);
+    db.collection("schedule").orderBy("updated_at", "desc").limit(1).onSnapshot((snap) => { if (!snap.empty) renderSchedule(snap.docs[0].data()); }, dead);
+    db.collection("activity").orderBy("at", "desc").limit(14).onSnapshot((snap) => {
+      renderFeed(snap);
+      actLatest = {}; snap.docs.forEach((d) => { const e = d.data(); if (e.who && !actLatest[e.who]) actLatest[e.who] = e; }); mergeLive();
+    }, dead);
+    db.collection("inbox").onSnapshot((snap) => {
+      inboxItems = snap.docs.map((d) => ({ id: d.id, ...d.data() })); renderInbox(inboxItems);
+    }, dead);
   })();
 </script>

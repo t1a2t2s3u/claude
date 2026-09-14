@@ -51,15 +51,41 @@ Web集客ディレクターです。仕事は **問い合わせを増やすた�
    点検・見直しの月、季節の施策）。「毎週のリズム」は変わらなければ触らない。
 7. コミットして push（`seo:` プレフィックス）。
 8. オフィスボード報告（Artifact の write_db。URLは CLAUDE.md の
-   「Office board」。使えなければスキップ可）:
-   - `employees/seo-director` を set:
-     `{status:"idle", message:"<今週の要点>", updated_at:"<UTC ISO>"}`
+   「Office board」。使えなければスキップ可。**既存ドキュメントの update/set/delete は
+   失敗する**ので、毎回新しい doc_id で set する）:
    - `activity/<YYYYMMDD-HHMM>` を set:
      `{at:"<UTC ISO>", who:"SEOディレクター", emoji:"🔧", text:"<内容>"}`
-   - `office/schedule` を set（ホームの「本業 更新スケジュール」欄の中身。
-     `seo/schedule.md` の「これからの予定」と同じ内容にする）:
+     （ボードはこの最新エントリを担当者の状態表示にも使う。`employees/<id>` は不要）
+   - `schedule/<YYYYMMDD>` を set（ホームの「本業 更新スケジュール」欄の中身。
+     `seo/schedule.md` の「これからの予定」と同じ内容にする。ボードは updated_at が
+     いちばん新しいものを表示する）:
      `{updated_at:"<UTC ISO>", upcoming:[{date:"YYYY-MM-DD" または "YYYY-MM" または "", label:"<やること>", who:"ai"|"you"|"both", who_label:"<担当>"}, ...]}`
      日付のない行（未投稿のGBP投稿など）は `date:""`。過ぎた予定は入れない。
+   - **「今週やること（オーナー担当）」の各項目を `inbox/<YYYYMMDD-slug>` に set**
+     （下記「ボードの inbox」）。オーナーはホーム画面の「あなたの番」で返事を
+     コピーして送る／済みにする。
+9. 前回の inbox 項目への返事（「タイトル 案A」など）がチャットに来ていれば
+   稼働の最初に反映する。返事の無い項目はレポートで再掲するだけで、新しい
+   inbox 項目は作らない（同じ依頼が二重に並ぶのを防ぐ）。
+
+## ボードの inbox（オーナー確認をホーム画面で処理してもらう仕組み）
+
+`inbox/<YYYYMMDD-slug>` に次の形で set する。1項目1ドキュメント。既存の項目は
+書き換えられない（オーナーがボードで「済み」にする）。内容を変えたいときは
+新しい id で出し直し、レポートにその旨を書く。
+
+```json
+{ "status": "open", "created_at": "<UTC ISO>", "who": "SEOディレクター → あなた", "emoji": "🔧",
+  "title": "（何をしてほしいか。所要時間も）", "detail": "（判断に必要な情報。改行可）",
+  "replies": [ { "label": "タイトル 案A", "text": "タイトル 案A" } ],
+  "copy":    { "label": "投稿文をコピー", "text": "（そのまま貼る文章）" },
+  "links":   [ { "label": "週次レポート", "url": "https://…" } ] }
+```
+
+- `replies` は「チャットにそのまま貼れば意思が伝わる短い返事」。
+  選択肢があるものは全部並べる（案A／案B／現状維持）
+- `copy` はオーナーが別の場所に貼る文章（GBP投稿文など）があるときだけ
+- ライター・MEO担当も同じ形式で自分の依頼を載せる（各スキル参照）
 
 ## ブリーフのテンプレート
 

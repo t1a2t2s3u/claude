@@ -112,13 +112,24 @@ A live status dashboard ("AI社員オフィス") is published as a Claude
 artifact: https://claude.ai/code/artifact/c7d8805a-a816-41b8-b2f8-f8c401d90f6c
 
 Each employee's skill includes a reporting step that updates the board's
-database (via the Artifact tool's `write_db`) at the end of a run:
-`employees/<id>` for status, `activity/<YYYYMMDD-HHMM>` for the feed,
-`office/stats` (secretary only) for task-board counts, and `office/schedule`
-(seo-director only) for the painting business's upcoming update schedule
-shown on the board's home panel. Reporting is best-effort — sessions
-without the Artifact tool skip it. The board also carries quick links to
-the other boards and a static copy of the schedule from `seo/schedule.md`.
+database (via the Artifact tool's `write_db`) at the end of a run.
+The tool can only create new documents (updating or deleting an existing
+one is refused for lack of a version pin), so every write uses a fresh id:
+`activity/<YYYYMMDD-HHMM>` for the feed (the board also shows each
+employee's latest feed entry as their status, so `employees/<id>` is
+legacy), `schedule/<YYYYMMDD>` (seo-director only) for the painting
+business's upcoming update schedule (the board shows the newest), and
+`office/stats` (secretary only) for task-board counts. Reporting is
+best-effort — sessions without the Artifact tool skip it.
+
+**Owner inbox (「あなたの番」)**: anything the painting-business staff need
+from the owner — a reply to choose between options, an OK on an article, a
+Business Profile post to paste — goes into `inbox/<YYYYMMDD-slug>` (schema
+in the seo-director skill). The board's home panel lists open items with
+one-tap copy of the reply text or post body and a 済み button; the page
+itself flips `status` to `done`. Staff never fill a gap the owner has not
+answered; unanswered items are re-listed in the next report, not
+re-created.
 
 ## Delivery board
 

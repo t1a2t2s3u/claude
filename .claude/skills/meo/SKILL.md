@@ -28,11 +28,18 @@ description: 辰弥塗装工業のMEO担当。Googleビジネスプロフィー�
    - 未回答のQ&Aがないか
 4. `seo/gbp/queue.md` の先頭に日付セクションで追記する。
 5. コミットして push（`meo:` プレフィックス）。
-6. オフィスボード報告（Artifact の write_db。使えなければスキップ可）:
-   - `employees/meo` を set:
-     `{status:"idle", message:"<用意した文案>", updated_at:"<UTC ISO>"}`
+6. オフィスボード報告（Artifact の write_db。使えなければスキップ可。
+   既存ドキュメントの update/set は失敗するので、毎回新しい doc_id で set する）:
    - `activity/<YYYYMMDD-HHMM>` を set:
      `{at:"<UTC ISO>", who:"MEO担当", emoji:"📍", text:"<内容>"}`
+   - **投稿可（`【要確認】` 0件）の文案ごとに `inbox/<YYYYMMDD-gbp-スラッグ>` を set**
+     （形式は seo-director スキルの「ボードの inbox」）。`title` は
+     「GBPに「<見出し>」を投稿する（10分）」、`detail` に必要な写真、`copy` に
+     投稿文の全文、`links` に `https://business.google.com/`。
+     `【要確認】` が残る文案は仕上げ担当が解消してから載せる（自分では載せない）。
+     オーナーはホーム画面の「あなたの番」で投稿文をコピーし、投稿後に「済み」を押す
+   - 前回の inbox 項目が「済み」になっていたら、`seo/gbp/queue.md` の状態を
+     「投稿済み」に直す（日付はオーナーに確認できなければ「済み」を押した日）
 
 ## 投稿のネタ（この範囲から。事実は business-profile.md に基づく）
 

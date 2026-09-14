@@ -38,11 +38,15 @@ description: 辰弥塗装工業のブログライター。SEOディレクター�
 5. ブリーフの状態を「執筆済み」に更新し、コミットして push
    （`seo-writer:` プレフィックス）。
 6. **ブログ記事ボードに納品**（下記）。
-7. オフィスボード報告（Artifact の write_db。使えなければスキップ可）:
-   - `employees/seo-writer` を set:
-     `{status:"idle", message:"<記事タイトル> 確認待ち", updated_at:"<UTC ISO>"}`
+7. オフィスボード報告（Artifact の write_db。使えなければスキップ可。
+   既存ドキュメントの update/set は失敗するので、毎回新しい doc_id で set する）:
    - `activity/<YYYYMMDD-HHMM>` を set:
      `{at:"<UTC ISO>", who:"塗装ブログ", emoji:"🖌️", text:"<内容>"}`
+   - **オーナーのOKが必要な記事ごとに `inbox/<YYYYMMDD-blog-スラッグ>` を set**
+     （形式は seo-director スキルの「ボードの inbox」）。`title` は
+     「ブログ「<タイトル>」を読んでOKか修正かを返す（15分）」、`replies` は
+     `[{label:"ブログ <スラッグ> OK", text:"ブログ <スラッグ> OK"}, {label:"修正あり（内容はチャットで）", text:"ブログ <スラッグ> 修正: "}]`、
+     `links` にブログ記事ボードのURL。オーナーはホーム画面の「あなたの番」から返事する
 8. 最後にチャットで、記事タイトル・ボードのURL・OKの返し方
    （「ブログ <スラッグ> OK」／「修正: …」）を短く伝える。
 

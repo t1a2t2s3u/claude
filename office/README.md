@@ -3,13 +3,17 @@
 オフィスボード（https://claude.ai/code/artifact/c7d8805a-a816-41b8-b2f8-f8c401d90f6c）の
 ページソース。同じ URL に republish すれば切り替えられる。
 
-- `office-map.html` — 見下ろし型マップ版（現在公開中）。キャラが歩き回り、
-  稼働中は自席で作業。タップで詳細。上部に各ボードへのリンク、マップの下に
+- `office-map.html` — 見下ろし型マップ版（現在公開中）。上から順に:
+  各ボードへのリンク → **「あなたの番」**（db の `inbox/*` で status が
+  open のもの。返事の札を押すとコピー、📋 で投稿文コピー、「済み」で
+  ページが status:done に更新）→ マップ（キャラをタップで詳細）→
   「本業 更新スケジュール」欄（初期値は `seo/schedule.md` の要約。db の
-  `office/schedule` があればそちらを表示）。
+  `schedule/*` と `office/schedule` のうち updated_at が新しいものを表示）。
 - `office-cards.html` — 部署別カード版（前バージョン）。スマホでの可読性重視。
 
-どちらも同じ db（employees / activity / office/stats）を読む。
+どちらも同じ db（employees / activity / office/stats）を読む。マップ版は
+担当者の状態に、`employees/<id>` より新しい `activity` の同名エントリがあれば
+そちらを使う（ツールからは既存ドキュメントを更新できないため）。
 
 その他のボードのソース:
 
