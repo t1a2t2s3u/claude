@@ -26,15 +26,19 @@ SEOディレクター（`.claude/skills/seo-director/`）が毎週の稼働で
 
 ## 通常
 
+- [ ] **http → https のリダイレクト設定を確認**（担当: オーナー / 状態: 未着手・優先度を上げた）
+      2026-09-15 の検索パフォーマンス（`seo/data/2026-09-15-performance/`）で
+      実害を確認。20日間の**全9クリックのうち2クリックが `http://` 版から**
+      発生しており、評価が2つのURLに分散している。
+      Cloudflare の SSL/TLS → Edge Certificates → **Always Use HTTPS** がオンか
+      確認（5分）。あわせて `www` → `tatsumi-tosou.com` の 301 転送
+      （`docs/deploy.md` 手順）も
+
 - [ ] サービス別・エリア別ページの構成案を作る（担当: ディレクター / 状態: 未着手）
       Search Console で「雨漏り修理」「屋根板金」の表示があるが、受け皿ページがない。
       ※サイトには `/services/`（外壁・屋根・コーキング・付帯部・防水・草刈り・網戸）が
       既にある。屋根板金は提供サービスに無いため、書くなら「屋根の傷みは塗装で
       直るか、板金が要るか」の判断記事にとどめる【要確認: 板金工事を受けるか】
-- [ ] http → https のリダイレクト設定を確認（担当: オーナー / 状態: 未着手）
-      Search Console に http 版の表示・クリックが出ている。Cloudflare の
-      SSL/TLS → Edge Certificates → **Always Use HTTPS** がオンか確認（5分）。
-      あわせて `www` → `tatsumi-tosou.com` の 301 転送（`docs/deploy.md` 手順）も
 - [ ] 実行環境のネットワーク設定で `tatsumi-tosou.com` を許可する（担当: オーナー / 状態: 未着手）
       サイトのソースはブランチ経由で読めるので緊急度は下がった。公開後の表示確認
       （タイトルの見え方・画像の読み込み）を AI側で行うために必要
