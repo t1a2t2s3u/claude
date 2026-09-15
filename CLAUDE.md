@@ -95,7 +95,9 @@ placeholders for these — fabricating experiences or earnings is forbidden).
 - `product/` — the app-idea pipeline (`pipeline.md`), the scout's weekly
   research (`reports/`), and per-idea planning memos (`ideas/`).
 - `seo/` — the painting business's SEO/MEO workspace: `business-profile.md`
-  (the fact base), `tasks.md` (action list), `schedule.md` (the website /
+  (the fact base), `tasks.md` (action list), `glossary.md` (plain-Japanese
+  definitions of the Search Console / SEO / MEO terms the reports use — staff
+  gloss a term on first use), `schedule.md` (the website /
   Business Profile update schedule, summarised on the office board),
   `photo-requests.md` (the standing list of photos the owner needs to
   shoot), `reports/`, `briefs/`,
