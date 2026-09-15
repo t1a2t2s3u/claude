@@ -70,6 +70,7 @@
   canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; cursor: pointer; border-radius: 2px; }
   .legend { display: flex; gap: 12px; flex-wrap: wrap; font-family: "DotGothic16", monospace; font-size: .7rem; color: var(--ink-soft); padding: 6px 4px 0; }
   .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+  .legend.absent { padding-top: 4px; line-height: 1.7; }
 
   /* ===== 詳細 ===== */
   .detail {
@@ -172,7 +173,8 @@
     <h1>🏢 AI社員オフィス</h1>
     <div class="gauges">
       <div class="gauge on"><b id="g-on">0</b><span>稼働中</span></div>
-      <div class="gauge"><b id="g-off">0</b><span>待機中</span></div>
+      <div class="gauge"><b id="g-off">0</b><span>在席（待機）</span></div>
+      <div class="gauge"><b id="g-away">0</b><span>不在</span></div>
       <div class="gauge"><b id="g-next">–</b><span>次の出勤</span></div>
     </div>
     <div class="clock"><span class="led" id="led"></span><span id="conn">接続中…</span><span id="clock"></span></div>
@@ -196,9 +198,10 @@
     <div class="map-scroll"><canvas id="map"></canvas></div>
     <div class="legend">
       <span><i style="background:var(--on)"></i>稼働中（自席で作業）</span>
-      <span><i style="background:var(--off)"></i>待機中（部屋を歩き回り、たまに休憩室へ ☕）</span>
+      <span><i style="background:var(--off)"></i>在席・待機中（出勤の約2時間前に出社。部屋を歩き回り、たまに休憩室へ ☕）</span>
       <span>👆 キャラをタップで詳細</span>
     </div>
+    <div class="legend absent" id="absent"></div>
   </section>
 
   <section class="detail" id="detail">
@@ -241,7 +244,7 @@
       <ul class="feed" id="feed"><li class="empty">まだ記録がありません。</li></ul>
     </section>
   </div>
-  <footer>各AI社員が稼働のたびに自席から状況を報告します。ページは開いたまま自動更新されます。</footer>
+  <footer>各AI社員は出勤の約2時間前に出社し、稼働のたびに自席から状況を報告して、仕事が終わると帰ります。ページは開いたまま自動更新されます。</footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -300,11 +303,42 @@
       const d = new Date(now); d.setDate(now.getDate() + i); d.setHours(m.hour, 0, 0, 0);
       if (m.days.includes(d.getDay()) && d > now) {
         const when = i === 0 ? "今日" : i === 1 ? "明日" : DOW[d.getDay()] + "曜";
-        return { label: when + " " + m.hour + ":00", hours: Math.round((d - now) / 3600000) };
+        return { label: when + " " + m.hour + ":00", hours: Math.round((d - now) / 3600000), at: d };
       }
     }
-    return { label: "—", hours: Infinity };
+    return { label: "—", hours: Infinity, at: null };
   }
+  // 直前の出勤時刻（過去7日以内）
+  function prevShift(m) {
+    const now = new Date();
+    for (let i = 0; i < 8; i++) {
+      const d = new Date(now); d.setDate(now.getDate() - i); d.setHours(m.hour, 0, 0, 0);
+      if (m.days.includes(d.getDay()) && d <= now) return d;
+    }
+    return null;
+  }
+
+  // ===================== 出社・退社 =====================
+  // 出勤時刻の約2時間前（人によって±30分）にオフィスに現れ、
+  // 出勤から2時間、または最後の報告から1時間たつと帰る。作業中は必ず在席。
+  const ARRIVE_BEFORE_MIN = 120, STAY_AFTER_SHIFT_MIN = 120, LINGER_AFTER_REPORT_MIN = 60;
+  function arriveOffsetMin(m) {
+    let h = 0; for (const c of m.id) h = (h * 31 + c.charCodeAt(0)) % 997;
+    return ARRIVE_BEFORE_MIN + (h % 61) - 30;
+  }
+  function isPresent(m) {
+    if (working(m.id)) return true;
+    const now = Date.now(), d = liveData[m.id] || {};
+    if (d.updated_at && now - new Date(d.updated_at).getTime() < LINGER_AFTER_REPORT_MIN * 60000) return true;
+    const prev = prevShift(m); if (prev && now - prev.getTime() < STAY_AFTER_SHIFT_MIN * 60000) return true;
+    const next = nextShift(m).at; return !!next && next.getTime() - now <= arriveOffsetMin(m) * 60000;
+  }
+  const present = (m) => !!anim[m.id].present;
+  function arrivesIn(m) { // 不在の社員が出社するまでの分数
+    const next = nextShift(m).at; if (!next) return Infinity;
+    return Math.max(0, Math.round((next.getTime() - Date.now()) / 60000 - arriveOffsetMin(m)));
+  }
+  const doorOf = (m) => { const r = ROOMS[m.room]; return { x: r.x + r.w / 2, y: r.y + r.h - .7 }; };
   function schedLabel(m) {
     if (m.days.length === 7) return "毎日 " + m.hour + ":00";
     if (m.days.length === 5 && !m.days.includes(0) && !m.days.includes(6)) return "平日 " + m.hour + ":00";
@@ -330,7 +364,7 @@
   // キャラの状態
   const anim = {};
   MEMBERS.forEach((m) => {
-    anim[m.id] = { x: m.desk.x + 1, y: m.desk.y + 1.2, path: null, inBreak: false, trip: null, wait: Math.random() * 3, step: 0, dir: 1 };
+    anim[m.id] = { x: m.desk.x + 1, y: m.desk.y + 1.2, path: null, inBreak: false, trip: null, wait: Math.random() * 3, step: 0, dir: 1, present: false };
   });
   const working = (id) => (liveData[id] || {}).status === "working";
   const seatOf = (m) => ({ x: m.desk.x + 1, y: m.desk.y + 1.2 });
@@ -371,6 +405,18 @@
   function update(dt) {
     MEMBERS.forEach((m) => {
       const a = anim[m.id];
+      // 出社・退社（判定は5秒ごと。作業中になったら即在席）
+      const nowMs = performance.now();
+      if (!a.nextCheck || nowMs > a.nextCheck) { a.shouldBe = isPresent(m); a.nextCheck = nowMs + 5000; }
+      const shouldBe = working(m.id) || !!a.shouldBe;
+      if (shouldBe && !a.present) { // ドアから入ってくる
+        const door = doorOf(m); a.present = true; a.x = door.x; a.y = door.y; a.dir = 1;
+        a.inBreak = false; a.trip = null; a.path = [roomSpot(m)]; a.step = 0;
+      } else if (!shouldBe && a.present && a.trip !== "leave") { // ドアへ歩いて帰る
+        a.path = a.inBreak ? [BRK_ENTRY, ...[...ROUTE_TO_BREAK[m.room]].reverse().slice(1), doorOf(m)] : [doorOf(m)];
+        a.inBreak = false; a.trip = "leave";
+      }
+      if (!a.present) return;
       if (working(m.id)) {
         const s = seatOf(m); a.x += (s.x - a.x) * .2; a.y += (s.y - a.y) * .2;
         a.path = null; a.inBreak = false; a.trip = null; a.step += dt * 6; return;
@@ -385,6 +431,7 @@
       if (dist < sp) {
         a.x = t.x; a.y = t.y; a.path.shift(); a.step = 0;
         if (a.path.length === 0) {
+          if (a.trip === "leave") { a.present = false; a.trip = null; a.path = null; return; }
           if (a.trip === "break") { a.inBreak = true; a.wait = 8 + Math.random() * 10; }
           else { a.inBreak = false; a.wait = 2 + Math.random() * 5; }
           a.trip = null;
@@ -495,8 +542,8 @@
       ctx.fillStyle = dark ? "#3a3f45" : "#6d7580"; ctx.fillRect(d.x * T + T * .7, d.y * T + T * 1.05, T * .6, T * .3); // 椅子
     });
 
-    // キャラ（yの順に）
-    const order = [...MEMBERS].sort((p, q) => anim[p.id].y - anim[q.id].y);
+    // キャラ（在席者のみ、yの順に）
+    const order = MEMBERS.filter(present).sort((p, q) => anim[p.id].y - anim[q.id].y);
     order.forEach((m) => {
       const a = anim[m.id], on = working(m.id);
       drawSprite(m, a, on, t);
@@ -526,7 +573,7 @@
     const rect = canvas.getBoundingClientRect();
     const x = (e.clientX - rect.left) / T, y = (e.clientY - rect.top) / T;
     let best = null, bd = 1.2;
-    MEMBERS.forEach((m) => { const a = anim[m.id]; const d = Math.hypot(a.x - x, a.y - (y + .6)); if (d < bd) { bd = d; best = m; } });
+    MEMBERS.filter(present).forEach((m) => { const a = anim[m.id]; const d = Math.hypot(a.x - x, a.y - (y + .6)); if (d < bd) { bd = d; best = m; } });
     selected = best ? best.id : null;
     renderDetail();
   });
@@ -535,11 +582,11 @@
     const el = $("#detail");
     const m = MEMBERS.find((x) => x.id === selected);
     if (!m) { el.innerHTML = `<div class="face">🏢</div><div><div class="name">オフィスへようこそ</div><p class="hint">マップ上の社員をタップすると、いまの報告・担当・次の出勤がここに出ます。</p></div>`; return; }
-    const d = liveData[m.id] || {}, on = d.status === "working", r = ROOMS[m.room], ns = nextShift(m);
+    const d = liveData[m.id] || {}, on = d.status === "working", r = ROOMS[m.room], ns = nextShift(m), here = present(m);
     el.innerHTML = `
       <div class="face" style="--dc:${cssVar(r.cvar)}">${m.emoji}</div>
       <div>
-        <div class="name">${m.name} <span class="tag ${on ? "on" : ""}">${on ? "作業中" : "待機中"}</span></div>
+        <div class="name">${m.name} <span class="tag ${on ? "on" : ""}">${on ? "作業中" : here ? "在席（待機）" : "不在"}</span></div>
         <div class="role">${r.tag}｜${r.name} ─ ${m.role}</div>
         <p class="msg">💬 ${esc(d.message || "（まだ報告がありません）")}</p>
         <div class="meta"><span>🕘 ${schedLabel(m)}</span><span>次の出勤: ${ns.label}</span>${d.updated_at ? `<span>最終稼働: ${ago(d.updated_at)}</span>` : ""}</div>
@@ -548,9 +595,18 @@
 
   function renderGauges() {
     const on = MEMBERS.filter((m) => working(m.id)).length;
-    $("#g-on").textContent = on; $("#g-off").textContent = MEMBERS.length - on;
+    const here = MEMBERS.filter((m) => isPresent(m)).length;
+    $("#g-on").textContent = on; $("#g-off").textContent = here - on; $("#g-away").textContent = MEMBERS.length - here;
     const soonest = MEMBERS.map(nextShift).sort((a, b) => a.hours - b.hours)[0];
     $("#g-next").textContent = soonest && soonest.hours < 100 ? soonest.hours + "h" : "–";
+    const away = MEMBERS.filter((m) => !isPresent(m))
+      .map((m) => ({ m, min: arrivesIn(m) })).sort((a, b) => a.min - b.min);
+    $("#absent").innerHTML = away.length
+      ? "🚪 不在: " + away.map(({ m, min }) => {
+          const t = min === Infinity ? "" : min < 60 ? `${min}分後に出社` : min < 1440 ? `${Math.round(min / 60)}時間後に出社` : `${Math.round(min / 1440)}日後に出社`;
+          return `${esc(m.name)}${t ? `（${t}）` : ""}`;
+        }).join("、")
+      : "全員在席しています。";
   }
   function renderStats(data) {
     $("#stats").innerHTML = STATS_DEF.map(([k, l]) => `<div class="stat"><b>${Number.isFinite(data?.[k]) ? data[k] : "–"}</b><span>${l}</span></div>`).join("");
