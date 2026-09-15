@@ -118,13 +118,24 @@ class _Builder:
                 for service in self.content.services
             ],
         )
+        # Search Console（2026-08-24〜09-06）で「外壁塗装 秋田市」1位なのにクリック0
+        # だったため、title と説明文に「クリックする理由」（料金・資格・無料診断）を
+        # 入れる（2026-09-14 本人が案Bを選択）。金額は services.toml のいちばん安い
+        # パック（30坪程度・税込）で、ページ本文に前提が明記されている。
+        plan = self.content.plan
+        lowest = self.content.packages[0].price if self.content.packages else ""
+        price_tag = f" {lowest}〜" if lowest else ""
+        areas = "・".join(company.areas) if company.areas else company.city
         html = self.render(
             "index.html",
             "/",
             # 検索結果で「地域＋工事名」で探す人に届くよう、キーワードを先頭に。
-            # 上位の同業もこの形（地域・サービス｜信頼要素＋社名）を取っている
-            title=f"{company.city}の外壁塗装・屋根塗装｜職人直営の{company.name}",
-            description=company.description,
+            title=f"{company.city}の外壁塗装・屋根塗装{price_tag}｜一級技能士が自社施工｜{company.name}",
+            description=(
+                f"現地調査・お見積りは無料。一級塗装技能士が完全自社施工、保証は{plan.warranty}。"
+                f"{areas}の外壁塗装・屋根塗装を、雪・湿気・塩害に合わせた塗料選びでご提案します。"
+                + (f"パック料金（{plan.basis}）{price_tag}（税込）。" if lowest else "")
+            ),
             section="home",
             jsonld=jsonld,
         )
