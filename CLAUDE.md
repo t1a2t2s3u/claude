@@ -20,9 +20,11 @@ Katagami City, Minamiakita District; https://tatsumi-tosou.com/).
 
 - **seo-director** — weekly SEO/MEO research, prioritised action list, blog
   briefs. Mondays.
-- **seo-writer** — two blog articles a month from those briefs, written in
-  the site's own post format and SEO-checked, delivered to the blog board as
-  確認待ち. Publishes to the site branch only after the owner's OK. Tuesdays.
+- **seo-writer** — three new blog articles a month from those briefs, plus one
+  refresh of an already-published article, written in the site's own post
+  format and SEO-checked, delivered to the blog board as 確認待ち (one item per
+  Tuesday run). Publishes to the site branch only after the owner's OK.
+  Tuesdays.
 - **meo** — Google Business Profile posts, profile audits, review replies.
   Thursdays. The owner posts manually.
 
