@@ -215,7 +215,7 @@ https://tatsumi-tosou.com
 
 ```
 パック料金でご案内しています。
-30坪程度の戸建ての場合の目安です。
+延床面積30坪程度の戸建ての場合の目安です。
 
 ▼ 料金の詳細はこちら
 https://tatsumi-tosou.com/services/
