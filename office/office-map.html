@@ -186,6 +186,7 @@
     <a href="https://claude.ai/code/artifact/787b2d97-717a-4449-bfc4-5563957d94c9">📰 note記事ボード</a>
     <a href="https://claude.ai/code/artifact/57204c23-dcaa-4df7-93db-6d67648fb985">📤 SNS納品ボード</a>
     <a href="https://claude.ai/code/artifact/a2022666-784a-45e2-b650-c67103b3d4df">✅ 仕上げ質問シート</a>
+    <a href="https://claude.ai/artifact/HKPwK3npkyC3XTYYjziMHU">🧭 企画ボード（新規事業）</a>
   </nav>
 
   <section class="panel inbox" aria-label="あなたの番 ─ 本業の確認待ち">
@@ -269,7 +270,8 @@
     { id: "reviewer",     room: "side", emoji: "🧐", name: "校閲",           role: "下書きの校閲・投稿待ちへ送出",         days: [3,5], hour: 8, desk: { x: 16, y: 8 }, hair: "#444444" },
     { id: "sns",          room: "side", emoji: "📣", name: "SNS担当",        role: "X・Threads投稿（1日3本）",             days: [0,1,2,3,4,5,6], hour: 8, desk: { x: 20, y: 8 }, hair: "#7b4b3a" },
     { id: "analyst",      room: "side", emoji: "📊", name: "アナリスト",     role: "KPI記録・週次分析",                    days: [6], hour: 8, desk: { x: 24, y: 8 }, hair: "#5a3d33" },
-    { id: "product-scout",room: "new",  emoji: "🧭", name: "企画リサーチャー", role: "アプリ需要の調査・企画メモ",         days: [3], hour: 8, desk: { x: 14, y: 15 }, hair: "#9c6b4a" },
+    { id: "product-scout",room: "new",  emoji: "🧭", name: "企画リサーチャー", role: "アプリ需要の調査・企画メモ",         days: [3], hour: 8, desk: { x: 14, y: 15 }, hair: "#9c6b4a",
+      board: { label: "企画ボードを開く", url: "https://claude.ai/artifact/HKPwK3npkyC3XTYYjziMHU" } },
     { id: "secretary",    room: "admin",emoji: "🗂️", name: "秘書",           role: "タスク管理・朝のブリーフィング",       days: [1,2,3,4,5], hour: 9, desk: { x: 2, y: 14 }, hair: "#333333" },
     { id: "auditor",      room: "admin",emoji: "🛡️", name: "監査役",         role: "全社員の成果物の点検（捏造・法令）",   days: [6], hour: 10, desk: { x: 5, y: 14 }, hair: "#5b6470" },
     { id: "finisher",     room: "admin",emoji: "✅", name: "仕上げ担当",     role: "投稿前の確認事項を質問に変換・反映",   days: [0,1,2,3,4,5,6], hour: 12, desk: { x: 3, y: 16 }, hair: "#b5744a" },
@@ -589,7 +591,7 @@
         <div class="name">${m.name} <span class="tag ${on ? "on" : ""}">${on ? "作業中" : here ? "在席（待機）" : "不在"}</span></div>
         <div class="role">${r.tag}｜${r.name} ─ ${m.role}</div>
         <p class="msg">💬 ${esc(d.message || "（まだ報告がありません）")}</p>
-        <div class="meta"><span>🕘 ${schedLabel(m)}</span><span>次の出勤: ${ns.label}</span>${d.updated_at ? `<span>最終稼働: ${ago(d.updated_at)}</span>` : ""}</div>
+        <div class="meta"><span>🕘 ${schedLabel(m)}</span><span>次の出勤: ${ns.label}</span>${d.updated_at ? `<span>最終稼働: ${ago(d.updated_at)}</span>` : ""}${m.board ? `<a href="${esc(m.board.url)}">📂 ${esc(m.board.label)}</a>` : ""}</div>
       </div>`;
   }
 

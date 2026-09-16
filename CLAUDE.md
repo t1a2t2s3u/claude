@@ -174,6 +174,19 @@ https://claude.ai/code/artifact/a2022666-784a-45e2-b650-c67103b3d4df
 The finisher republishes it from `finishing/questions.md` after each run.
 Best-effort, like the other boards.
 
+## Product board
+
+The product scout's work as a page (this week's pick with its 3-axis score
+and build/no-build call, open questions for the owner with copy-to-reply
+chips, the candidate/rejected ledger, and the weekly report history):
+https://claude.ai/artifact/HKPwK3npkyC3XTYYjziMHU
+
+Source: `office/product-board.html`. The product-scout rewrites it from
+`product/pipeline.md` and the latest `product/reports/` after each Wednesday
+run and republishes it to the same URL. Linked from the office board's
+shortcut row and from the 企画リサーチャー character's detail panel.
+Best-effort, like the other boards.
+
 ## Conventions
 
 - User-facing content (task board, reports, skill instructions) is written in

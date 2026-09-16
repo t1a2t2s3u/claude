@@ -25,3 +25,8 @@
   塗装ブログライターが記事ごとにカードを追加し、同じURLに republish する。
 - `finishing-sheet.html` — 仕上げ質問シート
   （https://claude.ai/code/artifact/a2022666-784a-45e2-b650-c67103b3d4df）。
+- `product-board.html` — 企画ボード
+  （https://claude.ai/artifact/HKPwK3npkyC3XTYYjziMHU）。企画リサーチャーが
+  毎週の稼働後に `product/pipeline.md` と `product/reports/` の最新から
+  書き直し、同じURLに republish する。オフィスボードのリンク列と、
+  マップで企画リサーチャーをタップした詳細から開ける。

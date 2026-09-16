@@ -1,0 +1,312 @@
+<title>企画ボード</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@400;500;700&family=Zen+Old+Mincho:wght@700;900&display=swap">
+<style>
+  :root {
+    --paper: #f3f5f8;
+    --surface: #ffffff;
+    --ink: #1e2733;
+    --ink-soft: #5f6b7a;
+    --line: #d9dee6;
+    --acc: #4a6fb5;        /* プロダクト開発室の部署色 */
+    --acc-wash: #e7edf8;
+    --gold: #a8781f;       /* 有望ライン（12点） */
+    --gold-wash: #f7efdd;
+    --muted: #8a95a3;
+    --muted-wash: #eceff3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #12181f; --surface: #1a222c; --ink: #e4e9f0; --ink-soft: #97a3b3; --line: #2c3743;
+      --acc: #7c9fe0; --acc-wash: #1f2b3d; --gold: #d9a84a; --gold-wash: #302a1a; --muted: #7d8898; --muted-wash: #222b35;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #12181f; --surface: #1a222c; --ink: #e4e9f0; --ink-soft: #97a3b3; --line: #2c3743;
+    --acc: #7c9fe0; --acc-wash: #1f2b3d; --gold: #d9a84a; --gold-wash: #302a1a; --muted: #7d8898; --muted-wash: #222b35;
+  }
+
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: "M PLUS 2", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    font-size: 15px; line-height: 1.75; padding: 0 16px 56px;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; }
+  a { color: var(--acc); }
+
+  header { padding: 28px 0 16px; border-bottom: 2px solid var(--ink); }
+  .kicker { font-size: 11px; font-weight: 700; letter-spacing: .16em; color: var(--acc); }
+  h1 { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", serif; font-weight: 900; font-size: 30px; margin: 2px 0 0; letter-spacing: .02em; text-wrap: balance; }
+  .stamp { font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+  .back { font-size: 12px; margin-top: 6px; }
+
+  .tally { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .tally div { flex: 1 1 120px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+  .tally b { display: block; font-family: "Zen Old Mincho", serif; font-weight: 900; font-size: 24px; line-height: 1.2; font-variant-numeric: tabular-nums; }
+  .tally span { font-size: 11px; color: var(--ink-soft); letter-spacing: .06em; }
+  .tally .gold b { color: var(--gold); }
+
+  section { margin-top: 30px; }
+  h2 { font-size: 12px; font-weight: 700; letter-spacing: .14em; color: var(--ink-soft); margin: 0 0 10px; display: flex; align-items: center; gap: 8px; }
+  h2::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+  h3 { font-size: 16px; margin: 0; line-height: 1.5; text-wrap: balance; }
+  p { margin: 0; }
+  .soft { color: var(--ink-soft); font-size: 13px; }
+
+  /* 今週の推し */
+  .hero { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--acc); border-radius: 0 10px 10px 0; padding: 16px 18px; }
+  .hero .lead { font-size: 13px; color: var(--acc); font-weight: 700; letter-spacing: .08em; }
+  .hero h3 { font-size: 19px; margin-top: 2px; }
+  .verdict { margin-top: 10px; padding: 10px 12px; background: var(--acc-wash); border-radius: 8px; font-size: 14px; }
+  .verdict strong { color: var(--acc); }
+
+  /* スコア（3軸5点） */
+  .score { display: grid; grid-template-columns: 5.5em 1fr auto; gap: 4px 10px; align-items: center; margin-top: 12px; font-size: 13px; }
+  .score .ax { color: var(--ink-soft); }
+  .segs { display: flex; gap: 3px; }
+  .seg { width: 22px; height: 9px; border-radius: 2px; background: var(--muted-wash); border: 1px solid var(--line); }
+  .seg.on { background: var(--acc); border-color: var(--acc); }
+  .score .n { font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+  .total { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 8px; margin-top: 4px; padding-top: 8px; border-top: 1px dashed var(--line); }
+  .total b { font-family: "Zen Old Mincho", serif; font-weight: 900; font-size: 22px; font-variant-numeric: tabular-nums; }
+  .total .thr { font-size: 12px; color: var(--gold); }
+
+  dl { margin: 14px 0 0; display: grid; grid-template-columns: 7em 1fr; gap: 6px 12px; font-size: 14px; }
+  dt { color: var(--ink-soft); font-size: 12.5px; padding-top: 2px; }
+  dd { margin: 0; }
+  dd ol, dd ul { margin: 0; padding-left: 1.2em; }
+  @media (max-width: 480px) { dl { grid-template-columns: 1fr; gap: 2px; } dt { margin-top: 8px; } }
+
+  /* あなたへの質問 */
+  .asks { display: grid; gap: 10px; }
+  .ask { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .ask .q { font-weight: 700; }
+  .ask .why { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+  .acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { font: inherit; font-size: 12.5px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--acc); background: var(--surface); color: var(--acc); cursor: pointer; }
+  .chip:hover, .chip:focus-visible { background: var(--acc-wash); outline: none; }
+  .chip:focus-visible { box-shadow: 0 0 0 3px var(--acc-wash); }
+  .howto { font-size: 12px; color: var(--ink-soft); margin: 0 0 8px; }
+
+  /* 案件台帳 */
+  .rows { display: grid; gap: 8px; }
+  .row { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: start; }
+  .row .name { font-weight: 700; }
+  .row .memo { grid-column: 1 / -1; font-size: 13px; color: var(--ink-soft); }
+  .mini { display: flex; gap: 6px; align-items: center; white-space: nowrap; }
+  .mini .segs .seg { width: 8px; height: 8px; }
+  .mini b { font-variant-numeric: tabular-nums; font-size: 14px; }
+  .mini small { color: var(--ink-soft); font-size: 11px; }
+  .state { font-size: 11px; font-weight: 700; letter-spacing: .06em; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+  .state.cand { color: var(--acc); background: var(--acc-wash); }
+  .state.route { color: var(--ink-soft); background: var(--muted-wash); }
+  .state.drop { color: var(--muted); background: var(--muted-wash); }
+  @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+
+  .tbl-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; vertical-align: top; padding: 7px 8px; border-top: 1px solid var(--line); }
+  thead th { border-top: none; font-size: 11px; color: var(--ink-soft); letter-spacing: .08em; font-weight: 700; }
+  td.n { white-space: nowrap; }
+
+  /* 週次レポート */
+  details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; }
+  details + details { margin-top: 8px; }
+  summary { cursor: pointer; padding: 12px 0; font-weight: 700; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+  summary .d { font-variant-numeric: tabular-nums; }
+  summary .s { font-weight: 400; font-size: 13px; color: var(--ink-soft); }
+  .rep { padding: 0 0 14px; font-size: 14px; display: grid; gap: 10px; }
+  .rep h4 { font-size: 12px; letter-spacing: .1em; color: var(--acc); margin: 4px 0 0; }
+  .rep ul { margin: 0; padding-left: 1.2em; }
+  .rep li { margin: 2px 0; }
+  .src { font-size: 12.5px; color: var(--ink-soft); }
+  .src a { word-break: break-all; }
+
+  footer { margin-top: 36px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-soft); }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(16px); opacity: 0; transition: .2s; pointer-events: none; background: var(--ink); color: var(--paper); padding: 8px 14px; border-radius: 8px; font-size: 13px; max-width: 90vw; text-align: center; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="kicker">AI社員オフィス ── プロダクト開発室・企画リサーチャー 🧭</div>
+    <h1>企画ボード</h1>
+    <div class="stamp">2026-09-16（水）の第2回調査まで反映 ｜ 毎週水曜 8:00 の稼働後に更新 ｜ 次回: 9/23（水）</div>
+    <div class="back"><a href="https://claude.ai/code/artifact/c7d8805a-a816-41b8-b2f8-f8c401d90f6c">← オフィスへ戻る</a></div>
+    <div class="tally">
+      <div><b>2</b><span>調査回数（週）</span></div>
+      <div><b>4</b><span>候補（検討中）</span></div>
+      <div><b>17</b><span>見送り</span></div>
+      <div class="gold"><b>0</b><span>有望（12点以上）</span></div>
+    </div>
+  </header>
+
+  <section aria-label="今週の推し">
+    <h2>今週の推し ── 9/16</h2>
+    <div class="hero">
+      <div class="lead">塗装店向け</div>
+      <h3>「塗り替え後フォロー当番」── OB客の点検リマインド＋はがき・LINE文面の下書き</h3>
+      <div class="score" aria-label="スコア">
+        <span class="ax">作れるか</span><span class="segs"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i></span><span class="n">4 / 5</span>
+        <span class="ax">売れるか</span><span class="segs"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span><span class="n">3 / 5</span>
+        <span class="ax">勝てるか</span><span class="segs"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i></span><span class="n">4 / 5</span>
+        <div class="total"><b>11</b><span class="soft">/ 15</span><span class="thr">有望ラインは 12。あと1点</span></div>
+      </div>
+      <div class="verdict"><strong>まだ作りません。</strong> オーナー自身が顧客なので、作る前の検証がタダでできます。下の質問に一言で答えてもらえれば、来週に再採点します。「自社でも使わない」なら没にします。</div>
+      <dl>
+        <dt>なぜ今か</dt>
+        <dd>リフォーム業界紙は「点検こそ最大の販促ツール」、外壁塗装のOB客には1・3・5年目の点検＋DMを送る企業がある一方、日経クロステックは「多くの工務店は年末にカレンダーを配る程度で何もしていない」と指摘。やるべきと分かっていて、やれていない典型です。</dd>
+        <dt>既存ツール</dt>
+        <dd>「住宅営業お便り当番」は月額 ¥25,000（新築の住宅営業向け）。1〜3人の塗装店向けの低価格・点検特化は今回の検索では見つからず【未確認】。</dd>
+        <dt>最小版</dt>
+        <dd><ol><li>顧客登録（施工日・箇所・塗料の耐用年数）</li><li>1年・3年・5年＋「耐用年数の2年前」に担当者へメールで通知（顧客には人が送る）</li><li>はがき／LINE用の文面下書き（コピーして使う）</li></ol></dd>
+        <dt>想定課金</dt>
+        <dd>塗装店1社 月額 ¥1,000〜¥3,000 の幅で要検証。払う人がいる証拠はまだありません。</dd>
+        <dt>検証方法</dt>
+        <dd>①自社で点検案内を送っているか・何が面倒かを一言で答える → ②使うなら、まずスプレッドシート＋カレンダーで1か月手動運用 → ③受注につながる接点が生まれたらツール化。</dd>
+        <dt>リスク</dt>
+        <dd>塗装店への販売チャネル未定【未確認】。顧客住所を預かるため利用規約・削除の仕組みが初版から必要。収益予測は断定しません。</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section aria-label="あなたへの質問">
+    <h2>あなたへの質問（タスクボードにも掲載）</h2>
+    <p class="howto">札を押すと返事の文がコピーされます。チャットに貼って、続きを書いて送ってください。</p>
+    <div class="asks">
+      <div class="ask">
+        <p class="q">辰弥塗装で、過去1〜5年の施工客に点検案内（はがき・LINE等）を送っていますか？ 送っていないなら、一番の理由を一言で。</p>
+        <p class="why">「塗り替え後フォロー当番」を作るかどうかの判断材料。優先: 中</p>
+        <div class="acts">
+          <button type="button" class="chip" id="a1-yes" data-copy="点検案内: 送っている。方法は：">送っている</button>
+          <button type="button" class="chip" id="a1-no" data-copy="点検案内: 送っていない。一番の理由は：">送っていない（理由を書く）</button>
+          <button type="button" class="chip" id="a1-drop" data-copy="点検案内: 自社でも使わないので、フォロー当番は没でいい">自社でも使わない → 没</button>
+        </div>
+      </div>
+      <div class="ask">
+        <p class="q">施主向け「見積書くらべ」を tatsumi-tosou.com の集客コンテンツとして検討する価値があるか ── SEOディレクターの判断待ち（月曜）。</p>
+        <p class="why">売り物としては9点で見送り。建設会社が無料の「見積もりチェックAI」でリードを獲得している前例あり。あなたの操作は不要です。</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="案件台帳">
+    <h2>案件台帳 ── 検討中</h2>
+    <p class="howto">スコアは 作れるか／売れるか／勝てるか（各5点）。合計12点以上で企画メモを書き、オーナーが「作る」と決めたものだけ着手します。</p>
+    <div class="rows">
+      <div class="row">
+        <span class="name">塗装店向け「塗り替え後フォロー当番」</span>
+        <span class="mini"><span class="segs"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i></span><b>11</b><small>4/3/4</small><span class="state cand">候補</span></span>
+        <span class="memo">9/16 初出。上の質問への回答次第で再採点。</span>
+      </div>
+      <div class="row">
+        <span class="name">note 売上CSV → 帳簿変換（確定申告用）</span>
+        <span class="mini"><span class="segs"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span><b>10</b><small>5/2/3</small><span class="state cand">候補</span></span>
+        <span class="memo">9/16 初出。noteのCSVは手数料控除後の額が中心で、そのまま記帳すると売上除外になると会計士が警告。ただし年1回しか使わず単価が低い。note編集部の記事ネタとして共有する方が価値が高い。</span>
+      </div>
+      <div class="row">
+        <span class="name">外壁塗装「見積書くらべ」（施主向け相見積もり整理）</span>
+        <span class="mini"><span class="segs"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span><b>9</b><small>4/2/3</small><span class="state cand">候補</span></span>
+        <span class="memo">9/10 初出。無料競合あり。売るより辰弥塗装の集客ツール向き → SEOディレクターへ共有済み。</span>
+      </div>
+      <div class="row">
+        <span class="name">Chrome拡張の買い切り小型ユーティリティ</span>
+        <span class="mini"><b>–</b><span class="state route">路線</span></span>
+        <span class="memo">17本作った個人開発者の「$19買い切り1本が無料17本の合計を上回った」事例が根拠。具体的な不便は未特定。次回はストアのレビュー欄を直接読む。</span>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="見送り一覧">
+    <h2>案件台帳 ── 見送り（理由付き）</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>案件</th><th>点</th><th>見送りの理由</th></tr></thead>
+        <tbody>
+          <tr><td>持続化補助金「様式2-1」下書きアシスタント</td><td class="n">9</td><td>9/10は11点。2026年の行政書士法改正で「下書きを作って渡す」型は作成代行と見なされるリスク（士業の解説記事に基づく【要確認】）。第20回公募は 11/5〜12/15。</td></tr>
+          <tr><td>個人店向けGBP投稿予約（1店舗・低価格）</td><td class="n">8</td><td>Business Profile API の審査が大企業向けで、2週間では出せない。</td></tr>
+          <tr><td>施主向け工事進捗の写真共有</td><td class="n">–</td><td>STUCCO・ミライ工事写真（無料あり）。</td></tr>
+          <tr><td>ポスティングのエリア記録・反響管理</td><td class="n">–</td><td>タウンノート（無料）。</td></tr>
+          <tr><td>安全書類（グリーンファイル）作成支援</td><td class="n">–</td><td>グリーンサイト・Greenfile.work が業界標準。</td></tr>
+          <tr><td>個人事業主の請求書・入金催促の自動化</td><td class="n">–</td><td>マネーフォワード・freee・弥生・請求管理ロボ。</td></tr>
+          <tr><td>Threads 分析ツール</td><td class="n">–</td><td>Meta が公式で分析・予約投稿を強化中。</td></tr>
+          <tr><td>PTA 役員向け集金・引き継ぎアプリ</td><td class="n">–</td><td>Piita 等の専用アプリあり。</td></tr>
+          <tr><td>LINE公式アカウント値上げの受け皿</td><td class="n">–</td><td>2026-10 改定の影響は月5万通超のみ。個人店は対象外。</td></tr>
+          <tr><td>施主向け「住まいの履歴」記録</td><td class="n">–</td><td>いえかるて等が無料〜低価格。</td></tr>
+          <tr><td>Google口コミ返信のAI下書き</td><td class="n">–</td><td>無料ツール複数。</td></tr>
+          <tr><td>note 分析ツール</td><td class="n">–</td><td>noteアナライザー・note booster 等、既存3ツール。</td></tr>
+          <tr><td>工事写真台帳（一人親方向け）</td><td class="n">–</td><td>月¥500・無料の既存アプリ。</td></tr>
+          <tr><td>町内会・自治会の会計ソフト</td><td class="n">–</td><td>無料クラウド・Excelフリーソフト多数。</td></tr>
+          <tr><td>工事のお知らせ・近隣挨拶文ジェネレーター</td><td class="n">–</td><td>無料テンプレート多数。</td></tr>
+          <tr><td>ステマ規制の投稿前チェッカー</td><td class="n">–</td><td>無料チェックリストあり。判定は法的助言に近くリスク大。</td></tr>
+          <tr><td>外壁カラーシミュレーション（業者向け）</td><td class="n">–</td><td>塗料メーカーが無料提供。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-label="週次レポート">
+    <h2>週次レポート（新しい順）</h2>
+
+    <details open>
+      <summary><span class="d">2026-09-16（水）</span><span>第2回</span><span class="s">推し: 塗り替え後フォロー当番 11点 ／ 補助金案は見送りへ</span></summary>
+      <div class="rep">
+        <p>先週の宿題2件を片付け、本業（塗装業）に近い領域を中心に9領域を追加調査。有望（12点以上）はゼロ。</p>
+        <h4>やったこと</h4>
+        <ul>
+          <li>持続化補助金案の法的整理: 2026年の行政書士法改正で、下書き生成型は作成代行と見なされるリスク → 9点に下げて見送り。第20回公募の受付は 11/5〜12/15。</li>
+          <li>Chrome拡張の「日本語未対応」不満は検索エンジンでは拾えず。次回はストアのレビューを直接読む。</li>
+          <li>新規9領域: 施主進捗共有・OB客フォロー・ポスティング記録・note売上の帳簿化・安全書類・入金催促・Threads分析・PTA・LINE値上げ・住まい履歴。</li>
+          <li>タスクボードに質問2件（オーナー向け1件、SEOディレクター向け1件）。</li>
+        </ul>
+        <h4>来週やること</h4>
+        <ul>
+          <li>フォロー当番: 回答を見て再採点。回答がなければ据え置き（作らない）。</li>
+          <li>Chrome拡張路線: ストアのレビュー欄を直接読めるか試す。</li>
+          <li>note売上CSVの件をリサーチャー／編集長に記事ネタとして共有。</li>
+        </ul>
+        <p class="src">全文と出典25件: リポジトリ <code>product/reports/2026-09-16.md</code>。主な出典: <a href="https://www.reform-online.jp/news/reform-shop/20442.php">リフォーム産業新聞（OB客18社事例）</a> ／ <a href="https://xtech.nikkei.com/atcl/nxt/column/18/01192/012900001/">日経クロステック（OB顧客フォロー）</a> ／ <a href="https://note.com/brisk_ram7621/n/na16d4c116b6c">弁護士解説（行政書士法改正）</a> ／ <a href="https://mitsuhashi-cpa.com/post-6205">公認会計士（noteの売上計上）</a></p>
+      </div>
+    </details>
+
+    <details>
+      <summary><span class="d">2026-09-10（水）</span><span>第1回</span><span class="s">推し: 持続化補助金の下書きアシスタント 11点 ／ 台帳を初期化</span></summary>
+      <div class="rep">
+        <p>初回。10領域を一次情報ベースで調査し、有望はゼロ。候補3件・見送り8件で台帳を作った。</p>
+        <h4>やったこと</h4>
+        <ul>
+          <li>推し: 持続化補助金「様式2-1」下書きアシスタント（11点）。行政書士向けツール「さくせいくん」は1件 ¥9,800、申請者本人向けの安価なものは見当たらず。</li>
+          <li>候補: 外壁塗装「見積書くらべ」（9点、無料競合あり）、Chrome拡張の買い切りユーティリティ路線。</li>
+          <li>見送り8件: GBP投稿予約（API審査）、口コミ返信AI、note分析、工事写真台帳、町内会会計、近隣挨拶文、ステマチェッカー、カラーシミュレーション。いずれも無料で十分か、2週間で出せない。</li>
+        </ul>
+        <h4>翌週の宿題</h4>
+        <ul>
+          <li>補助金案の法的整理と公募日程 → 9/16 に確認済み（見送り）。</li>
+          <li>Chrome拡張の「日本語未対応」不満の収集 → 9/16 に方法を変更。</li>
+          <li>見積書くらべ案をSEOディレクターへ共有 → 9/16 にタスクボード経由で共有。</li>
+        </ul>
+        <p class="src">全文と出典22件: リポジトリ <code>product/reports/2026-09-10.md</code>。主な出典: <a href="https://zenn.dev/ktg/articles/da898f8587df5d">Chrome拡張17本の個人開発（ktg）</a> ／ <a href="https://sakuseikun.jp/">さくせいくん</a> ／ <a href="https://support.google.com/business/workflow/16726127?hl=ja">Business Profile API の申請（Google）</a></p>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    企画リサーチャーは毎週水曜 8:00 に調査し、稼働後にこのページと台帳（product/pipeline.md）を更新します。実装はしません。収益の断定はしません。出典のない主張には【未確認】を付けます。
+  </footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  const toastEl = document.getElementById("toast");
+  let th;
+  function toast(msg) { toastEl.textContent = msg; toastEl.classList.add("show"); clearTimeout(th); th = setTimeout(() => toastEl.classList.remove("show"), 2200); }
+  async function copyText(text) {
+    try { await navigator.clipboard.writeText(text); toast("コピーしました。チャットに貼って続きを書いてください"); }
+    catch (e) {
+      const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); toast("コピーしました。チャットに貼って続きを書いてください"); } catch (_) { toast("コピーできませんでした。長押しで選択してください"); }
+      ta.remove();
+    }
+  }
+  document.querySelectorAll("button[data-copy]").forEach((b) => b.addEventListener("click", () => copyText(b.dataset.copy)));
+</script>

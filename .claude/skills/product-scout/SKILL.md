@@ -23,6 +23,9 @@ description: プロダクト企画リサーチャー。個人開発で収益化�
 - 週次レポート: `product/reports/YYYY-MM-DD.md`
 - 企画メモ: `product/ideas/<スラッグ>.md`（有望案件のみ）
 - 案件台帳: `product/pipeline.md`（全候補の一覧と状態）
+- 企画ボード: `office/product-board.html`（公開先
+  https://claude.ai/artifact/HKPwK3npkyC3XTYYjziMHU。オーナーがオフィスから
+  「何をしたか」を確認するページ）
 - 作業ブランチ: `claude/ai-employee-claude-code-d99jvr`
 
 ## 定期稼働時にやること（水曜）
@@ -56,13 +59,26 @@ description: プロダクト企画リサーチャー。個人開発で収益化�
    - 検証方法（作る前に需要を確かめる手段。LPだけ先に出す等）
    - リスク・不確実な点（正直に書く）
 6. `product/pipeline.md` に候補を追記・更新する。
-7. コミットして push する（`scout: <内容>` のプレフィックス）。
-8. オフィスボードへの報告 — Artifact ツールの write_db で更新
-   （URL は CLAUDE.md の「Office board」参照。使えなければスキップ可）。
-   - `employees/product-scout` を set:
-     `{status: "idle", message: "<今週の推しを一言>", updated_at: "<現在UTC ISO>"}`
-   - `activity/<YYYYMMDD-HHMM>` を set:
-     `{at: "<現在UTC ISO>", who: "企画リサーチャー", emoji: "🧭", text: "<何を見つけたか>"}`
+7. 企画ボード `office/product-board.html` を書き直す（オーナーはここで
+   仕事の中身を確認する。レポートの要約ではなく、判断に必要なものを載せる）:
+   - ヘッダーの日付・次回稼働日・集計（調査回数／候補／見送り／有望）
+   - 「今週の推し」: 案件名・3軸スコア・作る／作らない判断・なぜ今か・
+     既存ツール・最小版・想定課金・検証方法・リスク
+   - 「あなたへの質問」: タスクボードに置いた質問。返事の札（押すと
+     チャットに貼る文がコピーされる）を付ける。回答済みのものは消す
+   - 案件台帳（検討中はスコア付き、見送りは理由付き表）
+   - 週次レポートの履歴（新しい順。やったこと・来週やること・主な出典と
+     全文のパス）
+   書き直したら Artifact ツールで **同じURLに** republish する
+   （初回公開済み。`url` に上のURLを渡す。使えなければスキップ可）。
+8. コミットして push する（`scout: <内容>` のプレフィックス）。
+9. オフィスボードへの報告 — ArtifactData ツール（無ければ Artifact の
+   write_db）で `activity/<YYYYMMDD-HHMM>` を **新規に** set する
+   （URL は CLAUDE.md の「Office board」参照。既存ドキュメントの更新は
+   バージョン指定なしでは拒否されるので、毎回新しい id を使う。
+   `employees/product-scout` は旧仕様で、更新不要）:
+   `{at: "<現在UTC ISO>", who: "企画リサーチャー", emoji: "🧭", text: "<何を見つけたか・推しと点数>"}`
+   オフィスボードはこの最新エントリを企画リサーチャーの状態として表示する。
 
 ## 判断の指針
 
