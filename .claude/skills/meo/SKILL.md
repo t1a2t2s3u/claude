@@ -28,8 +28,9 @@ description: 辰弥塗装工業のMEO担当。Googleビジネスプロフィー�
    - 未回答のQ&Aがないか
 4. `seo/gbp/queue.md` の先頭に日付セクションで追記する。
 5. コミットして push（`meo:` プレフィックス）。
-6. オフィスボード報告（Artifact の write_db。使えなければスキップ可。
-   既存ドキュメントの update/set は失敗するので、毎回新しい doc_id で set する）:
+6. オフィスボード報告（`ArtifactData` ツール。使えなければスキップ可。
+   通常の報告は毎回新しい doc_id で set する。既存ドキュメントを変えるときは
+   先に get して `version` を読み、`if_version` を付けて update する）:
    - `activity/<YYYYMMDD-HHMM>` を set:
      `{at:"<UTC ISO>", who:"MEO担当", emoji:"📍", text:"<内容>"}`
    - **投稿可（`【要確認】` 0件）の文案ごとに `inbox/<YYYYMMDD-gbp-スラッグ>` を set**

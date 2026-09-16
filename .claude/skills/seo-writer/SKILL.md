@@ -54,8 +54,9 @@ description: 辰弥塗装工業のブログライター。SEOディレクター�
    `seo/articles/README.md` の一覧の「最終加筆」欄を更新する。
 3. コミットして push（`seo-writer:` プレフィックス）。
 4. **ブログ記事ボードに納品**（下記）。
-5. オフィスボード報告（Artifact の write_db。使えなければスキップ可。
-   既存ドキュメントの update/set は失敗するので、毎回新しい doc_id で set する）:
+5. オフィスボード報告（`ArtifactData` ツール。使えなければスキップ可。
+   通常の報告は毎回新しい doc_id で set する。既存ドキュメントを変えるときは
+   先に get して `version` を読み、`if_version` を付けて update する）:
    - `activity/<YYYYMMDD-HHMM>` を set:
      `{at:"<UTC ISO>", who:"塗装ブログ", emoji:"🖌️", text:"<内容>"}`
    - **オーナーのOKが必要な記事ごとに `inbox/<YYYYMMDD-blog-スラッグ>` を set**

@@ -116,9 +116,10 @@ A live status dashboard ("AI社員オフィス") is published as a Claude
 artifact: https://claude.ai/code/artifact/c7d8805a-a816-41b8-b2f8-f8c401d90f6c
 
 Each employee's skill includes a reporting step that updates the board's
-database (via the Artifact tool's `write_db`) at the end of a run.
-The tool can only create new documents (updating or deleting an existing
-one is refused for lack of a version pin), so every write uses a fresh id:
+database (via the `ArtifactData` tool) at the end of a run. Creating a
+document needs nothing extra; changing or deleting an existing one needs the
+`version` from a prior read passed as `if_version`, so routine reporting
+uses fresh ids and only inbox/status fixes touch existing documents:
 `activity/<YYYYMMDD-HHMM>` for the feed (the board also shows each
 employee's latest feed entry as their status, so `employees/<id>` is
 legacy), `schedule/<YYYYMMDD>` (seo-director only) for the painting

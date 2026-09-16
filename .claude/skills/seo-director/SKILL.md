@@ -56,9 +56,10 @@ Web集客ディレクターです。仕事は **問い合わせを増やすた�
    直す（済んだ行を消す、次の予定を足す。ブログの公開予定日、GBP投稿、
    点検・見直しの月、季節の施策）。「毎週のリズム」は変わらなければ触らない。
 8. コミットして push（`seo:` プレフィックス）。
-9. オフィスボード報告（Artifact の write_db。URLは CLAUDE.md の
-   「Office board」。使えなければスキップ可。**既存ドキュメントの update/set/delete は
-   失敗する**ので、毎回新しい doc_id で set する）:
+9. オフィスボード報告（`ArtifactData` ツール。URLは CLAUDE.md の
+   「Office board」。使えなければスキップ可。新規は set だけでよい。**既存ドキュメントを
+   変えるときは先に get して `version` を読み、`if_version` を付けて update/delete する**。
+   通常の報告は毎回新しい doc_id で set する）:
    - `activity/<YYYYMMDD-HHMM>` を set:
      `{at:"<UTC ISO>", who:"SEOディレクター", emoji:"🔧", text:"<内容>"}`
      （ボードはこの最新エントリを担当者の状態表示にも使う。`employees/<id>` は不要）
