@@ -49,6 +49,7 @@ js/compatibility.js ふたりの相性診断(星座/血液型/干支/五行の4�
 js/fortune.js       日替わり運勢とランキングの生成
 js/main.js          フォームと結果表示のDOM制御(ここだけDOMに触れる)
 test/*.test.mjs     ロジックのユニットテスト(node --test)
+training/           筋トレ計画のPWAページ(占いアプリ本体とは独立した自己完結の静的ページ)
 ```
 
 新しい占いロジックは `js/` にDOM非依存モジュールとして追加し、表示は
