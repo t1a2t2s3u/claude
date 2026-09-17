@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>ビルドアップ計画 — 週3筋トレ&記録</title>
-  <meta name="description" content="ダンベルとベンチで体を大きくする週3全身トレーニング計画。筋肉痛チェッカー・トレーニング記録・体重トラッカー付き。">
+  <meta name="description" content="ダンベルとベンチで体を大きくする週3全身トレーニング計画。筋肉痛チェッカー・トレーニング記録・達成度カレンダー・体重トラッカー付き。">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏋️</text></svg>">
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#F6F5F1" media="(prefers-color-scheme: light)">
@@ -35,6 +35,8 @@
     --good-soft: #DEEDE4;
     --warn: #9A6A00;
     --warn-soft: #F5E8C8;
+    --cal1: #F2DCCB;
+    --cal2: #E2A277;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -51,6 +53,8 @@
       --good-soft: #22352B;
       --warn: #E3B24A;
       --warn-soft: #3A3320;
+      --cal1: #40291B;
+      --cal2: #8A4A24;
     }
   }
   :root[data-theme="dark"] {
@@ -67,6 +71,8 @@
     --good-soft: #22352B;
     --warn: #E3B24A;
     --warn-soft: #3A3320;
+    --cal1: #40291B;
+    --cal2: #8A4A24;
   }
   body {
     background: var(--bg);
@@ -323,6 +329,49 @@
     font: inherit; font-size: 12px; padding: 0 2px;
   }
 
+  /* ---- training calendar ---- */
+  .calhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .caltitle {
+    font-family: 'Barlow Condensed', 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 700; font-size: 19px; letter-spacing: 0.02em;
+  }
+  .calnav {
+    font: inherit; font-size: 18px; font-weight: 700; line-height: 1;
+    width: 36px; height: 36px; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  }
+  .calnav:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .calgrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 12px; }
+  .cw { text-align: center; font-size: 11px; font-weight: 700; color: var(--ink-soft); padding-bottom: 2px; }
+  .cd {
+    position: relative; aspect-ratio: 1; border: none; border-radius: 8px;
+    background: var(--surface-alt); color: var(--ink-soft);
+    font-family: 'Barlow Condensed', 'Zen Kaku Gothic New', sans-serif;
+    font-size: 13.5px; font-weight: 600; font-variant-numeric: tabular-nums;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0; cursor: default;
+  }
+  .cd.blank { background: none; }
+  .cd.lv1, .cd.lv2, .cd.lv3 { cursor: pointer; color: var(--ink); font-weight: 700; }
+  .cd.lv1 { background: var(--cal1); }
+  .cd.lv2 { background: var(--cal2); }
+  .cd.lv3 { background: var(--accent); color: var(--bg); }
+  .cd .cwo { font-size: 10.5px; font-weight: 700; line-height: 1.1; opacity: 0.85; }
+  .cd .cstar { position: absolute; top: 2px; right: 4px; font-size: 9px; }
+  .cd.today { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .cd:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .callegend {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px;
+    margin-top: 12px; font-size: 12px; color: var(--ink-soft);
+  }
+  .callegend .sw { width: 13px; height: 13px; border-radius: 4px; display: inline-block; }
+  .callegend .sw.lv1 { background: var(--cal1); }
+  .callegend .sw.lv2 { background: var(--cal2); }
+  .callegend .sw.lv3 { background: var(--accent); }
+  .calkeys { margin: 14px 0 0; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+  .calkeys .key { padding: 12px 12px; }
+  .calkeys .key .v { font-size: 23px; }
+
   footer {
     margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--line);
     font-size: 12.5px; color: var(--ink-soft);
@@ -431,7 +480,25 @@
     <div class="adjnote" id="adjNote" hidden></div>
   </div>
 
-  <h2><span class="no">05</span>体重トラッカー</h2>
+  <h2><span class="no">05</span>トレーニングカレンダー</h2>
+  <p class="h2sub">記録した日が塗られていきます。カレンダーの空白を作らないことが最強の筋肥大戦略</p>
+  <div class="checker">
+    <div class="calhead">
+      <button type="button" class="calnav" id="calPrev" aria-label="前の月">&lsaquo;</button>
+      <div class="caltitle" id="calTitle"></div>
+      <button type="button" class="calnav" id="calNext" aria-label="次の月">&rsaquo;</button>
+    </div>
+    <div class="calgrid" id="calGrid"></div>
+    <div class="callegend">
+      <span class="sw lv1"></span><span class="sw lv2"></span><span class="sw lv3"></span>
+      <span>薄→濃 = その日に記録した種目数(1〜2 / 3〜4 / 5〜6)</span>
+      <span>★ = 全セット上限達成の種目あり</span>
+    </div>
+    <div class="keys calkeys" id="calStats"></div>
+    <div class="adjnote" id="calDetail" hidden></div>
+  </div>
+
+  <h2><span class="no">06</span>体重トラッカー</h2>
   <p class="h2sub">週1回、起床後トイレの後に測定。増量ペースを自動判定します</p>
   <div class="checker">
     <div class="rowlabel">今日の体重</div>
@@ -446,7 +513,7 @@
     <div class="wentries" id="wentries"></div>
   </div>
 
-  <h2><span class="no">06</span>食事 — 体を大きくする作業の7割はここ</h2>
+  <h2><span class="no">07</span>食事 — 体を大きくする作業の7割はここ</h2>
   <p class="h2sub">46kgで体重が増えない原因は、ほぼ確実に摂取カロリー不足</p>
   <p>167cm・46kgの場合、維持カロリーはおよそ1,900〜2,100kcal。ここに300〜500kcal上乗せした<strong>1日2,300〜2,500kcalが最初の目標</strong>です。2〜3週間続けて体重が増えなければ、さらに200kcalずつ足していきます。</p>
   <div class="keys">
@@ -464,7 +531,7 @@
   </div>
   <div class="note good">サプリメントで優先すべきは<strong>プロテイン(食事で足りない分の補完)</strong>と、余裕があれば<strong>クレアチン(1日3〜5g)</strong>の2つだけ。それ以外は後回しで構いません。</div>
 
-  <h2><span class="no">07</span>回復 — 筋肉はベンチの上ではなく布団の中で育つ</h2>
+  <h2><span class="no">08</span>回復 — 筋肉はベンチの上ではなく布団の中で育つ</h2>
   <ul>
     <li><strong>睡眠7〜9時間。</strong>睡眠不足は筋肉の合成もホルモンも食欲も全部悪化させます。</li>
     <li>トレーニング日の間は必ず1日空ける。休養日は散歩程度ならOK。</li>
@@ -472,7 +539,7 @@
     <li>関節の痛み(筋肉痛と違う鋭い痛み)が出たら、その種目だけ重量を下げるか代替種目に。</li>
   </ul>
 
-  <h2><span class="no">08</span>12週間の流れと、その先</h2>
+  <h2><span class="no">09</span>12週間の流れと、その先</h2>
   <div class="phases">
     <div class="phase"><div class="w num">第1–2週</div><div class="b"><b>フォーム習得期</b><span>軽めの重量で全種目の動きを覚える。動画で自分のフォームを撮って確認。食事記録も開始</span></div></div>
     <div class="phase"><div class="w num">第3–8週</div><div class="b"><b>漸進期</b><span>毎回、記録の更新を狙う。体重が週0.2kg以上増えているか2週ごとに確認し、増えていなければ+200kcal</span></div></div>
@@ -514,9 +581,12 @@
       { id: 'ohe',       n: 'オーバーヘッドエクステンション', s: '2 × 10–15', sets: 2, hi: 15, p: ['arm'],   sec: [] },
     ],
   };
+  const EXBYID = {};
+  WORKOUTS.A.concat(WORKOUTS.B).forEach(e => { EXBYID[e.id] = e; });
   const state = { wo: 'A', sore: {}, woChosen: false }; // sore[id] = 'mild' | 'severe'
   const records = {};  // 種目id → 最新の記録
   const weights = [];  // [{date, kg}] 昇順
+  const trainDays = {}; // 日付 → その日の実施記録 {date, wo, done: {種目id: {hit}}}
   let last = null;     // 前回のワークアウト {wo, date}
   let store = null;
   const chipsEl = document.getElementById('chips');
@@ -530,10 +600,19 @@
   const wchartEl = document.getElementById('wchart');
   const wnoteEl = document.getElementById('wnote');
   const wentriesEl = document.getElementById('wentries');
+  const calTitleEl = document.getElementById('calTitle');
+  const calGridEl = document.getElementById('calGrid');
+  const calStatsEl = document.getElementById('calStats');
+  const calDetailEl = document.getElementById('calDetail');
   const labelOf = id => MUSCLES.find(m => m.id === id).label;
   const pad = n => String(n).padStart(2, '0');
   const now = new Date();
   const todayStr = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+  let calY = now.getFullYear(), calM = now.getMonth(); // カレンダーの表示月
+  const isHit = rec => {
+    const ex = EXBYID[rec.id];
+    return !!ex && Array.isArray(rec.reps) && rec.reps.length >= ex.sets && rec.reps.every(r => r >= ex.hi);
+  };
   const fmtMD = d => Number(d.slice(5, 7)) + '/' + Number(d.slice(8, 10));
   const flash = (btn, msg) => {
     const t = btn.dataset.label || btn.textContent;
@@ -653,8 +732,14 @@
       try {
         await store.set('records/' + ex.id, data);
         await store.set('meta/last', { wo: state.wo, date: todayStr });
+        const day = trainDays[todayStr] || { date: todayStr, wo: state.wo, done: {} };
+        day.wo = state.wo;
+        day.done[ex.id] = { hit: isHit(data) };
+        await store.set('days/' + todayStr, day);
+        trainDays[todayStr] = day;
         records[ex.id] = data;
         last = { wo: state.wo, date: todayStr };
+        renderCal();
         flash(btn, '保存 ✓');
         setTimeout(() => { applyLast(); render(); }, 900);
       } catch (e) {
@@ -834,6 +919,99 @@
     });
   }
 
+  // ---- トレーニングカレンダー ----
+  document.getElementById('calPrev').addEventListener('click', () => {
+    calM--; if (calM < 0) { calM = 11; calY--; }
+    calDetailEl.hidden = true;
+    renderCal();
+  });
+  document.getElementById('calNext').addEventListener('click', () => {
+    calM++; if (calM > 11) { calM = 0; calY++; }
+    calDetailEl.hidden = true;
+    renderCal();
+  });
+
+  function showDay(ds) {
+    const day = trainDays[ds];
+    if (!day) return;
+    const names = Object.keys(day.done).map(id =>
+      (day.done[id] && day.done[id].hit ? '★' : '') + (EXBYID[id] ? EXBYID[id].n : id));
+    calDetailEl.hidden = false;
+    calDetailEl.textContent = fmtMD(ds) + (day.wo ? '(ワークアウト' + day.wo + ')' : '') +
+      ': ' + names.join('、') + ' を記録。★は全セット上限達成。';
+  }
+
+  function renderCal() {
+    calTitleEl.textContent = calY + '年' + (calM + 1) + '月';
+    calGridEl.textContent = '';
+    ['日', '月', '火', '水', '木', '金', '土'].forEach(w => {
+      const h = document.createElement('div');
+      h.className = 'cw';
+      h.textContent = w;
+      calGridEl.appendChild(h);
+    });
+    const lead = new Date(calY, calM, 1).getDay();
+    for (let i = 0; i < lead; i++) {
+      const b = document.createElement('div');
+      b.className = 'cd blank';
+      calGridEl.appendChild(b);
+    }
+    const dim = new Date(calY, calM + 1, 0).getDate();
+    const prefix = calY + '-' + pad(calM + 1) + '-';
+    let trained = 0, starDays = 0;
+    for (let d = 1; d <= dim; d++) {
+      const ds = prefix + pad(d);
+      const day = trainDays[ds];
+      const n = day ? Object.keys(day.done).length : 0;
+      const cell = document.createElement(n ? 'button' : 'div');
+      if (n) cell.type = 'button';
+      cell.className = 'cd';
+      if (ds === todayStr) cell.classList.add('today');
+      const num = document.createElement('span');
+      num.textContent = d;
+      cell.appendChild(num);
+      if (n) {
+        trained++;
+        cell.classList.add(n >= 5 ? 'lv3' : n >= 3 ? 'lv2' : 'lv1');
+        if (day.wo) {
+          const wo = document.createElement('span');
+          wo.className = 'cwo';
+          wo.textContent = day.wo;
+          cell.appendChild(wo);
+        }
+        const anyHit = Object.keys(day.done).some(id => day.done[id] && day.done[id].hit);
+        if (anyHit) {
+          starDays++;
+          const st = document.createElement('span');
+          st.className = 'cstar';
+          st.textContent = '★';
+          cell.appendChild(st);
+        }
+        cell.setAttribute('aria-label', fmtMD(ds) + ' ' + n + '種目を記録' + (anyHit ? '、全セット上限達成あり' : ''));
+        cell.addEventListener('click', () => showDay(ds));
+      }
+      calGridEl.appendChild(cell);
+    }
+    // 今週(日曜はじまり)のトレーニング回数
+    const wkStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
+    let weekCount = 0;
+    Object.keys(trainDays).forEach(k => {
+      const t = new Date(Number(k.slice(0, 4)), Number(k.slice(5, 7)) - 1, Number(k.slice(8, 10)));
+      if (t >= wkStart && Object.keys(trainDays[k].done).length) weekCount++;
+    });
+    calStatsEl.textContent = '';
+    [
+      [weekCount + '<small style="font-size:14px"> /3回</small>', '今週のトレーニング'],
+      [trained + '<small style="font-size:14px"> 回</small>', (calM + 1) + '月のトレーニング日数'],
+      [starDays + '<small style="font-size:14px"> 日</small>', '★全セット上限を達成した日'],
+    ].forEach(pair => {
+      const k = document.createElement('div');
+      k.className = 'key';
+      k.innerHTML = '<div class="v num">' + pair[0] + '</div><div class="l">' + pair[1] + '</div>';
+      calStatsEl.appendChild(k);
+    });
+  }
+
   // ---- 保存先: db(クラウド)/ フォールバックはこの端末のブラウザ ----
   function localStore() {
     const KEY = 'buildplan-store';
@@ -857,22 +1035,32 @@
   store = localStore();
   render();
   renderWeight();
+  renderCal();
   (async () => {
     try {
       const db = window.claude && window.claude.use ? await window.claude.use('db') : null;
       if (db) store = dbStore(db);
       const recs = await store.list('records');
       const ws = await store.list('weights');
+      const ds = await store.list('days');
       const lst = await store.get('meta/last');
       recs.forEach(r => { if (r && r.id) records[r.id] = r; });
       weights.length = 0;
       ws.forEach(w => { if (w && w.date && typeof w.kg === 'number') weights.push(w); });
       weights.sort((a, b) => (a.date < b.date ? -1 : 1));
+      ds.forEach(d => { if (d && d.date && d.done) trainDays[d.date] = d; });
+      // days導入前に保存された記録からカレンダーを補完
+      Object.keys(records).forEach(id => {
+        const r = records[id];
+        if (!trainDays[r.date]) trainDays[r.date] = { date: r.date, wo: null, done: {} };
+        if (!trainDays[r.date].done[id]) trainDays[r.date].done[id] = { hit: isHit(r) };
+      });
       if (lst) last = lst;
     } catch (e) { /* 読み込めなくてもページ自体は使える */ }
     applyLast();
     render();
     renderWeight();
+    renderCal();
   })();
 </script>
 </body>
