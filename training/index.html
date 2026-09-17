@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>ビルドアップ計画 — 週3筋トレ&記録</title>
-  <meta name="description" content="ダンベルとベンチで体を大きくする週3全身トレーニング計画。筋肉痛チェッカー・トレーニング記録・達成度カレンダー・体重トラッカー付き。">
+  <meta name="description" content="ダンベルとベンチで体を大きくする週3全身トレーニング計画。フォーム図解・筋肉痛チェッカー・トレーニング記録・達成度カレンダー・体重トラッカー付き。">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏋️</text></svg>">
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#F6F5F1" media="(prefers-color-scheme: light)">
@@ -187,25 +187,27 @@
   }
   .wo-head .name { font-weight: 900; font-size: 16px; }
   .wo-head .focus { font-size: 12.5px; color: var(--ink-soft); margin-left: auto; text-align: right; }
-  .tblwrap { overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; min-width: 480px; }
-  th {
-    text-align: left; font-size: 11.5px; letter-spacing: 0.08em;
-    color: var(--ink-soft); font-weight: 700; text-transform: uppercase;
-    padding: 10px 14px 6px; border-bottom: 1px solid var(--line);
+  .excard {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px; border-bottom: 1px solid var(--line);
   }
-  td {
-    padding: 10px 14px; border-bottom: 1px solid var(--line);
-    vertical-align: top; font-size: 14px;
+  .excard:last-child { border-bottom: none; }
+  .exfig {
+    flex: 0 0 128px; width: 128px; height: auto;
+    color: var(--ink); border-radius: 8px; background: var(--bg);
   }
-  tr:last-child td { border-bottom: none; }
-  td.sets {
+  .exbody { min-width: 0; }
+  .exname { font-weight: 700; font-size: 14.5px; line-height: 1.5; }
+  .exname .target { font-weight: 400; font-size: 12px; color: var(--ink-soft); margin-left: 6px; }
+  .exsets {
     font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
-    font-size: 17px; white-space: nowrap; font-variant-numeric: tabular-nums;
+    font-size: 17px; color: var(--accent-ink); font-variant-numeric: tabular-nums;
+    margin: 1px 0 3px;
   }
-  td.ex { font-weight: 700; min-width: 11em; }
-  td.ex .target { display: block; font-weight: 400; font-size: 12px; color: var(--ink-soft); }
-  td.tip { color: var(--ink-soft); font-size: 13px; min-width: 16em; }
+  .exhow { font-size: 13px; margin: 0 0 3px; line-height: 1.7; }
+  .extip { font-size: 12.5px; color: var(--ink-soft); margin: 0; line-height: 1.7; }
+  .extip b { color: var(--accent-ink); font-weight: 700; }
+  @media (max-width: 430px) { .exfig { flex-basis: 100px; width: 100px; } }
 
   /* ---- meals ---- */
   .meals { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; margin: 16px 0; }
@@ -427,30 +429,242 @@
   <div class="workouts">
     <div class="wo">
       <div class="wo-head"><span class="tag num">A</span><span class="name">プレス重点の日</span><span class="focus">胸・脚・背中・肩・腕</span></div>
-      <div class="tblwrap">
-        <table>
-          <tr><th>種目</th><th>セット×回数</th><th>ポイント</th></tr>
-          <tr><td class="ex">ダンベルベンチプレス<span class="target">胸・肩・上腕三頭</span></td><td class="sets">3 × 8–12</td><td class="tip">胸を張り、肩甲骨を寄せたまま。下ろすとき2〜3秒かける</td></tr>
-          <tr><td class="ex">ゴブレットスクワット<span class="target">太もも・お尻</span></td><td class="sets">3 × 8–12</td><td class="tip">ダンベル1個を胸の前で縦に抱える。かかと重心でしゃがむ</td></tr>
-          <tr><td class="ex">ワンハンドロウ<span class="target">背中・上腕二頭</span></td><td class="sets">左右 3 × 8–12</td><td class="tip">片手と膝をベンチに乗せ、肘を腰へ引く。背中を丸めない</td></tr>
-          <tr><td class="ex">ダンベルショルダープレス<span class="target">肩</span></td><td class="sets">3 × 8–12</td><td class="tip">ベンチの背もたれを立てて座って行うと腰が安全</td></tr>
-          <tr><td class="ex">ルーマニアンデッドリフト<span class="target">もも裏・お尻・背中下部</span></td><td class="sets">3 × 10–12</td><td class="tip">膝を軽く曲げたままお尻を後ろへ。背中はまっすぐキープ</td></tr>
-          <tr><td class="ex">ダンベルカール<span class="target">上腕二頭</span></td><td class="sets">2 × 10–15</td><td class="tip">反動を使わず、下ろす動作をゆっくり</td></tr>
-        </table>
+      <div class="excard">
+        <svg class="exfig" viewBox="0 0 200 150" role="img" aria-label="ダンベルベンチプレスのフォーム図: ベンチに仰向けでダンベルを真上へ押す">
+          <line x1="12" y1="132" x2="188" y2="132" stroke="var(--line)" stroke-width="2"/>
+          <rect x="38" y="94" width="112" height="10" rx="3" fill="var(--surface-alt)" stroke="var(--ink-soft)" stroke-width="1.5"/>
+          <rect x="48" y="104" width="6" height="28" fill="var(--ink-soft)"/><rect x="132" y="104" width="6" height="28" fill="var(--ink-soft)"/>
+          <path d="M 58 88 L 106 88 L 126 102 L 132 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="46" cy="87" r="8" fill="currentColor"/>
+          <path d="M 70 88 L 70 50" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="70" cy="44" r="6.5" fill="var(--accent)"/><circle cx="70" cy="44" r="2" fill="var(--surface)"/>
+          <line x1="94" y1="78" x2="94" y2="54" stroke="var(--accent)" stroke-width="2.5"/>
+          <polygon points="94,46 89,56 99,56" fill="var(--accent)"/>
+        </svg>
+        <div class="exbody">
+          <div class="exname">ダンベルベンチプレス<span class="target">胸・肩・上腕三頭</span></div>
+          <div class="exsets">3 × 8–12</div>
+          <p class="exhow">ベンチに仰向けになり、ダンベルを胸の真上へ押し上げて、2〜3秒かけて胸の横まで下ろす。</p>
+          <p class="extip"><b>コツ:</b> 胸を張り、肩甲骨を寄せたまま。手首は立てて構える</p>
+        </div>
+      </div>
+      <div class="excard">
+        <svg class="exfig" viewBox="0 0 200 150" role="img" aria-label="ゴブレットスクワットのフォーム図: ダンベルを胸の前で抱えてしゃがむ">
+          <line x1="12" y1="132" x2="188" y2="132" stroke="var(--line)" stroke-width="2"/>
+          <path d="M 98 58 L 92 90 L 112 100 L 108 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 92 90 L 104 106 L 98 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="98" cy="50" r="8" fill="currentColor"/>
+          <path d="M 96 64 L 110 76 L 114 62" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="117" cy="57" r="6.5" fill="var(--accent)"/><circle cx="117" cy="57" r="2" fill="var(--surface)"/>
+          <line x1="60" y1="76" x2="60" y2="106" stroke="var(--accent)" stroke-width="2.5"/>
+          <polygon points="60,68 55,78 65,78" fill="var(--accent)"/>
+          <polygon points="60,114 55,104 65,104" fill="var(--accent)"/>
+        </svg>
+        <div class="exbody">
+          <div class="exname">ゴブレットスクワット<span class="target">太もも・お尻</span></div>
+          <div class="exsets">3 × 8–12</div>
+          <p class="exhow">ダンベル1個を胸の前で縦に抱え、椅子に座るようにしゃがんで立ち上がる。</p>
+          <p class="extip"><b>コツ:</b> かかと重心で、膝はつま先と同じ向き。太ももが床と平行になる深さまで</p>
+        </div>
+      </div>
+      <div class="excard">
+        <svg class="exfig" viewBox="0 0 200 150" role="img" aria-label="ワンハンドロウのフォーム図: 片手と膝をベンチに乗せてダンベルを引き上げる">
+          <line x1="12" y1="132" x2="188" y2="132" stroke="var(--line)" stroke-width="2"/>
+          <rect x="108" y="98" width="76" height="9" rx="3" fill="var(--surface-alt)" stroke="var(--ink-soft)" stroke-width="1.5"/>
+          <rect x="116" y="107" width="5" height="25" fill="var(--ink-soft)"/><rect x="170" y="107" width="5" height="25" fill="var(--ink-soft)"/>
+          <path d="M 68 64 L 116 72 L 138 96" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 116 72 L 108 104 L 100 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 74 66 L 104 96" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="56" cy="60" r="8" fill="currentColor"/>
+          <path d="M 72 66 L 64 90 L 60 106" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="58" cy="112" r="6.5" fill="var(--accent)"/><circle cx="58" cy="112" r="2" fill="var(--surface)"/>
+          <line x1="38" y1="110" x2="38" y2="88" stroke="var(--accent)" stroke-width="2.5"/>
+          <polygon points="38,80 33,90 43,90" fill="var(--accent)"/>
+        </svg>
+        <div class="exbody">
+          <div class="exname">ワンハンドロウ<span class="target">背中・上腕二頭</span></div>
+          <div class="exsets">左右 3 × 8–12</div>
+          <p class="exhow">片手と片膝をベンチに乗せ、もう片方の手のダンベルを脇腹(腰)へ向かって引き上げる。</p>
+          <p class="extip"><b>コツ:</b> 背中を丸めない。腕ではなく肩甲骨を寄せる意識で、肘は体の近くを通す</p>
+        </div>
+      </div>
+      <div class="excard">
+        <svg class="exfig" viewBox="0 0 200 150" role="img" aria-label="ダンベルショルダープレスのフォーム図: 座って頭上へ押し上げる">
+          <line x1="12" y1="132" x2="188" y2="132" stroke="var(--line)" stroke-width="2"/>
+          <rect x="100" y="62" width="8" height="52" rx="3" fill="var(--surface-alt)" stroke="var(--ink-soft)" stroke-width="1.5"/>
+          <rect x="84" y="110" width="42" height="9" rx="3" fill="var(--surface-alt)" stroke="var(--ink-soft)" stroke-width="1.5"/>
+          <rect x="90" y="119" width="5" height="13" fill="var(--ink-soft)"/><rect x="116" y="119" width="5" height="13" fill="var(--ink-soft)"/>
+          <path d="M 94 54 L 98 108 L 70 108 L 72 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="92" cy="46" r="8" fill="currentColor"/>
+          <path d="M 94 62 L 76 70 L 76 46" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="76" cy="40" r="6.5" fill="var(--accent)"/><circle cx="76" cy="40" r="2" fill="var(--surface)"/>
+          <line x1="54" y1="62" x2="54" y2="40" stroke="var(--accent)" stroke-width="2.5"/>
+          <polygon points="54,32 49,42 59,42" fill="var(--accent)"/>
+        </svg>
+        <div class="exbody">
+          <div class="exname">ダンベルショルダープレス<span class="target">肩</span></div>
+          <div class="exsets">3 × 8–12</div>
+          <p class="exhow">背もたれを立てたベンチに座り、耳の横に構えたダンベルを頭上へ押し上げる。</p>
+          <p class="extip"><b>コツ:</b> 腰を反らさない。背もたれを使うと腰が安全</p>
+        </div>
+      </div>
+      <div class="excard">
+        <svg class="exfig" viewBox="0 0 200 150" role="img" aria-label="ルーマニアンデッドリフトのフォーム図: お尻を後ろへ引きダンベルを下ろす">
+          <line x1="12" y1="132" x2="188" y2="132" stroke="var(--line)" stroke-width="2"/>
+          <path d="M 56 62 L 96 80 L 102 106 L 106 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="44" cy="58" r="8" fill="currentColor"/>
+          <path d="M 58 64 L 62 98" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="63" cy="104" r="6.5" fill="var(--accent)"/><circle cx="63" cy="104" r="2" fill="var(--surface)"/>
+          <line x1="32" y1="78" x2="32" y2="104" stroke="var(--accent)" stroke-width="2.5"/>
+          <polygon points="32,70 27,80 37,80" fill="var(--accent)"/>
+          <polygon points="32,112 27,102 37,102" fill="var(--accent)"/>
+        </svg>
+        <div class="exbody">
+          <div class="exname">ルーマニアンデッドリフト<span class="target">もも裏・お尻・背中下部</span></div>
+          <div class="exsets">3 × 10–12</div>
+          <p class="exhow">膝を軽く曲げたままお尻を後ろへ引き、ダンベルを脚に沿って膝下まで下ろして戻す。</p>
+          <p class="extip"><b>コツ:</b> 背中はまっすぐキープ。もも裏が伸びたのを感じたら立ち上がる</p>
+        </div>
+      </div>
+      <div class="excard">
+        <svg class="exfig" viewBox="0 0 200 150" role="img" aria-label="ダンベルカールのフォーム図: 肘を固定して巻き上げる">
+          <line x1="12" y1="132" x2="188" y2="132" stroke="var(--line)" stroke-width="2"/>
+          <path d="M 94 52 L 96 92 L 90 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 96 92 L 104 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="94" cy="44" r="8" fill="currentColor"/>
+          <path d="M 94 58 L 98 84 L 120 72" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="125" cy="68" r="6.5" fill="var(--accent)"/><circle cx="125" cy="68" r="2" fill="var(--surface)"/>
+          <path d="M 122 100 Q 144 90 132 62" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+          <polygon points="129,54 126,66 138,62" fill="var(--accent)"/>
+        </svg>
+        <div class="exbody">
+          <div class="exname">ダンベルカール<span class="target">上腕二頭</span></div>
+          <div class="exsets">2 × 10–15</div>
+          <p class="exhow">肘を体の横に固定したまま、ダンベルを肩へ向かって巻き上げる。</p>
+          <p class="extip"><b>コツ:</b> 反動を使わない。下ろす動作をゆっくり(2〜3秒)</p>
+        </div>
       </div>
     </div>
     <div class="wo">
       <div class="wo-head"><span class="tag num">B</span><span class="name">角度を変える日</span><span class="focus">胸上部・脚・背中・肩横・腕</span></div>
-      <div class="tblwrap">
-        <table>
-          <tr><th>種目</th><th>セット×回数</th><th>ポイント</th></tr>
-          <tr><td class="ex">インクラインダンベルプレス<span class="target">胸上部・肩</span></td><td class="sets">3 × 8–12</td><td class="tip">ベンチを30〜45度に。鎖骨の下あたりへ下ろす</td></tr>
-          <tr><td class="ex">ブルガリアンスクワット<span class="target">太もも・お尻</span></td><td class="sets">左右 3 × 8–10</td><td class="tip">後ろ足をベンチに乗せる。最初は自重だけで練習してよい</td></tr>
-          <tr><td class="ex">チェストサポートロウ<span class="target">背中</span></td><td class="sets">3 × 8–12</td><td class="tip">傾けたベンチにうつ伏せになり両手で引く。腰に優しい</td></tr>
-          <tr><td class="ex">サイドレイズ<span class="target">肩の横(肩幅を作る)</span></td><td class="sets">3 × 12–15</td><td class="tip">軽い重量で肩の高さまで。すくめない</td></tr>
-          <tr><td class="ex">ダンベルヒップスラスト<span class="target">お尻・もも裏</span></td><td class="sets">3 × 10–15</td><td class="tip">背中上部をベンチに預け、腰にダンベルを乗せて持ち上げる</td></tr>
-          <tr><td class="ex">オーバーヘッドエクステンション<span class="target">上腕三頭(腕の太さの2/3)</span></td><td class="sets">2 × 10–15</td><td class="tip">ダンベル1個を両手で頭上に。肘を開きすぎない</td></tr>
-        </table>
+      <div class="excard">
+        <svg class="exfig" viewBox="0 0 200 150" role="img" aria-label="インクラインダンベルプレスのフォーム図: 傾けたベンチで斜め上へ押す">
+          <line x1="12" y1="132" x2="188" y2="132" stroke="var(--line)" stroke-width="2"/>
+          <line x1="58" y1="118" x2="118" y2="70" stroke="var(--line)" stroke-width="12" stroke-linecap="round"/>
+          <line x1="88" y1="98" x2="88" y2="130" stroke="var(--ink-soft)" stroke-width="4"/>
+          <path d="M 72 106 L 104 80" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <path d="M 72 106 L 56 114 L 60 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="112" cy="72" r="8" fill="currentColor"/>
+          <path d="M 104 80 L 116 50" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="118" cy="44" r="6.5" fill="var(--accent)"/><circle cx="118" cy="44" r="2" fill="var(--surface)"/>
+          <line x1="140" y1="72" x2="149" y2="49" stroke="var(--accent)" stroke-width="2.5"/>
+          <polygon points="152,41 143,47 152,52" fill="var(--accent)"/>
+        </svg>
+        <div class="exbody">
+          <div class="exname">インクラインダンベルプレス<span class="target">胸上部・肩</span></div>
+          <div class="exsets">3 × 8–12</div>
+          <p class="exhow">ベンチを30〜45度に傾けて仰向けになり、ダンベルを斜め上へ押し上げる。</p>
+          <p class="extip"><b>コツ:</b> 鎖骨の下あたりへ下ろす。角度を立てすぎると肩の種目になる</p>
+        </div>
+      </div>
+      <div class="excard">
+        <svg class="exfig" viewBox="0 0 200 150" role="img" aria-label="ブルガリアンスクワットのフォーム図: 後ろ足をベンチに乗せて前脚でしゃがむ">
+          <line x1="12" y1="132" x2="188" y2="132" stroke="var(--line)" stroke-width="2"/>
+          <rect x="128" y="100" width="58" height="9" rx="3" fill="var(--surface-alt)" stroke="var(--ink-soft)" stroke-width="1.5"/>
+          <rect x="136" y="109" width="5" height="23" fill="var(--ink-soft)"/><rect x="172" y="109" width="5" height="23" fill="var(--ink-soft)"/>
+          <path d="M 84 54 L 82 84 L 66 104 L 70 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 82 84 L 110 100 L 134 98" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="84" cy="46" r="8" fill="currentColor"/>
+          <path d="M 84 60 L 90 92" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="91" cy="98" r="6.5" fill="var(--accent)"/><circle cx="91" cy="98" r="2" fill="var(--surface)"/>
+          <line x1="46" y1="76" x2="46" y2="102" stroke="var(--accent)" stroke-width="2.5"/>
+          <polygon points="46,68 41,78 51,78" fill="var(--accent)"/>
+          <polygon points="46,110 41,100 51,100" fill="var(--accent)"/>
+        </svg>
+        <div class="exbody">
+          <div class="exname">ブルガリアンスクワット<span class="target">太もも・お尻</span></div>
+          <div class="exsets">左右 3 × 8–10</div>
+          <p class="exhow">後ろ足の甲をベンチに乗せ、前脚だけでしゃがんで立ち上がる。</p>
+          <p class="extip"><b>コツ:</b> 最初は自重だけで練習してOK。前膝はつま先と同じ向きに</p>
+        </div>
+      </div>
+      <div class="excard">
+        <svg class="exfig" viewBox="0 0 200 150" role="img" aria-label="チェストサポートロウのフォーム図: 傾けたベンチにうつ伏せでダンベルを引く">
+          <line x1="12" y1="132" x2="188" y2="132" stroke="var(--line)" stroke-width="2"/>
+          <line x1="58" y1="118" x2="118" y2="70" stroke="var(--line)" stroke-width="12" stroke-linecap="round"/>
+          <line x1="88" y1="98" x2="88" y2="130" stroke="var(--ink-soft)" stroke-width="4"/>
+          <path d="M 66 102 L 98 74" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <path d="M 66 102 L 52 112 L 56 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="106" cy="66" r="8" fill="currentColor"/>
+          <path d="M 96 76 L 94 96 L 92 110" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="91" cy="116" r="6.5" fill="var(--accent)"/><circle cx="91" cy="116" r="2" fill="var(--surface)"/>
+          <line x1="134" y1="114" x2="134" y2="92" stroke="var(--accent)" stroke-width="2.5"/>
+          <polygon points="134,84 129,94 139,94" fill="var(--accent)"/>
+        </svg>
+        <div class="exbody">
+          <div class="exname">チェストサポートロウ<span class="target">背中</span></div>
+          <div class="exsets">3 × 8–12</div>
+          <p class="exhow">傾けたベンチに胸を預けてうつ伏せになり、両手のダンベルを引き上げる。</p>
+          <p class="extip"><b>コツ:</b> 肩をすくめず、肘を後ろへ引く。腰に優しいロウ種目</p>
+        </div>
+      </div>
+      <div class="excard">
+        <svg class="exfig" viewBox="0 0 200 150" role="img" aria-label="サイドレイズのフォーム図: 両腕を横へ肩の高さまで上げる(正面から)">
+          <line x1="12" y1="132" x2="188" y2="132" stroke="var(--line)" stroke-width="2"/>
+          <path d="M 100 48 L 100 94 L 90 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 100 94 L 110 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="100" cy="40" r="8" fill="currentColor"/>
+          <path d="M 100 56 L 68 72" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <path d="M 100 56 L 132 72" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="62" cy="75" r="6.5" fill="var(--accent)"/><circle cx="62" cy="75" r="2" fill="var(--surface)"/>
+          <circle cx="138" cy="75" r="6.5" fill="var(--accent)"/><circle cx="138" cy="75" r="2" fill="var(--surface)"/>
+          <line x1="72" y1="100" x2="58" y2="84" stroke="var(--accent)" stroke-width="2.5"/>
+          <polygon points="53,78 55,89 65,81" fill="var(--accent)"/>
+          <line x1="128" y1="100" x2="142" y2="84" stroke="var(--accent)" stroke-width="2.5"/>
+          <polygon points="147,78 145,89 135,81" fill="var(--accent)"/>
+        </svg>
+        <div class="exbody">
+          <div class="exname">サイドレイズ<span class="target">肩の横(肩幅を作る)</span></div>
+          <div class="exsets">3 × 12–15</div>
+          <p class="exhow">両手のダンベルを体の横から肩の高さまで持ち上げて下ろす。</p>
+          <p class="extip"><b>コツ:</b> 軽い重量で。肩をすくめず、肘を少し曲げたまま上げる</p>
+        </div>
+      </div>
+      <div class="excard">
+        <svg class="exfig" viewBox="0 0 200 150" role="img" aria-label="ダンベルヒップスラストのフォーム図: 背中上部をベンチに預けてお尻を持ち上げる">
+          <line x1="12" y1="132" x2="188" y2="132" stroke="var(--line)" stroke-width="2"/>
+          <rect x="18" y="88" width="52" height="9" rx="3" fill="var(--surface-alt)" stroke="var(--ink-soft)" stroke-width="1.5"/>
+          <rect x="24" y="97" width="5" height="35" fill="var(--ink-soft)"/><rect x="58" y="97" width="5" height="35" fill="var(--ink-soft)"/>
+          <path d="M 58 90 L 104 86 L 126 96 L 126 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="42" cy="80" r="8" fill="currentColor"/>
+          <circle cx="100" cy="77" r="6.5" fill="var(--accent)"/><circle cx="100" cy="77" r="2" fill="var(--surface)"/>
+          <line x1="80" y1="70" x2="80" y2="50" stroke="var(--accent)" stroke-width="2.5"/>
+          <polygon points="80,42 75,52 85,52" fill="var(--accent)"/>
+        </svg>
+        <div class="exbody">
+          <div class="exname">ダンベルヒップスラスト<span class="target">お尻・もも裏</span></div>
+          <div class="exsets">3 × 10–15</div>
+          <p class="exhow">背中の上部をベンチに預けて座り、腰に乗せたダンベルごとお尻を持ち上げる。</p>
+          <p class="extip"><b>コツ:</b> 上げきったとき肩から膝まで一直線。お尻をぎゅっと締める</p>
+        </div>
+      </div>
+      <div class="excard">
+        <svg class="exfig" viewBox="0 0 200 150" role="img" aria-label="オーバーヘッドエクステンションのフォーム図: 頭上でダンベルを持ち肘から下だけ曲げ伸ばし">
+          <line x1="12" y1="132" x2="188" y2="132" stroke="var(--line)" stroke-width="2"/>
+          <path d="M 94 54 L 96 94 L 90 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 96 94 L 104 130" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="94" cy="46" r="8" fill="currentColor"/>
+          <path d="M 94 58 L 100 30 L 116 40" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="121" cy="44" r="6.5" fill="var(--accent)"/><circle cx="121" cy="44" r="2" fill="var(--surface)"/>
+          <path d="M 130 66 Q 138 40 112 26" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+          <polygon points="104,24 116,21 114,32" fill="var(--accent)"/>
+        </svg>
+        <div class="exbody">
+          <div class="exname">オーバーヘッドエクステンション<span class="target">上腕三頭(腕の太さの2/3)</span></div>
+          <div class="exsets">2 × 10–15</div>
+          <p class="exhow">ダンベル1個を両手で頭上に持ち、肘の位置を固定して肘から下だけを曲げ伸ばしする。</p>
+          <p class="extip"><b>コツ:</b> 肘を開きすぎない。頭の後ろへゆっくり下ろす</p>
+        </div>
       </div>
     </div>
   </div>
