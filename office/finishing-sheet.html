@@ -52,7 +52,7 @@
   <header>
     <h1>✅ 仕上げ質問シート</h1>
     <p class="lede">投稿前にあなたにしか答えられない点だけを集めました。答えたら本文に反映して「投稿可」にします。無回答の項目は各問のデフォルトで処理し、事実の創作はしません。</p>
-    <div class="chips"><span class="chip">2026-09-18 更新</span><span class="chip">1案件</span><span class="chip">4問</span><span class="chip">約2分</span></div>
+    <div class="chips"><span class="chip">2026-09-19 更新</span><span class="chip">3案件</span><span class="chip">6問</span><span class="chip">約3分</span></div>
   </header>
 
   <section class="item">
@@ -65,6 +65,12 @@
   </section>
 
   <section class="item">
+    <h2>🔍 監査役の指摘による確認<small>2026-09-19 監査報告より / 約30秒</small></h2>
+    <div class="q"><b>Q5</b><div><strong>AI秘書 完全手順書</strong>の「日本時間の朝9時は前日の深夜0時（UTC）」（誤り）を、修正文「日本時間の朝9時は、UTCでは同じ日の午前0時。曜日を前日にずらす必要はありません」に直してよいですか？<div class="ans">→ はい／いいえ</div><div class="def">デフォルト: 誤りの部分を削除し「内部的にはUTCで動くため、『日本時間で』と明記して頼むのが安全です」に一般化</div><div class="note">※「はい」で2週間続いた修正待ちが解消し、手順書が投稿できます</div></div></div>
+    <div class="q"><b>Q6</b><div>ブログ<strong>「秋田市の外壁塗装は30坪でいくら？」</strong>（9/22 公開予約）の「当社はお見積りに塗料のメーカー名と製品名を明記しています」は事実ですか？<div class="ans">→ はい／いいえ</div><div class="def">デフォルト: 「見積書に塗料のメーカー名と製品名が書いてあるかを確認してください」の一般論に置換</div><div class="note">※記事全体はOK済みですが、見積書の「証拠」として使う一文なので念のため確認します</div></div></div>
+  </section>
+
+  <section class="item">
     <h2>✅ 質問なしで投稿可になったもの<small>2026-09-18</small></h2>
     <ul>
       <li><span class="tag">投稿可</span>GPT-6 Astra は「AI社員」になれるか（無料） — 校閲合格・空欄0。数字の鮮度が命のトレンド記事なので早めの投稿を</li>
@@ -74,7 +80,7 @@
   <section class="item">
     <h2>⚠ 投稿可だが、投稿前に修正待ち</h2>
     <ul>
-      <li><span class="tag wait">修正待ち</span>Claude CodeでAI秘書を作る完全手順書（500円） — 監査🔴「日本時間の朝9時は前日の深夜0時（UTC）」は誤り（同じ日の 0:00 UTC）。まだ未修正。校閲が修正するまで投稿を待ってください</li>
+      <li><span class="tag wait">修正待ち</span>Claude CodeでAI秘書を作る完全手順書（500円） — 監査🔴の UTC 表記の誤りが未修正。上の Q5 に「はい」で仕上げ担当が直します</li>
     </ul>
   </section>
 
@@ -109,7 +115,9 @@
     <pre id="tpl">Q1
 Q2
 Q3
-Q4 </pre>
+Q4
+Q5
+Q6 </pre>
     <button class="copy" type="button" id="copy">テンプレートをコピー</button>
   </section>
 
