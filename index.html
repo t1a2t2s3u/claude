@@ -236,6 +236,7 @@ h1{font-family:"Shippori Mincho","Noto Sans JP",serif;font-weight:600;font-size:
 .prog-num small{font-size:.5em;font-weight:500;color:var(--muted)}
 .prog{height:10px;border-radius:5px;background:var(--surface2);overflow:hidden;margin-top:8px}
 .prog span{display:block;height:100%;background:var(--accent);border-radius:5px;min-width:2px}
+.prog.over span{background:var(--c-ex)}
 .warn-dot{color:var(--hanko);font-weight:600}
 .item-name .tag{margin-left:6px;vertical-align:1px}
 .ytable tr.sec td{background:var(--surface2);font-size:.72rem;color:var(--muted);font-weight:600;padding:5px 8px}
@@ -1114,16 +1115,19 @@ function calcDeductions(pr, income){
 /* ふるさと納税。所得税は所得控除、住民税は税額控除（基本分＋特例分） */
 function furusato(pr, income, itRate, rtIncomeTax){
   const g = pr.ded.furusato;
-  if(g<=2000) return {itDed:0, rtCredit:0, limit:0, over:false};
-  const itDed = Math.max(0, Math.min(g, income*0.4) - 2000);
-  const base = Math.max(0, Math.min(g, income*0.3) - 2000) * 0.10;
   const cap = rtIncomeTax * 0.20;
   const rate = 0.90 - itRate;
+  /* 自己負担2,000円で収まる寄附の上限。枠は寄附額と関係なく決まるので、
+     まだ寄附していなくても出せる。住民税の所得割がない年は枠そのものが無い */
+  const limit = (rate>0 && cap>0) ? Math.floor((cap/rate + 2000)/1000)*1000 : 0;
+  const left = Math.max(0, limit - g);
+  if(g<=2000) return {itDed:0, rtCredit:0, limit, left, over:false};
+  const itDed = Math.max(0, Math.min(g, income*0.4) - 2000);
+  const base = Math.max(0, Math.min(g, income*0.3) - 2000) * 0.10;
   const specialRaw = rate>0 ? (g-2000) * rate : 0;
   const special = Math.min(specialRaw, cap);
-  /* 自己負担2,000円で収まる寄附の上限 */
-  const limit = rate>0 ? Math.floor((cap/rate + 2000)/1000)*1000 : 0;
-  return {itDed, rtCredit: Math.round(base+special), limit, over: specialRaw > cap+1};
+  return {itDed, rtCredit: Math.round(base+special), limit, left,
+    over: specialRaw > cap+1};
 }
 
 /* 年ごとの事業の利益（青色控除前・按分込み） */
@@ -2811,7 +2815,7 @@ function taxTips(t, y){
   if(t.rt>0 && t.fs.limit>0){
     const done = pr.ded.furusato;
     tips.push({t: t.fs.over ? 'ふるさと納税が上限を超えています'
-        : done>0 ? 'ふるさと納税はあと'+yen(Math.max(0, t.fs.limit-done))+'まで' : 'ふるさと納税',
+        : done>0 ? 'ふるさと納税はあと'+yen(t.fs.left)+'まで' : 'ふるさと納税',
       dep:null, save:0, hot:t.fs.over,
       b:'税が減るわけではなく、<b>先に払って返礼品を受け取る</b>制度です。実質負担は2,000円。'
         +'いまの所得なら<b>年 '+yen(t.fs.limit)+'</b> くらいまでが目安で、'
@@ -3083,12 +3087,46 @@ function dedModalHtml(){
     + '</form></div></div>';
 }
 
+/* ふるさと納税の枠と残り。寄附がまだ無くても「あといくら使えるか」を出す */
+function furusatoNote(fs){
+  const g = state.profile.ded.furusato;
+  if(fs.limit<=0){
+    return g>0
+      ? '<div class="notice warn-notice" style="margin:14px 0 0">'
+        + '<b>今年はふるさと納税で戻ってくる税がありません。</b>'
+        + 'いまの記録では住民税の所得割がかからないため、寄附した '+yen(g)+' は全額自己負担になります。'
+        + '収入をまだ入れ切っていない場合は、全部記録してからもう一度見てください。</div>'
+      : '';
+  }
+  const pct = Math.min(100, Math.round(g/fs.limit*100));
+  const head = fs.over
+    ? '<b>ふるさと納税が上限を '+yen(g-fs.limit)+' 超えています。</b>'
+      + '超えた分は税から戻らず、そのまま自己負担になります。'
+    : g>0
+      ? '<b>ふるさと納税は、あと '+yen(fs.left)+' まで使えます。</b>'
+      : '<b>ふるさと納税は、いまの所得なら '+yen(fs.limit)+' まで使えます。</b>';
+  return '<div class="notice '+(fs.over?'warn-notice':'info-notice')+'" style="margin:14px 0 0">'
+    + head
+    /* 空のゲージは「まだ無い」のか「読めない」のか分からないので、寄附があるときだけ出す */
+    + (g>0 ? '<div class="prog'+(fs.over?' over':'')+'" style="margin:9px 0 7px">'
+      + '<span style="width:'+pct+'%"></span></div>' : '<div style="height:9px"></div>')
+    + '<div class="sub-note">上限の目安 '+yen(fs.limit)+'　／　記録した寄附 '+yen(g)
+    + '　／　'+(fs.over?'超過 '+yen(g-fs.limit):'残り '+yen(fs.left))+'</div>'
+    + '寄附のうち2,000円は必ず自己負担です。上限は年末の所得で決まるので、'
+    + '<b>収入を全部記録してから</b>確かめてください。'
+    + (g>0 ? '' : '寄附したら「入力する」から金額を入れると、残りがここに出ます。')
+    + '</div>';
+}
+
 /* 目安タブに出す、いま効いている控除のまとめ */
 function dedCard(t){
   const rows = t.ded.rows;
   const fs = t.fs || {itDed:0, rtCredit:0, limit:0, over:false};
   const head = '<div class="panel-head"><h2>所得控除</h2><div class="actions">'
     + '<button class="btn-sm" data-act="ded">入力する</button></div></div>';
+  /* ふるさと納税は「あといくら使えるか」が知りたいところなので、
+     寄附がまだ0でも枠と残りを出す */
+  const fsNote = furusatoNote(fs);
   /* 「配偶者がいる」にチェックがあるのに控除が0円のとき、その理由を出す */
   const spNote = t.ded.spouseNote
     ? '<div class="notice warn-notice" style="margin:14px 0 0">'
@@ -3099,7 +3137,7 @@ function dedCard(t){
     return '<section class="card panel">'+head
       + '<div class="hint">小規模企業共済・iDeCo・生命保険料・医療費・扶養家族などを入れると、'
       + 'その分だけ所得税と住民税が下がります。<b>小規模企業共済とiDeCoは掛金が全額</b>引けるので、'
-      + '効き目がいちばん大きいところです。</div>'+spNote+'</section>';
+      + '効き目がいちばん大きいところです。</div>'+spNote+fsNote+'</section>';
   }
   const body = rows.map(r=>'<div class="trow"><span class="tlab">'+r.label
     + (r.note?'<small>'+r.note+'</small>':'')+'</span>'
@@ -3112,21 +3150,18 @@ function dedCard(t){
       + '<span class="tval">'+yen(fs.itDed)+'<small style="font-weight:400;color:var(--muted)">／住民税から '
       + yen(fs.rtCredit)+'</small></span></div>'
     : '';
-  const fsNote = state.profile.ded.furusato>0 && fs.limit>0
-    ? '<div class="notice '+(fs.over?'warn-notice':'info-notice')+'" style="margin:14px 0 0">'
-      + (fs.over
-        ? '<b>ふるさと納税が上限を超えています。</b>実質2,000円で収まる目安は <b>'+yen(fs.limit)+'</b> までで、'
-          + '超えた分は自己負担になります。'
-        : 'ふるさと納税は、いまの所得なら <b>'+yen(fs.limit)+'</b> くらいまでが目安です'
-          + '（これを超えると自己負担が増えます）。')
-      + '収入を全部記録してから確認してください。</div>'
-    : '';
+  /* ふるさと納税の所得税分は所得控除なので合計に入れる。
+     住民税分は税額控除で、所得から引くものではないので入れない */
   return '<section class="card panel">'+head
     + '<div class="hint">所得税と住民税で控除額が違うものは、右側に住民税の額も出しています。</div>'
     + body + fsRow
     + '<div class="trow total"><span class="tlab">合計</span>'
-    + '<span class="tval">'+yen(t.ded.it)+'<small style="font-weight:400;color:var(--muted)">／住民税 '
+    + '<span class="tval">'+yen(t.ded.it + fs.itDed)+'<small style="font-weight:400;color:var(--muted)">／住民税 '
     + yen(t.ded.rt)+'</small></span></div>'
+    + (fs.rtCredit>0
+      ? '<div class="sub-note" style="margin-top:6px">住民税のふるさと納税 '+yen(fs.rtCredit)
+        + ' は、所得からではなく<b>税額から直接</b>引かれるので、この合計には入れていません。</div>'
+      : '')
     + spNote
     + fsNote
     + '</section>';

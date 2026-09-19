@@ -180,6 +180,31 @@ group('通し：収入800万・経費200万・控除いろいろ・秋田3人世
   eq('ふるさと納税・税額控除', t.fs.rtCredit, 43420);
   eq('ふるさと納税の上限目安', t.fs.limit, 47000);
   eq('上限超えの判定',      t.fs.over, true);
+  eq('上限を超えたら残り0',  t.fs.left, 0);
+});
+
+/* ふるさと納税の枠は寄附額と関係なく決まるので、まだ寄附していなくても出せる */
+group('ふるさと納税の残り枠', ()=>{
+  const mk = furusato => boot({ v:4, payments:[], biz:[
+      {id:'i', type:'in', name:'元請', amount:8000000, y:2026, m:6, d:30, cat:'sales'},
+      {id:'e', type:'ex', name:'材料', amount:2000000, y:2026, m:6, d:15, cat:'buy'}],
+    profile: Object.assign({}, base, {invoice:true, ctMethod:'simple', ctSimpleType:3,
+      care40:true, nhiMembers:3, bizTaxRate:5,
+      ded:{ kyosai:840000, lifeGen:80000, lifeMed:40000, lifePen:80000, quake:50000,
+            spouse:true, spouseIncome:0, depGeneral:1, depSpecific:1, furusato }}) }).calcTax(2026);
+  eq('寄附0でも上限は同じ',    mk(0).fs.limit,  47000);
+  eq('寄附0なら残りは上限',    mk(0).fs.left,   47000);
+  eq('2万寄附したら残り2.7万', mk(20000).fs.left, 27000);
+  eq('上限ぴったりなら残り0',  mk(47000).fs.left, 0);
+  eq('上限ぴったりは超過なし', mk(47000).fs.over, false);
+
+  /* 住民税の所得割がかからない年は、枠そのものが無い（寄附しても戻らない） */
+  const poor = boot({ v:4, payments:[], biz:[
+      {id:'i', type:'in', name:'元請', amount:1200000, y:2026, m:6, d:30, cat:'sales'}],
+    profile: Object.assign({}, base, {ded:{ furusato:30000 }}) }).calcTax(2026);
+  eq('住民税の所得割が0',      poor.rtTaxable, 0);
+  eq('枠は0（2,000円ではない）', poor.fs.limit, 0);
+  eq('残りも0',                poor.fs.left, 0);
 });
 
 group('通し：白色・控除なしとの差（控除が効いているか）', ()=>{
