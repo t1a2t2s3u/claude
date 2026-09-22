@@ -388,4 +388,12 @@ def _warnings(content: content_mod.Content) -> list[str]:
         )
     if not content.works:
         warnings.append("施工事例が1件もありません。塗装業では最も効くコンテンツです。")
+    # cover は全記事そろって初めて一覧に出る (post_thumbs_ready)。1本でも欠けると
+    # 全記事のサムネイルが消えるが、画面を見ないと気づけないので警告で知らせる。
+    missing_cover = [post.slug for post in content.posts if not post.cover]
+    if missing_cover and len(missing_cover) != len(content.posts):
+        warnings.append(
+            "cover の無い記事があるため、一覧のサムネイルが1枚も表示されません: "
+            + "、".join(missing_cover)
+        )
     return warnings
