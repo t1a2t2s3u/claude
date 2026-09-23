@@ -52,21 +52,20 @@
   <header>
     <h1>✅ 仕上げ質問シート</h1>
     <p class="lede">投稿前にあなたにしか答えられない点だけを集めました。答えたら本文に反映して「投稿可」にします。無回答の項目は各問のデフォルトで処理し、事実の創作はしません。</p>
-    <div class="chips"><span class="chip">2026-09-22 更新</span><span class="chip">回答待ち 0件</span></div>
+    <div class="chips"><span class="chip">2026-09-23 更新</span><span class="chip">1案件</span><span class="chip">2問</span><span class="chip">約1分</span></div>
   </header>
 
-  <section class="item empty">
-    <div class="big">🎉</div>
-    <h2>回答待ちの案件はありません</h2>
-    <p>新しい下書きや校閲メモが出たら、毎日12:00の稼働でここに質問が並びます。</p>
+  <section class="item">
+    <h2>📄 運用日記 第3回：AIが書いた記事をAIが監査したら<small>投稿待ち・無料 / 約1分</small></h2>
+    <p class="muted">校閲合格（9/23）。残るのは体験1箇所と連載リンクだけです。</p>
+    <div class="q"><b>Q1</b><div>監査報告で間違いを指摘されたとき、<strong>正直どう思いましたか</strong>（1〜2文で）<div class="ans">「AIがAIを疑うの、意味あるんだ」のような実感でも十分です</div><div class="def">デフォルト: この一文を削除（前後の説明だけで成立します）</div></div></div>
+    <div class="q"><b>Q2</b><div>本文の【第1回のURL】【第2回のURL】は<strong>残して投稿後に貼りますか</strong>？<div class="ans">→ 残す／削除</div><div class="def">デフォルト: 削除して「第1回では」「第2回では」に一般化し、本文を投稿可にする</div><div class="note">※「何をどこまで任せるか」では残す判断をされたので、同じにするなら「残す」とだけ送ってください</div></div></div>
   </section>
 
   <section class="item">
-    <h2>📦 直近の反映（2026-09-20）<small>3案件・6問</small></h2>
+    <h2>✅ 質問なしで投稿可になったもの<small>2026-09-23</small></h2>
     <ul>
-      <li><span class="tag">反映済み</span>AI社員に「何をどこまで任せるか」（500円） — 体験2箇所を反映（感想＝「あれ？」／任せたくない業務＝最終的な判断）。Q3「いいえ」で記事URL5箇所は残置</li>
-      <li><span class="tag">投稿可</span>Claude CodeでAI秘書を作る完全手順書（500円） — Q5「はい」で監査🔴のUTC表記を修正。2週間の修正待ちが解消</li>
-      <li><span class="tag">確認済み</span>ブログ「秋田市の外壁塗装は30坪でいくら？」 — Q6「はい」＝事実のため本文は変更なし。メモに記録</li>
+      <li><span class="tag">投稿可</span>AI社員同士はどうやって連絡を取り合っているのか（無料） — 校閲合格・空欄0。連載第3回への言及があるため、第3回の後に公開するのが自然です</li>
     </ul>
   </section>
 
@@ -89,18 +88,41 @@
       <li><span class="tag">6</span>Claude CodeでAI秘書を作る完全手順書（500円・UTC修正済み）</li>
       <li><span class="tag">7</span>AI社員の「雇用契約書」の書き方（500円・手順書の後）</li>
       <li><span class="tag wait">8</span>AI社員に「何をどこまで任せるか」（500円・上のURLを貼ってから、7 の後）</li>
-      <li><span class="tag">GBP</span>投稿案 残り2本（【要確認】なし。オフィスボードの「あなたの番」にコピー札あり）: 秋の屋根チェック5項目／塗り替え時期5つのサイン。「【ブログ更新】20年していないとどうなる？」は 9/20 投稿済み</li>
+      <li><span class="tag wait">9</span>運用日記 第3回（無料・上の Q1〜2 の回答後、第2回の後）</li>
+      <li><span class="tag">10</span>AI社員同士はどうやって連絡を取り合っているのか（無料・第3回の後）</li>
+      <li><span class="tag">GBP</span>投稿案 残り2本（【要確認】なし。オフィスボードの「あなたの番」にコピー札あり）: 秋の屋根チェック5項目／塗り替え時期5つのサイン</li>
     </ul>
   </section>
 
   <section class="item">
     <h2>📦 対象外（参考）</h2>
     <ul>
-      <li><span class="tag wait">校閲待ち</span>運用日記 第3回／AI社員間の連携（9/21 執筆） — 校閲合格後に、体験の空欄と連載URLを質問します</li>
-      <li><span class="tag">公開済み</span>ブログ「秋田市の外壁塗装は30坪でいくら？」 — 2026-09-22 公開（10/6から前倒し）。仕上げ対象から外れました</li>
+      <li><span class="tag">空</span>articles/drafts は空です（校閲待ちなし）</li>
       <li><span class="tag">空欄なし</span>本日のSNS投稿</li>
     </ul>
   </section>
 
+  <section class="reply">
+    <h3>📝 回答テンプレート</h3>
+    <p>コピーしてチャットに貼り、埋めて送ってください。答えない問は空欄のままで大丈夫です。</p>
+    <pre id="tpl">Q1
+Q2 </pre>
+    <button class="copy" type="button" id="copy">テンプレートをコピー</button>
+  </section>
+
   <footer>仕上げ担当が毎日12:00に更新します。回答済みの案件はシートから消えます。</footer>
 </div>
+
+<script>
+  const btn = document.getElementById("copy"), tpl = document.getElementById("tpl").textContent;
+  btn.addEventListener("click", async () => {
+    let ok = false;
+    try { await navigator.clipboard.writeText(tpl); ok = true; }
+    catch (e) {
+      const ta = document.createElement("textarea"); ta.value = tpl; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select(); try { ok = document.execCommand("copy"); } catch (e2) {} document.body.removeChild(ta);
+    }
+    btn.textContent = ok ? "コピーしました" : "選択してコピーしてください";
+    setTimeout(() => { btn.textContent = "テンプレートをコピー"; }, 2000);
+  });
+</script>
