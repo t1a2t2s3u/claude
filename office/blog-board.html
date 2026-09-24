@@ -120,26 +120,26 @@
   <header class="mast">
     <p class="kicker">Tatsumi Tosou Kogyo · Blog</p>
     <h1>辰弥塗装工業 ブログ記事ボード</h1>
-    <p>ホームページのブログに載せる前の記事を、ここで確認します。OKが出るまで公開はしません。<span>2026-09-24 更新</span></p>
+    <p>ホームページのブログに載せる前の記事を、ここで確認します。OKが出るまで公開はしません。<span>2026-09-24 更新（公開予約に変更）</span></p>
     <div class="stats">
-      <div class="stat review"><b>1</b><span>確認待ち（あなたの番）</span></div>
-      <div class="stat sched"><b>0</b><span>公開予約（確認済み）</span></div>
+      <div class="stat review"><b>0</b><span>確認待ち（あなたの番）</span></div>
+      <div class="stat sched"><b>1</b><span>公開予約（確認済み）</span></div>
       <div class="stat pub"><b>5</b><span>公開済み</span></div>
     </div>
   </header>
 
   <section class="howto">
-    <div><b>返し方</b>　チャットに <code>ブログ amamori OK</code> のように書けば公開作業に進みます。公開日の入れ替えのご相談も、カード内に書いています。</div>
+    <div><b>返し方</b>　チャットに <code>ブログ &lt;スラッグ&gt; OK</code> のように書けば公開作業に進みます。いまOK待ちの記事はありません。</div>
     <div>直したい所は <code>修正: 段落2の「〜」を「〜」に</code> の形で。事実の間違い（料金・保証・実績）は特に教えてください。</div>
     <div>本文の「全文を読む」を開くと、サイトに載る形とほぼ同じ見た目で確認できます。</div>
   </section>
 
   <!-- ARTICLES:START -->
 
-  <article class="card" data-status="review" id="2026-10-akita-amamori">
-    <div class="card-head"><span class="pill review">確認待ち（あなたの番）</span><span>あなたのご依頼分・公開日はご相談</span></div>
+  <article class="card" data-status="scheduled" id="2026-10-akita-amamori">
+    <div class="card-head"><span class="pill sched">公開予約 10/6（火）9:00</span><span>9/24 にOKをいただきました・修正は10/5までに</span></div>
     <h2>秋田市で雨漏りしたら？原因の見つけ方と、やってはいけない応急処置</h2>
-    <div class="card-url">公開URL（予定）: <a href="https://tatsumi-tosou.com/blog/2026-10-akita-amamori/">https://tatsumi-tosou.com/blog/2026-10-akita-amamori/</a></div>
+    <div class="card-url">公開URL（予約済み）: <a href="https://tatsumi-tosou.com/blog/2026-10-akita-amamori/">https://tatsumi-tosou.com/blog/2026-10-akita-amamori/</a></div>
     <p class="desc"><small>検索結果に出る説明文（description・124字）</small>秋田市で天井や壁にシミが出たら、まず原因を探すことから始まります。雨漏りは水が入る場所と漏れる場所が違うことが多く、見えている所を塞ぐだけでは止まりません。雪が融けて再び凍る「すが漏り」など秋田特有の原因と、やってはいけない応急処置をまとめました。</p>
     <h3>SEOのねらい</h3>
     <dl class="seo">
@@ -153,13 +153,14 @@
       <dt>写真</dt><dd class="ok">cover は既存の屋根作業写真（works/shokunin-yane.jpg）を設定済み。<b>ビルドでサムネイル表示まで確認しました</b>（9/22 のような cover 欠落は起きません）</dd>
       <dt>検査</dt><dd class="ok">site-build --strict 15ページ成功／pytest 145件すべて通過</dd>
     </dl>
-    <h3>確認してほしい点（2つ）</h3>
+    <h3>確認事項（9/24 回答いただき、反映済み）</h3>
     <ol>
-      <li><b>協力業者の社名を記事に書いてよいですか。</b> 板金が必要な場合は「協力業者をご紹介します」とだけ書き、社名は伏せています。伏せたままでも記事は成立します。</li>
-      <li>応急処置に「濡れている場所に配線や照明があればブレーカーを落とす」と入れました。この案内で問題ないでしょうか。</li>
+      <li>協力業者の社名は<b>伏せたまま</b> → 本文の【要確認】を削除し、「協力業者をご紹介します」のままにしました。社名・資格・料金は書いていません。</li>
+      <li>応急処置のブレーカーの案内は<b>そのままで可</b> → 本文は変更していません。</li>
     </ol>
-    <h3>公開日のご相談 — 入れ替えを提案します</h3>
-    <p class="photo">いまの予定は 10/06 が「雪止め」（未執筆）、10/13 がこの雨漏り記事です。<b>雨漏りを 10/06、雪止めを 10/13 に入れ替えることを提案します。</b>「雨漏り 秋田市」はいま表示回数が全クエリ中1位で受け皿がゼロなので、1週でも早いほうが効きます。雪止めはブリーフの目安（初雪の平年日 11/15 の1か月前）に 10/13 でも収まります。入れ替え不要なら、このまま 10/13 で進めます。</p>
+    <p class="photo">本文に残っている【要確認】は<b>0件</b>です。10/6（火）の朝9時に公開します。</p>
+    <h3>公開日（9/24 決定）— 雪止めと入れ替えました</h3>
+    <p class="photo">10/06（火）にこの雨漏り記事を<b>公開</b>、10/13（火）に雪止めの記事を<b>執筆・納品</b>します。雨漏りは表示回数が全クエリ中1位で受け皿がゼロのため前に出しました。雪止めは 10/13 執筆でも、ブリーフの目安（初雪の平年日 11/15 の1か月前に公開）に収まります。</p>
     <details>
       <summary>全文を読む</summary>
       <div class="body-text">
@@ -287,5 +288,5 @@
     </div>
   </section>
 
-  <footer>塗装ブログライターが毎週火曜に更新します（新規は月3本、既存記事の加筆が月1本）。9月の新規3本は公開済み。この雨漏り記事はあなたからのご依頼分で、10月の1本として書きました。9/29（火）は9月の加筆1本（対象「塗り替え時期」）を納品します。</footer>
+  <footer>塗装ブログライターが毎週火曜に更新します（新規は月3本、既存記事の加筆が月1本）。9月の新規3本は公開済み。この雨漏り記事はあなたからのご依頼分で、10/06（火）に公開します。9/29（火）は9月の加筆1本（対象「塗り替え時期」）を納品します。</footer>
 </div>
