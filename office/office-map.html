@@ -100,6 +100,16 @@
   .boards a:hover, .boards a:focus-visible { background: var(--panel-alt); outline: none; }
   .boards a.hot { border-color: var(--d-main); }
 
+  /* ===== 今日やること（秘書の朝礼より） ===== */
+  .todo ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: todo; }
+  .todo li { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start; border: 2px solid var(--line); border-radius: 3px; background: var(--panel-alt); padding: 8px 10px; }
+  .todo li::before { counter-increment: todo; content: counter(todo); font-family: "DotGothic16", monospace; font-weight: 700; font-size: 1rem; color: var(--d-main); text-align: center; }
+  .todo .t-ttl { font-weight: 700; font-size: .88rem; line-height: 1.45; }
+  .todo .t-note { font-size: .76rem; color: var(--ink-soft); margin: 2px 0 0; }
+  .todo .pr { font-family: "DotGothic16", monospace; font-size: .64rem; padding: 1px 6px; border-radius: 3px; margin-left: 6px; vertical-align: 1px; background: var(--off-bg); color: var(--off); white-space: nowrap; }
+  .todo .pr.hi { background: var(--d-main); color: #fff; }
+  .todo .t-date { font-family: "DotGothic16", monospace; font-size: .68rem; color: var(--ink-soft); margin-left: 8px; font-weight: 400; }
+
   /* ===== あなたの番（本業の確認待ち） ===== */
   .inbox h3 .cnt { display: inline-block; min-width: 1.4em; text-align: center; margin-left: 6px; padding: 0 6px; border-radius: 3px; background: var(--d-main); color: #fff; font-size: .78rem; }
   .inbox h3 .cnt.zero { background: var(--off-bg); color: var(--off); }
@@ -188,6 +198,12 @@
     <a href="https://claude.ai/code/artifact/a2022666-784a-45e2-b650-c67103b3d4df">✅ 仕上げ質問シート</a>
     <a href="https://claude.ai/artifact/HKPwK3npkyC3XTYYjziMHU">🧭 企画ボード（新規事業）</a>
   </nav>
+
+  <section class="panel todo" aria-label="今日やること">
+    <h3>📌 今日やること ─ 重要な順<span class="t-date" id="todo-date"></span></h3>
+    <ol id="todo"><li><div><div class="t-ttl">読み込み中…</div></div></li></ol>
+    <p class="note">秘書が毎朝のブリーフィングと同時に更新します。詳しくは ☀️ 朝のブリーフィング へ。</p>
+  </section>
 
   <section class="panel inbox" aria-label="あなたの番 ─ 本業の確認待ち">
     <h3>🔔 あなたの番 ─ 本業（SEO・MEO）からの確認待ち<span class="cnt zero" id="inbox-cnt">0</span></h3>
@@ -733,9 +749,23 @@
 
   function tick() { $("#clock").textContent = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" }); }
 
+  // ===================== 今日やること（秘書が today/<YYYYMMDD> を毎朝更新） =====================
+  const TODO_FALLBACK = { date: "2026-09-24", items: [
+    { title: "note の1本目を投稿する", priority: "高", note: "投稿可8本。推奨1位は「GPT-6 Astra は『AI社員』になれるか」（無料・鮮度優先）" },
+    { title: "仕上げ質問2問に回答（約1分）", priority: "中", note: "運用日記03の体験1箇所＋連載リンク。仕上げ質問シートから" },
+    { title: "キットの通知フォーム＋販売ページ公開", priority: "中", note: "フォーム5分＋note公開15分（価格 ¥3,980 決定済み）" },
+    { title: "note アカウントの現状を編集長に共有", priority: "中", note: "" },
+    { title: "秘書AIの試運転を完了にする", priority: "中", note: "問題なければ「完了にして」とチャットで" },
+  ] };
+  function renderTodo(t) {
+    const d = t && Array.isArray(t.items) && t.items.length ? t : TODO_FALLBACK;
+    $("#todo-date").textContent = d.date ? d.date + " の朝礼より" : "";
+    $("#todo").innerHTML = d.items.map((i) => `<li><div><div class="t-ttl">${esc(i.title || "")}${i.priority ? `<span class="pr ${i.priority === "高" ? "hi" : ""}">優先 ${esc(i.priority)}</span>` : ""}</div>${i.note ? `<div class="t-note">${esc(i.note)}</div>` : ""}</div></li>`).join("");
+  }
+
   // ===================== 起動 =====================
   tick(); setInterval(tick, 15000);
-  resize(); renderGauges(); renderStats(null); renderSchedule(null);
+  resize(); renderGauges(); renderStats(null); renderSchedule(null); renderTodo(null);
   inboxItems = INBOX_FALLBACK; renderInbox(inboxItems);
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(loop));
   setInterval(renderGauges, 60000);
@@ -762,6 +792,7 @@
     db.doc("office/stats").onSnapshot((snap) => { if (snap.exists) renderStats(snap.data()); }, dead);
     db.doc("office/schedule").onSnapshot((snap) => { if (snap.exists) renderSchedule(snap.data()); }, dead);
     db.collection("schedule").orderBy("updated_at", "desc").limit(1).onSnapshot((snap) => { if (!snap.empty) renderSchedule(snap.docs[0].data()); }, dead);
+    db.collection("today").orderBy("updated_at", "desc").limit(1).onSnapshot((snap) => { if (!snap.empty) renderTodo(snap.docs[0].data()); }, dead);
     db.collection("activity").orderBy("at", "desc").limit(14).onSnapshot((snap) => {
       renderFeed(snap);
       actLatest = {}; snap.docs.forEach((d) => { const e = d.data(); if (e.who && !actLatest[e.who]) actLatest[e.who] = e; }); mergeLive();

@@ -123,9 +123,11 @@ uses fresh ids and only inbox/status fixes touch existing documents:
 `activity/<YYYYMMDD-HHMM>` for the feed (the board also shows each
 employee's latest feed entry as their status, so `employees/<id>` is
 legacy), `schedule/<YYYYMMDD>` (seo-director only) for the painting
-business's upcoming update schedule (the board shows the newest), and
-`office/stats` (secretary only) for task-board counts. Reporting is
-best-effort — sessions without the Artifact tool skip it.
+business's upcoming update schedule (the board shows the newest),
+`today/<YYYYMMDD>` (secretary only) for the day's tasks in priority order
+(shown at the top of the board's home panel; schema in the secretary
+skill), and `office/stats` (secretary only) for task-board counts.
+Reporting is best-effort — sessions without the Artifact tool skip it.
 
 **Owner inbox (「あなたの番」)**: anything the painting-business staff need
 from the owner — a reply to choose between options, an OK on an article, a

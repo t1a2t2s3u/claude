@@ -91,18 +91,26 @@ git push -u origin claude/ai-employee-claude-code-d99jvr
 
 ### 6. オフィスボードへの報告
 
-稼働の最後に、Artifact ツールの write_db でオフィスボード
-（URL は CLAUDE.md の「Office board」参照）を更新する。
-Artifact ツールが使えないセッションではスキップしてよい（必須ではない）。
+稼働の最後に、ArtifactData ツールでオフィスボード
+（URL は CLAUDE.md の「Office board」参照）の db を更新する。
+ツールが使えないセッションではスキップしてよい（必須ではない）。
 
-- `employees/secretary` を set:
-  `{status: "idle", message: "<今回やったことを一言>", updated_at: "<現在UTC ISO>"}`
-  （長時間の作業中は最初に status: "working" で set してもよい）
 - `activity/<YYYYMMDD-HHMM>` を set:
   `{at: "<現在UTC ISO>", who: "秘書", emoji: "🗂️", text: "<何をしたか>"}`
-- `office/stats` を set: ボードの実数で
-  `{inbox, today, doing, waiting, drafts, published, updated_at}`
+  （ボードはこの最新エントリを秘書の状態としても表示する。
+  `employees/secretary` は旧方式なので更新不要）
+- `office/stats` を set（要 if_version — 直前に読んで version を渡す）:
+  ボードの実数で `{inbox, today, doing, waiting, drafts, published, updated_at}`
   （drafts/published は articles/ 内のファイル数）
+- **`today/<YYYYMMDD>` を set**（定期稼働時・新規ドキュメント）:
+  その日の「今日やるべきこと」を重要な順で。オフィスボードのホーム最上部
+  「📌 今日やること」欄がこの最新ドキュメントを表示する。
+  ```
+  {date: "YYYY-MM-DD", updated_at: "<現在UTC ISO>",
+   items: [{title: "<短い動詞形>", priority: "高|中|低", note: "<一言・省略可>"}, …]}
+  ```
+  並び順はブリーフィングの「今日やるべきこと」と同じ（ボード外の
+  仕上げ質問なども、朝礼に載せたなら含めてよい。多くても5件）。
 
 ## してはいけないこと
 
