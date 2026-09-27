@@ -52,14 +52,14 @@
   <header>
     <h1>✅ 仕上げ質問シート</h1>
     <p class="lede">投稿前にあなたにしか答えられない点だけを集めました。答えたら本文に反映して「投稿可」にします。無回答の項目は各問のデフォルトで処理し、事実の創作はしません。</p>
-    <div class="chips"><span class="chip">2026-09-27 更新</span><span class="chip">回答待ち 0件</span></div>
+    <div class="chips"><span class="chip">2026-09-27 更新</span><span class="chip">1案件</span><span class="chip">1問</span><span class="chip">約30秒</span></div>
   </header>
 
-  <section class="item empty">
-    <div class="big">🎉</div>
-    <h2>回答待ちの案件はありません</h2>
-    <p>新しい下書きや校閲メモが出たら、毎日12:00の稼働でここに質問が並びます。</p>
+  <section class="item">
+    <h2>🔍 監査役の指摘による確認<small>2026-09-26 監査報告より / 約30秒</small></h2>
+    <div class="q"><b>Q1</b><div><strong>AI社員同士はどうやって連絡を取り合っているのか</strong>の「時期の誤り」を、監査役の指摘どおりに直してよいですか？<div class="ans">→ はい／いいえ</div><div class="def">デフォルト: 直さず、記事を「修正待ち」のまま保留</div><div class="note">※セッション間メッセージは8月上旬に導入済みで、9/18 は不具合修正だけでした。冒頭と「v2.1.277〜278 の主役2つ」を事実に合わせ、出典を1件足します。構成・主張は変えません。「はい」で投稿順5番が投稿可に戻ります</div></div></div>
   </section>
+
 
   <section class="item">
     <h2>📦 直近の反映（2026-09-27）<small>note 投稿順を優先順に並べ替え・運用日記 第3回・2問</small></h2>
@@ -86,7 +86,7 @@
       <li><span class="tag">2</span>運用日記 第1回：Claude Codeに秘書を雇ってみた（無料）— 連載の入口</li>
       <li><span class="tag">3</span>運用日記 第2回：秘書を雇ったのに、10日間なにも届かなかった話（無料・第1回の後）</li>
       <li><span class="tag wait">4</span>運用日記 第3回：AIが書いた記事をAIが監査したら…（無料・第1回・第2回のURLを貼ってから）— AI量産記事への警戒が強い今いちばん刺さる</li>
-      <li><span class="tag">5</span>AI社員同士はどうやって連絡を取り合っているのか（無料・第3回の後）— 9/19 の新機能が題材</li>
+      <li><span class="tag wait">5</span>AI社員同士はどうやって連絡を取り合っているのか（無料・第3回の後）— ⚠ 修正待ち: 監査🔴の時期の誤り。上の Q1 に「はい」で投稿可に戻ります</li>
       <li><span class="tag">6</span>「AI社員」ブームの正体 — 実際に運用してわかった、できること・まだ幻想なこと（無料）</li>
       <li><span class="tag">7</span>AIに「下書き」を任せ、人間は「編集」に集中する——コンテンツ制作の新しい分業術（無料）</li>
       <li><span class="tag">8</span>Claude CodeでAI秘書を作る完全手順書（500円）</li>
@@ -105,5 +105,26 @@
     </ul>
   </section>
 
+  <section class="reply">
+    <h3>📝 回答テンプレート</h3>
+    <p>コピーしてチャットに貼り、埋めて送ってください。</p>
+    <pre id="tpl">Q1 </pre>
+    <button class="copy" type="button" id="copy">テンプレートをコピー</button>
+  </section>
+
   <footer>仕上げ担当が毎日12:00に更新します。回答済みの案件はシートから消えます。</footer>
 </div>
+
+<script>
+  const btn = document.getElementById("copy"), tpl = document.getElementById("tpl").textContent;
+  btn.addEventListener("click", async () => {
+    let ok = false;
+    try { await navigator.clipboard.writeText(tpl); ok = true; }
+    catch (e) {
+      const ta = document.createElement("textarea"); ta.value = tpl; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select(); try { ok = document.execCommand("copy"); } catch (e2) {} document.body.removeChild(ta);
+    }
+    btn.textContent = ok ? "コピーしました" : "選択してコピーしてください";
+    setTimeout(() => { btn.textContent = "テンプレートをコピー"; }, 2000);
+  });
+</script>
