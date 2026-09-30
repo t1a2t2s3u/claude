@@ -51,7 +51,8 @@ customers for honest reviews is fine.
 - **researcher** — weekly trend reports (`strategy/research/`). Sundays.
 - **writer** — note drafts into `articles/drafts/`. Tue/Thu.
 - **reviewer** — proofreads and promotes to `articles/ready/`. Wed/Fri.
-- **sns** — X and Threads drafts into `sns/queue.md`, three a day. Daily.
+- **sns** — X and Threads drafts into `sns/queue.md`, two a day (a morning
+  main post and an optional spare). Daily.
 - **analyst** — owner-supplied metrics into `analytics/`. Saturdays.
 
 Boundary: AI staff research, plan, and draft; the owner publishes to note,
