@@ -99,8 +99,10 @@ placeholders for these — fabricating experiences or earnings is forbidden).
   definitions of the Search Console / SEO / MEO terms the reports use — staff
   gloss a term on first use), `schedule.md` (the website /
   Business Profile update schedule, summarised on the office board),
-  `photo-requests.md` (the standing list of photos the owner needs to
-  shoot), `reports/`, `briefs/`,
+  `photo-requests.md` (shooting rules — the stock-photo ban, what must never
+  be published, what is already shot; the photo **request queue** itself lives
+  on the site branch at `docs/photo-requests.md`, added to before a run
+  starts), `reports/`, `briefs/`,
   `articles/` (site-format drafts plus `.memo.md` sidecars; see its README),
   and `gbp/queue.md` (Business Profile post drafts).
 - `office/` — HTML sources of the published boards (office, blog board,
