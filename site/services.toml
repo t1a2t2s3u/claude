@@ -34,32 +34,32 @@ includes = [
 name = "シリコン塗料"
 durability = "約7年"
 warranty = "1年"
-price = "84万円"
+price = "89万円"
 
 [[package]]
 name = "ラジカル制御型塗料"
 durability = "約10年"
 warranty = "2年"
-price = "90万円"
+price = "96万円"
 
 [[package]]
 name = "フッ素塗料"
 durability = "約15年"
 warranty = "3年"
-price = "109万円"
+price = "120万円"
 
 [[package]]
 name = "遮熱塗料"
 durability = "約15年"
 warranty = "4年"
-price = "114万円"
+price = "126万円"
 note = "夏の室温上昇を抑えたい方に"
 
 [[package]]
 name = "無機塗料"
 durability = "約20年"
 warranty = "5年"
-price = "116万円"
+price = "131万円"
 
 # ---------------------------------------------------------------
 # 工事の内容。料金は上のパックに含まれるため、ここには書かない。
