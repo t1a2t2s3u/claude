@@ -444,24 +444,36 @@ table.price-table thead th {
 }
 .pt-name { font-weight: 700; color: var(--brand-deep); }
 .pt-note { display: block; font-size: .78rem; font-weight: 500; color: var(--ink-muted); }
-.pt-durability { font-size: .9rem; color: var(--ink-muted); white-space: nowrap; }
-.pt-warranty {
-  font-size: .9rem; font-weight: 700; color: var(--brand-text);
-  white-space: nowrap;
-}
 .pt-price {
   font-weight: 700; color: var(--accent); font-size: 1.15rem;
   text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums;
 }
 .price-tax { margin: 0 0 1.5rem; font-size: .8rem; color: var(--ink-muted); }
 
-/* 狭い画面では余白と文字を詰める。料金の列が画面外に出ると、いちばん
-   知りたい数字が見えないまま終わってしまう。 */
-@media (max-width: 26rem) {
-  table.price-table th, table.price-table td { padding: .7rem .3rem; }
-  .pt-name { font-size: .95rem; }
-  .pt-durability, .pt-warranty { font-size: .82rem; }
-  .pt-price { font-size: 1rem; }
+/* 狭い画面では5列が収まらず、塗料名が1文字ずつ折り返して崩れる。
+   横スクロールにすると料金が画面外に出てしまうので、表をやめて
+   1塗料=1ブロックに積み替える（トップの料金カードと同じ見え方になる）。 */
+@media (max-width: 40rem) {
+  table.price-table { min-width: 0; }
+  table.price-table thead { display: none; }
+  table.price-table tbody { display: block; }
+  table.price-table tr {
+    display: flex; flex-direction: column;
+    padding: .9rem 0; border-bottom: 1px solid var(--line);
+  }
+  table.price-table td { display: block; border: 0; padding: 0; }
+  .pt-name { order: 1; font-size: 1.05rem; }
+  .pt-price { order: 2; text-align: left; font-size: 1.35rem; margin: .1rem 0 .45rem; }
+  .pt-rate { order: 3; }
+  /* 表のヘッダが消えるぶん、各行に項目名を出す */
+  .pt-rate {
+    display: grid; grid-template-columns: 3.7rem auto 1fr;
+    align-items: baseline; gap: .45rem; margin-top: .1rem;
+  }
+  .pt-rate::before {
+    content: attr(data-label); font-size: .74rem; color: var(--ink-muted);
+  }
+  .pt-rate .pt-note { display: inline; }
 }
 
 .includes, .bonus {
@@ -495,14 +507,22 @@ table.price-table thead th {
   margin: 0; font-weight: 700; font-size: 1.25rem; color: var(--accent);
   white-space: nowrap; font-variant-numeric: tabular-nums;
 }
-/* 星は耐久年数の言い換え。金額(オレンジ)と競らないよう、落ち着いた色にする */
-.price-stars { color: var(--brand-text); letter-spacing: .04em; white-space: nowrap; }
-.price-yearly {
-  grid-column: 1 / -1; margin: .3rem 0 0; font-size: .78rem;
-  color: var(--brand-text); font-weight: 700;
-}
-.pt-yearly { white-space: nowrap; font-variant-numeric: tabular-nums; }
-.pt-years { display: block; font-size: .8rem; color: var(--ink-muted); }
+/* ---------- 評価の星 ---------- */
+/* 金色は「評価」として最も読み慣れた色。金額のオレンジとは色味を分ける */
+.stars { white-space: nowrap; letter-spacing: .02em; font-size: .95rem; }
+.stars-on { color: #d99a0b; }
+.stars-off { color: #d9dee1; }
+
+/* 料金カードの3項目（耐久・保証・コスパ） */
+.ratings { grid-column: 1 / -1; margin: .5rem 0 0; display: grid; gap: .1rem; }
+.ratings > div { display: grid; grid-template-columns: 3.2rem auto 1fr; align-items: baseline; gap: .4rem; }
+.ratings dt { font-size: .74rem; color: var(--ink-muted); }
+.ratings dd { margin: 0; display: contents; }
+.rating-note { font-size: .74rem; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+
+/* 料金表（サービス・料金ページ） */
+.pt-rate { white-space: nowrap; }
+.pt-note { display: block; font-size: .76rem; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
 .price-note-stars { margin: .6rem 0 0; font-size: .8rem; color: var(--ink-muted); }
 
 .service-tag {

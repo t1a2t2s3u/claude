@@ -189,6 +189,36 @@ class Package:
             return ""
         return f"約{self.price_man / self.years:.1f}万円"
 
+    @property
+    def warranty_years(self) -> int:
+        """保証年数の数値。「5年」→ 5。読めなければ 0。"""
+        import re
+
+        m = re.search(r"\d+", self.warranty)
+        return int(m.group()) if m else 0
+
+    @property
+    def warranty_stars(self) -> int:
+        """保証の星。1〜5年がそのまま星1〜5に対応する。"""
+        return min(self.warranty_years, 5)
+
+    @property
+    def value_stars(self) -> int:
+        """コスパの星。1年あたりの費用が安いほど多い。
+
+        区切りは実際の金額（約6.5〜12.7万円）の分布に合わせた。
+        """
+        if not (self.years and self.price_man):
+            return 0
+        per_year = self.price_man / self.years
+        if per_year < 7.5:
+            return 5
+        if per_year < 8.5:
+            return 4
+        if per_year < 11:
+            return 3
+        return 2
+
 
 @dataclass
 class PackagePlan:

@@ -27,3 +27,21 @@
   </div>
 </nav>
 {% endmacro %}
+
+{# 評価の星。label は読み上げ用。n は 0〜5 #}
+{% macro stars(n, label) %}
+<span class="stars" role="img" aria-label="{{ label }}は5段階中{{ n }}">
+  <span class="stars-on">{{ '★' * n }}</span><span class="stars-off">{{ '★' * (5 - n) }}</span>
+</span>
+{%- endmacro %}
+
+{# 料金カード・料金表で使う3項目の評価 #}
+{% macro rating_rows(package) %}
+<dl class="ratings">
+  <div><dt>耐久</dt><dd>{{ stars(package.stars, '耐久') }}<span class="rating-note">{{ package.durability }}</span></dd></div>
+  <div><dt>保証</dt><dd>{{ stars(package.warranty_stars, '保証') }}<span class="rating-note">{{ package.warranty }}</span></dd></div>
+  {% if package.yearly_cost %}
+  <div><dt>コスパ</dt><dd>{{ stars(package.value_stars, 'コスパ') }}<span class="rating-note">{{ package.yearly_cost }}/年</span></dd></div>
+  {% endif %}
+</dl>
+{%- endmacro %}

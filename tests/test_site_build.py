@@ -359,16 +359,29 @@ def test_prices_are_labelled_tax_inclusive(built):
 
 
 def test_every_package_shows_its_warranty(built):
-    """保証年数は塗料ごとに違う。表から落ちると「最大5年」しか伝わらない。"""
+    """保証年数は塗料ごとに違う。表から落ちると「最大5年」しか伝わらない。
+
+    マークアップ（クラス名や星の有無）は変わり得るので、料金表の行の中に
+    保証年数が文字として出ていることだけを見る。
+    """
+    import re
+
     from seo_meo.site import content as content_mod
 
     _, out = built
     html = read(out, "services/index.html")
     packages = content_mod.load_packages(SITE_ROOT)
     assert packages
+
+    # 料金表の各行。塗料名と同じ行に保証年数が載っていることを確かめる。
+    rows = re.findall(r"<tr>(.*?)</tr>", html, re.S)
     for package in packages:
         assert package.warranty, f"{package.name} に warranty が無い"
-        assert f'<td class="pt-warranty">{package.warranty}</td>' in html
+        row = next((r for r in rows if package.name in r), None)
+        assert row is not None, f"{package.name} の行が料金表に無い"
+        assert f">{package.warranty}<" in row, (
+            f"{package.name} の行に保証年数 {package.warranty} が無い"
+        )
 
 
 def test_generated_html_tags_are_balanced(built):
