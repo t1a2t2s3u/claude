@@ -147,6 +147,48 @@ class Package:
     warranty: str = ""
     note: str = ""
 
+    # 以下は durability と price から計算する。手で星の数を決めると、
+    # 料金や耐久年数を直したときに食い違う。表示はすべてここから導く。
+
+    @property
+    def years(self) -> int:
+        """耐久年数の数値。「約7年」→ 7。読めなければ 0。"""
+        import re
+
+        m = re.search(r"\d+", self.durability)
+        return int(m.group()) if m else 0
+
+    @property
+    def price_man(self) -> int:
+        """料金（万円）。「89万円」→ 89。読めなければ 0。"""
+        import re
+
+        m = re.search(r"\d+", self.price)
+        return int(m.group()) if m else 0
+
+    @property
+    def stars(self) -> int:
+        """耐久の目安を5段階で。境目は塗料グレードの一般的な区切りに合わせた。
+
+        星はあくまで耐久年数の言い換えであって、評価ではない。耐汚染性などの
+        独自の採点は、メーカーの資料が無いまま作ると事実の創作になるのでやらない。
+        """
+        y = self.years
+        if y >= 18:
+            return 5
+        if y >= 13:
+            return 4
+        if y >= 8:
+            return 3
+        return 2 if y else 0
+
+    @property
+    def yearly_cost(self) -> str:
+        """1年あたりの費用。「約12.7万円」。高いグレードほど安くなる。"""
+        if not (self.years and self.price_man):
+            return ""
+        return f"約{self.price_man / self.years:.1f}万円"
+
 
 @dataclass
 class PackagePlan:

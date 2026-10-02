@@ -112,8 +112,14 @@
       {% for package in packages %}
       <div class="price-card">
         <p class="price-name">{{ package.name }}</p>
-        <p class="price-durability">耐久年数 {{ package.durability }}</p>
+        <p class="price-durability">
+          <span class="price-stars" role="img" aria-label="耐久の目安は5段階中{{ package.stars }}">{{ '★' * package.stars }}{{ '☆' * (5 - package.stars) }}</span>
+          耐久 {{ package.durability }}
+        </p>
         <p class="price-amount">{{ package.price }}</p>
+        {% if package.yearly_cost %}
+        <p class="price-yearly">1年あたり {{ package.yearly_cost }}</p>
+        {% endif %}
       </div>
       {% endfor %}
     </div>

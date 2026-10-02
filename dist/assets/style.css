@@ -495,6 +495,15 @@ table.price-table thead th {
   margin: 0; font-weight: 700; font-size: 1.25rem; color: var(--accent);
   white-space: nowrap; font-variant-numeric: tabular-nums;
 }
+/* 星は耐久年数の言い換え。金額(オレンジ)と競らないよう、落ち着いた色にする */
+.price-stars { color: var(--brand-text); letter-spacing: .04em; white-space: nowrap; }
+.price-yearly {
+  grid-column: 1 / -1; margin: .3rem 0 0; font-size: .78rem;
+  color: var(--brand-text); font-weight: 700;
+}
+.pt-yearly { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pt-years { display: block; font-size: .8rem; color: var(--ink-muted); }
+.price-note-stars { margin: .6rem 0 0; font-size: .8rem; color: var(--ink-muted); }
 
 .service-tag {
   margin: 0; font-size: .82rem; font-weight: 700; color: var(--brand-text);

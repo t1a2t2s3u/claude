@@ -265,3 +265,33 @@ def test_work_without_photos_has_no_cover(tmp_path):
     work = c.load(write_site(tmp_path)).works[0]
     assert work.pairs == []
     assert work.cover_image == ""
+
+
+def test_package_stars_and_yearly_cost_are_derived():
+    """星と1年あたりの費用は、耐久年数と料金から計算する。
+
+    手で決めた値を持たせると、料金改定のたびに食い違う。星はあくまで
+    耐久年数の言い換えで、独自の採点ではない。
+    """
+    from seo_meo.site.content import Package
+
+    p = Package(name="無機塗料", durability="約20年", price="131万円", warranty="5年")
+    assert p.years == 20
+    assert p.price_man == 131
+    assert p.stars == 5
+    assert p.yearly_cost == "約6.5万円"
+
+    cheap = Package(name="シリコン塗料", durability="約7年", price="89万円", warranty="1年")
+    assert cheap.stars == 2
+    assert cheap.yearly_cost == "約12.7万円"
+
+    # グレードが上がるほど1年あたりは安くなる、という関係が崩れていないこと
+    assert float(cheap.yearly_cost[1:-3]) > float(p.yearly_cost[1:-3])
+
+
+def test_package_without_numbers_does_not_crash():
+    """耐久年数や料金が「別途お見積り」のような文字列でも落ちない。"""
+    from seo_meo.site.content import Package
+
+    p = Package(name="特別仕様", durability="応相談", price="別途お見積り")
+    assert p.years == 0 and p.stars == 0 and p.yearly_cost == ""
