@@ -68,7 +68,7 @@ placeholders for these — fabricating experiences or earnings is forbidden).
 ### 管理 — 管理部 (`TASKS.md`, `reports/`, `audit/`, `finishing/`)
 
 - **secretary** — cross-department task board and the morning briefing.
-  Weekday mornings. Any task-related request from the user goes through it.
+  Every morning, weekends included (weekend lists lead with the longer tasks). Any task-related request from the user goes through it.
 - **auditor** — spot-checks every department's output for fabrication,
   puffery, legal risk, and rule violations; reports in `audit/` and files
   🔴 items on the task board. Saturdays. Flags, does not rewrite (except a
@@ -167,7 +167,7 @@ The morning briefing as a one-tap page (highlight of the day, today's tasks,
 owner action items, board counts, team activity):
 https://claude.ai/code/artifact/35755c24-c2e8-4945-b2d9-fb2f515f9e00
 
-Source: `office/briefing-board.html`. The secretary rewrites it each weekday
+Source: `office/briefing-board.html`. The secretary rewrites it every
 morning from that day's `reports/YYYY-MM-DD.md` and republishes it to the
 same URL. Best-effort republish, like the other boards.
 
