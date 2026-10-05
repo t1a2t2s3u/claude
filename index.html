@@ -875,6 +875,22 @@ function loadEmbedded(){
 }
 let state = loadEmbedded();
 let art = null, dl = null;
+/* 書き出し。Artifact の中では downloads 機能を使う（サンドボックスのため
+   <a download> が効かない）。自分のサーバーに置いたときはブラウザに任せる */
+function canSave(){ return !!dl || !window.claude; }
+function saveFile(filename, data, mime){
+  if(dl) return dl.save({filename, data});
+  return new Promise((resolve, reject)=>{
+    try{
+      const url = URL.createObjectURL(new Blob([data], {type:(mime||'text/plain')+';charset=utf-8'}));
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 10000);
+      resolve();
+    }catch(e){ reject(e); }
+  });
+}
 let saveMode = 'none';
 let readOnly = false;
 
@@ -2162,8 +2178,8 @@ function invoiceHtml(v){
 }
 function exportInvoice(id){
   const v = state.invoices.find(x=>x.id===id);
-  if(!v || !dl) return;
-  dl.save({filename:'seikyusho-'+(v.no||v.id)+'.html', data: invoiceHtml(v)})
+  if(!v || !canSave()) return;
+  saveFile('seikyusho-'+(v.no||v.id)+'.html', invoiceHtml(v), 'text/html')
     .then(()=>toast('請求書を書き出しました。開いて印刷・PDF保存できます'))
     .catch(err=>{ if(err && err.code!=='declined') toast('書き出せませんでした'); });
 }
@@ -2181,7 +2197,7 @@ function renderInvoices(){
       + (v.subject?'　'+esc(v.subject):'')+'</span></div>'
       + '<span class="amt">'+yen(t.total)+'</span>'
       + '<span class="item-actions">'
-      + (dl ? '<button type="button" class="icon-btn" data-act="invout" data-id="'+v.id+'">書き出し</button>' : '')
+      + (canSave() ? '<button type="button" class="icon-btn" data-act="invout" data-id="'+v.id+'">書き出し</button>' : '')
       + '<button type="button" class="icon-btn" data-act="editinv" data-id="'+v.id+'">編集</button>'
       + '</span></div>';
   }).join('');
@@ -2258,7 +2274,7 @@ function renderStatement(y){
 
   return '<section class="card panel">'
     + '<div class="panel-head"><h2>'+y+'年の'+filingLabel+'</h2><div class="actions">'
-    + (dl ? '<button class="btn-sm" data-act="stmtcsv">CSVで書き出す</button>' : '')
+    + (canSave() ? '<button class="btn-sm" data-act="stmtcsv">CSVで書き出す</button>' : '')
     + '</div></div>'
     + '<div class="hint">確定申告のときに、'+filingLabel+'へ<b>そのまま書き写せる</b>形にまとめました。'
     + '経費は申告書の科目名に置きかえてあります。</div>'
@@ -2289,7 +2305,7 @@ function renderStatement(y){
 }
 
 function exportStatementCsv(){
-  if(!dl) return;
+  if(!canSave()) return;
   const y = view.y;
   const st = statement(y);
   const q = v => '"'+String(v).replace(/"/g,'""')+'"';
@@ -2306,7 +2322,7 @@ function exportStatementCsv(){
   if(st.blue>0) rows.push(['まとめ', '青色申告特別控除', st.blue]);
   rows.push(['まとめ', '所得金額', st.net]);
   const csv = '\uFEFF' + rows.map(r=>r.map(q).join(',')).join('\r\n');
-  dl.save({filename:'sonae-kessansho-'+y+'.csv', data:csv})
+  saveFile('sonae-kessansho-'+y+'.csv', csv, 'text/csv')
     .then(()=>toast(y+'年の決算書の数字を書き出しました'))
     .catch(err=>{ if(err && err.code!=='declined') toast('書き出せませんでした'); });
 }
@@ -3190,7 +3206,7 @@ function dataModalHtml(){
     + 'クラウド（iCloud Drive など）や自分宛てのメールに保存しておけば、'
     + '機種変更のときや、間違って消してしまったときに元に戻せます。</div>'
     + '<div class="f-actions" style="margin-top:10px">'
-    + (dl ? '<button class="btn btn-primary" type="button" data-act="backup">バックアップを書き出す</button>'
+    + (canSave() ? '<button class="btn btn-primary" type="button" data-act="backup">バックアップを書き出す</button>'
           : '<span class="hint">このブラウザでは書き出しが使えません。</span>')
     + '<button class="btn btn-ghost" type="button" data-act="restore">ファイルから復元</button>'
     + '</div>'
@@ -3198,12 +3214,12 @@ function dataModalHtml(){
     + '<div class="group-label" style="margin-top:20px">書き出し（CSV）</div>'
     + '<div class="hint">会計ソフトや表計算に取り込む用です。</div>'
     + '<div class="f-actions" style="margin-top:8px;gap:6px">'
-    + (dl && state.payments.length ? '<button class="btn-sm" type="button" data-act="csv">固定費CSV</button>' : '')
-    + (dl && state.biz.length ? '<button class="btn-sm" type="button" data-act="bizcsv">収支CSV</button>' : '')
-    + (dl && (state.biz.length || state.payments.some(p=>p.bizPct>0))
+    + (canSave() && state.payments.length ? '<button class="btn-sm" type="button" data-act="csv">固定費CSV</button>' : '')
+    + (canSave() && state.biz.length ? '<button class="btn-sm" type="button" data-act="bizcsv">収支CSV</button>' : '')
+    + (canSave() && (state.biz.length || state.payments.some(p=>p.bizPct>0))
         ? '<button class="btn-sm" type="button" data-act="jrncsv">仕訳CSV（'+view.y+'年）</button>'
           + '<button class="btn-sm" type="button" data-act="stmtcsv">決算書CSV（'+view.y+'年）</button>' : '')
-    + (!dl ? '<span class="hint">このブラウザでは書き出しが使えません。</span>' : '')
+    + (!canSave() ? '<span class="hint">このブラウザでは書き出しが使えません。</span>' : '')
     + '</div>'
     + '<div class="group-label" style="margin-top:20px">取り込み（CSV）</div>'
     + '<div class="hint">銀行やカードの明細CSVを読み込んで、収支にまとめて登録できます。</div>'
@@ -3546,10 +3562,10 @@ function shiftMonth(d){
 }
 /* ---------- バックアップと復元 ---------- */
 function exportBackup(){
-  if(!dl) return;
+  if(!canSave()) return;
   const stamp = todayStr().replace(/-/g,'');
   const data = JSON.stringify(Object.assign({}, state, {exportedAt: new Date().toISOString()}), null, 1);
-  dl.save({filename:'sonae-backup-'+stamp+'.json', data})
+  saveFile('sonae-backup-'+stamp+'.json', data, 'application/json')
     .then(()=>{
       persist({profile: Object.assign({}, state.profile, {lastBackup: todayStr()})});
       toast('バックアップを書き出しました');
@@ -3575,14 +3591,14 @@ function pickFile(accept, onText){
 }
 
 function restoreBackup(){
-  pickFile('.json,application/json', text=>{
+  pickFile('.json,application/json', (text, fileName)=>{
     let data;
     try{ data = JSON.parse(text); }
     catch(e){ toast('Sonaeのバックアップファイルではないようです'); return; }
     if(!data || typeof data!=='object' || (!Array.isArray(data.biz) && !Array.isArray(data.payments))){
       toast('Sonaeのバックアップファイルではないようです'); return;
     }
-    view.restore = {next: migrate(data), name};
+    view.restore = {next: migrate(data), name: fileName};
     view.modal = {kind:'restore'};
     render();
   });
@@ -3692,7 +3708,7 @@ function buildCsvPreview(){
 }
 
 function exportCsv(){
-  if(!dl) return;
+  if(!canSave()) return;
   const q = s => '"'+String(s).replace(/"/g,'""')+'"';
   const head = ['名前','金額','頻度','支払日','支払月','カテゴリ','支払い方法','経費割合%','メモ','月換算'];
   const rows = state.payments.map(p=>[
@@ -3701,12 +3717,12 @@ function exportCsv(){
     CAT_MAP[p.cat].label, METHOD_MAP[p.method].label, p.bizPct||'', p.note, Math.round(monthlyEquiv(p))
   ]);
   const csv = '\uFEFF' + [head].concat(rows).map(r=>r.map(q).join(',')).join('\r\n');
-  dl.save({filename:'sonae-kotehi.csv', data:csv})
+  saveFile('sonae-kotehi.csv', csv, 'text/csv')
     .then(()=>toast('CSVを保存しました'))
     .catch(err=>{ if(err && err.code!=='declined') toast('CSVを保存できませんでした'); });
 }
 function exportBizCsv(){
-  if(!dl) return;
+  if(!canSave()) return;
   const q = s => '"'+String(s).replace(/"/g,'""')+'"';
   const pad = n=>String(n).padStart(2,'0');
   const head = ['種別','日付','内容','科目','金額','メモ'];
@@ -3715,13 +3731,13 @@ function exportBizCsv(){
     .map(b=>[b.type==='in'?'収入':'経費', b.y+'/'+pad(b.m)+'/'+pad(b.d),
       b.name, BIZ_CAT_MAP[b.cat].label, b.amount, b.note]);
   const csv = '\uFEFF' + [head].concat(rows).map(r=>r.map(q).join(',')).join('\r\n');
-  dl.save({filename:'sonae-shushi.csv', data:csv})
+  saveFile('sonae-shushi.csv', csv, 'text/csv')
     .then(()=>toast('CSVを保存しました'))
     .catch(err=>{ if(err && err.code!=='declined') toast('CSVを保存できませんでした'); });
 }
 
 function exportJournalCsv(){
-  if(!dl) return;
+  if(!canSave()) return;
   const y = view.y;
   const pad = n => String(n).padStart(2,'0');
   const eom = (yy,mm) => yy+'/'+pad(mm)+'/'+pad(daysInMonth(yy,mm));
@@ -3765,7 +3781,7 @@ function exportJournalCsv(){
   const head = ['取引日','借方勘定科目','借方金額','借方税区分',
     '貸方勘定科目','貸方金額','貸方税区分','摘要'];
   const csv = '\uFEFF' + [head].concat(rows).map(r=>r.map(q).join(',')).join('\r\n');
-  dl.save({filename:'sonae-shiwake-'+y+'.csv', data:csv})
+  saveFile('sonae-shiwake-'+y+'.csv', csv, 'text/csv')
     .then(()=>toast(y+'年の仕訳CSVを保存しました（'+rows.length+'行）'))
     .catch(err=>{ if(err && err.code!=='declined') toast('CSVを保存できませんでした'); });
 }

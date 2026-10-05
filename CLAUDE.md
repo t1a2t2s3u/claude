@@ -30,6 +30,11 @@ with them: past it the app warns that its rates are stale. State is v3:
 `{payments, biz, saves, invoices, taxPaid, profile}` (`profile.ded` holds the 所得控除); `migrate()` upgrades older
 embedded state (v3 income becomes `paid:true`, since it predates 入金管理).
 
+File export goes through `saveFile()`/`canSave()`, not the `downloads`
+capability directly: inside the Artifact the sandbox blocks `<a download>` so
+it needs `dl.save()`, and on a self-hosted copy there is no `window.claude` so
+it falls back to a Blob URL. Guard export buttons with `canSave()`.
+
 The iOS/PWA head tags live in `APP_META` (including a base64 apple-touch-icon)
 and are emitted both in the real `<head>` and by `docFor()` — change them in
 one place only by editing `APP_META` and the head to match. `release/` holds
