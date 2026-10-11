@@ -98,6 +98,48 @@ def export_state(
     return path, text
 
 
+def export_candidates(rows: list[dict], note: str = "") -> tuple[Path, str]:
+    """スクリーナー上位候補をAI分析用Markdownにして ai_input/ に保存する。"""
+    now = datetime.now()
+    AI_INPUT_DIR.mkdir(parents=True, exist_ok=True)
+    path = AI_INPUT_DIR / f"screener_{now:%Y%m%d_%H%M}.md"
+
+    def oku(value):  # 億円表示
+        return f"{value / 1e8:,.0f}億円" if value else "—"
+
+    lines = [
+        f"# スクリーナー候補の分析依頼({now:%Y-%m-%d %H:%M})",
+        "",
+        "「第二のキオクシア型」スクリーナー(大型×若い上場×出遅れ×点火の兆し×テーマ)の"
+        "上位候補です。各銘柄について、型への合致度・想定シナリオ・主なリスクを分析し、"
+        "買うならどれをいくら分か(または見送りか)を提案してください。",
+        "",
+    ]
+    if note:
+        lines += [f"補足: {note}", ""]
+    lines += [
+        "| 順位 | ティッカー | 銘柄名 | スコア | 時価総額 | PBR | PER | 上場年数 | 業種 |",
+        "|---|---|---|---|---|---|---|---|---|",
+    ]
+    for i, r in enumerate(rows, start=1):
+        pbr = f"{r['pbr']:.2f}" if r.get("pbr") else "—"
+        per = f"{r['per']:.1f}" if r.get("per") else "—"
+        years = f"{r['ipo_years']}年" if r.get("ipo_years") is not None else "—"
+        industry = r.get("industry") or r.get("sector") or "—"
+        lines.append(
+            f"| {i} | {r['ticker']} | {r['name']} | {r['score']} | "
+            f"{oku(r['mcap_jpy'])} | {pbr} | {per} | {years} | {industry} |"
+        )
+    lines += [
+        "",
+        "注意: スコアは過去の急騰パターンとの類似度であり、上昇の予測ではありません。",
+        "売買する場合は、売買指示JSON(ticker / side / qty / reason)で返してください。",
+    ]
+    text = "\n".join(lines)
+    path.write_text(text, encoding="utf-8")
+    return path, text
+
+
 def list_order_files() -> list[Path]:
     AI_ORDERS_DIR.mkdir(parents=True, exist_ok=True)
     return sorted(AI_ORDERS_DIR.glob("*.json"), reverse=True)

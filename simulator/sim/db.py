@@ -83,6 +83,12 @@ CREATE TABLE IF NOT EXISTS settings (
   key   TEXT PRIMARY KEY,
   value TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS fundamentals (
+  ticker     TEXT PRIMARY KEY,   -- スクリーナー用の財務・市況データ(JSON)
+  data       TEXT NOT NULL,
+  fetched_at TEXT NOT NULL
+);
 """
 
 # 手数料・取引ルールの既定値(設定ページで変更可能)
