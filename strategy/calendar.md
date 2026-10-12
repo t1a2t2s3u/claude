@@ -54,10 +54,12 @@
 
 ## 企画
 
-- [企画] 1ヶ月半書き足してきたAI社員の指示書を、AIに点検させてみる — 「指示書の健康診断」機能の実録
-  （無料 / ブリーフ: strategy/briefs/2026-10-12-prompt-audit.md）
-- [企画] 「AIの会社は部署より台帳と検査」— 半年運用した人と同じ結論に、うちも1ヶ月半でたどり着いていた
-  （無料 / ブリーフ: strategy/briefs/2026-10-12-ledger-and-inspection.md）
+- [執筆済み] 1ヶ月半書き足してきたAI社員の指示書を、AIに点検させてみる — 「指示書の健康診断」機能の実録
+  （無料 / ブリーフ: strategy/briefs/2026-10-12-prompt-audit.md /
+  下書き: articles/drafts/2026-10-12-prompt-audit.md）
+- [執筆済み] 「AIの会社は部署より台帳と検査」— 半年運用した人と同じ結論に、うちも1ヶ月半でたどり着いていた
+  （無料 / ブリーフ: strategy/briefs/2026-10-12-ledger-and-inspection.md /
+  下書き: articles/drafts/2026-10-12-ledger-and-inspection.md）
 
 ---
 
