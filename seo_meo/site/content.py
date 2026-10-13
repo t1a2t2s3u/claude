@@ -21,13 +21,17 @@ FRONT_MATTER_DELIM = "+++"
 # 未記入であることを示す印。この文字列を含む値はビルド時に警告される。
 PLACEHOLDER = "【要記入】"
 
+# 「【要記入：点検の回数】」のように、何を書けばよいかを添えた形も拾う。
+# 完全一致だけを見ていると、この形が素通りして未記入のまま公開される。
+PLACEHOLDER_PREFIX = "【要記入"
+
 
 class ContentError(Exception):
     """コンテンツの読み込みに失敗したとき。"""
 
 
 def is_placeholder(value: Any) -> bool:
-    return isinstance(value, str) and PLACEHOLDER in value
+    return isinstance(value, str) and PLACEHOLDER_PREFIX in value
 
 
 @dataclass
@@ -714,15 +718,15 @@ def find_placeholders(content: Content) -> list[str]:
             found.append(f"faq.toml の {index + 1}件目")
 
     for work in content.works:
-        if is_placeholder(work.title) or PLACEHOLDER in work.body_html:
+        if is_placeholder(work.title) or is_placeholder(work.body_html):
             found.append(f"works/{work.slug}.md")
 
     for post in content.posts:
-        if is_placeholder(post.title) or PLACEHOLDER in post.body_html:
+        if is_placeholder(post.title) or is_placeholder(post.body_html):
             found.append(f"posts/{post.slug}.md")
 
     for page in content.pages:
-        if is_placeholder(page.title) or PLACEHOLDER in page.body_html:
+        if is_placeholder(page.title) or is_placeholder(page.body_html):
             found.append(f"pages/{page.slug}.md")
 
     return found

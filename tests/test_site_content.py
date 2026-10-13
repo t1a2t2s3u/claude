@@ -306,3 +306,12 @@ def test_plan_carries_the_simulator_coefficients():
     assert plan.base_tsubo == 30
     assert 0 < plan.fixed_ratio < 1
     assert plan.tsubo_min < plan.base_tsubo < plan.tsubo_max
+
+
+def test_placeholder_with_a_note_is_still_a_placeholder():
+    """「【要記入：点検の回数】」のように説明を添えた形も未記入として扱う。
+    完全一致だけを見ていると、この形が素通りして公開されてしまう。"""
+    assert c.is_placeholder("【要記入】")
+    assert c.is_placeholder("点検は【要記入：いつ・何回伺うか】です")
+    assert not c.is_placeholder("記入済みの文章")
+    assert not c.is_placeholder("")
