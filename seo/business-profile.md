@@ -66,6 +66,9 @@
   QRの生成はパソコンのブラウザのみ可）
 - ホームページ: **https://tatsumi-tosou.com/**（Cloudflare Workers で配信。
   ソースは上記ブランチの `site/`、公開物は `dist/`）
+  **印刷物（チラシ・名刺・看板・社用車）のURLも www なし**（2026-10-13 オーナー確認）。
+  `www.tatsumi-tosou.com` は転送未設定で接続できないが、印刷物・検索とも www なしのため
+  実害は小さい
 - Instagram: https://www.instagram.com/tatsumi_tosou_kougyou/（自社アカウント）
 - LINE公式: https://lin.ee/WxoWd1J
 
