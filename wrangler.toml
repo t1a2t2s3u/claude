@@ -15,6 +15,9 @@ main = "worker/index.js"
 [assets]
 directory = "./dist"
 binding = "ASSETS"
+# 無い URL のとき dist/404.html を返す。これが無いと本文が空の404になり、
+# リンク切れで来た人が真っ白な画面を見ることになる。
+not_found_handling = "404-page"
 
 # フォームの内容をメールで送るためのバインディング。
 # Cloudflare の Email Routing を tatsumi-tosou.com で有効にし、受信用の
