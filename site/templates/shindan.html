@@ -6,32 +6,27 @@
 <div class="page-head">
   <div class="wrap">
     <h1>外壁の傷み セルフチェック</h1>
-    <p>お家の壁を見ながら、当てはまるものを選んでください。<strong>今どのくらいの段階か</strong>の目安が出ます。入力は送信されません。</p>
+    <p>お家の壁を見ながら、当てはまるものを選んでください。<strong>選び終わると、いちばん下に今の段階の目安が出ます。</strong>入力は送信されません。</p>
   </div>
 </div>
 
 <div class="wrap prose-wrap">
 
-  {# 判定は常に見えている。選ぶほど内容が変わる。 #}
-  <section class="sx-result" id="sx-result" aria-live="polite">
-    <p class="sx-result-label">いまの目安</p>
-    {% for verdict in verdicts %}
-    <div class="sx-verdict sx-v{{ verdict.level }}" data-level="{{ verdict.level }}"{% if not loop.first %} hidden{% endif %}>
-      <h2>{{ verdict.title }}</h2>
-      <div class="sx-verdict-body">{{ verdict.body_html|safe }}</div>
-    </div>
-    {% endfor %}
-    <p class="sx-hit" id="sx-hit" hidden></p>
-  </section>
-
+  {# 見出しは家の周りを一周しながら確かめる順。
+     同じ見出しが続く間は出さず、変わったところだけ出す。 #}
   <ol class="sx-list">
+    {% set ns = namespace(group='') %}
     {% for symptom in symptoms %}
+    {% if symptom.group and symptom.group != ns.group %}
+    {% set ns.group = symptom.group %}
+    <li class="sx-group"><h2>{{ symptom.group }}</h2></li>
+    {% endif %}
     <li class="sx" data-level="{{ symptom.level }}" data-name="{{ symptom.name }}">
       <figure class="sx-photo">
         <img src="/assets/{{ symptom.image }}" alt="{{ symptom.name }}の例" loading="lazy">
       </figure>
       <div class="sx-body">
-        <h2 class="sx-name">{{ symptom.name }}</h2>
+        <h3 class="sx-name">{{ symptom.name }}</h3>
         <p class="sx-q">{{ symptom.question }}</p>
         <p class="sx-note">{{ symptom.note }}</p>
         <div class="sx-choice">
@@ -44,6 +39,18 @@
     </li>
     {% endfor %}
   </ol>
+
+  {# 判定は選び終わった先。上に置くと、まだ何も見ていないのに結果が目に入る #}
+  <section class="sx-result" id="sx-result" aria-live="polite">
+    <p class="sx-result-label">いまの目安</p>
+    {% for verdict in verdicts %}
+    <div class="sx-verdict sx-v{{ verdict.level }}" data-level="{{ verdict.level }}"{% if not loop.first %} hidden{% endif %}>
+      <h2>{{ verdict.title }}</h2>
+      <div class="sx-verdict-body">{{ verdict.body_html|safe }}</div>
+    </div>
+    {% endfor %}
+    <p class="sx-hit" id="sx-hit" hidden></p>
+  </section>
 
   <section class="note-box">
     <h2>この結果でできること・できないこと</h2>

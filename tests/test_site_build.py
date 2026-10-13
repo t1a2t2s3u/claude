@@ -543,3 +543,28 @@ def test_self_check_shows_one_verdict_before_any_input(built):
     verdicts = re.findall(r'<div class="sx-verdict [^"]*"([^>]*)>', html)
     assert len(verdicts) == 4
     assert sum(1 for attrs in verdicts if "hidden" not in attrs) == 1
+
+
+def test_self_check_puts_the_verdict_after_the_questions(built):
+    """先に結果が目に入ると、壁を見ずに読んで終わってしまう。"""
+    _, out = built
+    html = read(out, "shindan/index.html")
+    assert html.index('class="sx-list"') < html.index('id="sx-result"')
+
+
+def test_self_check_groups_are_in_order(built):
+    """見出しは家の周りを一周する順。同じ見出しが離れて出ると流れが切れる。"""
+    import re
+
+    from seo_meo.site.content import load_symptoms
+
+    _, out = built
+    html = read(out, "shindan/index.html")
+    shown = re.findall(r'<li class="sx-group"><h2>([^<]+)</h2></li>', html)
+    expected = []
+    for symptom in load_symptoms(SITE_ROOT):
+        assert symptom.group, symptom.slug
+        if not expected or expected[-1] != symptom.group:
+            expected.append(symptom.group)
+    assert shown == expected
+    assert len(shown) == len(set(shown)), "同じ見出しが2回出ている"

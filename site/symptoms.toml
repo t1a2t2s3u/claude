@@ -8,10 +8,16 @@
 #   2 = 進行。塗膜が切れ始め、水の入り口ができつつある
 #   3 = 水が入っている。放っておくと下地や構造材に及ぶ
 #
-# 症状を足すときは、写真と level を決めてここに追記すれば画面に出る。
+# group は見出し。お客様が家の周りを一周しながら確かめる順に並べてある。
+# 手で触る → 壁の面を見る → 塗装そのもの → 継ぎ目 → 壁そのもの、の順。
+# 同じ group の中は軽いものから重いものへ。判定は level だけで決まるので、
+# 並べ替えても結果は変わらない。
+#
+# 症状を足すときは、写真と level と group を決めてここに追記すれば画面に出る。
 
 [[symptom]]
 slug = "chalking"
+group = "壁の表面"
 name = "チョーキング"
 question = "壁を手でこすると、白い粉が付く"
 image = "blog/20nen-chalking.jpg"
@@ -19,15 +25,8 @@ level = 1
 note = "塗膜の防水の役目が終わったサインです。壁そのものはまだ守られています。"
 
 [[symptom]]
-slug = "crack-hosoi"
-name = "細いひび割れ"
-question = "髪の毛くらいの細いひびがある"
-image = "symptoms/crack-hosoi.jpg"
-level = 1
-note = "塗膜の表面だけのひびです。この段階なら、塗装のときの下地補修で直せます。"
-
-[[symptom]]
 slug = "koke"
+group = "壁の表面"
 name = "北面の苔・藻"
 question = "日の当たらない面に、緑や黒の汚れが出ている"
 image = "symptoms/koke.jpg"
@@ -35,15 +34,17 @@ level = 1
 note = "壁が乾かず、湿気を含んだままになっています。塗膜が水を弾かなくなった証拠です。"
 
 [[symptom]]
-slug = "coking-hibi"
-name = "コーキングのひび"
-question = "壁の継ぎ目（ゴム状の部分）に、細かいひびが入っている"
-image = "symptoms/coking-hibi.jpg"
+slug = "crack-hosoi"
+group = "ひび割れ"
+name = "細いひび割れ"
+question = "髪の毛くらいの細いひびがある"
+image = "symptoms/crack-hosoi.jpg"
 level = 1
-note = "まだ中まで切れてはいません。この段階で打ち替えれば、水は入りません。"
+note = "塗膜の表面だけのひびです。この段階なら、塗装のときの下地補修で直せます。"
 
 [[symptom]]
 slug = "crack-futoi"
+group = "ひび割れ"
 name = "太いひび割れ"
 question = "ひびが開いていて、中が見える"
 image = "symptoms/crack-futoi.jpg"
@@ -52,6 +53,7 @@ note = "塗膜を越えて壁本体まで達しています。雨のたびに水
 
 [[symptom]]
 slug = "fukure"
+group = "塗膜"
 name = "塗膜の膨れ"
 question = "壁の一部が浮いていて、押すとペコペコする"
 image = "symptoms/fukure.jpg"
@@ -59,15 +61,8 @@ level = 2
 note = "塗膜の裏に水が回っています。放っておくと、そこからはがれます。"
 
 [[symptom]]
-slug = "coking-kire"
-name = "コーキングの切れ"
-question = "継ぎ目が裂けて、奥が見えている"
-image = "symptoms/coking-kire.jpg"
-level = 3
-note = "水がまっすぐ内部に入る状態です。外壁材の裏側が濡れ続けます。"
-
-[[symptom]]
 slug = "hagare"
+group = "塗膜"
 name = "塗膜のはがれ"
 question = "塗装がめくれて、下地がむき出しになっている"
 image = "symptoms/hagare.jpg"
@@ -75,7 +70,26 @@ level = 3
 note = "壁が直接、雨と紫外線を受けています。ここから急に傷みが進みます。"
 
 [[symptom]]
+slug = "coking-hibi"
+group = "継ぎ目（コーキング）"
+name = "コーキングのひび"
+question = "壁の継ぎ目（ゴム状の部分）に、細かいひびが入っている"
+image = "symptoms/coking-hibi.jpg"
+level = 1
+note = "まだ中まで切れてはいません。この段階で打ち替えれば、水は入りません。"
+
+[[symptom]]
+slug = "coking-kire"
+group = "継ぎ目（コーキング）"
+name = "コーキングの切れ"
+question = "継ぎ目が裂けて、奥が見えている"
+image = "symptoms/coking-kire.jpg"
+level = 3
+note = "水がまっすぐ内部に入る状態です。外壁材の裏側が濡れ続けます。"
+
+[[symptom]]
 slug = "touhai"
+group = "壁そのもの"
 name = "凍害"
 question = "壁の表面がボロボロと崩れ、欠けている"
 image = "symptoms/touhai.jpg"

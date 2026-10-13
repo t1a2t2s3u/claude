@@ -358,6 +358,7 @@ class Symptom:
     image: str
     level: int
     note: str
+    group: str = ""
 
 
 @dataclass
@@ -692,6 +693,7 @@ def load_symptoms(root: Path) -> list[Symptom]:
             image=entry.get("image", ""),
             level=int(entry.get("level", 1)),
             note=entry.get("note", ""),
+            group=entry.get("group", ""),
         )
         for entry in raw.get("symptom", [])
     ]

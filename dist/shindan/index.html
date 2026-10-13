@@ -126,11 +126,163 @@
 <div class="page-head">
   <div class="wrap">
     <h1>外壁の傷み セルフチェック</h1>
-    <p>お家の壁を見ながら、当てはまるものを選んでください。<strong>今どのくらいの段階か</strong>の目安が出ます。入力は送信されません。</p>
+    <p>お家の壁を見ながら、当てはまるものを選んでください。<strong>選び終わると、いちばん下に今の段階の目安が出ます。</strong>入力は送信されません。</p>
   </div>
 </div>
 
 <div class="wrap prose-wrap">
+
+  <ol class="sx-list">
+    <li class="sx-group"><h2>壁の表面</h2></li>
+    <li class="sx" data-level="1" data-name="チョーキング">
+      <figure class="sx-photo">
+        <img src="/assets/blog/20nen-chalking.jpg" alt="チョーキングの例" loading="lazy">
+      </figure>
+      <div class="sx-body">
+        <h3 class="sx-name">チョーキング</h3>
+        <p class="sx-q">壁を手でこすると、白い粉が付く</p>
+        <p class="sx-note">塗膜の防水の役目が終わったサインです。壁そのものはまだ守られています。</p>
+        <div class="sx-choice">
+          <input type="radio" name="sx-chalking" id="chalking-yes" value="1">
+          <label for="chalking-yes">当てはまる</label>
+          <input type="radio" name="sx-chalking" id="chalking-no" value="0" checked>
+          <label for="chalking-no">当てはまらない</label>
+        </div>
+      </div>
+    </li>
+    <li class="sx" data-level="1" data-name="北面の苔・藻">
+      <figure class="sx-photo">
+        <img src="/assets/symptoms/koke.jpg" alt="北面の苔・藻の例" loading="lazy">
+      </figure>
+      <div class="sx-body">
+        <h3 class="sx-name">北面の苔・藻</h3>
+        <p class="sx-q">日の当たらない面に、緑や黒の汚れが出ている</p>
+        <p class="sx-note">壁が乾かず、湿気を含んだままになっています。塗膜が水を弾かなくなった証拠です。</p>
+        <div class="sx-choice">
+          <input type="radio" name="sx-koke" id="koke-yes" value="1">
+          <label for="koke-yes">当てはまる</label>
+          <input type="radio" name="sx-koke" id="koke-no" value="0" checked>
+          <label for="koke-no">当てはまらない</label>
+        </div>
+      </div>
+    </li>
+    <li class="sx-group"><h2>ひび割れ</h2></li>
+    <li class="sx" data-level="1" data-name="細いひび割れ">
+      <figure class="sx-photo">
+        <img src="/assets/symptoms/crack-hosoi.jpg" alt="細いひび割れの例" loading="lazy">
+      </figure>
+      <div class="sx-body">
+        <h3 class="sx-name">細いひび割れ</h3>
+        <p class="sx-q">髪の毛くらいの細いひびがある</p>
+        <p class="sx-note">塗膜の表面だけのひびです。この段階なら、塗装のときの下地補修で直せます。</p>
+        <div class="sx-choice">
+          <input type="radio" name="sx-crack-hosoi" id="crack-hosoi-yes" value="1">
+          <label for="crack-hosoi-yes">当てはまる</label>
+          <input type="radio" name="sx-crack-hosoi" id="crack-hosoi-no" value="0" checked>
+          <label for="crack-hosoi-no">当てはまらない</label>
+        </div>
+      </div>
+    </li>
+    <li class="sx" data-level="2" data-name="太いひび割れ">
+      <figure class="sx-photo">
+        <img src="/assets/symptoms/crack-futoi.jpg" alt="太いひび割れの例" loading="lazy">
+      </figure>
+      <div class="sx-body">
+        <h3 class="sx-name">太いひび割れ</h3>
+        <p class="sx-q">ひびが開いていて、中が見える</p>
+        <p class="sx-note">塗膜を越えて壁本体まで達しています。雨のたびに水が入ります。</p>
+        <div class="sx-choice">
+          <input type="radio" name="sx-crack-futoi" id="crack-futoi-yes" value="1">
+          <label for="crack-futoi-yes">当てはまる</label>
+          <input type="radio" name="sx-crack-futoi" id="crack-futoi-no" value="0" checked>
+          <label for="crack-futoi-no">当てはまらない</label>
+        </div>
+      </div>
+    </li>
+    <li class="sx-group"><h2>塗膜</h2></li>
+    <li class="sx" data-level="2" data-name="塗膜の膨れ">
+      <figure class="sx-photo">
+        <img src="/assets/symptoms/fukure.jpg" alt="塗膜の膨れの例" loading="lazy">
+      </figure>
+      <div class="sx-body">
+        <h3 class="sx-name">塗膜の膨れ</h3>
+        <p class="sx-q">壁の一部が浮いていて、押すとペコペコする</p>
+        <p class="sx-note">塗膜の裏に水が回っています。放っておくと、そこからはがれます。</p>
+        <div class="sx-choice">
+          <input type="radio" name="sx-fukure" id="fukure-yes" value="1">
+          <label for="fukure-yes">当てはまる</label>
+          <input type="radio" name="sx-fukure" id="fukure-no" value="0" checked>
+          <label for="fukure-no">当てはまらない</label>
+        </div>
+      </div>
+    </li>
+    <li class="sx" data-level="3" data-name="塗膜のはがれ">
+      <figure class="sx-photo">
+        <img src="/assets/symptoms/hagare.jpg" alt="塗膜のはがれの例" loading="lazy">
+      </figure>
+      <div class="sx-body">
+        <h3 class="sx-name">塗膜のはがれ</h3>
+        <p class="sx-q">塗装がめくれて、下地がむき出しになっている</p>
+        <p class="sx-note">壁が直接、雨と紫外線を受けています。ここから急に傷みが進みます。</p>
+        <div class="sx-choice">
+          <input type="radio" name="sx-hagare" id="hagare-yes" value="1">
+          <label for="hagare-yes">当てはまる</label>
+          <input type="radio" name="sx-hagare" id="hagare-no" value="0" checked>
+          <label for="hagare-no">当てはまらない</label>
+        </div>
+      </div>
+    </li>
+    <li class="sx-group"><h2>継ぎ目（コーキング）</h2></li>
+    <li class="sx" data-level="1" data-name="コーキングのひび">
+      <figure class="sx-photo">
+        <img src="/assets/symptoms/coking-hibi.jpg" alt="コーキングのひびの例" loading="lazy">
+      </figure>
+      <div class="sx-body">
+        <h3 class="sx-name">コーキングのひび</h3>
+        <p class="sx-q">壁の継ぎ目（ゴム状の部分）に、細かいひびが入っている</p>
+        <p class="sx-note">まだ中まで切れてはいません。この段階で打ち替えれば、水は入りません。</p>
+        <div class="sx-choice">
+          <input type="radio" name="sx-coking-hibi" id="coking-hibi-yes" value="1">
+          <label for="coking-hibi-yes">当てはまる</label>
+          <input type="radio" name="sx-coking-hibi" id="coking-hibi-no" value="0" checked>
+          <label for="coking-hibi-no">当てはまらない</label>
+        </div>
+      </div>
+    </li>
+    <li class="sx" data-level="3" data-name="コーキングの切れ">
+      <figure class="sx-photo">
+        <img src="/assets/symptoms/coking-kire.jpg" alt="コーキングの切れの例" loading="lazy">
+      </figure>
+      <div class="sx-body">
+        <h3 class="sx-name">コーキングの切れ</h3>
+        <p class="sx-q">継ぎ目が裂けて、奥が見えている</p>
+        <p class="sx-note">水がまっすぐ内部に入る状態です。外壁材の裏側が濡れ続けます。</p>
+        <div class="sx-choice">
+          <input type="radio" name="sx-coking-kire" id="coking-kire-yes" value="1">
+          <label for="coking-kire-yes">当てはまる</label>
+          <input type="radio" name="sx-coking-kire" id="coking-kire-no" value="0" checked>
+          <label for="coking-kire-no">当てはまらない</label>
+        </div>
+      </div>
+    </li>
+    <li class="sx-group"><h2>壁そのもの</h2></li>
+    <li class="sx" data-level="3" data-name="凍害">
+      <figure class="sx-photo">
+        <img src="/assets/symptoms/touhai.jpg" alt="凍害の例" loading="lazy">
+      </figure>
+      <div class="sx-body">
+        <h3 class="sx-name">凍害</h3>
+        <p class="sx-q">壁の表面がボロボロと崩れ、欠けている</p>
+        <p class="sx-note">入った水が凍って膨らみ、壁そのものを押し割った状態です。秋田で多い傷み方です。</p>
+        <div class="sx-choice">
+          <input type="radio" name="sx-touhai" id="touhai-yes" value="1">
+          <label for="touhai-yes">当てはまる</label>
+          <input type="radio" name="sx-touhai" id="touhai-no" value="0" checked>
+          <label for="touhai-no">当てはまらない</label>
+        </div>
+      </div>
+    </li>
+  </ol>
 
   <section class="sx-result" id="sx-result" aria-live="polite">
     <p class="sx-result-label">いまの目安</p>
@@ -164,153 +316,6 @@
     </div>
     <p class="sx-hit" id="sx-hit" hidden></p>
   </section>
-
-  <ol class="sx-list">
-    <li class="sx" data-level="1" data-name="チョーキング">
-      <figure class="sx-photo">
-        <img src="/assets/blog/20nen-chalking.jpg" alt="チョーキングの例" loading="lazy">
-      </figure>
-      <div class="sx-body">
-        <h2 class="sx-name">チョーキング</h2>
-        <p class="sx-q">壁を手でこすると、白い粉が付く</p>
-        <p class="sx-note">塗膜の防水の役目が終わったサインです。壁そのものはまだ守られています。</p>
-        <div class="sx-choice">
-          <input type="radio" name="sx-chalking" id="chalking-yes" value="1">
-          <label for="chalking-yes">当てはまる</label>
-          <input type="radio" name="sx-chalking" id="chalking-no" value="0" checked>
-          <label for="chalking-no">当てはまらない</label>
-        </div>
-      </div>
-    </li>
-    <li class="sx" data-level="1" data-name="細いひび割れ">
-      <figure class="sx-photo">
-        <img src="/assets/symptoms/crack-hosoi.jpg" alt="細いひび割れの例" loading="lazy">
-      </figure>
-      <div class="sx-body">
-        <h2 class="sx-name">細いひび割れ</h2>
-        <p class="sx-q">髪の毛くらいの細いひびがある</p>
-        <p class="sx-note">塗膜の表面だけのひびです。この段階なら、塗装のときの下地補修で直せます。</p>
-        <div class="sx-choice">
-          <input type="radio" name="sx-crack-hosoi" id="crack-hosoi-yes" value="1">
-          <label for="crack-hosoi-yes">当てはまる</label>
-          <input type="radio" name="sx-crack-hosoi" id="crack-hosoi-no" value="0" checked>
-          <label for="crack-hosoi-no">当てはまらない</label>
-        </div>
-      </div>
-    </li>
-    <li class="sx" data-level="1" data-name="北面の苔・藻">
-      <figure class="sx-photo">
-        <img src="/assets/symptoms/koke.jpg" alt="北面の苔・藻の例" loading="lazy">
-      </figure>
-      <div class="sx-body">
-        <h2 class="sx-name">北面の苔・藻</h2>
-        <p class="sx-q">日の当たらない面に、緑や黒の汚れが出ている</p>
-        <p class="sx-note">壁が乾かず、湿気を含んだままになっています。塗膜が水を弾かなくなった証拠です。</p>
-        <div class="sx-choice">
-          <input type="radio" name="sx-koke" id="koke-yes" value="1">
-          <label for="koke-yes">当てはまる</label>
-          <input type="radio" name="sx-koke" id="koke-no" value="0" checked>
-          <label for="koke-no">当てはまらない</label>
-        </div>
-      </div>
-    </li>
-    <li class="sx" data-level="1" data-name="コーキングのひび">
-      <figure class="sx-photo">
-        <img src="/assets/symptoms/coking-hibi.jpg" alt="コーキングのひびの例" loading="lazy">
-      </figure>
-      <div class="sx-body">
-        <h2 class="sx-name">コーキングのひび</h2>
-        <p class="sx-q">壁の継ぎ目（ゴム状の部分）に、細かいひびが入っている</p>
-        <p class="sx-note">まだ中まで切れてはいません。この段階で打ち替えれば、水は入りません。</p>
-        <div class="sx-choice">
-          <input type="radio" name="sx-coking-hibi" id="coking-hibi-yes" value="1">
-          <label for="coking-hibi-yes">当てはまる</label>
-          <input type="radio" name="sx-coking-hibi" id="coking-hibi-no" value="0" checked>
-          <label for="coking-hibi-no">当てはまらない</label>
-        </div>
-      </div>
-    </li>
-    <li class="sx" data-level="2" data-name="太いひび割れ">
-      <figure class="sx-photo">
-        <img src="/assets/symptoms/crack-futoi.jpg" alt="太いひび割れの例" loading="lazy">
-      </figure>
-      <div class="sx-body">
-        <h2 class="sx-name">太いひび割れ</h2>
-        <p class="sx-q">ひびが開いていて、中が見える</p>
-        <p class="sx-note">塗膜を越えて壁本体まで達しています。雨のたびに水が入ります。</p>
-        <div class="sx-choice">
-          <input type="radio" name="sx-crack-futoi" id="crack-futoi-yes" value="1">
-          <label for="crack-futoi-yes">当てはまる</label>
-          <input type="radio" name="sx-crack-futoi" id="crack-futoi-no" value="0" checked>
-          <label for="crack-futoi-no">当てはまらない</label>
-        </div>
-      </div>
-    </li>
-    <li class="sx" data-level="2" data-name="塗膜の膨れ">
-      <figure class="sx-photo">
-        <img src="/assets/symptoms/fukure.jpg" alt="塗膜の膨れの例" loading="lazy">
-      </figure>
-      <div class="sx-body">
-        <h2 class="sx-name">塗膜の膨れ</h2>
-        <p class="sx-q">壁の一部が浮いていて、押すとペコペコする</p>
-        <p class="sx-note">塗膜の裏に水が回っています。放っておくと、そこからはがれます。</p>
-        <div class="sx-choice">
-          <input type="radio" name="sx-fukure" id="fukure-yes" value="1">
-          <label for="fukure-yes">当てはまる</label>
-          <input type="radio" name="sx-fukure" id="fukure-no" value="0" checked>
-          <label for="fukure-no">当てはまらない</label>
-        </div>
-      </div>
-    </li>
-    <li class="sx" data-level="3" data-name="コーキングの切れ">
-      <figure class="sx-photo">
-        <img src="/assets/symptoms/coking-kire.jpg" alt="コーキングの切れの例" loading="lazy">
-      </figure>
-      <div class="sx-body">
-        <h2 class="sx-name">コーキングの切れ</h2>
-        <p class="sx-q">継ぎ目が裂けて、奥が見えている</p>
-        <p class="sx-note">水がまっすぐ内部に入る状態です。外壁材の裏側が濡れ続けます。</p>
-        <div class="sx-choice">
-          <input type="radio" name="sx-coking-kire" id="coking-kire-yes" value="1">
-          <label for="coking-kire-yes">当てはまる</label>
-          <input type="radio" name="sx-coking-kire" id="coking-kire-no" value="0" checked>
-          <label for="coking-kire-no">当てはまらない</label>
-        </div>
-      </div>
-    </li>
-    <li class="sx" data-level="3" data-name="塗膜のはがれ">
-      <figure class="sx-photo">
-        <img src="/assets/symptoms/hagare.jpg" alt="塗膜のはがれの例" loading="lazy">
-      </figure>
-      <div class="sx-body">
-        <h2 class="sx-name">塗膜のはがれ</h2>
-        <p class="sx-q">塗装がめくれて、下地がむき出しになっている</p>
-        <p class="sx-note">壁が直接、雨と紫外線を受けています。ここから急に傷みが進みます。</p>
-        <div class="sx-choice">
-          <input type="radio" name="sx-hagare" id="hagare-yes" value="1">
-          <label for="hagare-yes">当てはまる</label>
-          <input type="radio" name="sx-hagare" id="hagare-no" value="0" checked>
-          <label for="hagare-no">当てはまらない</label>
-        </div>
-      </div>
-    </li>
-    <li class="sx" data-level="3" data-name="凍害">
-      <figure class="sx-photo">
-        <img src="/assets/symptoms/touhai.jpg" alt="凍害の例" loading="lazy">
-      </figure>
-      <div class="sx-body">
-        <h2 class="sx-name">凍害</h2>
-        <p class="sx-q">壁の表面がボロボロと崩れ、欠けている</p>
-        <p class="sx-note">入った水が凍って膨らみ、壁そのものを押し割った状態です。秋田で多い傷み方です。</p>
-        <div class="sx-choice">
-          <input type="radio" name="sx-touhai" id="touhai-yes" value="1">
-          <label for="touhai-yes">当てはまる</label>
-          <input type="radio" name="sx-touhai" id="touhai-no" value="0" checked>
-          <label for="touhai-no">当てはまらない</label>
-        </div>
-      </div>
-    </li>
-  </ol>
 
   <section class="note-box">
     <h2>この結果でできること・できないこと</h2>

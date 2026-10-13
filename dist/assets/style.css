@@ -987,3 +987,13 @@ table.price-table thead th {
 @media (min-width: 720px) {
   .check-inner { grid-template-columns: 1fr auto; gap: 2rem; }
 }
+
+/* セルフチェックの見出し。家の周りを一周する順に並べてある */
+.sx-group { margin: 1.4rem 0 -.25rem; }
+.sx-group:first-child { margin-top: 0; }
+.sx-group h2 {
+  margin: 0; font-size: .95rem; color: var(--brand-text);
+  letter-spacing: .06em; padding-bottom: .4rem;
+  border-bottom: 2px solid var(--brand);
+}
+.sx-result { margin-top: 0; }
