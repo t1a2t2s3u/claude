@@ -103,3 +103,21 @@ def test_missing_pages_fall_back_to_the_404_page():
     """これが無いと、リンク切れで来た人が本文の空のページを見ることになる。"""
     assert _config()["assets"]["not_found_handling"] == "404-page"
     assert (REPO_ROOT / "dist" / "404.html").exists()
+
+
+def test_bold_before_punctuation_still_renders_as_strong():
+    """markdown のバージョンで生成物が変わらないことを確かめる。
+
+    dist/ を commit して配信しているので、HTML を作る側の挙動が環境で変わると、
+    気づかないまま本番に出る。markdown 3.11.1 は「閉じる ** の直前が句読点」の
+    とき <strong> にせず ** をそのまま出すようになった。記事では
+    「**必要です。**」のような書き方を多用しているため、全文に ** が露出する。
+
+    pyproject.toml でバージョンを固定してあるが、固定を外したときに
+    ここで気づけるようにしておく。
+    """
+    from seo_meo.site.content import _render_markdown
+
+    html = _render_markdown("**必要です。**\n")
+    assert "<strong>必要です。</strong>" in html
+    assert "**" not in html
