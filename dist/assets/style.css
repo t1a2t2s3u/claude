@@ -822,3 +822,60 @@ table.price-table thead th {
 .reasons p { margin: 0; font-size: .88rem; color: var(--ink-muted); line-height: 1.7; }
 @media (min-width: 700px) { .reasons { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1000px) { .reasons { grid-template-columns: repeat(4, 1fr); } }
+
+/* ---------- お問い合わせフォーム ---------- */
+/* 入力欄は16px以上にする。これより小さいと iOS が勝手に拡大して、
+   そのあと画面が元に戻らず操作しづらくなる。 */
+
+.form-box {
+  background: var(--bg-alt); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 1.5rem; margin-top: 2rem;
+}
+.form-box h2 { margin: 0 0 .5rem; font-size: 1.15rem; color: var(--brand-deep); }
+.form-lead { margin: 0 0 1.25rem; font-size: .9rem; color: var(--ink-muted); }
+.form-lead strong { color: var(--brand-deep); }
+
+.contact-form { display: grid; gap: 1rem; }
+.field { display: grid; gap: .35rem; }
+.field-row { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+.field label { font-weight: 700; font-size: .9rem; color: var(--brand-deep); }
+.req {
+  background: var(--accent); color: #fff; font-size: .7rem; font-weight: 700;
+  padding: .1rem .45rem; border-radius: 3px; margin-left: .35rem; vertical-align: 1px;
+}
+.contact-form input[type="text"],
+.contact-form input[type="tel"],
+.contact-form input[type="email"],
+.contact-form select,
+.contact-form textarea {
+  font: inherit; font-size: 1rem; width: 100%; padding: .7rem .8rem;
+  border: 1px solid var(--line); border-radius: 6px; background: var(--bg);
+  color: var(--ink);
+}
+.contact-form textarea { line-height: 1.7; resize: vertical; }
+.contact-form :focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+.field-note { margin: 0; font-size: .8rem; color: var(--ink-muted); }
+.field-note strong { color: var(--brand-deep); }
+
+.field-check { display: flex; align-items: flex-start; gap: .55rem; }
+.field-check input { width: 1.15rem; height: 1.15rem; margin: .2rem 0 0; flex: none; }
+.field-check label { font-weight: 400; font-size: .9rem; color: var(--ink); }
+
+/* 迷惑メール対策の囮。読み上げからも外してあるが、見た目でも隠す */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.btn-submit {
+  font: inherit; font-size: 1.05rem; font-weight: 700; color: #fff;
+  background: var(--accent); border: none; border-radius: var(--radius);
+  padding: .95rem 1.5rem; cursor: pointer; width: 100%;
+}
+.btn-submit:hover { background: var(--accent-dark); }
+.btn-submit:active { transform: translateY(1px); }
+
+.form-foot { margin: 0; font-size: .8rem; color: var(--ink-muted); line-height: 1.8; }
+.form-foot strong { color: var(--brand-deep); }
+
+@media (min-width: 600px) {
+  .field-row { grid-template-columns: 1fr 1fr; }
+  .btn-submit { width: auto; justify-self: start; padding-inline: 2.5rem; }
+}

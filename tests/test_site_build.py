@@ -187,6 +187,7 @@ def test_phone_number_is_a_tap_to_call_link(built):
 
 
 def test_sitemap_lists_every_generated_page(built):
+    """noindex を宣言したページ以外は、すべて sitemap に載ること。"""
     _, out = built
     sitemap = read(out, "sitemap.xml")
     generated = {
@@ -195,6 +196,10 @@ def test_sitemap_lists_every_generated_page(built):
     }
     generated = {"/" if url == "//" else url for url in generated}
     for url in generated:
+        page = read(out, ("index.html" if url == "/" else url.strip("/") + "/index.html"))
+        if '<meta name="robots" content="noindex">' in page:
+            assert f"<loc>{BASE_URL}{url}</loc>" not in sitemap, url
+            continue
         assert f"<loc>{BASE_URL}{url}</loc>" in sitemap, url
 
 
@@ -448,3 +453,30 @@ def test_internal_links_all_resolve(built):
                 broken.append(f"{path.name} → {href}")
 
     assert not broken, f"リンク切れ: {broken}"
+
+
+def test_contact_page_has_a_working_form(built):
+    """「フォームで問い合わせる」ボタンの行き先。入力欄が無いと行き止まりになる。"""
+    _, out = built
+    html = read(out, "contact/index.html")
+    assert '<form class="contact-form" action="/api/contact" method="post">' in html
+    for field in ('name="name"', 'name="tel"', 'name="email"', 'name="message"'):
+        assert field in html, field
+    assert 'required' in html
+    # 迷惑メール対策の囮。人には見えない欄なので、送信ボタンより前にあること。
+    assert html.index('name="company"') < html.index("</form>")
+
+
+def test_thanks_page_is_not_indexed(built):
+    """送信完了ページが検索結果に出ると、問い合わせ前の人が迷い込む。"""
+    _, out = built
+    html = read(out, "thanks/index.html")
+    assert '<meta name="robots" content="noindex">' in html
+    assert "/thanks/" not in read(out, "sitemap.xml")
+
+
+def test_only_the_pages_that_ask_for_it_are_noindexed(built):
+    """noindex を既定にしてしまう事故を防ぐ。"""
+    _, out = built
+    for name in ["index.html", "contact/index.html", "services/index.html"]:
+        assert 'content="noindex"' not in read(out, name), name

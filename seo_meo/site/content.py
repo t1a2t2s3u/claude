@@ -316,6 +316,9 @@ class StaticPage:
     title: str
     description: str
     body_html: str
+    # 送信完了ページのように、検索結果に出す意味がないページ。
+    # sitemap からも外し、robots メタで noindex を出す。
+    noindex: bool = False
 
     @property
     def url(self) -> str:
@@ -598,6 +601,7 @@ def load_pages(root: Path) -> list[StaticPage]:
                 title=front.get("title", path.stem),
                 description=front.get("description") or _summarise(body_html),
                 body_html=body_html,
+                noindex=bool(front.get("noindex", False)),
             )
         )
     return pages

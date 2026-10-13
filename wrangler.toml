@@ -5,7 +5,29 @@
 name = "orange-boat-b4db"
 compatibility_date = "2026-08-23"
 
+# お問い合わせフォームの受け口 (/api/contact)。これ以外のリクエストは
+# worker/index.js がそのまま assets へ流すので、サイトの配信は今までどおり。
+main = "worker/index.js"
+
 # dist/ は seo-meo site-build の出力。ビルド済みのものをリポジトリに含めて
 # あるため、Cloudflare 側でのビルドは不要。
+# binding は Worker からアセットを取り出すために必要。
 [assets]
 directory = "./dist"
+binding = "ASSETS"
+
+# フォームの内容をメールで送るためのバインディング。
+# Cloudflare の Email Routing を tatsumi-tosou.com で有効にし、受信用の
+# アドレス (CONTACT_TO) を「検証済みの宛先」に登録しておく必要がある。
+# 外部のメール配信サービスは契約しなくてよい。
+[[send_email]]
+name = "CONTACT_MAIL"
+
+[vars]
+# 差出人。Email Routing を有効にしたドメインのアドレスであればよく、
+# 実際に受信できる必要はない（返信先は Reply-To でお客様宛てになる）。
+CONTACT_FROM = "form@tatsumi-tosou.com"
+
+# フォームの送信先。Cloudflare で「検証済みの宛先」に登録したアドレスを書く。
+# 【要記入】のままだと、フォームは送信エラーの画面を出す（電話とLINEの案内）。
+CONTACT_TO = "【要記入】"

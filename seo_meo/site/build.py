@@ -255,8 +255,9 @@ class _Builder:
                 page=page,
                 trail=trail,
                 jsonld=jsonld,
+                noindex=page.noindex,
             )
-            self.write(page.url, html)
+            self.write(page.url, html, in_sitemap=not page.noindex)
 
     def build_faq(self) -> None:
         if not self.content.faq:

@@ -63,3 +63,37 @@ def test_committed_build_is_up_to_date(tmp_path):
         if (fresh / name).read_bytes() != (committed / name).read_bytes()
     ]
     assert not stale, f"dist/ の内容が古い（seo-meo site-build をやり直す）: {stale}"
+
+
+def test_worker_entry_point_exists():
+    """フォームの受け口。main が無いと /api/contact が 404 になる。"""
+    config = _config()
+    assert config["main"] == "worker/index.js"
+    assert (REPO_ROOT / "worker" / "index.js").exists()
+
+
+def test_worker_can_reach_the_static_assets():
+    """binding が無いと、Worker からサイト本体を返せずに全ページが落ちる。"""
+    assert _config()["assets"]["binding"] == "ASSETS"
+
+
+def test_mail_binding_and_addresses_are_configured():
+    """フォームの送信先。バインディング名は worker/index.js と揃える。"""
+    config = _config()
+    assert [b["name"] for b in config["send_email"]] == ["CONTACT_MAIL"]
+
+    worker = (REPO_ROOT / "worker" / "index.js").read_text(encoding="utf-8")
+    assert "env.CONTACT_MAIL" in worker
+    for key in ("CONTACT_FROM", "CONTACT_TO"):
+        assert config["vars"][key], key
+        assert f"env.{key}" in worker, key
+
+
+def test_worker_does_not_load_anything_from_npm():
+    """npm の依存を入れると、Cloudflare 側でのビルドが必要になる。
+    cloudflare: で始まる組み込みモジュールだけで書くこと。"""
+    import re
+
+    worker = (REPO_ROOT / "worker" / "index.js").read_text(encoding="utf-8")
+    imports = re.findall(r'^import .*? from "([^"]+)";', worker, re.M)
+    assert imports == ["cloudflare:email"], imports

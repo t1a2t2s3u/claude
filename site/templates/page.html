@@ -30,6 +30,58 @@
   {% endif %}
 
   {% if section == 'contact' %}
+  {# お問い合わせフォーム。送信先は同じドメインの /api/contact（Cloudflare
+     Worker）。外部のフォームサービスは使わない（読み込みが増えるのと、
+     送信先が他社になるため）。JS は使わず、素の POST で動く。 #}
+  <section class="form-box" id="form">
+    <h2>フォームでのご相談</h2>
+    <p class="form-lead">24時間受け付けています。いただいた内容は<strong>ご相談への回答にのみ使い、第三者には渡しません。</strong></p>
+    <form class="contact-form" action="/api/contact" method="post">
+      <div class="field">
+        <label for="f-name">お名前 <span class="req">必須</span></label>
+        <input id="f-name" name="name" type="text" required maxlength="60" autocomplete="name">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="f-tel">電話番号</label>
+          <input id="f-tel" name="tel" type="tel" maxlength="20" autocomplete="tel" inputmode="tel">
+        </div>
+        <div class="field">
+          <label for="f-email">メールアドレス</label>
+          <input id="f-email" name="email" type="email" maxlength="120" autocomplete="email">
+        </div>
+      </div>
+      <p class="field-note">電話番号とメールアドレスは、<strong>どちらか一方で構いません。</strong></p>
+      <div class="field">
+        <label for="f-area">建物のある市町村</label>
+        <select id="f-area" name="area">
+          <option value="">選ばない</option>
+          {% for area in company.areas %}<option value="{{ area }}">{{ area }}</option>{% endfor %}
+          <option value="その他">その他</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-message">ご相談内容 <span class="req">必須</span></label>
+        <textarea id="f-message" name="message" rows="7" required maxlength="2000"></textarea>
+        <p class="field-note">築年数、気になっている症状、ご希望の時期など、分かる範囲で構いません。</p>
+      </div>
+      <div class="field-check">
+        <input id="f-estimate" name="estimate" type="checkbox" value="あり">
+        <label for="f-estimate">他社のお見積りを持っている（内容を診断してお伝えします）</label>
+      </div>
+      {# 迷惑メール対策。人には見えない欄なので、埋まっていれば機械とみなす #}
+      <div class="hp" aria-hidden="true">
+        <label for="f-company">会社名</label>
+        <input id="f-company" name="company" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <button class="btn-submit" type="submit">この内容で送信する</button>
+      <p class="form-foot">
+        順にご返信します。<strong>お急ぎの場合はお電話ください。</strong><br>
+        ※ ホームページ制作・広告掲載・資材販売などの<strong>営業目的のご連絡はお断りしています。</strong>
+      </p>
+    </form>
+  </section>
+
   <div class="contact-methods">
     <a class="contact-card contact-call" href="tel:{{ company.tel_link }}">
       <span class="contact-label">お電話</span>
