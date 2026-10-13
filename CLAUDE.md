@@ -20,8 +20,12 @@ Katagami City, Minamiakita District; https://tatsumi-tosou.com/).
 
 - **seo-director** — weekly SEO/MEO research, prioritised action list, blog
   briefs. Mondays.
-- **seo-writer** — three new blog articles a month from those briefs, plus one
-  refresh of an already-published article, written in the site's own post
+- **seo-writer** — four new blog articles a month (one per week) from those
+  briefs, plus one refresh of an already-published article. The fourth new
+  article is fixed to a theme that needs no photos, so site photos stay
+  concentrated in the other three (owner's condition, 2026-10-14); it is taken
+  from the site branch's topic list rows marked 「未着手・写真不要」 and must not
+  add to `docs/photo-requests.md`. Articles are written in the site's own post
   format and SEO-checked, delivered to the blog board as 確認待ち (one item per
   Tuesday run). Publishes to the site branch only after the owner's OK.
   Tuesdays.
