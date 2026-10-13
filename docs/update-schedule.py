@@ -226,8 +226,10 @@ topics = [
      "2026-09-15 公開（/blog/2026-09-gaiheki-20nen/）。チョーキングの実写真つき"),
     ("塗装と張り替え（カバー工法）どっちが安い？", "外壁塗装 張り替え どっち / サイディング 張替え", "11月", "未着手",
      "検討初期の比較記事。張替えが向くケースも正直に書くと信頼になる"),
-    ("「屋根塗装は意味がない」は本当か（秋田のトタン屋根の場合）", "屋根塗装 意味がない / 秋田市 屋根塗装 / トタン屋根 塗装 / トタン屋根 錆", "11〜12月", "優先度UP",
-     "2026-10-14 構成案を作成し、ブログ担当へ下書きを依頼した"
+    ("「屋根塗装は意味がない」は本当か（秋田のトタン屋根の場合）", "屋根塗装 意味がない / 秋田市 屋根塗装 / トタン屋根 塗装 / トタン屋根 錆", "10月20日公開予定", "下書き済み・写真待ち",
+     "2026-10-14 下書き完成（docs/drafts/2026-10-yane-imi-ga-nai.md）。要確認2件はオーナー回答済み。"
+     "トタンの写真4点を待って10月20日に公開する（締め切り10月19日）。"
+     "構成案は docs/drafts/yane-imi-ga-nai-kousei.md。"
      "（docs/drafts/yane-imi-ga-nai-kousei.md）。地元で取られている秋田の語は"
      "ほぼ全部が屋根塗装で、当社は屋根の記事がゼロ。1位の堀井総建も7語しか"
      "持っておらず、サイトの力は強くない。さらに「屋根塗装 意味がない」の上位20本は"
@@ -253,7 +255,9 @@ for t in topics:
         ws3.cell(row=r, column=c, value=v)
     st = ws3.cell(row=r, column=4)
     st.alignment = Alignment(horizontal="center", vertical="top")
-    if t[3] == "未着手・写真不要":
+    if t[3] == "下書き済み・写真待ち":
+        st.font = Font(name=FONT, bold=True, size=10, color=ACCENT)
+    elif t[3] == "未着手・写真不要":
         st.font = Font(name=FONT, bold=True, size=10, color=BRAND_DEEP)
     elif t[3] in ("下書き済み・確認待ち", "優先度UP"):
         st.font = Font(name=FONT, bold=True, size=10, color=ACCENT)
