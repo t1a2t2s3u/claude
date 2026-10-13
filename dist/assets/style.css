@@ -879,3 +879,34 @@ table.price-table thead th {
   .field-row { grid-template-columns: 1fr 1fr; }
   .btn-submit { width: auto; justify-self: start; padding-inline: 2.5rem; }
 }
+
+/* ---------- 料金の目安を計算する ---------- */
+
+.sim {
+  background: var(--bg-alt); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 1.5rem; margin-top: 1.75rem;
+}
+.sim h3 { margin: 0 0 .5rem; font-size: 1.1rem; color: var(--brand-deep); }
+.sim-lead { margin: 0 0 1.1rem; font-size: .9rem; color: var(--ink-muted); }
+.sim-lead strong { color: var(--brand-deep); }
+
+.sim-row { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.sim-row label { font-weight: 700; font-size: .95rem; color: var(--brand-deep); }
+/* 16px未満だと iOS が入力時に勝手に拡大する */
+.sim-row input {
+  font: inherit; font-size: 1.25rem; font-weight: 700; width: 6rem;
+  padding: .55rem .7rem; text-align: right; color: var(--brand-deep);
+  border: 2px solid var(--brand); border-radius: 6px; background: var(--bg);
+  font-variant-numeric: tabular-nums;
+}
+.sim-row input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.sim-unit { font-weight: 700; color: var(--brand-deep); }
+
+.sim-help { margin: .6rem 0 1.1rem; font-size: .8rem; color: var(--ink-muted); line-height: 1.8; }
+.sim-help strong { color: var(--brand-deep); }
+
+.sim-table { margin-bottom: .9rem; background: var(--bg); }
+.sim-table .pt-price { font-size: 1.25rem; }
+.sim-note { margin: 0; font-size: .82rem; color: var(--ink-muted); line-height: 1.9; }
+.sim-note strong { color: var(--brand-deep); }
+.sim-warn { font-size: .8rem; font-weight: 700; color: var(--accent-dark); }

@@ -480,3 +480,25 @@ def test_only_the_pages_that_ask_for_it_are_noindexed(built):
     _, out = built
     for name in ["index.html", "contact/index.html", "services/index.html"]:
         assert 'content="noindex"' not in read(out, name), name
+
+
+def test_price_simulator_falls_back_to_the_base_price(built):
+    """JSが動かない環境でも、基準の坪数の金額が読めること。
+    検索エンジンが読むのもこの状態なので、空の表を出さない。"""
+    _, out = built
+    from seo_meo.site.content import load_packages, load_plan
+
+    html = read(out, "services/index.html")
+    plan = load_plan(SITE_ROOT)
+    assert plan and plan.base_tsubo
+    assert f"延床{plan.base_tsubo}坪の目安" in html
+    for package in load_packages(SITE_ROOT):
+        assert f'data-base-price="{package.price_man}"' in html, package.name
+
+
+def test_price_simulator_warns_that_it_is_only_an_estimate(built):
+    """断定した金額に見えると、景品表示法上の問題になり得る。"""
+    _, out = built
+    html = read(out, "services/index.html")
+    assert "これは目安です" in html
+    assert "現地調査" in html

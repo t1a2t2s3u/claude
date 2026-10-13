@@ -295,3 +295,14 @@ def test_package_without_numbers_does_not_crash():
 
     p = Package(name="特別仕様", durability="応相談", price="別途お見積り")
     assert p.years == 0 and p.stars == 0 and p.yearly_cost == ""
+
+
+def test_plan_carries_the_simulator_coefficients():
+    """係数が欠けると、料金の目安が出なくなる（テンプレート側で非表示になる）。"""
+    from pathlib import Path
+
+    plan = c.load_plan(Path(__file__).resolve().parents[1] / "site")
+    assert plan is not None
+    assert plan.base_tsubo == 30
+    assert 0 < plan.fixed_ratio < 1
+    assert plan.tsubo_min < plan.base_tsubo < plan.tsubo_max

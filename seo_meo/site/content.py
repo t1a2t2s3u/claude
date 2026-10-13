@@ -231,6 +231,13 @@ class PackagePlan:
     bonus: str = ""
     bonus_options: list[str] = field(default_factory=list)
 
+    # 延床面積から目安を出すための係数 (services.toml のコメントを参照)。
+    # 0 のときは計算を出さない。
+    base_tsubo: int = 0
+    fixed_ratio: float = 0.0
+    tsubo_min: int = 0
+    tsubo_max: int = 0
+
 
 @dataclass
 class Testimonial:
@@ -504,6 +511,10 @@ def load_plan(root: Path) -> PackagePlan | None:
         includes=list(plan.get("includes", [])),
         bonus=plan.get("bonus", ""),
         bonus_options=list(plan.get("bonus_options", [])),
+        base_tsubo=int(plan.get("base_tsubo", 0)),
+        fixed_ratio=float(plan.get("fixed_ratio", 0.0)),
+        tsubo_min=int(plan.get("tsubo_min", 0)),
+        tsubo_max=int(plan.get("tsubo_max", 0)),
     )
 
 

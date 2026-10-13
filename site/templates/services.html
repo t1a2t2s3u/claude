@@ -39,6 +39,46 @@
     <p class="price-note-stars">★はメーカーの評価ではなく、<strong>当社の料金表の数字をそのまま5段階にしたもの</strong>です。耐久＝耐久年数、保証＝保証年数、コスパ＝「料金÷耐久年数」で、<strong>グレードが上がるほど1年あたりの負担は軽くなります。</strong></p>
     {% if plan and plan.tax_note %}<p class="price-tax">{{ plan.tax_note }}</p>{% endif %}
 
+    {% if plan and plan.base_tsubo and packages %}
+    {# 延床面積から目安を計算し直す。JSが動かない環境でも、基準の坪数の
+       金額が表として読める状態にしておく（検索エンジンもそれを読む）。 #}
+    <section class="sim" id="sim"
+             data-base-tsubo="{{ plan.base_tsubo }}"
+             data-fixed-ratio="{{ plan.fixed_ratio }}"
+             data-min="{{ plan.tsubo_min }}"
+             data-max="{{ plan.tsubo_max }}">
+      <h3>お家の広さで計算し直す</h3>
+      <p class="sim-lead">上の料金は<strong>延床面積{{ plan.base_tsubo }}坪</strong>のときの金額です。延床面積を入れると、その広さでの目安に計算し直します。</p>
+
+      <div class="sim-row">
+        <label for="sim-tsubo">延床面積</label>
+        <input id="sim-tsubo" type="number" value="{{ plan.base_tsubo }}"
+               min="{{ plan.tsubo_min }}" max="{{ plan.tsubo_max }}" step="1" inputmode="numeric">
+        <span class="sim-unit">坪</span>
+        <span class="sim-warn" id="sim-warn" hidden>{{ plan.tsubo_min }}〜{{ plan.tsubo_max }}坪で入力してください</span>
+      </div>
+      <p class="sim-help">分からないときは、<strong>固定資産税の納税通知書</strong>か<strong>建築時の図面</strong>に「延床面積」が載っています。㎡で書かれている場合は、<strong>3.3 で割る</strong>とおおよその坪数になります。</p>
+
+      <div class="sheet">
+        <table class="price-table sim-table">
+          <thead>
+            <tr><th>塗料</th><th id="sim-head">延床{{ plan.base_tsubo }}坪の目安</th></tr>
+          </thead>
+          <tbody>
+            {% for package in packages %}
+            <tr data-base-price="{{ package.price_man }}">
+              <td class="pt-name">{{ package.name }}</td>
+              <td class="pt-price sim-value">{{ package.price }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <p class="sim-note"><strong>これは目安です。</strong>外壁の面積、下地の傷み具合、必要な補修の量で金額は変わります。延床面積が同じでも、総2階と平屋では塗る面積が違います。<strong>正確な金額は現地調査のうえでお出しします（無料です）。</strong></p>
+    </section>
+    {% endif %}
+
     {% if plan and plan.includes %}
     <div class="includes">
       <h3>この料金に含まれるもの</h3>
@@ -108,4 +148,41 @@
   </section>
 </div>
 
+{% if plan and plan.base_tsubo and packages %}
+<script>
+  // 延床面積から料金の目安を出す。足場・洗浄・諸経費は坪数で動きにくいので、
+  // 料金の fixedRatio を固定費とみなし、残りだけを坪数に比例させる。
+  (function () {
+    var box = document.getElementById("sim");
+    var input = document.getElementById("sim-tsubo");
+    if (!box || !input) return;
+
+    var baseTsubo = Number(box.dataset.baseTsubo);
+    var fixed = Number(box.dataset.fixedRatio);
+    var min = Number(box.dataset.min);
+    var max = Number(box.dataset.max);
+    var head = document.getElementById("sim-head");
+    var warn = document.getElementById("sim-warn");
+    var rows = box.querySelectorAll("tbody tr");
+
+    function update() {
+      var tsubo = Math.round(Number(input.value));
+      // 範囲外のときは金額を書き換えず、表の見出しが示す坪数との食い違いを
+      // 注意書きで知らせる。勝手に丸めると、入れた数字と違う金額が出て混乱する。
+      var ok = !!tsubo && tsubo >= min && tsubo <= max;
+      warn.hidden = ok || input.value === "";
+      if (!ok) return;
+      head.textContent = "延床" + tsubo + "坪の目安";
+      rows.forEach(function (row) {
+        var base = Number(row.dataset.basePrice);
+        var man = base * (fixed + (1 - fixed) * tsubo / baseTsubo);
+        row.querySelector(".sim-value").textContent = "約" + Math.round(man) + "万円";
+      });
+    }
+
+    input.addEventListener("input", update);
+    input.addEventListener("change", update);
+  })();
+</script>
+{% endif %}
 {% endblock %}

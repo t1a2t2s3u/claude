@@ -395,6 +395,56 @@
     </div>
     <p class="price-note-stars">★はメーカーの評価ではなく、<strong>当社の料金表の数字をそのまま5段階にしたもの</strong>です。耐久＝耐久年数、保証＝保証年数、コスパ＝「料金÷耐久年数」で、<strong>グレードが上がるほど1年あたりの負担は軽くなります。</strong></p>
 <p class="price-tax">表示価格はすべて税込です。</p>
+    <section class="sim" id="sim"
+             data-base-tsubo="30"
+             data-fixed-ratio="0.35"
+             data-min="15"
+             data-max="60">
+      <h3>お家の広さで計算し直す</h3>
+      <p class="sim-lead">上の料金は<strong>延床面積30坪</strong>のときの金額です。延床面積を入れると、その広さでの目安に計算し直します。</p>
+
+      <div class="sim-row">
+        <label for="sim-tsubo">延床面積</label>
+        <input id="sim-tsubo" type="number" value="30"
+               min="15" max="60" step="1" inputmode="numeric">
+        <span class="sim-unit">坪</span>
+        <span class="sim-warn" id="sim-warn" hidden>15〜60坪で入力してください</span>
+      </div>
+      <p class="sim-help">分からないときは、<strong>固定資産税の納税通知書</strong>か<strong>建築時の図面</strong>に「延床面積」が載っています。㎡で書かれている場合は、<strong>3.3 で割る</strong>とおおよその坪数になります。</p>
+
+      <div class="sheet">
+        <table class="price-table sim-table">
+          <thead>
+            <tr><th>塗料</th><th id="sim-head">延床30坪の目安</th></tr>
+          </thead>
+          <tbody>
+            <tr data-base-price="89">
+              <td class="pt-name">シリコン塗料</td>
+              <td class="pt-price sim-value">89万円</td>
+            </tr>
+            <tr data-base-price="96">
+              <td class="pt-name">ラジカル制御型塗料</td>
+              <td class="pt-price sim-value">96万円</td>
+            </tr>
+            <tr data-base-price="120">
+              <td class="pt-name">フッ素塗料</td>
+              <td class="pt-price sim-value">120万円</td>
+            </tr>
+            <tr data-base-price="126">
+              <td class="pt-name">遮熱塗料</td>
+              <td class="pt-price sim-value">126万円</td>
+            </tr>
+            <tr data-base-price="131">
+              <td class="pt-name">無機塗料</td>
+              <td class="pt-price sim-value">131万円</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="sim-note"><strong>これは目安です。</strong>外壁の面積、下地の傷み具合、必要な補修の量で金額は変わります。延床面積が同じでも、総2階と平屋では塗る面積が違います。<strong>正確な金額は現地調査のうえでお出しします（無料です）。</strong></p>
+    </section>
+
     <div class="includes">
       <h3>この料金に含まれるもの</h3>
       <ul class="include-list">
@@ -580,6 +630,41 @@
   </section>
 </div>
 
+<script>
+  // 延床面積から料金の目安を出す。足場・洗浄・諸経費は坪数で動きにくいので、
+  // 料金の fixedRatio を固定費とみなし、残りだけを坪数に比例させる。
+  (function () {
+    var box = document.getElementById("sim");
+    var input = document.getElementById("sim-tsubo");
+    if (!box || !input) return;
+
+    var baseTsubo = Number(box.dataset.baseTsubo);
+    var fixed = Number(box.dataset.fixedRatio);
+    var min = Number(box.dataset.min);
+    var max = Number(box.dataset.max);
+    var head = document.getElementById("sim-head");
+    var warn = document.getElementById("sim-warn");
+    var rows = box.querySelectorAll("tbody tr");
+
+    function update() {
+      var tsubo = Math.round(Number(input.value));
+      // 範囲外のときは金額を書き換えず、表の見出しが示す坪数との食い違いを
+      // 注意書きで知らせる。勝手に丸めると、入れた数字と違う金額が出て混乱する。
+      var ok = !!tsubo && tsubo >= min && tsubo <= max;
+      warn.hidden = ok || input.value === "";
+      if (!ok) return;
+      head.textContent = "延床" + tsubo + "坪の目安";
+      rows.forEach(function (row) {
+        var base = Number(row.dataset.basePrice);
+        var man = base * (fixed + (1 - fixed) * tsubo / baseTsubo);
+        row.querySelector(".sim-value").textContent = "約" + Math.round(man) + "万円";
+      });
+    }
+
+    input.addEventListener("input", update);
+    input.addEventListener("change", update);
+  })();
+</script>
 </main>
 
 <section class="cta-band">
