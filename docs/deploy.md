@@ -230,6 +230,53 @@ MEO の減点材料になる。集客の実績も無く、残す理由が無い�
 > 「どこの会社か」を判断させにくくする。範囲を絞るほうが地元の検索で
 > 強くなる。正は `site/company.toml` の `areas`。
 
+### お問い合わせフォーム（2026-10-13 公開）
+
+`/contact/` のフォームは、同じドメインの `/api/contact` へ素の POST で送る。
+受けるのは `worker/index.js`。それ以外のリクエストは今までどおり静的ファイルへ
+素通しするので、**フォームが壊れてもサイトの表示は止まらない。**
+
+メールは **Cloudflare の Email Routing (`send_email` バインディング)** で送る。
+外部のメール配信サービスは契約していない。設定は `wrangler.toml` の
+`[vars]` にある。
+
+| | 値 |
+|---|---|
+| 差出人 | `form@tatsumi-tosou.com`（送信専用） |
+| 宛先 | `CONTACT_TO`。Cloudflare で**検証済みの宛先**だけが使える |
+
+**宛先を変えるときは、先に Cloudflare の Email Routing →
+Destination addresses でそのアドレスを登録し、確認メールのリンクを押すこと。**
+未検証のアドレスには送れず、フォームはエラー画面を出す。
+
+#### 設定したときに踏んだこと
+
+- **お名前.com のメール設定が残っていた。** `MX → mail1002.onamae.ne.jp` と
+  SPF が入っており、Email Routing と競合して有効化できなかった。
+  本人に「このドメインのメールは使っていない」ことを確認したうえで削除した。
+  **戻すときは MX を `mail1002.onamae.ne.jp` / 優先度10 で再作成する。**
+- **1通目は iCloud の迷惑メールフォルダに入った。** ドメインから初めて
+  メールを送ったため。本人が「迷惑メールではない」を設定し、2通目は受信トレイに
+  届いた。**宛先を変えたときは同じことが起きるので、必ずテスト送信すること。**
+- `mail.tatsumi-tosou.com` の A レコードは、お名前.com のメール用に残ったもの。
+  使っていないが、消さなくても害はない。
+
+#### 動作確認のしかた
+
+```bash
+# 入力が足りないとき（400 とエラー画面が返る。メールは送らない）
+curl -i -X POST https://tatsumi-tosou.com/api/contact -d "name=test"
+
+# 正常な送信（303 で /thanks/ へ。宛先にメールが届く）
+curl -i -X POST https://tatsumi-tosou.com/api/contact \
+  --data-urlencode "name=動作確認" \
+  --data-urlencode "tel=080-0000-0000" \
+  --data-urlencode "message=テストです"
+```
+
+迷惑メール対策は、人には見えない囮の入力欄（`company`）と本文長の上限。
+囮が埋まっていた場合は、送信したように見せて実際には送らない。
+
 ### GBP と連動させる — 公開したらすぐに
 
 Google ビジネスプロフィールの「ウェブサイト」欄に

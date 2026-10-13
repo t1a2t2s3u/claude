@@ -63,6 +63,8 @@ site/
   templates/*.html     Jinja2 テンプレート
   assets/              CSS と画像。dist/assets/ にそのままコピーされる
 dist/                  site/ から生成した公開物。commit する（下記）
+worker/index.js        お問い合わせフォームの受け口 (/api/contact)。
+                       それ以外のリクエストは静的ファイルへ素通しする
 wrangler.toml          Cloudflare の更新先 Worker と、公開ディレクトリ
 docs/deploy.md         ドメイン取得から Search Console 登録までの手順
 docs/line.md           公式LINE の設定。サイトの案内文と揃える必要がある
