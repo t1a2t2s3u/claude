@@ -97,3 +97,9 @@ def test_worker_does_not_load_anything_from_npm():
     worker = (REPO_ROOT / "worker" / "index.js").read_text(encoding="utf-8")
     imports = re.findall(r'^import .*? from "([^"]+)";', worker, re.M)
     assert imports == ["cloudflare:email"], imports
+
+
+def test_missing_pages_fall_back_to_the_404_page():
+    """これが無いと、リンク切れで来た人が本文の空のページを見ることになる。"""
+    assert _config()["assets"]["not_found_handling"] == "404-page"
+    assert (REPO_ROOT / "dist" / "404.html").exists()
