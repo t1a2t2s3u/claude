@@ -55,8 +55,20 @@
   詳細は `site/services.toml`（2026年8月のチラシから転記、2026-10-02 本人提供の積算見積書で
   5グレードとも改定: 89/96/120/126/131万円）
 - Google口コミ: 評価 5.0・4件（2026-08時点。増えたら要更新）
+- **クチコミを書く直リンク: https://g.page/r/CWf36k8NH_I5EAE/review**
+  （2026-10-13 オーナー提供・**同日オーナーが実機で動作確認済み**。星の評価画面が
+  直接開く。お願いカード・公式LINE・完工時の書類に使う）
+- **Googleプロフィールの短縮URL: https://g.page/r/CWf36k8NH_I5EAE**
+  （2026-10-13 **動作確認済み**。`site/company.toml` の `gbp_url` に入れて、
+  構造化データの sameAs とサイトのクチコミ欄のリンクに使う）
+- QRコード（PDF・社名入り）: Google公式の「Google QR コード」をオーナーが保持
+  （2026-10-13 受領。ラベルは「クチコミをみる」で**行き先はプロフィール**。
+  QRの生成はパソコンのブラウザのみ可）
 - ホームページ: **https://tatsumi-tosou.com/**（Cloudflare Workers で配信。
   ソースは上記ブランチの `site/`、公開物は `dist/`）
+  **印刷物（チラシ・名刺・看板・社用車）のURLも www なし**（2026-10-13 オーナー確認）。
+  `www.tatsumi-tosou.com` は転送未設定で接続できないが、印刷物・検索とも www なしのため
+  実害は小さい
 - Instagram: https://www.instagram.com/tatsumi_tosou_kougyou/（自社アカウント）
 - LINE公式: https://lin.ee/WxoWd1J
 
