@@ -98,6 +98,20 @@
   </div>
 </section>
 
+{% if symptoms %}
+{# 料金を見る前に「うちはどうなのか」を確かめられるようにする。
+   いきなり金額を出されるより、先に自分の家の状態が分かるほうが進みやすい #}
+<section class="section check-band">
+  <div class="wrap check-inner">
+    <div>
+      <h2>うちはもう塗り替えどき？</h2>
+      <p>外壁の症状を写真で見比べながら、今どの段階かを確かめられます。<strong>入力は送信されません。</strong></p>
+    </div>
+    <a class="btn btn-check" href="/shindan/">セルフチェックしてみる</a>
+  </div>
+</section>
+{% endif %}
+
 {% if packages %}
 <section class="section section-alt">
   <div class="wrap">

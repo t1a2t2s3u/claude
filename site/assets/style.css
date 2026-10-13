@@ -967,3 +967,23 @@ table.price-table thead th {
   .sx { grid-template-columns: 240px 1fr; }
   .sx-photo { aspect-ratio: auto; height: 100%; }
 }
+
+/* セルフチェックへの導線。料金を見る前に置くので、主張しすぎない */
+.check-band { padding: 2.2rem 0; background: var(--bg-tint); }
+.check-inner {
+  display: grid; gap: 1rem; align-items: center; grid-template-columns: 1fr;
+}
+.check-band h2 { margin: 0 0 .4rem; font-size: 1.25rem; color: var(--brand-deep); }
+.check-band p { margin: 0; font-size: .92rem; color: var(--ink); }
+.check-band strong { color: var(--brand-deep); }
+.btn-check {
+  display: inline-block; text-align: center; text-decoration: none;
+  font-weight: 700; color: #fff; background: var(--brand-deep);
+  padding: .9rem 1.6rem; border-radius: var(--radius); white-space: nowrap;
+}
+.btn-check:hover { background: var(--brand-deepest); }
+.sim-check { margin: 0 0 .7rem; font-size: .86rem; }
+
+@media (min-width: 720px) {
+  .check-inner { grid-template-columns: 1fr auto; gap: 2rem; }
+}

@@ -95,6 +95,8 @@ class _Builder:
             # 記事も同じ。1本だけ写真があると一覧の行が不揃いになる
             post_thumbs_ready=all(post.cover for post in self.content.posts),
             plan=self.content.plan,
+            # セルフチェックへの導線は、症状が1つも無ければ出さない
+            symptoms=self.content.symptoms,
             testimonials=self.content.testimonials,
             works=self.content.works,
             posts=self.content.posts,
@@ -302,7 +304,6 @@ class _Builder:
             ),
             section="shindan",
             trail=trail,
-            symptoms=self.content.symptoms,
             verdicts=self.content.verdicts,
             jsonld=jsonld,
         )
