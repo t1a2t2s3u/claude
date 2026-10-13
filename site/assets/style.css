@@ -910,3 +910,60 @@ table.price-table thead th {
 .sim-note { margin: 0; font-size: .82rem; color: var(--ink-muted); line-height: 1.9; }
 .sim-note strong { color: var(--brand-deep); }
 .sim-warn { font-size: .8rem; font-weight: 700; color: var(--accent-dark); }
+
+/* ---------- 外壁の傷み セルフチェック ---------- */
+
+/* 判定。選ぶたびに中身が変わるので、画面の上に置いて目に入るようにする */
+.sx-result {
+  background: var(--bg-alt); border: 2px solid var(--brand);
+  border-radius: var(--radius); padding: 1.4rem; margin-bottom: 1.75rem;
+}
+.sx-result-label {
+  margin: 0 0 .4rem; font-size: .75rem; font-weight: 700;
+  letter-spacing: .08em; color: var(--brand-text);
+}
+.sx-verdict h2 {
+  margin: 0 0 .6rem; font-size: 1.2rem; color: var(--brand-deep);
+  line-height: 1.5;
+}
+.sx-verdict-body p { margin: 0 0 .7rem; font-size: .92rem; line-height: 1.9; }
+.sx-verdict-body p:last-child { margin-bottom: 0; }
+.sx-verdict-body strong { color: var(--brand-deep); }
+/* 段階が上がるほど枠の色を変える。数字ではなく色で伝わるようにする */
+.sx-result:has(.sx-v2:not([hidden])) { border-color: var(--accent); }
+.sx-result:has(.sx-v3:not([hidden])) { border-color: var(--accent-dark); background: #fff6f0; }
+.sx-hit {
+  margin: .9rem 0 0; padding-top: .8rem; border-top: 1px solid var(--line);
+  font-size: .82rem; color: var(--ink-muted);
+}
+
+/* 症状のカード */
+.sx-list { list-style: none; margin: 0 0 2rem; padding: 0; display: grid; gap: 1rem; }
+.sx {
+  background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
+  overflow: hidden; display: grid; grid-template-columns: 1fr;
+}
+.sx.is-hit { border-color: var(--accent); box-shadow: var(--shadow); }
+.sx-photo { margin: 0; aspect-ratio: 4 / 3; background: var(--bg-alt); }
+.sx-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sx-body { padding: 1rem 1.1rem 1.1rem; }
+.sx-name { margin: 0 0 .3rem; font-size: 1.05rem; color: var(--brand-deep); }
+.sx-q { margin: 0 0 .5rem; font-size: 1rem; font-weight: 700; line-height: 1.7; }
+.sx-note { margin: 0 0 .9rem; font-size: .84rem; color: var(--ink-muted); line-height: 1.8; }
+
+/* ある／ない。指で押せる大きさを確保する */
+.sx-choice { display: flex; gap: .5rem; }
+.sx-choice input { position: absolute; opacity: 0; pointer-events: none; }
+.sx-choice label {
+  flex: 1; text-align: center; cursor: pointer; font-size: .92rem; font-weight: 700;
+  padding: .7rem .5rem; border: 2px solid var(--line); border-radius: 6px;
+  color: var(--ink-muted); background: var(--bg);
+}
+.sx-choice input:checked + label { border-color: var(--brand); background: var(--bg-tint); color: var(--brand-deep); }
+.sx-choice input[value="1"]:checked + label { border-color: var(--accent); background: #fdf0e7; color: var(--accent-dark); }
+.sx-choice input:focus-visible + label { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+@media (min-width: 620px) {
+  .sx { grid-template-columns: 240px 1fr; }
+  .sx-photo { aspect-ratio: auto; height: 100%; }
+}

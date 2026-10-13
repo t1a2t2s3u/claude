@@ -315,3 +315,17 @@ def test_placeholder_with_a_note_is_still_a_placeholder():
     assert c.is_placeholder("点検は【要記入：いつ・何回伺うか】です")
     assert not c.is_placeholder("記入済みの文章")
     assert not c.is_placeholder("")
+
+
+def test_symptom_levels_have_a_matching_verdict():
+    """症状の level に対応する判定が無いと、選んでも画面が変わらない。"""
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1] / "site"
+    symptoms = c.load_symptoms(root)
+    verdicts = c.load_verdicts(root)
+    assert symptoms and verdicts
+    levels = {v.level for v in verdicts}
+    assert 0 in levels, "何も当てはまらないときの判定が必要"
+    for symptom in symptoms:
+        assert symptom.level in levels, symptom.slug

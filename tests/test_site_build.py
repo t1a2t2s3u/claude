@@ -502,3 +502,44 @@ def test_price_simulator_warns_that_it_is_only_an_estimate(built):
     html = read(out, "services/index.html")
     assert "これは目安です" in html
     assert "現地調査" in html
+
+
+def test_self_check_lists_every_symptom(built):
+    """症状を足したのに画面に出ない、という取りこぼしを防ぐ。"""
+    from seo_meo.site.content import load_symptoms
+
+    _, out = built
+    html = read(out, "shindan/index.html")
+    symptoms = load_symptoms(SITE_ROOT)
+    assert symptoms
+    for symptom in symptoms:
+        assert symptom.question in html, symptom.slug
+        assert f'/assets/{symptom.image}"' in html, symptom.slug
+
+
+def test_self_check_photos_exist(built):
+    """写真のパスを間違えると、画像が割れたページが公開される。"""
+    from seo_meo.site.content import load_symptoms
+
+    _, out = built
+    for symptom in load_symptoms(SITE_ROOT):
+        assert (out / "assets" / symptom.image).exists(), symptom.image
+
+
+def test_self_check_does_not_claim_to_be_a_diagnosis(built):
+    """建物を見ずに断定すると、訪問販売と同じになる。"""
+    _, out = built
+    html = read(out, "shindan/index.html")
+    assert "これは目安です" in html
+    assert "診断ではありません" in html
+
+
+def test_self_check_shows_one_verdict_before_any_input(built):
+    """JSが動かない環境でも、判定が1つだけ見えていること。"""
+    import re
+
+    _, out = built
+    html = read(out, "shindan/index.html")
+    verdicts = re.findall(r'<div class="sx-verdict [^"]*"([^>]*)>', html)
+    assert len(verdicts) == 4
+    assert sum(1 for attrs in verdicts if "hidden" not in attrs) == 1

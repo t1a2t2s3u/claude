@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block breadcrumb %}{{ breadcrumb(trail) }}{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div class="wrap">
+    <h1>外壁の傷み セルフチェック</h1>
+    <p>お家の壁を見ながら、当てはまるものを選んでください。<strong>今どのくらいの段階か</strong>の目安が出ます。入力は送信されません。</p>
+  </div>
+</div>
+
+<div class="wrap prose-wrap">
+
+  {# 判定は常に見えている。選ぶほど内容が変わる。 #}
+  <section class="sx-result" id="sx-result" aria-live="polite">
+    <p class="sx-result-label">いまの目安</p>
+    {% for verdict in verdicts %}
+    <div class="sx-verdict sx-v{{ verdict.level }}" data-level="{{ verdict.level }}"{% if not loop.first %} hidden{% endif %}>
+      <h2>{{ verdict.title }}</h2>
+      <div class="sx-verdict-body">{{ verdict.body_html|safe }}</div>
+    </div>
+    {% endfor %}
+    <p class="sx-hit" id="sx-hit" hidden></p>
+  </section>
+
+  <ol class="sx-list">
+    {% for symptom in symptoms %}
+    <li class="sx" data-level="{{ symptom.level }}" data-name="{{ symptom.name }}">
+      <figure class="sx-photo">
+        <img src="/assets/{{ symptom.image }}" alt="{{ symptom.name }}の例" loading="lazy">
+      </figure>
+      <div class="sx-body">
+        <h2 class="sx-name">{{ symptom.name }}</h2>
+        <p class="sx-q">{{ symptom.question }}</p>
+        <p class="sx-note">{{ symptom.note }}</p>
+        <div class="sx-choice">
+          <input type="radio" name="sx-{{ symptom.slug }}" id="{{ symptom.slug }}-yes" value="1">
+          <label for="{{ symptom.slug }}-yes">当てはまる</label>
+          <input type="radio" name="sx-{{ symptom.slug }}" id="{{ symptom.slug }}-no" value="0" checked>
+          <label for="{{ symptom.slug }}-no">当てはまらない</label>
+        </div>
+      </div>
+    </li>
+    {% endfor %}
+  </ol>
+
+  <section class="note-box">
+    <h2>この結果でできること・できないこと</h2>
+    <p>
+      <strong>これは目安です。診断ではありません。</strong>
+      屋根、2階の高いところ、北側の壁は地上からは見えません。外から見て何ともなくても、
+      <strong>内側が傷んでいることがあります。</strong>その逆もあります。
+    </p>
+    <p>
+      当てはまるものが多くても、<strong>すぐに工事が必要とは限りません。</strong>
+      当社は見積りをお出しした後、こちらから繰り返しご連絡することはありません。
+      <strong>点検だけでも無料でお受けしています。</strong>
+    </p>
+  </section>
+
+</div>
+
+<script>
+  // 当てはまる症状のうち、いちばん重い level で判定を切り替える。
+  // 点数を足し上げないのは、軽い症状がいくつ重なっても「水が入っている」には
+  // ならないため。逆に重いものが1つあれば、それだけで見てもらう理由になる。
+  (function () {
+    var list = document.querySelector(".sx-list");
+    var result = document.getElementById("sx-result");
+    var hit = document.getElementById("sx-hit");
+    if (!list || !result) return;
+
+    var items = Array.prototype.slice.call(list.querySelectorAll(".sx"));
+    var verdicts = Array.prototype.slice.call(result.querySelectorAll(".sx-verdict"));
+
+    function update() {
+      var names = [];
+      var worst = 0;
+      items.forEach(function (item) {
+        var yes = item.querySelector('input[value="1"]');
+        item.classList.toggle("is-hit", !!(yes && yes.checked));
+        if (yes && yes.checked) {
+          names.push(item.dataset.name);
+          worst = Math.max(worst, Number(item.dataset.level));
+        }
+      });
+      verdicts.forEach(function (v) {
+        v.hidden = Number(v.dataset.level) !== worst;
+      });
+      hit.hidden = names.length === 0;
+      hit.textContent = "当てはまった症状: " + names.join("、");
+    }
+
+    list.addEventListener("change", update);
+    update();
+  })();
+</script>
+
+{% endblock %}

@@ -283,6 +283,31 @@ class _Builder:
         )
         self.write("/faq/", html)
 
+    def build_shindan(self) -> None:
+        """外壁の傷みセルフチェック。症状が無ければページごと出さない。"""
+        if not self.content.symptoms or not self.content.verdicts:
+            return
+        trail = [("ホーム", "/"), ("外壁の傷み セルフチェック", "/shindan/")]
+        jsonld = structured.graph(
+            self.content, structured.breadcrumbs(self.settings, trail)
+        )
+        html = self.render(
+            "shindan.html",
+            "/shindan/",
+            title="外壁の傷み セルフチェック",
+            description=(
+                "お家の外壁を見ながら、チョーキング・ひび割れ・コーキングの切れなど"
+                "9つの症状から今の段階を確かめられます。写真付きで比べられるので、"
+                "塗り替えの時期の目安になります。秋田市・潟上市・南秋田郡対応。"
+            ),
+            section="shindan",
+            trail=trail,
+            symptoms=self.content.symptoms,
+            verdicts=self.content.verdicts,
+            jsonld=jsonld,
+        )
+        self.write("/shindan/", html)
+
     def build_404(self) -> None:
         html = self.render(
             "404.html",
@@ -367,6 +392,7 @@ def build(
     builder.build_blog()
     builder.build_pages()
     builder.build_faq()
+    builder.build_shindan()
     builder.build_404()
     builder.build_sitemap()
     builder.build_robots()

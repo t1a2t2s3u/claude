@@ -349,6 +349,27 @@ class FaqItem:
 
 
 @dataclass
+class Symptom:
+    """セルフチェックで出す劣化症状。level は進み具合 (1=初期 2=進行 3=水が入っている)。"""
+
+    slug: str
+    name: str
+    question: str
+    image: str
+    level: int
+    note: str
+
+
+@dataclass
+class Verdict:
+    """セルフチェックの判定。level は該当した症状のうち最も重いもの。"""
+
+    level: int
+    title: str
+    body_html: str
+
+
+@dataclass
 class Content:
     """サイト生成に必要なもの一式。"""
 
@@ -362,6 +383,8 @@ class Content:
     works: list[Work]
     posts: list[Post]
     pages: list[StaticPage]
+    symptoms: list[Symptom] = field(default_factory=list)
+    verdicts: list[Verdict] = field(default_factory=list)
 
     def page(self, slug: str) -> StaticPage | None:
         return next((p for p in self.pages if p.slug == slug), None)
@@ -654,6 +677,44 @@ def _as_date(value: Any, path: Path) -> date:
     )
 
 
+def load_symptoms(root: Path) -> list[Symptom]:
+    """セルフチェックの症状。ファイルが無ければ空で返す（画面ごと出さない）。"""
+    path = root / "symptoms.toml"
+    if not path.exists():
+        return []
+    with path.open("rb") as fh:
+        raw = tomllib.load(fh)
+    return [
+        Symptom(
+            slug=entry.get("slug", ""),
+            name=entry.get("name", ""),
+            question=entry.get("question", ""),
+            image=entry.get("image", ""),
+            level=int(entry.get("level", 1)),
+            note=entry.get("note", ""),
+        )
+        for entry in raw.get("symptom", [])
+    ]
+
+
+def load_verdicts(root: Path) -> list[Verdict]:
+    path = root / "symptoms.toml"
+    if not path.exists():
+        return []
+    with path.open("rb") as fh:
+        raw = tomllib.load(fh)
+    verdicts = [
+        Verdict(
+            level=int(entry.get("level", 0)),
+            title=entry.get("title", ""),
+            body_html=_render_markdown(entry.get("body", "")),
+        )
+        for entry in raw.get("verdict", [])
+    ]
+    verdicts.sort(key=lambda v: v.level)
+    return verdicts
+
+
 def load(root: Path) -> Content:
     """``site/`` 以下を丸ごと読み込む。"""
     return Content(
@@ -667,6 +728,8 @@ def load(root: Path) -> Content:
         works=load_works(root),
         posts=load_posts(root),
         pages=load_pages(root),
+        symptoms=load_symptoms(root),
+        verdicts=load_verdicts(root),
     )
 
 
@@ -728,5 +791,14 @@ def find_placeholders(content: Content) -> list[str]:
     for page in content.pages:
         if is_placeholder(page.title) or is_placeholder(page.body_html):
             found.append(f"pages/{page.slug}.md")
+
+    for symptom in content.symptoms:
+        for field_name, value in vars(symptom).items():
+            if is_placeholder(value):
+                found.append(f"symptoms.toml の {symptom.slug}.{field_name}")
+
+    for verdict in content.verdicts:
+        if is_placeholder(verdict.title) or is_placeholder(verdict.body_html):
+            found.append(f"symptoms.toml の verdict[level={verdict.level}]")
 
     return found
