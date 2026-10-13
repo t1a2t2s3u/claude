@@ -28,6 +28,7 @@ name = "CONTACT_MAIL"
 # 実際に受信できる必要はない（返信先は Reply-To でお客様宛てになる）。
 CONTACT_FROM = "form@tatsumi-tosou.com"
 
-# フォームの送信先。Cloudflare で「検証済みの宛先」に登録したアドレスを書く。
-# 【要記入】のままだと、フォームは送信エラーの画面を出す（電話とLINEの案内）。
-CONTACT_TO = "【要記入】"
+# フォームの送信先。Cloudflare の Email Routing で「検証済みの宛先」に
+# 登録したアドレス（2026-10-13 に本人が検証）。変更するときは Cloudflare 側の
+# Destination addresses にも登録して検証すること。未検証のアドレスには送れない。
+CONTACT_TO = "t1a2t2s3u@icloud.com"
