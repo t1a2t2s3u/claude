@@ -56,6 +56,7 @@ simulator/          実在株価(yfinance)によるペーパートレード用�
                     Python/Streamlitアプリ(独立プロジェクト。詳細は
                     simulator/README.md。テストは python -m unittest)
 test/*.test.mjs     ロジックのユニットテスト(node --test)
+training/           筋トレ計画のPWAページ(占いアプリ本体とは独立した自己完結の静的ページ)
 ```
 
 新しい占いロジックは `js/` にDOM非依存モジュールとして追加し、表示は
