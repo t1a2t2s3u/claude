@@ -106,17 +106,25 @@ def get_usdjpy(conn) -> float:
 _history_cache: dict[tuple[str, str], tuple[float, pd.DataFrame]] = {}
 
 
-def get_history(ticker: str, period: str = "1y") -> pd.DataFrame:
-    """日足のOHLCV DataFrameを返す(空ならQuoteError)。"""
-    key = (ticker, period)
+INTRADAY_TTL_SEC = 55  # 分足はほぼ毎分更新できるよう短いTTLにする
+
+
+def get_history(ticker: str, period: str = "1y", interval: str = "1d") -> pd.DataFrame:
+    """OHLCVのDataFrameを返す(空ならQuoteError)。
+
+    interval="5m" などの分足にも対応する(Yahooの無料データは15〜20分遅延)。
+    分足はTTLを短くして、チャートの自動更新で最新に追従できるようにする。
+    """
+    key = (ticker, period, interval)
     cached = _history_cache.get(key)
-    if cached and time.time() - cached[0] < HISTORY_TTL_SEC:
+    ttl = INTRADAY_TTL_SEC if interval != "1d" else HISTORY_TTL_SEC
+    if cached and time.time() - cached[0] < ttl:
         return cached[1]
 
     import yfinance as yf
 
     try:
-        df = yf.Ticker(ticker).history(period=period, interval="1d", auto_adjust=False)
+        df = yf.Ticker(ticker).history(period=period, interval=interval, auto_adjust=False)
     except Exception as exc:
         raise QuoteError(
             f"「{ticker}」の履歴取得に失敗しました(ネットワークまたはYahoo Finance側の問題)。"
@@ -124,8 +132,8 @@ def get_history(ticker: str, period: str = "1y") -> pd.DataFrame:
         ) from exc
     if df is None or df.empty:
         raise QuoteError(
-            f"「{ticker}」の日足データがありません。休場のみの期間か、ティッカーが誤っている"
-            "可能性があります。"
+            f"「{ticker}」の値動きデータがありません。休場中(当日分がまだ無い)か、"
+            "ティッカーが誤っている可能性があります。"
         )
     df = df.tz_localize(None) if df.index.tz is not None else df
     _history_cache[key] = (time.time(), df)
