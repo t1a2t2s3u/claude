@@ -1,6 +1,8 @@
-"""スクリーナーページ: 「第二のキオクシア型」銘柄を全銘柄から探す。"""
+"""スクリーナーページ: 戦略プリセット(テンバガー総合/キオクシア型)で銘柄を探す。"""
 
 from __future__ import annotations
+
+from datetime import timedelta
 
 import pandas as pd
 import streamlit as st
@@ -8,14 +10,20 @@ import streamlit as st
 from sim import screener
 from sim.ai_bridge import export_candidates
 from sim.master import master_counts
+from sim.screener import FACTOR_LABELS, PRESETS
 
 COUNTRY_LABELS = {"日本株": "JP", "米国株": "US"}
 MCAP_PRESETS = {
+    "指定なし": 0,
+    "50億円以上": 5e9,
     "300億円以上": 3e10,
     "1,000億円以上": 1e11,
     "3,000億円以上": 3e11,
-    "1兆円以上": 1e12,
-    "指定なし": 0,
+}
+# プリセットごとの推奨初期値(テンバガーは小型も対象、キオクシア型は大型中心)
+PRESET_DEFAULTS = {
+    "tenbagger": {"mcap": "50億円以上", "markets": []},
+    "kioxia": {"mcap": "1,000億円以上", "markets": ["プライム"]},
 }
 
 
@@ -29,15 +37,21 @@ def _universe(conn, country: str, markets: list[str]) -> list:
 
 
 def render(conn, pf) -> None:
-    st.subheader("🔎 スクリーナー — 「第二のキオクシア」型")
-    st.markdown(
-        "キオクシア(285A)が急騰する**前**に持っていた特徴を点数化し、同じ\"型\"の銘柄を探します: "
-        "**①大型なのに若い上場**(放置された大型IPO) × **②出遅れ・低評価**(低PBR/PER) × "
-        "**③点火の兆し**(52週高値圏+出来高急増) × **④テーマ**(半導体・AI等)。"
+    st.subheader("🔎 スクリーナー")
+
+    # ── 戦略プリセットの選択 ─────────────────────────────
+    preset_key = st.selectbox(
+        "戦略",
+        list(PRESETS.keys()),
+        format_func=lambda k: PRESETS[k]["label"],
+        key="screener_preset",
     )
+    preset = PRESETS[preset_key]
+    st.markdown(preset["description"])
     st.warning(
-        "これは「過去に急騰した銘柄と似た状態」を探すツールであり、将来の上昇を予測・保証する"
-        "ものではありません。候補はAI分析や自分の調査の出発点として使ってください。",
+        "これは「実績ある手法の条件に、いま合致している銘柄」を探すツールであり、"
+        "将来の上昇(テンバガー)を予測・保証するものではありません。"
+        "候補はAI分析や自分の調査の出発点として使ってください。",
         icon="⚠️",
     )
 
@@ -46,8 +60,6 @@ def render(conn, pf) -> None:
         st.session_state["fund_autodata_checked"] = True
         auto = screener.load_autodata_fundamentals(conn)
         if auto and auto["loaded"]:
-            from datetime import timedelta
-
             jst = auto["generated_at"] + timedelta(hours=9)
             st.success(
                 f"自動収集の財務データ({jst:%m/%d %H:%M} JST時点・{auto['loaded']:,}銘柄)を"
@@ -60,6 +72,7 @@ def render(conn, pf) -> None:
         return
 
     # ── 対象の選択 ───────────────────────────────────────
+    defaults = PRESET_DEFAULTS[preset_key]
     col1, col2 = st.columns([1, 2])
     with col1:
         country_label = st.selectbox("対象", list(COUNTRY_LABELS.keys()))
@@ -68,9 +81,11 @@ def render(conn, pf) -> None:
         markets = []
         if country == "JP":
             markets = st.multiselect(
-                "市場区分(未選択=全部)", ["プライム", "スタンダード", "グロース"],
-                default=["プライム"],
-                help="キオクシア型(大型)を狙うならプライムだけで十分です。",
+                "市場区分(未選択=全部)",
+                ["プライム", "スタンダード", "グロース"],
+                default=defaults["markets"],
+                key=f"markets_{preset_key}",
+                help="テンバガー狙いは小型も対象になる全市場、キオクシア型はプライム中心がおすすめ。",
             )
 
     universe = _universe(conn, country, markets)
@@ -81,8 +96,8 @@ def render(conn, pf) -> None:
     # ── ① データ取得(スキャン) ──────────────────────────
     st.markdown("##### ① 財務データのスキャン")
     st.caption(
-        "yfinanceから1銘柄ずつ取得するため時間がかかります(目安: 100銘柄で2〜5分)。"
-        "取得結果は24時間キャッシュされ、途中で止めても「続きから」になります。"
+        "毎朝の自動収集データが同梱されるため通常は不要です。対象を広げたときや"
+        "最新化したいときだけ実行してください(100銘柄で2〜5分、24時間キャッシュ)。"
     )
     c1, c2 = st.columns([1, 2])
     with c1:
@@ -97,35 +112,52 @@ def render(conn, pf) -> None:
     if run and pending:
         targets = pending[:batch]
         bar = st.progress(0.0, text="取得中…")
+
         def update(i, total, ticker):
             bar.progress(i / total, text=f"取得中… {i}/{total} {ticker}")
+
         stats = screener.scan(conn, targets, progress_cb=update)
         bar.empty()
         st.success(f"{stats['ok']}件取得(失敗 {stats['error']}件)。失敗分は6時間後に再試行できます。")
         st.rerun()
 
     # ── ② ランキング ─────────────────────────────────────
-    st.markdown("##### ② キオクシア型スコアランキング")
+    st.markdown("##### ② スコアランキング")
+    factor_names = list(preset["weights"].keys())
     with st.expander("重み・条件を調整する", expanded=False):
-        w1, w2, w3, w4 = st.columns(4)
+        cols = st.columns(len(factor_names))
         weights = {
-            "freshness": w1.slider("① 大型×若さ", 0, 50, screener.DEFAULT_WEIGHTS["freshness"]),
-            "undervalue": w2.slider("② 低評価", 0, 50, screener.DEFAULT_WEIGHTS["undervalue"]),
-            "momentum": w3.slider("③ 点火", 0, 50, screener.DEFAULT_WEIGHTS["momentum"]),
-            "theme": w4.slider("④ テーマ", 0, 50, screener.DEFAULT_WEIGHTS["theme"]),
+            name: cols[i].slider(
+                FACTOR_LABELS[name], 0, 50, preset["weights"][name],
+                key=f"w_{preset_key}_{name}",
+            )
+            for i, name in enumerate(factor_names)
         }
         f1, f2 = st.columns(2)
-        min_mcap = MCAP_PRESETS[f1.selectbox("最低時価総額", list(MCAP_PRESETS.keys()), index=1)]
-        keywords = [
-            k.strip() for k in f2.text_input(
-                "テーマ追加キーワード(カンマ区切り・英語)",
-                placeholder="例: defense, nuclear, robotics",
-            ).split(",") if k.strip()
+        min_mcap = MCAP_PRESETS[
+            f1.selectbox(
+                "最低時価総額", list(MCAP_PRESETS.keys()),
+                index=list(MCAP_PRESETS.keys()).index(defaults["mcap"]),
+                key=f"mcap_{preset_key}",
+            )
         ]
+        keywords = []
+        if "theme" in weights:
+            keywords = [
+                k.strip() for k in f2.text_input(
+                    "テーマ追加キーワード(カンマ区切り・英語)",
+                    placeholder="例: defense, nuclear, robotics",
+                    key=f"kw_{preset_key}",
+                ).split(",") if k.strip()
+            ]
+
     results = screener.rank(conn, universe, weights, keywords, min_mcap)
     if not results:
         st.info("スコア計算できる銘柄がまだありません。①のスキャンを実行してください。")
         return
+
+    def pct(value):
+        return f"{value * 100:+.0f}%" if value is not None else None
 
     top = results[:30]
     df = pd.DataFrame(
@@ -135,13 +167,13 @@ def render(conn, pf) -> None:
                 "ティッカー": r["ticker"],
                 "銘柄名": r["name"],
                 "スコア": r["score"],
-                "大型×若さ": round(r["components"]["freshness"], 2),
-                "低評価": round(r["components"]["undervalue"], 2),
-                "点火": round(r["components"]["momentum"], 2),
-                "テーマ": round(r["components"]["theme"], 2),
+                **{FACTOR_LABELS[n]: round(r["components"][n], 2) for n in factor_names},
                 "時価総額": f"{r['mcap_jpy'] / 1e8:,.0f}億円",
-                "PBR": round(r["pbr"], 2) if r["pbr"] else None,
                 "PER": round(r["per"], 1) if r["per"] else None,
+                "PEG": round(r["peg"], 2) if r["peg"] else None,
+                "ROE": pct(r["roe"]),
+                "増益率(Q)": pct(r["eps_growth"]),
+                "PBR": round(r["pbr"], 2) if r["pbr"] else None,
                 "上場年数": r["ipo_years"],
                 "業種": r["industry"] or r["sector"],
             }
@@ -150,8 +182,8 @@ def render(conn, pf) -> None:
     )
     st.dataframe(df, use_container_width=True, hide_index=True, height=420)
     st.caption(
-        f"スコア対象 {len(results):,}銘柄(データ取得済みのみ)。"
-        "因子は0〜1(1が「キオクシア急騰前」に最も近い)。"
+        f"スコア対象 {len(results):,}銘柄(データ取得済みのみ)。因子は0〜1。"
+        "PEG・ROE等が空欄の銘柄はデータ未取得か、Yahoo側にデータがありません。"
     )
 
     # ── ③ AI分析へ ───────────────────────────────────────
@@ -159,7 +191,7 @@ def render(conn, pf) -> None:
     n = st.number_input("書き出す件数", min_value=3, max_value=30, value=10)
     note = st.text_input("Claudeへの補足(任意)", placeholder="例: 予算3万円、1〜2銘柄に絞りたい")
     if st.button("📤 AI分析用に書き出す"):
-        path, text = export_candidates(results[: int(n)], note)
+        path, text = export_candidates(results[: int(n)], note, strategy=preset["label"])
         st.success(f"書き出しました: `{path}`")
         st.download_button("⬇️ ダウンロード", text, file_name=path.name, mime="text/markdown")
         with st.expander("内容を確認"):

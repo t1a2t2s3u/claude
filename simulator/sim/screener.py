@@ -45,6 +45,18 @@ INFO_FIELDS = [
     "firstTradeDateEpochUtc",
     "sector",
     "industry",
+    # テンバガー戦略(リンチ/オニール/ミネルヴィニ/バフェット)用
+    "earningsQuarterlyGrowth",
+    "revenueGrowth",
+    "returnOnEquity",
+    "debtToEquity",
+    "pegRatio",
+    "profitMargins",
+    "operatingMargins",
+    "heldPercentInsiders",
+    "heldPercentInstitutions",
+    "fiftyDayAverage",
+    "twoHundredDayAverage",
 ]
 
 DEFAULT_WEIGHTS = {"freshness": 30, "undervalue": 25, "momentum": 30, "theme": 15}
@@ -248,17 +260,157 @@ def _score_theme(fund: dict, extra_keywords: list[str] | None = None) -> float:
     return 0.0
 
 
+# ── テンバガー戦略の因子(有名投資家の公開手法を数値化) ────────
+# 注意: いずれも「過去にテンバガーを生んだ手法の条件に今合致しているか」で
+# あって、10倍になることの予測ではない。
+
+def peg_value(fund: dict) -> float | None:
+    """PEGレシオ。yfinanceに無ければ PER ÷ 四半期増益率(%) で近似する。"""
+    peg = fund.get("pegRatio")
+    if peg and peg > 0:
+        return peg
+    per = fund.get("trailingPE")
+    growth = fund.get("earningsQuarterlyGrowth")
+    if per and per > 0 and growth and growth > 0:
+        return per / (growth * 100)
+    return None
+
+
+def _score_lynch(fund: dict) -> float:
+    """ピーター・リンチ: 割安成長(GARP)。PEG<1が買い、0.5以下は大バーゲン。"""
+    peg = peg_value(fund)
+    if peg is None:
+        return 0.0
+    return (
+        1.0 if peg <= 0.5 else 0.85 if peg <= 0.75 else 0.7 if peg <= 1.0
+        else 0.35 if peg <= 1.5 else 0.0
+    )
+
+
+def _score_oneil(fund: dict) -> float:
+    """ウィリアム・オニール(CAN-SLIM): 四半期EPS+25%以上×新高値圏。"""
+    growth = fund.get("earningsQuarterlyGrowth")
+    g = (
+        1.0 if growth and growth >= 0.5 else 0.8 if growth and growth >= 0.25
+        else 0.4 if growth and growth >= 0.1 else 0.0
+    )
+    price = fund.get("regularMarketPrice") or fund.get("currentPrice")
+    hi = fund.get("fiftyTwoWeekHigh")
+    h = 0.0
+    if price and hi and hi > 0:
+        ratio = price / hi
+        h = 1.0 if ratio >= 0.9 else 0.6 if ratio >= 0.8 else 0.2 if ratio >= 0.7 else 0.0
+    return 0.6 * g + 0.4 * h
+
+
+def _score_trend(fund: dict) -> float:
+    """マーク・ミネルヴィニ: 株価>50日線>200日線の上昇ステージだけ買う。"""
+    price = fund.get("regularMarketPrice") or fund.get("currentPrice")
+    ma50 = fund.get("fiftyDayAverage")
+    ma200 = fund.get("twoHundredDayAverage")
+    if not (price and ma50 and ma200):
+        return 0.0
+    if price > ma50 > ma200:
+        base = 1.0
+    elif price > ma200:
+        base = 0.4
+    else:
+        return 0.0
+    hi = fund.get("fiftyTwoWeekHigh")
+    near_high = bool(hi and price >= hi * 0.75)  # 高値から25%以内(テンプレート条件)
+    return base * (1.0 if near_high else 0.6)
+
+
+def _score_quality(fund: dict) -> float:
+    """バフェット流の質: 高ROE・高営業利益率・低負債。"""
+    roe = fund.get("returnOnEquity")
+    s_roe = (
+        1.0 if roe and roe >= 0.2 else 0.8 if roe and roe >= 0.15
+        else 0.5 if roe and roe >= 0.1 else 0.2 if roe and roe > 0 else 0.0
+    )
+    margin = fund.get("operatingMargins")
+    s_margin = (
+        1.0 if margin and margin >= 0.15 else 0.6 if margin and margin >= 0.08
+        else 0.2 if margin and margin > 0 else 0.0
+    )
+    debt = fund.get("debtToEquity")  # yfinanceは%表記(例: 45.3)
+    s_debt = (
+        1.0 if debt is not None and debt <= 50 else 0.7 if debt is not None and debt <= 100
+        else 0.3 if debt is not None and debt <= 200 else 0.0 if debt is not None else 0.4
+    )
+    return 0.5 * s_roe + 0.25 * s_margin + 0.25 * s_debt
+
+
+def _score_neglect(fund: dict) -> float:
+    """リンチ補足: 小型で機関投資家に無視されている銘柄ほど伸び代がある。"""
+    m = mcap_jpy(fund)
+    s_size = (
+        1.0 if 5e9 <= m < 3e10 else 0.8 if 3e10 <= m < 1e11 else 0.6 if 2e9 <= m < 5e9
+        else 0.4 if 1e11 <= m < 3e11 else 0.1
+    )
+    inst = fund.get("heldPercentInstitutions")
+    s_inst = (
+        1.0 if inst is not None and inst < 0.2 else 0.7 if inst is not None and inst < 0.4
+        else 0.3 if inst is not None and inst < 0.6 else 0.1 if inst is not None else 0.5
+    )
+    return 0.6 * s_size + 0.4 * s_inst
+
+
+# 因子レジストリ。ctx = {"now", "ticker", "keywords"}
+FACTORS = {
+    "freshness": lambda fund, ctx: _score_freshness(fund, ctx.get("now"), ctx.get("ticker")),
+    "undervalue": lambda fund, ctx: _score_undervalue(fund),
+    "momentum": lambda fund, ctx: _score_momentum(fund),
+    "theme": lambda fund, ctx: _score_theme(fund, ctx.get("keywords")),
+    "lynch": lambda fund, ctx: _score_lynch(fund),
+    "oneil": lambda fund, ctx: _score_oneil(fund),
+    "trend": lambda fund, ctx: _score_trend(fund),
+    "quality": lambda fund, ctx: _score_quality(fund),
+    "neglect": lambda fund, ctx: _score_neglect(fund),
+}
+
+FACTOR_LABELS = {
+    "freshness": "大型×若さ",
+    "undervalue": "低評価",
+    "momentum": "点火",
+    "theme": "テーマ",
+    "lynch": "リンチ(PEG)",
+    "oneil": "オニール(増益×高値)",
+    "trend": "ミネルヴィニ(トレンド)",
+    "quality": "バフェット(質)",
+    "neglect": "小型×無視",
+}
+
+# 戦略プリセット
+PRESETS = {
+    "tenbagger": {
+        "label": "テンバガー総合(リンチ×オニール×ミネルヴィニ×バフェット)",
+        "description": (
+            "有名投資家の公開手法を数値化: **リンチ**のPEG<1(割安成長)、"
+            "**オニール**の四半期EPS+25%×新高値圏、**ミネルヴィニ**の"
+            "株価>50日線>200日線、**バフェット**の高ROE・低負債、"
+            "そしてリンチの言う「機関投資家に無視された小型株」。"
+        ),
+        "weights": {"lynch": 25, "oneil": 20, "trend": 20, "quality": 20, "neglect": 15},
+    },
+    "kioxia": {
+        "label": "キオクシア型(大型IPO×出遅れ×点火)",
+        "description": (
+            "キオクシア(285A)が急騰する前の状態を数値化: 大型なのに若い上場 × "
+            "低PBR/PER × 52週高値圏+出来高急増 × 半導体テーマ。"
+        ),
+        "weights": dict(DEFAULT_WEIGHTS),
+    },
+}
+
+
 def score(fund: dict, weights: dict | None = None,
           extra_keywords: list[str] | None = None,
           now: datetime | None = None, ticker: str | None = None) -> dict:
-    """1銘柄のキオクシア型スコア(0〜100)と因子の内訳を返す。"""
-    w = {**DEFAULT_WEIGHTS, **(weights or {})}
-    comps = {
-        "freshness": _score_freshness(fund, now, ticker),
-        "undervalue": _score_undervalue(fund),
-        "momentum": _score_momentum(fund),
-        "theme": _score_theme(fund, extra_keywords),
-    }
+    """1銘柄のスコア(0〜100)と因子の内訳を返す。weightsのキーで因子を選ぶ。"""
+    w = weights or DEFAULT_WEIGHTS
+    ctx = {"now": now, "ticker": ticker, "keywords": extra_keywords}
+    comps = {name: FACTORS[name](fund, ctx) for name in w}
     total_w = sum(w.values()) or 1
     total = sum(w[k] * comps[k] for k in comps) / total_w * 100
     return {"total": round(total, 1), "components": comps}
@@ -296,6 +448,9 @@ def rank(conn, universe: list, weights: dict | None = None,
                 "industry": fund.get("industry"),
                 "price": fund.get("regularMarketPrice") or fund.get("currentPrice"),
                 "high52": fund.get("fiftyTwoWeekHigh"),
+                "peg": peg_value(fund),
+                "roe": fund.get("returnOnEquity"),
+                "eps_growth": fund.get("earningsQuarterlyGrowth"),
                 "low52": fund.get("fiftyTwoWeekLow"),
             }
         )
