@@ -6,12 +6,15 @@ name: 市場データ自動更新
 
 on:
   schedule:
-    # JST 6:30(月〜金)= UTC 21:30(日〜木)
+    # 平日 JST 6:30 = UTC 21:30(日〜木): 東証プライム(約35分)
     - cron: '30 21 * * 0-4'
+    # 土曜 JST 5:30 = UTC 金 20:30: 東証全銘柄+米国普通株(約3時間)。
+    # 財務データは四半期でしか変わらないため週1で十分、かつActions無料枠に収める
+    - cron: '30 20 * * 5'
   workflow_dispatch:
     inputs:
       scope:
-        description: '財務データの対象(prime/jp/all)'
+        description: '財務データの対象(prime/jp/us/all)'
         default: 'prime'
         required: false
 
@@ -25,7 +28,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,7 +39,16 @@ jobs:
       - name: 依存をインストール
         run: pip install -r simulator/requirements.txt
       - name: 市場データを生成
-        run: python simulator/scripts/build_autodata.py "${{ inputs.scope || 'prime' }}"
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python simulator/scripts/build_autodata.py "${{ inputs.scope || 'prime' }}"
+          elif [ "${{ github.event.schedule }}" = "30 20 * * 5" ]; then
+            # 土曜の週次フル更新: 東証全銘柄 → 米国普通株
+            python simulator/scripts/build_autodata.py jp
+            python simulator/scripts/build_autodata.py us
+          else
+            python simulator/scripts/build_autodata.py prime
+          fi
       - name: コミットしてプッシュ
         run: |
           git config user.name 'github-actions[bot]'

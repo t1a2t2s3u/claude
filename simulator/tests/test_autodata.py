@@ -67,5 +67,33 @@ class AutodataTest(unittest.TestCase):
         self.assertIsNone(load_autodata_fundamentals(self.conn, self.dir))
 
 
+class SelectTargetsTest(unittest.TestCase):
+    """build_autodata.select_targets(スコープ別の対象選定)のテスト。"""
+
+    @classmethod
+    def setUpClass(cls):
+        import importlib.util
+
+        path = Path(__file__).resolve().parent.parent / "scripts" / "build_autodata.py"
+        spec = importlib.util.spec_from_file_location("build_autodata", path)
+        cls.mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.mod)
+
+    def test_usスコープはETFと優先株等を除いた普通株のみ(self):
+        rows = [
+            {"ticker": "AAPL", "market": "NASDAQ", "country": "US"},
+            {"ticker": "BRK-B", "market": "NYSE", "country": "US"},       # クラス株は残す
+            {"ticker": "SPY", "market": "NYSE Arca ETF", "country": "US"},  # ETF除外
+            {"ticker": "ABC-PA", "market": "NYSE", "country": "US"},      # 優先株除外
+            {"ticker": "XYZ-WS", "market": "NYSE", "country": "US"},      # ワラント除外
+            {"ticker": "7203.T", "market": "プライム", "country": "JP"},
+        ]
+        got = [r["ticker"] for r in self.mod.select_targets(rows, "us")]
+        self.assertEqual(got, ["AAPL", "BRK-B"])
+        self.assertEqual(
+            [r["ticker"] for r in self.mod.select_targets(rows, "prime")], ["7203.T"]
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
