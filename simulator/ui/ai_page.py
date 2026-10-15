@@ -82,23 +82,30 @@ def render(conn, pf) -> None:
 
     # ── 2. 取込・一括発注 ─────────────────────────────────
     st.markdown("##### ② 売買指示JSONの取込")
-    files = ai_bridge.list_order_files()
+    # スマホでも使えるよう、貼り付け > アップロード > サーバー上のファイル の順で受け付ける
     source = None
+    pasted = st.text_area(
+        "JSONをここに貼り付け(いちばん簡単)",
+        height=170,
+        placeholder='[\n  {"ticker": "7203.T", "side": "buy", "qty": 100, "reason": "..."}\n]',
+    )
+    if pasted.strip():
+        source = pasted
+    files = ai_bridge.list_order_files()
     col1, col2 = st.columns(2)
     with col1:
+        uploaded = st.file_uploader("またはJSONファイルをアップロード", type=["json"])
+        if source is None and uploaded:
+            source = uploaded.getvalue().decode("utf-8")
+    with col2:
         selected = st.selectbox(
-            "ai_orders/ のファイル",
+            "または ai_orders/ のファイル",
             ["(選択してください)"] + [f.name for f in files],
         )
-        if selected != "(選択してください)":
+        if source is None and selected != "(選択してください)":
             source = next(f for f in files if f.name == selected).read_text(encoding="utf-8")
-    with col2:
-        uploaded = st.file_uploader("またはJSONをアップロード", type=["json"])
-        if uploaded:
-            source = uploaded.getvalue().decode("utf-8")
 
     if not source:
-        st.caption(f"注文JSONの置き場所: `{ai_bridge.AI_ORDERS_DIR}`")
         return
 
     try:
