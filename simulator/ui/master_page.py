@@ -69,6 +69,8 @@ def render(conn, pf) -> None:
     st.caption(
         "日本株はJPX「東証上場銘柄一覧」(data_j.xlsx)、米国株は nasdaqtrader.com の "
         "nasdaqlisted.txt / otherlisted.txt から取り込みます。"
+        "GitHub Actionsの自動更新(market-data.yml)が有効なら、毎朝のデータが自動で"
+        "同梱されるため、ここでの手動更新は通常不要です。"
     )
     b1, b2 = st.columns(2)
     if b1.button("🇯🇵 日本株マスタを更新", use_container_width=True):

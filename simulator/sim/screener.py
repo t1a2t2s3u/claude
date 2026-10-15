@@ -91,6 +91,45 @@ def get_fundamentals(conn, ticker: str, force: bool = False) -> dict:
     return data
 
 
+def load_autodata_fundamentals(conn, data_dir=None) -> dict | None:
+    """同梱の自動収集財務データ(autodata/fundamentals.json)をキャッシュに取り込む。
+
+    自動収集データの生成時刻より新しいキャッシュは上書きしない。
+    戻り値: {"loaded": 取込件数, "generated_at": 生成時刻} / データが無ければ None。
+    """
+    from pathlib import Path
+
+    base = Path(data_dir) if data_dir else Path(__file__).resolve().parent.parent / "autodata"
+    fund_path = base / "fundamentals.json"
+    if not fund_path.exists():
+        return None
+    try:
+        funds = json.loads(fund_path.read_text(encoding="utf-8"))
+        meta = json.loads((base / "meta.json").read_text(encoding="utf-8"))
+        generated_at = datetime.fromisoformat(meta["generated_at"]).replace(tzinfo=None)
+    except Exception:
+        return None
+
+    existing = {
+        r["ticker"]: datetime.fromisoformat(r["fetched_at"])
+        for r in conn.execute("SELECT ticker, fetched_at FROM fundamentals").fetchall()
+    }
+    stamp = generated_at.isoformat(timespec="seconds")
+    loaded = 0
+    for ticker, data in funds.items():
+        if ticker in existing and existing[ticker] >= generated_at:
+            continue  # アプリ側でより新しく取得済みなら尊重する
+        conn.execute(
+            "INSERT INTO fundamentals(ticker, data, fetched_at) VALUES(?, ?, ?) "
+            "ON CONFLICT(ticker) DO UPDATE SET data = excluded.data, "
+            "fetched_at = excluded.fetched_at",
+            (ticker, json.dumps(data, ensure_ascii=False), stamp),
+        )
+        loaded += 1
+    conn.commit()
+    return {"loaded": loaded, "generated_at": generated_at}
+
+
 def cached_fundamentals(conn) -> dict[str, dict]:
     """キャッシュ済みの全データ(エラーを含む)。ランキングはここから計算する。"""
     rows = conn.execute("SELECT ticker, data FROM fundamentals").fetchall()

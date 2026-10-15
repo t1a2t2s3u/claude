@@ -11,6 +11,7 @@ from __future__ import annotations
 import streamlit as st
 
 from sim.db import restore_db_bytes
+from sim.master import load_autodata_masters, master_counts
 from sim.portfolio import list_portfolios
 from ui import ai_page, ai_stats_page, dashboard, master_page, screener_page, settings_page, trade
 from ui.common import get_conn, inject_style, portfolio_create_form
@@ -24,6 +25,13 @@ st.set_page_config(
 
 conn = get_conn()
 inject_style()
+
+# GitHub Actionsが同梱した自動収集データがあれば、マスタ未取込時に自動で読み込む
+# (サーバー再起動でDBが初期化されても、銘柄マスタは手動更新なしで復活する)
+if not st.session_state.get("autodata_checked"):
+    st.session_state["autodata_checked"] = True
+    if not master_counts(conn):
+        load_autodata_masters(conn)
 
 PAGES = {
     "📊 ダッシュボード": dashboard.render,

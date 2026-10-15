@@ -11,13 +11,18 @@
 
 from __future__ import annotations
 
+import csv
 import io
 import re
 from datetime import datetime
+from pathlib import Path
 from urllib.parse import urljoin
 
 import pandas as pd
 import requests
+
+# GitHub Actionsが毎朝生成する同梱データの置き場所(scripts/build_autodata.py参照)
+AUTODATA_DIR = Path(__file__).resolve().parent.parent / "autodata"
 
 # 既知の直リンク(新しい順に試す)。失効したらインデックスページから探す
 JPX_DIRECT_URLS = [
@@ -177,6 +182,22 @@ def update_us_master(
 
     if not rows:
         raise MasterError("米国株が1件も見つかりませんでした。ファイルの内容を確認してください。")
+    return _upsert(conn, rows)
+
+
+def load_autodata_masters(conn, data_dir: Path | None = None) -> int | None:
+    """同梱の自動収集マスタ(autodata/stocks.csv)を取り込む。無ければNone。"""
+    path = (data_dir or AUTODATA_DIR) / "stocks.csv"
+    if not path.exists():
+        return None
+    with open(path, encoding="utf-8", newline="") as f:
+        reader = csv.reader(f)
+        header = next(reader, None)
+        if header != ["ticker", "code", "name", "market", "country"]:
+            raise MasterError("autodata/stocks.csv の列構成が想定と異なります。")
+        rows = [tuple(row) for row in reader if len(row) == 5]
+    if not rows:
+        return None
     return _upsert(conn, rows)
 
 

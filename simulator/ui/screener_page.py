@@ -41,6 +41,19 @@ def render(conn, pf) -> None:
         icon="⚠️",
     )
 
+    # 同梱の自動収集データ(GitHub Actionsが毎朝更新)があれば自動で取り込む
+    if not st.session_state.get("fund_autodata_checked"):
+        st.session_state["fund_autodata_checked"] = True
+        auto = screener.load_autodata_fundamentals(conn)
+        if auto and auto["loaded"]:
+            from datetime import timedelta
+
+            jst = auto["generated_at"] + timedelta(hours=9)
+            st.success(
+                f"自動収集の財務データ({jst:%m/%d %H:%M} JST時点・{auto['loaded']:,}銘柄)を"
+                "取り込みました。手動スキャンなしでランキングを表示できます。"
+            )
+
     counts = master_counts(conn)
     if not counts:
         st.error("銘柄マスタが未取込です。先に「🔍 銘柄検索・マスタ」ページで更新してください。")
