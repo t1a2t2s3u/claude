@@ -11,6 +11,12 @@ from sim.db import dump_db_bytes, get_setting, get_setting_float, restore_db_byt
 
 def render(conn, pf) -> None:
     st.subheader("⚙️ 設定")
+
+    with st.expander("➕ 新しいポートフォリオを追加"):
+        from ui.common import portfolio_create_form
+
+        portfolio_create_form(conn, key="create_pf_settings")
+
     st.caption("手数料・為替スプレッドの設定は全ポートフォリオ共通で、以後の約定に適用されます。")
 
     with st.form("settings_form"):

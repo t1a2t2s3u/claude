@@ -62,6 +62,40 @@ def metric_grid(items: list[tuple]) -> None:
     st.markdown(f'<div class="mgrid">{cards}</div>', unsafe_allow_html=True)
 
 
+PRESETS = {
+    "1万円": 10_000,
+    "5万円": 50_000,
+    "10万円": 100_000,
+    "30万円": 300_000,
+    "50万円": 500_000,
+    "100万円": 1_000_000,
+    "自由入力": None,
+}
+
+
+def portfolio_create_form(conn, key: str = "create_pf") -> None:
+    """ポートフォリオ作成フォーム(ようこそ画面と設定ページで共用)。"""
+    from sim.portfolio import TradeError, create_portfolio
+
+    with st.form(key):
+        name = st.text_input("名前", placeholder="例: Claude判断 / 自分の判断")
+        preset = st.selectbox("初期資金", list(PRESETS.keys()), index=2)
+        custom = st.number_input(
+            "自由入力(円)", min_value=10_000, max_value=1_000_000,
+            value=100_000, step=10_000,
+            help="「自由入力」を選んだときに使われます(1万〜100万円)。",
+        )
+        if st.form_submit_button("作成", type="primary", use_container_width=True):
+            initial = PRESETS[preset] if PRESETS[preset] is not None else custom
+            try:
+                create_portfolio(conn, name, initial)
+            except TradeError as exc:
+                st.error(str(exc))
+            else:
+                st.success(f"「{name}」を作成しました。")
+                st.rerun()
+
+
 def resolve_name(conn, ticker: str) -> str:
     row = conn.execute("SELECT name FROM stocks WHERE ticker = ?", (ticker,)).fetchone()
     return row["name"] if row else ticker

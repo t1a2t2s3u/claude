@@ -1,8 +1,9 @@
 """株式投資シミュレータ(ペーパートレード)のエントリポイント。
 
 起動: streamlit run app.py
-スマホでの操作を前提に、ページ切替は画面上部(st.pills)、
-ポートフォリオの作成などの低頻度操作だけをサイドバーに置く。
+スマホ前提のため、サイドバーは使わない(スマホでは開くボタンが見つけにくい)。
+ページ切替は画面上部のピル型ボタン、ポートフォリオ作成は
+「ようこそ」画面と設定ページに置く。
 """
 
 from __future__ import annotations
@@ -10,9 +11,9 @@ from __future__ import annotations
 import streamlit as st
 
 from sim.db import restore_db_bytes
-from sim.portfolio import TradeError, create_portfolio, list_portfolios
+from sim.portfolio import list_portfolios
 from ui import ai_page, ai_stats_page, dashboard, master_page, screener_page, settings_page, trade
-from ui.common import get_conn, inject_style, yen
+from ui.common import get_conn, inject_style, portfolio_create_form
 
 st.set_page_config(
     page_title="株式投資シミュレータ",
@@ -23,16 +24,6 @@ st.set_page_config(
 
 conn = get_conn()
 inject_style()
-
-PRESETS = {
-    "1万円": 10_000,
-    "5万円": 50_000,
-    "10万円": 100_000,
-    "30万円": 300_000,
-    "50万円": 500_000,
-    "100万円": 1_000_000,
-    "自由入力": None,
-}
 
 PAGES = {
     "📊 ダッシュボード": dashboard.render,
@@ -46,40 +37,18 @@ PAGES = {
 
 portfolios = list_portfolios(conn)
 
-# ── サイドバー: 低頻度の操作だけ(ポートフォリオ作成) ────────
-
-with st.sidebar:
-    st.title("📈 株式投資シミュレータ")
-    st.caption("実在の株価で練習する仮想売買。実際のお金は動きません。")
-    with st.expander("➕ 新しいポートフォリオ", expanded=not portfolios):
-        with st.form("create_pf"):
-            new_name = st.text_input("名前", placeholder="例: Claude判断 / 自分の判断")
-            preset = st.selectbox("初期資金", list(PRESETS.keys()), index=2)
-            custom = st.number_input(
-                "自由入力(円)", min_value=10_000, max_value=1_000_000,
-                value=100_000, step=10_000,
-                help="「自由入力」を選んだときに使われます(1万〜100万円)。",
-            )
-            if st.form_submit_button("作成", use_container_width=True):
-                initial = PRESETS[preset] if PRESETS[preset] is not None else custom
-                try:
-                    create_portfolio(conn, new_name, initial)
-                    st.success(f"「{new_name}」を作成しました。")
-                    st.rerun()
-                except TradeError as exc:
-                    st.error(str(exc))
-
-# ── 本体 ──────────────────────────────────────────────────
+# ── 初期画面: ポートフォリオ作成 or バックアップ復元 ─────────
 
 if not portfolios:
-    st.header("ようこそ")
-    st.markdown(
-        "左上の **»** からサイドバーを開き、ポートフォリオを作成すると始められます。\n\n"
-        "- 実在の株価(Yahoo Finance・15〜20分遅延)で仮想売買します\n"
-        "- 「自分の判断」「Claude判断」のように複数ポートフォリオを並走できます"
-    )
+    st.title("📈 株式投資シミュレータ")
+    st.caption("実在の株価(Yahoo Finance・15〜20分遅延)で練習する仮想売買。実際のお金は動きません。")
+
+    st.markdown("##### ➕ ポートフォリオを作成して始める")
+    portfolio_create_form(conn)
+
+    st.divider()
     # 無料クラウドでは再起動でサーバー上のデータが消えることがあるため、
-    # 初期画面からもバックアップ復元できるようにしておく
+    # 初期画面からバックアップ復元できるようにしておく
     st.markdown("##### 💾 以前のデータがある場合(バックアップから復元)")
     st.caption(
         "サーバーの再起動でデータが初期化された場合は、設定ページで保存した"
@@ -97,7 +66,8 @@ if not portfolios:
             st.rerun()
     st.stop()
 
-# ポートフォリオ選択(複数あるときだけ表示)
+# ── 本体 ──────────────────────────────────────────────────
+
 names = [p["name"] for p in portfolios]
 if len(names) > 1:
     selected_name = st.selectbox(
