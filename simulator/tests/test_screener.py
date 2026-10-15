@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from sim import db
-from sim.screener import ipo_years, mcap_jpy, rank, score
+from sim.screener import PRESETS, ipo_years, mcap_jpy, peg_value, rank, score
 
 NOW = datetime(2026, 10, 1)
 
@@ -99,6 +99,60 @@ class ScoreTest(unittest.TestCase):
         with_kw = score(fund, extra_keywords=["robotics"], now=NOW)["components"]["theme"]
         self.assertEqual(base, 0.0)
         self.assertEqual(with_kw, 1.0)
+
+
+# テンバガー戦略の理想形: 小型(150億)・PEG0.4・四半期+60%増益・
+# 高ROE/低負債・株価>50日線>200日線の高値圏・機関保有1割
+TENBAGGER_LIKE = {
+    "currency": "JPY",
+    "marketCap": 1.5e10,
+    "trailingPE": 12.0,
+    "pegRatio": 0.4,
+    "earningsQuarterlyGrowth": 0.6,
+    "returnOnEquity": 0.25,
+    "operatingMargins": 0.18,
+    "debtToEquity": 30.0,
+    "heldPercentInstitutions": 0.1,
+    "regularMarketPrice": 95,
+    "fiftyTwoWeekHigh": 100,
+    "fiftyTwoWeekLow": 40,
+    "fiftyDayAverage": 88,
+    "twoHundredDayAverage": 70,
+    "averageVolume": 100_000,
+    "averageVolume10days": 250_000,
+    "sector": "Technology",
+    "industry": "Software - Application",
+}
+
+
+class TenbaggerTest(unittest.TestCase):
+    def test_テンバガー戦略は理想形で高得点_データ欠損の老舗小型で低得点(self):
+        weights = PRESETS["tenbagger"]["weights"]
+        high = score(TENBAGGER_LIKE, weights, now=NOW)["total"]
+        low = score(OLD_SMALL, weights, now=NOW)["total"]
+        self.assertGreater(high, 85)
+        self.assertLess(low, 25)
+
+    def test_テンバガー因子も0から1の範囲(self):
+        weights = PRESETS["tenbagger"]["weights"]
+        for fund in (TENBAGGER_LIKE, OLD_SMALL, {}):
+            comps = score(fund, weights, now=NOW)["components"]
+            for name, value in comps.items():
+                self.assertTrue(0 <= value <= 1, f"{name}={value}")
+
+    def test_PEGはpegRatioが無ければPERと増益率から近似(self):
+        self.assertEqual(peg_value({"pegRatio": 0.8}), 0.8)
+        approx = peg_value({"trailingPE": 20.0, "earningsQuarterlyGrowth": 0.5})
+        self.assertAlmostEqual(approx, 0.4)
+        self.assertIsNone(peg_value({"trailingPE": 20.0}))
+
+    def test_トレンド因子は移動平均の並びを見る(self):
+        weights = {"trend": 100}
+        staged = dict(TENBAGGER_LIKE)
+        self.assertEqual(score(staged, weights, now=NOW)["components"]["trend"], 1.0)
+        broken = dict(TENBAGGER_LIKE, regularMarketPrice=60, fiftyDayAverage=70,
+                      twoHundredDayAverage=80)
+        self.assertEqual(score(broken, weights, now=NOW)["components"]["trend"], 0.0)
 
 
 class RankTest(unittest.TestCase):

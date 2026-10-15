@@ -46,5 +46,7 @@ jobs:
             echo '変更なし'
           else
             git commit -m "市場データ自動更新 $(date -u +'%Y-%m-%d')"
+            # 実行中(30〜70分)に他のコミットが積まれていても失敗しないようにリベースしてから押す
+            git pull --rebase origin claude/reproduce-post-h3a7sn
             git push
           fi
