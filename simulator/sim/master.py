@@ -166,7 +166,8 @@ def update_us_master(
         if r[idx.get("Test Issue", 3)] == "Y":
             continue
         symbol = r[idx["Symbol"]]
-        rows.append((_to_yf_symbol(symbol), symbol, r[idx["Security Name"]], "NASDAQ", "US"))
+        market = "NASDAQ ETF" if r[idx.get("ETF", 6)] == "Y" else "NASDAQ"
+        rows.append((_to_yf_symbol(symbol), symbol, r[idx["Security Name"]], market, "US"))
 
     parsed = _parse_pipe_file(other)
     header = parsed[0]
@@ -178,6 +179,8 @@ def update_us_master(
             continue
         symbol = r[idx["ACT Symbol"]]
         market = US_EXCHANGES.get(r[idx.get("Exchange", 2)], "US")
+        if r[idx.get("ETF", 4)] == "Y":
+            market += " ETF"
         rows.append((_to_yf_symbol(symbol), symbol, r[idx["Security Name"]], market, "US"))
 
     if not rows:

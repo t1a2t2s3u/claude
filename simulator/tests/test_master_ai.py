@@ -54,7 +54,7 @@ class MasterTest(unittest.TestCase):
         self.assertIn("BRK-B", rows)  # BRK.B → BRK-B に変換
         self.assertEqual(rows["BRK-B"]["code"], "BRK.B")
         self.assertEqual(rows["BRK-B"]["market"], "NYSE")
-        self.assertEqual(rows["SPY"]["market"], "NYSE Arca")
+        self.assertEqual(rows["SPY"]["market"], "NYSE Arca ETF")  # ETFはmarketに明示
 
     def test_日本株マスタはxlsx形式を読み込める(self):
         df = pd.DataFrame(
