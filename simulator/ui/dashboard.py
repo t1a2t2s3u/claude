@@ -8,11 +8,11 @@ import streamlit as st
 from sim import metrics
 from sim.portfolio import get_trades, realized_summary, value_positions
 from sim.quotes import QuoteError, get_quote
-from ui.common import current_usdjpy, yen
+from ui.common import current_usdjpy, metric_grid, yen
 
 
 def render(conn, pf) -> None:
-    st.subheader(f"📊 ダッシュボード — {pf['name']}")
+    st.markdown(f"##### 📊 {pf['name']}")
 
     usdjpy = current_usdjpy(conn)
     rows, positions_value, warnings = value_positions(
@@ -25,16 +25,16 @@ def render(conn, pf) -> None:
     for w in warnings:
         st.warning(w)
 
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("総資産", yen(total), f"{total - pf['initial_cash']:+,.0f}円(初期資金比)")
-    c2.metric("現金", yen(pf["cash"]))
-    c3.metric("評価損益(含み)", f"{unrealized:+,.0f}円")
-    c4.metric(
-        "実現損益(税引後)",
-        f"{realized['after_tax']:+,.0f}円",
-        f"税引前 {realized['realized']:+,.0f}円 / 源泉徴収 {realized['tax']:,.0f}円",
-        delta_color="off",
-    )
+    total_diff = total - pf["initial_cash"]
+    metric_grid([
+        ("総資産", yen(total), f"初期資金比 {total_diff:+,.0f}円", ""),
+        ("現金", yen(pf["cash"]), f"株式評価額 {yen(positions_value)}", ""),
+        ("評価損益(含み)", f"{unrealized:+,.0f}円", "",
+         "up" if unrealized > 0 else "down" if unrealized < 0 else ""),
+        ("実現損益(税引後)", f"{realized['after_tax']:+,.0f}円",
+         f"税引前 {realized['realized']:+,.0f}円 / 源泉 {realized['tax']:,.0f}円",
+         "up" if realized["after_tax"] > 0 else "down" if realized["after_tax"] < 0 else ""),
+    ])
     if usdjpy:
         st.caption(f"USD/JPY(仲値・参考): {usdjpy:.2f}円")
 
