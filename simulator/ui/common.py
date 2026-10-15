@@ -20,8 +20,9 @@ def inject_style() -> None:
     st.markdown(
         """
 <style>
-/* 余白を詰めて1画面の情報量を増やす */
-.block-container { padding: 1.1rem 0.9rem 3rem; max-width: 1100px; }
+/* 余白を詰めて1画面の情報量を増やす。
+   上だけはStreamlitの固定ヘッダーに1行目が隠れない高さを確保する */
+.block-container { padding: 3.4rem 0.9rem 3rem; max-width: 1100px; }
 /* 上部ツールバー(Share等)と右上メニューを隠してすっきりさせる */
 [data-testid="stToolbar"], #MainMenu, footer { display: none !important; }
 /* st.metricの数字が巨大になりすぎるのを抑える(スクリーナー等で使用) */
