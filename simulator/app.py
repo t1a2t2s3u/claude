@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import streamlit as st
 
+from sim.db import restore_db_bytes
 from sim.portfolio import TradeError, create_portfolio, list_portfolios
 from ui import ai_page, ai_stats_page, dashboard, master_page, screener_page, settings_page, trade
 from ui.common import get_conn, inject_style, yen
@@ -77,6 +78,23 @@ if not portfolios:
         "- 実在の株価(Yahoo Finance・15〜20分遅延)で仮想売買します\n"
         "- 「自分の判断」「Claude判断」のように複数ポートフォリオを並走できます"
     )
+    # 無料クラウドでは再起動でサーバー上のデータが消えることがあるため、
+    # 初期画面からもバックアップ復元できるようにしておく
+    st.markdown("##### 💾 以前のデータがある場合(バックアップから復元)")
+    st.caption(
+        "サーバーの再起動でデータが初期化された場合は、設定ページで保存した"
+        "バックアップ(.db)をここにアップロードすると全データが元に戻ります。"
+    )
+    backup = st.file_uploader("バックアップファイル(.db)", type=["db"], key="welcome_restore")
+    if backup is not None and st.button("このバックアップで復元する", type="primary"):
+        try:
+            restore_db_bytes(backup.getvalue())
+        except ValueError as exc:
+            st.error(str(exc))
+        else:
+            st.cache_resource.clear()
+            st.success("復元しました。再読み込みします…")
+            st.rerun()
     st.stop()
 
 # ポートフォリオ選択(複数あるときだけ表示)
