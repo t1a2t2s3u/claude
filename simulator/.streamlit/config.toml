@@ -1,0 +1,10 @@
+# 夜空テーマ(本体「星よみ手帳」の配色に合わせたダーク)
+[theme]
+base = "dark"
+primaryColor = "#f6c453"
+backgroundColor = "#12112b"
+secondaryBackgroundColor = "#1e1b40"
+textColor = "#f2effa"
+
+[browser]
+gatherUsageStats = false
