@@ -20,6 +20,7 @@
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime, timedelta
 
 FUND_TTL_SEC = 24 * 3600      # 取得成功データのキャッシュ(24時間)
@@ -144,11 +145,19 @@ def ipo_years(fund: dict, now: datetime | None = None) -> float | None:
     return ((now or datetime.now()) - first).days / 365.25
 
 
-def _score_freshness(fund: dict, now: datetime | None) -> float:
+# 英字入り証券コード(例: 167A, 285A)は2024年1月以降の新規上場にのみ付与される。
+# yfinanceに上場日が無い日本株が多いため、「若さ」の代替シグナルとして使う
+NEW_CODE_RE = re.compile(r"^\d{3}[A-Z]\.T$")
+
+
+def _score_freshness(fund: dict, now: datetime | None, ticker: str | None = None) -> float:
     years = ipo_years(fund, now)
     if years is None:
-        return 0.0
-    age = 1.0 if years <= 3 else 0.6 if years <= 5 else 0.15
+        if not (ticker and NEW_CODE_RE.match(ticker)):
+            return 0.0
+        age = 1.0  # 英字入りコード = 2024年以降の上場
+    else:
+        age = 1.0 if years <= 3 else 0.6 if years <= 5 else 0.15
     m = mcap_jpy(fund)
     size = (
         1.0 if m >= 1e12 else 0.85 if m >= 3e11 else 0.6 if m >= 1e11
@@ -202,11 +211,11 @@ def _score_theme(fund: dict, extra_keywords: list[str] | None = None) -> float:
 
 def score(fund: dict, weights: dict | None = None,
           extra_keywords: list[str] | None = None,
-          now: datetime | None = None) -> dict:
+          now: datetime | None = None, ticker: str | None = None) -> dict:
     """1銘柄のキオクシア型スコア(0〜100)と因子の内訳を返す。"""
     w = {**DEFAULT_WEIGHTS, **(weights or {})}
     comps = {
-        "freshness": _score_freshness(fund, now),
+        "freshness": _score_freshness(fund, now, ticker),
         "undervalue": _score_undervalue(fund),
         "momentum": _score_momentum(fund),
         "theme": _score_theme(fund, extra_keywords),
@@ -231,7 +240,7 @@ def rank(conn, universe: list, weights: dict | None = None,
             continue
         if mcap_jpy(fund) < min_mcap_jpy:
             continue
-        s = score(fund, weights, extra_keywords, now)
+        s = score(fund, weights, extra_keywords, now, ticker=stock["ticker"])
         years = ipo_years(fund, now)
         results.append(
             {

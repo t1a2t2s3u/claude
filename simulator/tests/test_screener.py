@@ -81,6 +81,18 @@ class ScoreTest(unittest.TestCase):
         del no_ipo["firstTradeDateEpochUtc"]
         self.assertEqual(score(no_ipo, now=NOW)["components"]["freshness"], 0.0)
 
+    def test_上場日欠損でも英字入りコードなら若い上場とみなす(self):
+        # yfinanceに上場日が無い日本株が多い。167Aのような英字入りコードは
+        # 2024年以降の新規上場にしか存在しないため、代替シグナルとして使う
+        no_ipo = dict(KIOXIA_LIKE)
+        del no_ipo["firstTradeDateEpochUtc"]
+        self.assertEqual(
+            score(no_ipo, now=NOW, ticker="7203.T")["components"]["freshness"], 0.0
+        )
+        self.assertGreater(
+            score(no_ipo, now=NOW, ticker="167A.T")["components"]["freshness"], 0.9
+        )
+
     def test_テーマは追加キーワードでも一致する(self):
         fund = dict(OLD_SMALL, industry="Specialty Industrial Machinery - Robotics")
         base = score(fund, now=NOW)["components"]["theme"]
