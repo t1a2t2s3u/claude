@@ -8,9 +8,19 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+import io
+
+import pandas as pd
+
 from sim import db
 from sim.ai_bridge import OrderParseError, parse_orders
-from sim.master import search_stocks, update_us_master
+from sim.master import (
+    MasterError,
+    discover_jpx_url,
+    search_stocks,
+    update_jp_master,
+    update_us_master,
+)
 
 NASDAQ_SAMPLE = "\n".join([
     "Symbol|Security Name|Market Category|Test Issue|Financial Status|Round Lot Size|ETF|NextShares",
@@ -45,6 +55,30 @@ class MasterTest(unittest.TestCase):
         self.assertEqual(rows["BRK-B"]["code"], "BRK.B")
         self.assertEqual(rows["BRK-B"]["market"], "NYSE")
         self.assertEqual(rows["SPY"]["market"], "NYSE Arca")
+
+    def test_日本株マスタはxlsx形式を読み込める(self):
+        df = pd.DataFrame(
+            {
+                "コード": ["7203", "1305", "285A"],
+                "銘柄名": ["トヨタ自動車", "ETFもどき", "キオクシアHD"],
+                "市場・商品区分": ["プライム（内国株式）", "ETF・ETN", "プライム（内国株式）"],
+            }
+        )
+        buf = io.BytesIO()
+        df.to_excel(buf, index=False)  # openpyxlでxlsx(zip形式)を生成
+        n = update_jp_master(self.conn, file_bytes=buf.getvalue())
+        self.assertEqual(n, 2)  # ETFは除外
+        rows = {r["ticker"] for r in self.conn.execute("SELECT * FROM stocks").fetchall()}
+        self.assertEqual(rows, {"7203.T", "285A.T"})
+
+    def test_JPX一覧ページからdata_jリンクを発見できる(self):
+        html = '<a href="/markets/statistics-equities/misc/xxxx-att/data_j.xlsx">一覧</a>'
+        self.assertEqual(
+            discover_jpx_url(html),
+            "https://www.jpx.co.jp/markets/statistics-equities/misc/xxxx-att/data_j.xlsx",
+        )
+        with self.assertRaises(MasterError):
+            discover_jpx_url("<html>リンクなし</html>")
 
     def test_検索は名前とコードの部分一致(self):
         update_us_master(

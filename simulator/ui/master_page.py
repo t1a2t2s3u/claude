@@ -67,7 +67,7 @@ def render(conn, pf) -> None:
     # ── マスタ更新 ───────────────────────────────────────
     st.markdown("##### 銘柄マスタ更新")
     st.caption(
-        "日本株はJPX「東証上場銘柄一覧」(data_j.xls)、米国株は nasdaqtrader.com の "
+        "日本株はJPX「東証上場銘柄一覧」(data_j.xlsx)、米国株は nasdaqtrader.com の "
         "nasdaqlisted.txt / otherlisted.txt から取り込みます。"
     )
     b1, b2 = st.columns(2)
@@ -91,7 +91,7 @@ def render(conn, pf) -> None:
             "プロキシ等でダウンロードに失敗する場合は、ブラウザで取得したファイルを"
             "ここにアップロードしてください。"
         )
-        jp_file = st.file_uploader("data_j.xls(JPX)", type=["xls"])
+        jp_file = st.file_uploader("data_j.xlsx / data_j.xls(JPX)", type=["xlsx", "xls"])
         if jp_file and st.button("このファイルで日本株マスタを更新"):
             try:
                 n = update_jp_master(conn, file_bytes=jp_file.getvalue())

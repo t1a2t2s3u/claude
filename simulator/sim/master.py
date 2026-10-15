@@ -1,7 +1,9 @@
 """銘柄マスタの取込(JPX / nasdaqtrader.com)と検索。
 
-- 日本株: JPX公開の「東証上場銘柄一覧」(data_j.xls)から内国株式を取り込む。
+- 日本株: JPX公開の「東証上場銘柄一覧」(data_j.xlsx)から内国株式を取り込む。
   yfinance用ティッカーは「7203.T」のようにコード+".T"。
+  JPXはファイルのURL・形式を変えることがある(2026-09に .xls → .xlsx へ変更)ため、
+  既知の直リンク2種 → 一覧ページからのリンク自動発見、の順で取得する。
 - 米国株: nasdaqtrader.com の nasdaqlisted.txt / otherlisted.txt を取り込む。
   クラス株などの記号はyfinance流に変換する(BRK.B → BRK-B、優先株 $ → -P)。
 - ダウンロードできない環境向けに、ファイルを直接渡す引数(bytes)にも対応。
@@ -10,12 +12,19 @@
 from __future__ import annotations
 
 import io
+import re
 from datetime import datetime
+from urllib.parse import urljoin
 
 import pandas as pd
 import requests
 
-JPX_URL = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
+# 既知の直リンク(新しい順に試す)。失効したらインデックスページから探す
+JPX_DIRECT_URLS = [
+    "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xlsx",
+    "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls",
+]
+JPX_INDEX_URL = "https://www.jpx.co.jp/markets/statistics-equities/misc/01.html"
 NASDAQ_LISTED_URL = "https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqlisted.txt"
 OTHER_LISTED_URL = "https://www.nasdaqtrader.com/dynamic/SymDir/otherlisted.txt"
 
@@ -59,13 +68,51 @@ def _upsert(conn, rows: list[tuple]) -> int:
     return len(rows)
 
 
+def discover_jpx_url(index_html: str) -> str:
+    """JPXの一覧ページHTMLから data_j.xlsx(旧 .xls)へのリンクを見つけて絶対URLで返す。"""
+    m = re.search(r'href="([^"]*data_j\.xlsx?)"', index_html)
+    if not m:
+        raise MasterError(
+            "JPXの一覧ページから data_j.xlsx のリンクを見つけられませんでした。"
+            "JPXサイトの構成が変わった可能性があります。ブラウザでファイルを取得して"
+            "アップロード欄から取り込んでください。"
+        )
+    return urljoin(JPX_INDEX_URL, m.group(1))
+
+
+def _download_jpx() -> bytes:
+    """data_j.xlsx を取得する。既知の直リンク→一覧ページからの自動発見の順に試す。"""
+    last_error = None
+    for url in JPX_DIRECT_URLS:
+        try:
+            return _download(url, "JPX 東証上場銘柄一覧")
+        except MasterError as exc:
+            last_error = exc
+    try:
+        html = _download(JPX_INDEX_URL, "JPX 上場銘柄一覧ページ").decode("utf-8", errors="replace")
+        return _download(discover_jpx_url(html), "JPX 東証上場銘柄一覧")
+    except MasterError as exc:
+        raise MasterError(
+            "JPXの東証上場銘柄一覧をダウンロードできませんでした(既知のURLと一覧ページの"
+            f"両方を試しました)。ブラウザで {JPX_INDEX_URL} から「東証上場銘柄一覧」を取得し、"
+            f"アップロード欄から取り込んでください。直リンクの失敗: {last_error} / "
+            f"一覧ページ経由の失敗: {exc}"
+        ) from exc
+
+
+def _read_jpx_excel(data: bytes) -> pd.DataFrame:
+    """xlsx(zip形式)とxls(旧OLE2形式)をファイル先頭の署名で見分けて読む。"""
+    engine = "openpyxl" if data[:4] == b"PK\x03\x04" else "xlrd"
+    return pd.read_excel(io.BytesIO(data), engine=engine)
+
+
 def update_jp_master(conn, file_bytes: bytes | None = None) -> int:
     """東証の内国株式を取り込む。戻り値は件数。"""
-    data = file_bytes or _download(JPX_URL, "JPX 東証上場銘柄一覧(data_j.xls)")
+    data = file_bytes if file_bytes is not None else _download_jpx()
     try:
-        df = pd.read_excel(io.BytesIO(data))
+        df = _read_jpx_excel(data)
     except Exception as exc:
-        raise MasterError(f"data_j.xls の読み込みに失敗しました。詳細: {exc}") from exc
+        raise MasterError(f"data_j.xlsx の読み込みに失敗しました。詳細: {exc}") from exc
 
     col_code = next((c for c in df.columns if "コード" in str(c)), None)
     col_name = next((c for c in df.columns if "銘柄名" in str(c)), None)
