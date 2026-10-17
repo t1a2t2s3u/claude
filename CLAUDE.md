@@ -98,7 +98,10 @@ placeholders for these — fabricating experiences or earnings is forbidden).
 - `analytics/` — the KPI log (`kpi.md`), owner-supplied data drops (`inbox/`),
   and the analyst's weekly reports (`reports/`).
 - `product/` — the app-idea pipeline (`pipeline.md`), the scout's weekly
-  research (`reports/`), and per-idea planning memos (`ideas/`).
+  research (`reports/`), per-idea planning memos (`ideas/`), and `kit/` (the
+  generalised "AI社員オフィス" starter kit being prepared for sale: a
+  stripped copy of the management department with no business facts,
+  boards, or git dependency; `kit/制作メモ.md` tracks what is left).
 - `seo/` — the painting business's SEO/MEO workspace: `business-profile.md`
   (the fact base), `tasks.md` (action list), `glossary.md` (plain-Japanese
   definitions of the Search Console / SEO / MEO terms the reports use — staff
