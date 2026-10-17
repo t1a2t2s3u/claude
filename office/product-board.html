@@ -152,7 +152,7 @@
         <span class="ax">勝てるか</span><span class="segs"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span><span class="n">3 / 5</span>
         <div class="total"><b>12</b><span class="soft">/ 15</span><span class="thr">有望ライン 12 に到達</span></div>
       </div>
-      <div class="verdict"><strong>10/15 あなたの決定「A. 60分サービスを先に出す・¥5,000」で、検証ルートが決まりました。</strong> 出品原稿（ココナラ用＋ストアカ用の差分）は product/ideas/ai-staff-office-kit-service60.md。まずココナラを推奨します（活動実績 URL が不要で今日出せる。ビデオチャットの手数料は 27.5% で手取り約 ¥3,625、要確認）。ストアカは note の記事が公開されて活動実績 URL ができてから。判定は公開から4週間で購入3件以上。note の販売ページ（¥3,980）は保留のままです。</div>
+      <div class="verdict"><strong>10/17 あなたの決定「チャット対応は無し」を受けて、ココナラで売るのは60分サービスではなく、キット本体のデータ納品に切り替える案を作りました。</strong> 内容案は product/ideas/ai-staff-office-kit-contents.md。初版は管理部3人（秘書・仕上げ担当・監査役）の設定ファイル一式＋手順書＋FAQ 25問以上＋最初の1週間の進め方を ZIP で納品、質問対応なし・返金不可を明記。定期実行は<strong>デスクトップ版の「ローカルの定期タスク」</strong>を使うので GitHub は不要です（公式ドキュメントで確認）。一般化は5工程で、うち「まっさらなフォルダで3本を自分で動かす（60〜90分）」だけはあなたの手が要ります。60分サービスは保留に。</div>
       <dl>
         <dt>なぜ今か</dt>
         <dd>中小企業のAI導入率は12%、最大の障壁は「何から始めればいいか分からない」（Leach 調査2026）。九州大学の Claude Code ハンズオンを無料キットとして公開した投稿は表示9万回超・保存約1,800件。無料でこの反応なので需要は確か。</dd>
@@ -183,16 +183,16 @@
 
   <section aria-label="あなたへの質問">
     <h2>あなたへの質問・作業（タスクボードにも掲載）</h2>
-    <p class="howto">札を押すと返事の文がコピーされます。チャットに貼って送ってください。回答済み: 検証ルート「A. 60分サービス先行・¥5,000」（10/15）／見積書くらべを閉じる（10/13）／キット価格 ¥3,980（9/17）／キット「①進める」（9/16）／点検案内の有無「自社でも使わない」（9/16、フォロー当番は没）。</p>
+    <p class="howto">札を押すと返事の文がコピーされます。チャットに貼って送ってください。回答済み: チャット対応は無し（10/17）／検証ルート「A. 60分サービス先行・¥5,000」（10/15、10/17 に保留）／見積書くらべを閉じる（10/13）／キット価格 ¥3,980（9/17）／キット「①進める」（9/16）／点検案内の有無「自社でも使わない」（9/16、フォロー当番は没）。</p>
     <div class="asks">
       <div class="ask">
-        <p class="q">「AI社員を1人立ち上げる60分」をココナラに出品する（あなたの作業・30〜40分）</p>
-        <p class="why">① ココナラに出品者登録（ニックネームで） → ② 原稿 product/ideas/ai-staff-office-kit-service60.md を貼って出品（カテゴリはビデオチャット系、価格 ¥5,000。【 】はあなたの体験1文だけ） → ③ 公開したら URL と公開日を送る。購入が入ったら60分を実施し、購入者の質問を一言で送ってください（キットの手順書に使います）。判定日は公開＋28日。</p>
+        <p class="q">キットの内容案（データ納品・サポートなし）で一般化を始めてよいですか？ 価格はどちらですか？</p>
+        <p class="why">内容案: product/ideas/ai-staff-office-kit-contents.md。初版は管理部3人の設定ファイル＋手順書＋FAQ＋最初の1週間を ZIP で納品。一般化は5工程、あなたの手が要るのは「まっさらなフォルダで定期タスク3本を自分で動かす 60〜90分」だけ（これが手順書の一次情報）。価格は 10/15 の ¥5,000 を仮置き（note 向けは ¥3,980 で決めていました）。</p>
         <div class="acts">
-          <button type="button" class="chip" id="sv-done" data-copy="60分サービス: 出品した。URL：　公開日：">出品した（URLと日付を書く）</button>
-          <button type="button" class="chip" id="sv-sold" data-copy="60分サービス: 購入あり。件数：　購入者の質問：">購入が入った</button>
-          <button type="button" class="chip" id="sv-storeaca" data-copy="60分サービス: ストアカにも出す">ストアカにも出す</button>
-          <button type="button" class="chip" id="sv-stop" data-copy="60分サービス: 一旦やめる。理由は：">一旦やめる（理由を書く）</button>
+          <button type="button" class="chip" id="kc-go" data-copy="キット内容案: この内容で一般化を始めてよい。価格は ¥">この内容で進める（価格を書く）</button>
+          <button type="button" class="chip" id="kc-fix" data-copy="キット内容案: 直してほしい点：">直してほしい点がある</button>
+          <button type="button" class="chip" id="kc-when" data-copy="キット: 定期タスク3本を自分で動かす60〜90分をやる日：">動かす日を決めた</button>
+          <button type="button" class="chip" id="kc-stop" data-copy="キット: 一旦やめる。理由は：">一旦やめる（理由を書く）</button>
         </div>
       </div>
     </div>
@@ -219,8 +219,8 @@
       </div>
       <div class="row">
         <span class="name">「AI社員を1人立ち上げる60分」（ココナラ／ストアカの個別サポート）</span>
-        <span class="mini"><span class="segs"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i></span><b>11</b><small>5/3/3</small><span class="state cand" style="color:var(--gold);background:var(--gold-wash)">検証中</span></span>
-        <span class="memo">10/7 初出。10/15 あなたの決定「A. 先に出す・¥5,000」。出品原稿あり。まずココナラ、判定は公開から4週間で購入3件以上。</span>
+        <span class="mini"><span class="segs"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i></span><b>11</b><small>5/3/3</small><span class="state route">保留</span></span>
+        <span class="memo">10/7 初出。10/15「A. 先に出す・¥5,000」→ 10/17「チャット対応は無し」でビデオチャット商品は保留。キット本体のデータ納品に切替。</span>
       </div>
       <div class="row">
         <span class="name">「発信ミニキット」（SNS担当＋納品ボード、Routine 1本）</span>
@@ -307,6 +307,10 @@
         <h4>追記（10/15）</h4>
         <ul>
           <li>あなたの決定「A. 60分サービスを先に出す・¥5,000」。出品原稿（ココナラ用＋ストアカ差分）と判定基準（公開から4週間で購入3件以上）を作成。ココナラのビデオチャット手数料 27.5%、ストアカは自己集客 10%／経由 30%・顔写真と活動実績 URL が必要（いずれも要確認）。</li>
+        </ul>
+        <h4>追記（10/17）</h4>
+        <ul>
+          <li>あなたの決定「チャット対応は無し」→ 60分サービスは保留。ココナラで売る物を<strong>キット本体のデータ納品</strong>に切り替え、内容案（納品物の構成・3人が回る理由・一般化5工程・サポートなしを成立させる条件・出品原稿・判定基準）を作成。定期実行はデスクトップ版の「ローカルの定期タスク」で GitHub 不要と公式で確認（アプリが開いている時だけ動く、寝ていた分は1回追いつき実行）。ココナラの規約上「質問に応じない」出品が許されない場合は BOOTH／STORES に販路を変える。</li>
         </ul>
         <h4>次に必要なこと</h4>
         <ul>
