@@ -89,9 +89,22 @@ def render(conn, pf) -> None:
             )
 
     universe = _universe(conn, country, markets)
-    pending = screener.pending_tickers(conn, [r["ticker"] for r in universe])
-    done = len(universe) - len(pending)
-    st.caption(f"対象 {len(universe):,}銘柄 / データ取得済み {done:,}銘柄(残り {len(pending):,})")
+    tickers = [r["ticker"] for r in universe]
+    # 「データあり」はTTLに関係なく数える。ランキング・AI書き出しは古いデータでも
+    # 使う設計のため、ここでTTL切れを「残り」と見せると誤解を招く
+    have = {
+        row["ticker"]
+        for row in conn.execute(
+            "SELECT ticker FROM fundamentals WHERE data NOT LIKE '%\"error\":%'"
+        )
+    }
+    covered = sum(1 for t in tickers if t in have)
+    pending = screener.pending_tickers(conn, tickers)
+    fresh = len(universe) - len(pending)
+    st.caption(
+        f"対象 {len(universe):,}銘柄 / データあり {covered:,}銘柄(うち24時間以内 {fresh:,})。"
+        "ランキングとAI書き出しは「データあり」の全銘柄で計算されます(全量は毎週土曜に自動更新)。"
+    )
 
     # ── ① データ取得(スキャン) ──────────────────────────
     st.markdown("##### ① 財務データのスキャン")

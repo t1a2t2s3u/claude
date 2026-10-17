@@ -36,6 +36,37 @@ FETCH_INTERVAL_SEC = 0.4  # yfinanceを叩きすぎないための間隔
 # 米国株の普通株以外(優先株 -P、ワラント -WS/-W、ユニット -U、ライツ -R)を除く
 US_EXCLUDE_RE = re.compile(r"-(P[A-Z]*|WS[A-Z]?|W|U|R)$")
 
+# 平日実行時に、まだ一度も取得していない銘柄(新規上場など)を穴埋めする上限
+MISSING_CATCHUP_LIMIT = 300
+
+
+def read_existing_fundamentals(path: Path) -> dict:
+    """蓄積済みの財務データを読む。
+
+    壊れている場合は例外を投げて中断する。空扱いで続行すると、その日の
+    スコープ分だけのファイルで上書きしてしまい「全銘柄分が常にある」が崩れるため。
+    """
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise RuntimeError(
+            f"{path} を読み込めません。上書きすると蓄積データを失うため中断します。"
+            f"詳細: {exc}"
+        ) from exc
+    if not isinstance(data, dict):
+        raise RuntimeError(f"{path} の形式が想定外(dictでない)のため中断します。")
+    return data
+
+
+def catchup_missing(rows: list, existing: dict, limit: int = MISSING_CATCHUP_LIMIT) -> list:
+    """スクリーニング対象の全ユニバース(東証全銘柄+米国普通株)のうち、
+    まだ一度もデータが無い銘柄を返す(新規上場の穴埋め用)。"""
+    universe = select_targets(rows, "jp") + select_targets(rows, "us")
+    missing = [r for r in universe if r["ticker"] not in existing]
+    return missing[:limit]
+
 
 def select_targets(rows: list, scope: str) -> list:
     """スコープに応じて財務データ取得の対象銘柄を選ぶ(rowsは銘柄マスタの行)。"""
@@ -73,7 +104,18 @@ def main() -> int:
         for r in rows:
             writer.writerow([r["ticker"], r["code"], r["name"], r["market"], r["country"]])
 
+    fund_path = AUTODATA_DIR / "fundamentals.json"
+    existing = read_existing_fundamentals(fund_path)
+
     targets = select_targets(rows, scope)
+    # 平日のプライム更新でも、未取得の銘柄(新規上場など)は全ユニバースから拾い、
+    # 「最新でなくても全銘柄分のデータが常にある」状態を保つ
+    if scope == "prime":
+        seen = {r["ticker"] for r in targets}
+        extra = [r for r in catchup_missing(rows, existing) if r["ticker"] not in seen]
+        if extra:
+            print(f"未取得銘柄の穴埋めを追加: {len(extra):,}件", flush=True)
+            targets = targets + extra
     print(f"財務データを取得中…(scope={scope}、対象 {len(targets):,}銘柄)", flush=True)
 
     fetched: dict[str, dict] = {}
@@ -88,13 +130,6 @@ def main() -> int:
         time.sleep(FETCH_INTERVAL_SEC)
 
     # 既存のautodataにマージする(prime/jp/usを別日に実行しても蓄積される)
-    fund_path = AUTODATA_DIR / "fundamentals.json"
-    existing: dict[str, dict] = {}
-    if fund_path.exists():
-        try:
-            existing = json.loads(fund_path.read_text(encoding="utf-8"))
-        except Exception:
-            existing = {}
     merged = {**existing, **fetched}
 
     generated_at = datetime.now(timezone.utc).isoformat(timespec="seconds")

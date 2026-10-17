@@ -79,6 +79,31 @@ class SelectTargetsTest(unittest.TestCase):
         cls.mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(cls.mod)
 
+    def test_壊れた蓄積ファイルは空扱いにせず中断する(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "fundamentals.json"
+            self.assertEqual(self.mod.read_existing_fundamentals(path), {})  # 無ければ空
+            path.write_text("こわれたJSON", encoding="utf-8")
+            with self.assertRaises(RuntimeError):
+                self.mod.read_existing_fundamentals(path)
+            path.write_text('["dictでない"]', encoding="utf-8")
+            with self.assertRaises(RuntimeError):
+                self.mod.read_existing_fundamentals(path)
+
+    def test_未取得銘柄の穴埋めはユニバース全体から拾う(self):
+        rows = [
+            {"ticker": "7203.T", "market": "プライム", "country": "JP"},
+            {"ticker": "500A.T", "market": "グロース", "country": "JP"},   # 新規上場想定
+            {"ticker": "AAPL", "market": "NASDAQ", "country": "US"},
+            {"ticker": "SPY", "market": "NYSE Arca ETF", "country": "US"},  # 対象外
+        ]
+        existing = {"7203.T": {}, "AAPL": {}}
+        got = [r["ticker"] for r in self.mod.catchup_missing(rows, existing)]
+        self.assertEqual(got, ["500A.T"])
+        self.assertEqual(self.mod.catchup_missing(rows, existing, limit=0), [])
+
     def test_usスコープはETFと優先株等を除いた普通株のみ(self):
         rows = [
             {"ticker": "AAPL", "market": "NASDAQ", "country": "US"},
