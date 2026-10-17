@@ -3705,6 +3705,7 @@ A,A,"Agilent Technologies, Inc. Common Stock",NYSE,US
 AA,AA,Alcoa Corporation Common Stock ,NYSE,US
 AAA,AAA,Alternative Access First Priority CLO Bond ETF,NYSE Arca ETF,US
 AAAA,AAAA,Amplius Aggressive Asset Allocation ETF,Cboe BZX ETF,US
+AAAB,AAAB,Corgi FTSE Aaa-A Intermediate Corporate Bond ETF,Cboe BZX ETF,US
 AAAC,AAAC,Columbia AAA CLO ETF,NYSE Arca ETF,US
 AAAD,AAAD,PGIM AAA CLO Aggregate Duration ETF,NYSE Arca ETF,US
 AAAP,AAAP,Pacer Barings CLO Market Flex ETF,NASDAQ ETF,US
@@ -3945,7 +3946,6 @@ AEHL,AEHL,Antelope Enterprise Holdings Limited - Class A Ordinary Shares,NASDAQ,
 AEHR,AEHR,Aehr Test Systems - Common Stock,NASDAQ,US
 AEI,AEI,Alset Inc. - Common Stock,NASDAQ,US
 AEIS,AEIS,"Advanced Energy Industries, Inc. - Common Stock",NASDAQ,US
-AELV,AELV,Harbor AlphaEdge Large Cap Value ETF,NYSE Arca ETF,US
 AEM,AEM,Agnico Eagle Mines Limited Common Stock,NYSE,US
 AEMC,AEMC,Harbor AlphaEdge Mid Cap Core ETF,NYSE Arca ETF,US
 AEMD,AEMD,"Aethlon Medical, Inc. - Common Stock",NASDAQ,US
@@ -4009,6 +4009,7 @@ AGEM,AGEM,abrdn Emerging Markets Dividend Active ETF,NASDAQ ETF,US
 AGEN,AGEN,Agenus Inc. - Common Stock,NASDAQ,US
 AGG,AGG,iShares Core U.S. Aggregate Bond ETF,NYSE Arca ETF,US
 AGGA,AGGA,EA Astoria Beacon Dynamic Core US Fixed Income ETF,NASDAQ ETF,US
+AGGB,AGGB,Corgi FTSE U.S. Aggregate Bond ETF,Cboe BZX ETF,US
 AGGH,AGGH,Simplify Aggregate Bond ETF,NYSE Arca ETF,US
 AGGM,AGGM,iShares 1-10 Year U.S. Aggregate Bond ETF,NYSE Arca ETF,US
 AGGS,AGGS,Harbor Disciplined Bond ETF,NYSE Arca ETF,US
@@ -4334,6 +4335,7 @@ ANDG,ANDG,Andersen Group Inc. Class A Common Stock,NYSE,US
 ANEL,ANEL,Defiance Daily Target 2x Long ANET ETF,NASDAQ ETF,US
 ANET,ANET,"Arista Networks, Inc. Common Stock",NYSE,US
 ANF,ANF,Abercrombie & Fitch Company Common Stock,NYSE,US
+ANG,ANG,Corgi FTSE Fallen Angels Bond ETF,Cboe BZX ETF,US
 ANG-PD,ANG$D,"American National Group Inc. Depositary Shares, each representing a 1/1000th interest in a share of 7.375% Fixed-Rate Non-Cumulative Preferred Stock, Series D",NYSE,US
 ANGH,ANGH,Anghami Inc. - Ordinary Shares,NASDAQ,US
 ANGHW,ANGHW,Anghami Inc. - Warrants,NASDAQ,US
@@ -4868,6 +4870,7 @@ BBAI-W,BBAI.W,"BigBear.ai, Inc. Redeemable Warrants, each exercisable for one sh
 BBAR,BBAR,Banco BBVA Argentina S.A. ADS,NYSE,US
 BBAX,BBAX,JPMorgan BetaBuilders Developed Asia Pacific-ex Japan ETF,Cboe BZX ETF,US
 BBB,BBB,CYBER HORNET S&P 500 and Bitcoin 75/25 Strategy ETF,NASDAQ ETF,US
+BBBB,BBBB,Corgi FTSE BBB Rated Corporate Bond ETF,Cboe BZX ETF,US
 BBBI,BBBI,BondBloxx BBB Rated 5-10 Year Corporate Bond ETF,NYSE Arca ETF,US
 BBBL,BBBL,BondBloxx BBB Rated 10+ Year Corporate Bond ETF,NYSE Arca ETF,US
 BBBS,BBBS,BondBloxx BBB Rated 1-5 Year Corporate Bond ETF,NYSE Arca ETF,US
@@ -6518,6 +6521,7 @@ CTVA,CTVA,"Corteva, Inc. Common Stock ",NYSE,US
 CTW,CTW,CTW - Class A Ordinary Shares,NASDAQ,US
 CTWO,CTWO,Common units,NYSE Arca ETF,US
 CTXR,CTXR,"Citius Pharmaceuticals, Inc. - Common Stock",NASDAQ,US
+CTY,CTY,"City Therapeutics, Inc. - Common Stock",NASDAQ,US
 CUB,CUB,Lionheart Holdings - Class A Ordinary Shares,NASDAQ,US
 CUBB,CUBB,"Customers Bancorp, Inc 5.375% Subordinated Notes Due 2034",NYSE,US
 CUBE,CUBE,CubeSmart Common Shares,NYSE,US
@@ -8319,6 +8323,7 @@ FTMH,FTMH,Franklin Municipal High Yield ETF,NYSE Arca ETF,US
 FTMN,FTMN,Franklin Minnesota Municipal Income ETF,NYSE Arca ETF,US
 FTMS,FTMS,Franklin Short-Term Municipal Income ETF,NYSE Arca ETF,US
 FTMU,FTMU,Franklin Municipal Income ETF,NYSE Arca ETF,US
+FTN,FTN,Corgi FTSE 5-10 Year IG Corporate Bond ETF,Cboe BZX ETF,US
 FTNJ,FTNJ,Franklin New Jersey Municipal Income ETF,NYSE Arca ETF,US
 FTNT,FTNT,"Fortinet, Inc. - Common Stock",NASDAQ,US
 FTNY,FTNY,Franklin New York Municipal Income ETF,NYSE Arca ETF,US
@@ -8464,6 +8469,7 @@ GBUG,GBUG,Sprott Active Gold & Silver Miners ETF,NASDAQ ETF,US
 GBX,GBX,"Greenbrier Companies, Inc. (The) Common Stock",NYSE,US
 GCAD,GCAD,Gabelli Commercial Aerospace and Defense ETF,NYSE Arca ETF,US
 GCAL,GCAL,Goldman Sachs Dynamic California Municipal Income ETF,NYSE Arca ETF,US
+GCB,GCB,Corgi FTSE Intermediate Government/Credit Bond ETF,Cboe BZX ETF,US
 GCBC,GCBC,"Greene County Bancorp, Inc. - Common Stock",NASDAQ,US
 GCC,GCC,WisdomTree EnhancedContinuous Commodity Index Fund,NYSE Arca ETF,US
 GCDT,GCDT,Green Circle Decarbonize Technology Limited Class A Ordinary Shares,NYSE American,US
@@ -9121,6 +9127,7 @@ HGLB,HGLB,Highland Global Allocation Fund Common Stock,NYSE,US
 HGRO,HGRO,Hedgeye Quality Growth ETF,NYSE Arca ETF,US
 HGTY,HGTY,"Hagerty, Inc. Class A Common Stock",NYSE,US
 HGV,HGV,Hilton Grand Vacations Inc. Common Stock ,NYSE,US
+HH,HH,Corgi FTSE High Yield Corporate Bond ETF,Cboe BZX ETF,US
 HHH,HHH,Howard Hughes Holdings Inc. Common Stock,NYSE,US
 HHS,HHS,"Harte Hanks, Inc. - Common Stock",NASDAQ,US
 HIAI,HIAI,Ai Funds High Conviction US Equity AI-Managed ETF,Cboe BZX ETF,US
@@ -9191,6 +9198,7 @@ HODO,HODO,House of Doge Inc. - Common Stock,NASDAQ,US
 HODU,HODU,Direxion Daily HOOD Bull 2X ETF,NASDAQ ETF,US
 HOFT,HOFT,Hooker Furnishings Corporation - Common Stock,NASDAQ,US
 HOG,HOG,"Harley-Davidson, Inc. Common Stock",NYSE,US
+HOID,HOID,Tuttle - Rareview Humanoid Robotics ETF,Cboe BZX ETF,US
 HOLA,HOLA,JPMorgan International Hedged Equity Laddered Overlay ETF,NYSE Arca ETF,US
 HOLD,HOLD,Harbor Alpha Layering ETF,NYSE Arca ETF,US
 HOLO,HOLO,MicroCloud Hologram Inc. - Ordinary Shares,NASDAQ,US
@@ -9433,7 +9441,6 @@ IBHJ,IBHJ,iShares iBonds 2030 Term High Yield and Income ETF,Cboe BZX ETF,US
 IBHK,IBHK,iShares iBonds 2031 Term High Yield and Income ETF,Cboe BZX ETF,US
 IBHL,IBHL,iShares iBonds 2032 Term High Yield and Income ETF,Cboe BZX ETF,US
 IBHM,IBHM,iShares iBonds 2033 Term High Yield and Income ETF,Cboe BZX ETF,US
-IBIC,IBIC,iShares iBonds Oct 2026 Term TIPS ETF,NYSE Arca ETF,US
 IBID,IBID,iShares iBonds Oct 2027 Term TIPS ETF,NYSE Arca ETF,US
 IBIE,IBIE,iShares iBonds Oct 2028 Term TIPS ETF,NYSE Arca ETF,US
 IBIF,IBIF,iShares iBonds Oct 2029 Term TIPS ETF,NYSE Arca ETF,US
@@ -9578,6 +9585,7 @@ IGA,IGA,Voya Global Advantage and Premium Opportunity Fund Common Shares of Bene
 IGAC,IGAC,Invest Green Acquisition Corporation - Class A Ordinary Shares,NASDAQ,US
 IGACR,IGACR,Invest Green Acquisition Corporation - Rights,NASDAQ,US
 IGACU,IGACU,Invest Green Acquisition Corporation - Units,NASDAQ,US
+IGB,IGB,Corgi FTSE U.S. IG Corporate Bond ETF,Cboe BZX ETF,US
 IGBH,IGBH,iShares Interest Rate Hedged Long-Term Corporate Bond ETF,NYSE Arca ETF,US
 IGC,IGC,"IGC Pharma, Inc. Common Stock",NYSE American,US
 IGCB,IGCB,TCW Corporate Bond ETF,NYSE ETF,US
@@ -10668,6 +10676,7 @@ LIEN,LIEN,"Chicago Atlantic BDC, Inc. - Common Stock",NASDAQ,US
 LIF,LIF,"Life360, Inc. - Common Stock",NASDAQ,US
 LIFE,LIFE,Ethos Technologies Inc. - Class A Common Stock,NASDAQ,US
 LIFT,LIFT,LifeX 2028 Income Bucket ETF,Cboe BZX ETF,US
+LIGB,LIGB,Corgi FTSE 10 Year IG Corporate Bond ETF,Cboe BZX ETF,US
 LII,LII,"Lennox International, Inc. Common Stock",NYSE,US
 LILA,LILA,Liberty Latin America Ltd. - Class A Common Stock,NASDAQ,US
 LILAK,LILAK,Liberty Latin America Ltd. - Class C Common Stock,NASDAQ,US
@@ -10827,6 +10836,7 @@ LSTB,LSTB,Natixis Loomis Sayles Total Return Bond ETF,NYSE Arca ETF,US
 LSTR,LSTR,"Landstar System, Inc. - Common Stock",NASDAQ,US
 LSVD,LSVD,LSV Disciplined Value ETF,NYSE Arca ETF,US
 LTAX,LTAX,Nomura Tax-Free USA ETF,NYSE Arca ETF,US
+LTB,LTB,Corgi FTSE 20 Year U.S. Treasury Bond ETF,Cboe BZX ETF,US
 LTBR,LTBR,Lightbridge Corporation - Common Stock,NASDAQ,US
 LTC,LTC,"LTC Properties, Inc. Common Stock",NYSE,US
 LTCC,LTCC,Canary Litecoin ETF,NASDAQ ETF,US
@@ -11264,6 +11274,7 @@ MMCA,MMCA,NYLIM MacKay California Muni Intermediate ETF,NYSE Arca ETF,US
 MMD,MMD,NYLIM MacKay DefinedTerm Muni Opportunities Fund Common Shares,NYSE,US
 MMED,MMED,"MiniMed Group, Inc. - Common Stock",NASDAQ,US
 MMEDV,MMEDV,"MiniMed Group, Inc. - Common Stock When Issued",NASDAQ,US
+MMF,MMF,Corgi Money Market ETF,Cboe BZX ETF,US
 MMHI,MMHI,NYLIM MacKay Muni High Income ETF,NYSE Arca ETF,US
 MMI,MMI,"Marcus & Millichap, Inc. Common Stock",NYSE,US
 MMID,MMID,MFS Active Mid Cap ETF,NYSE ETF,US
@@ -14902,6 +14913,7 @@ SVRA,SVRA,"Savara, Inc. - Common Stock",NASDAQ,US
 SVRE,SVRE,SaverOne 2014 Ltd. - American Depositary Shares,NASDAQ,US
 SVREW,SVREW,SaverOne 2014 Ltd. - Warrant,NASDAQ,US
 SVRN,SVRN,"SVRN, Inc. - Common Stock",NASDAQ,US
+SVTN,SVTN,Corgi FTSE 7-10 Year U.S. Treasury Bond ETF,Cboe BZX ETF,US
 SVV,SVV,"Savers Value Village, Inc. Common Stock",NYSE,US
 SVXY,SVXY,ProShares Short VIX Short Term Futures ETF,Cboe BZX ETF,US
 SW,SW,Smurfit WestRock plc Ordinary Shares,NYSE,US
@@ -15045,6 +15057,7 @@ TCRT,TCRT,"Alaunos Therapeutics, Inc. - Common Stock",NASDAQ,US
 TCRX,TCRX,"TScan Therapeutics, Inc. - Common Stock",NASDAQ,US
 TCV,TCV,Towle Small-Cap Value ETF,NYSE Arca ETF,US
 TCX,TCX,Tucows Inc. - Common Stock,NASDAQ,US
+TCXB,TCXB,TCGX Acquisition Corp. II - Class A Ordinary Shares,NASDAQ,US
 TD,TD,Toronto Dominion Bank (The) Common Stock,NYSE,US
 TDAC,TDAC,Translational Development Acquisition Corp. - Ordinary Shares,NASDAQ,US
 TDACU,TDACU,Translational Development Acquisition Corp. - Units,NASDAQ,US
@@ -15325,6 +15338,7 @@ TNL,TNL,Travel   Leisure Co. Common  Stock,NYSE,US
 TNMG,TNMG,TNL Mediagene - Ordinary Shares,NASDAQ,US
 TNON,TNON,"Tenon Medical, Inc. - Common Stock",NASDAQ,US
 TNONW,TNONW,"Tenon Medical, Inc. - Warrant",NASDAQ,US
+TNTW,TNTW,Corgi FTSE 10-20 Year U.S. Treasury Bond ETF,Cboe BZX ETF,US
 TNUK,TNUK,Tortoise Nuclear Renaissance ETF,NYSE Arca ETF,US
 TNXP,TNXP,Tonix Pharmaceuticals Holding Corp. - Common Stock,NASDAQ,US
 TNXT,TNXT,T. Rowe Price Innovation Leaders ETF,NASDAQ ETF,US
@@ -15547,6 +15561,7 @@ TTMX,TTMX,Tradr 2X Long TTMI Daily ETF,Cboe BZX ETF,US
 TTOP,TTOP,21Shares FTSE Crypto 10 Index ETF,NYSE Arca ETF,US
 TTRX,TTRX,Turn Therapeutics Inc. - Common Stock,NASDAQ,US
 TTT,TTT,ProShares UltraPro Short 20 Year Treasury,NYSE Arca ETF,US
+TTTT,TTTT,Corgi FTSE U.S. TIPS Bond ETF,Cboe BZX ETF,US
 TTWO,TTWO,"Take-Two Interactive Software, Inc. - Common Stock",NASDAQ,US
 TTXD,TTXD,Direxion Daily Technology Top 5 Bear 2X ETF,NYSE Arca ETF,US
 TTXU,TTXU,Direxion Daily Technology Top 5 Bull 2X ETF,NYSE Arca ETF,US
@@ -15639,6 +15654,7 @@ UAN,UAN,"CVR Partners, LP Common Units representing Limited Partner Interests",N
 UAPR,UAPR,Innovator U.S. Equity Ultra Buffer ETF - April,Cboe BZX ETF,US
 UAUG,UAUG,Innovator U.S. Equity Ultra Buffer ETF - August,Cboe BZX ETF,US
 UAVS,UAVS,"AgEagle Aerial Systems, Inc. Common Stock",NYSE American,US
+UB,UB,Corgi FTSE U.S. Treasury Bond ETF,Cboe BZX ETF,US
 UBCP,UBCP,"United Bancorp, Inc. - Common Stock",NASDAQ,US
 UBER,UBER,"Uber Technologies, Inc. Common Stock",NYSE,US
 UBEW,UBEW,Roundhill UBER WeeklyPay ETF,Cboe BZX ETF,US
