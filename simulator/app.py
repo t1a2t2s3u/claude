@@ -62,7 +62,9 @@ if not portfolios:
         "サーバーの再起動でデータが初期化された場合は、設定ページで保存した"
         "バックアップ(.db)をここにアップロードすると全データが元に戻ります。"
     )
-    backup = st.file_uploader("バックアップファイル(.db)", type=["db"], key="welcome_restore")
+    # iOSは拡張子.dbを「未知の種類」と扱い、type制限があると選択できないため制限しない。
+    # 中身がSQLiteかどうかは restore_db_bytes がファイル先頭の署名で検証する
+    backup = st.file_uploader("バックアップファイル(sim-backup-….db)", key="welcome_restore")
     if backup is not None and st.button("このバックアップで復元する", type="primary"):
         try:
             restore_db_bytes(backup.getvalue())

@@ -70,7 +70,9 @@ def render(conn, pf) -> None:
         file_name=f"sim-backup-{date.today():%Y%m%d}.db",
         mime="application/octet-stream",
     )
-    backup = st.file_uploader("バックアップから復元(.db)", type=["db"])
+    # iOSは拡張子.dbを「未知の種類」と扱い、type制限があると選択できないため制限しない。
+    # 中身の検証は restore_db_bytes(ファイル先頭の署名)で行う
+    backup = st.file_uploader("バックアップから復元(sim-backup-….db)")
     if backup is not None:
         st.warning("復元すると現在のデータはバックアップの内容で上書きされます。")
         if st.button("このバックアップで復元する", type="primary"):
