@@ -42,10 +42,13 @@
 
 ## 企画
 
-- [企画] AI社員の「人件費」が1ヶ月で3回下がった — 値下げ一巡を非エンジニアが読み解く（%の罠つき）
-  （無料 / ブリーフ: strategy/briefs/2026-10-19-ai-cost-roundup.md）
-- [企画] AI社員チーム運用日記 第5回：AIは毎週納品した。止まっていたのは人間だった — 在庫15本・投稿ゼロの1ヶ月半
-  （無料 / ブリーフ: strategy/briefs/2026-10-19-ai-staff-diary-05.md）
+- [執筆済み] AI社員の「人件費」が1ヶ月で3回下がった — 値下げ一巡を非エンジニアが読み解く（%の罠つき）
+  （無料 / ブリーフ: strategy/briefs/2026-10-19-ai-cost-roundup.md /
+  下書き: articles/drafts/2026-10-19-ai-cost-roundup.md）
+- [執筆済み] AI社員チーム運用日記 第5回：AIは毎週納品した。止まっていたのは人間だった — 在庫15本・投稿ゼロの1ヶ月半
+  （無料 / ブリーフ: strategy/briefs/2026-10-19-ai-staff-diary-05.md /
+  下書き: articles/drafts/2026-10-19-ai-staff-diary-05.md。公開可否はオーナー判断
+  — ドラフト冒頭メモ参照）
 
 ---
 
