@@ -3832,6 +3832,7 @@ ACIG,ACIG,Hartford Alpha Capture International Growth ETF,Cboe BZX ETF,US
 ACII,ACII,Innovator Index Autocallable Income Strategy ETF,NYSE Arca ETF,US
 ACIO,ACIO,Aptus Collared Investment Opportunity ETF,Cboe BZX ETF,US
 ACIU,ACIU,AC Immune SA - Common Stock,NASDAQ,US
+ACIV,ACIV,Hartford Alpha Capture International Value ETF,Cboe BZX ETF,US
 ACIW,ACIW,"ACI Worldwide, Inc. - Common Stock",NASDAQ,US
 ACKY,ACKY,VistaShares Target 15 ACKtivist Distribution ETF,NYSE Arca ETF,US
 ACLC,ACLC,American Century Large Cap Equity ETF,NYSE Arca ETF,US
@@ -3870,7 +3871,6 @@ ACTS,ACTS,FIS Tactical Equity ETF,NYSE Arca ETF,US
 ACTU,ACTU,"Actuate Therapeutics, Inc. - Common stock",NASDAQ,US
 ACU,ACU,Acme United Corporation. Common Stock,NYSE American,US
 ACV,ACV,Virtus Diversified Income & Convertible Fund Common Shares of Beneficial Interest,NYSE,US
-ACVA,ACVA,ACV Auctions Inc. Class A Common Stock,NYSE,US
 ACVF,ACVF,American Conservative Values ETF,NYSE Arca ETF,US
 ACVT,ACVT,Advent Convertible Bond ETF,NYSE Arca ETF,US
 ACVU,ACVU,Hartford Alpha Capture Value ETF,Cboe BZX ETF,US
@@ -4081,6 +4081,7 @@ AIBU,AIBU,Direxion Daily AI and Big Data Bull 2X ETF,NYSE Arca ETF,US
 AIBZ,AIBZ,Bitzero Holdings Inc. - Common Shares,NASDAQ,US
 AICH,AICH,China AI ETF,NASDAQ ETF,US
 AIDX,AIDX,"20/20 Biolabs, Inc. - Common Stock",NASDAQ,US
+AIED,AIED,Defiance LLM Catalyst Momentum ETF,NYSE Arca ETF,US
 AIEQ,AIEQ,Amplify AI Powered Equity ETF,NYSE Arca ETF,US
 AIFA,AIFA,"All In FutureTech Alliance, Inc. - Common Stock",NASDAQ,US
 AIFC,AIFC,AI Financial Corporation - Common Stock,NASDAQ,US
@@ -4286,7 +4287,6 @@ AMMO,AMMO,VistaShares Defense Supercycle ETF,NYSE Arca ETF,US
 AMN,AMN,AMN Healthcare Services Inc,NYSE,US
 AMOD,AMOD,"Alpha Modus Holdings, Inc. - Class A Common Stock",NASDAQ,US
 AMODW,AMODW,"Alpha Modus Holdings, Inc. - Warrant",NASDAQ,US
-AMOM,AMOM,QRAFT AI-Enhanced U.S. Large Cap Momentum ETF,NYSE Arca ETF,US
 AMP,AMP,"Ameriprise Financial, Inc. Common Stock",NYSE,US
 AMPG,AMPG,"Amplitech Group, Inc. - Common Stock",NASDAQ,US
 AMPGZ,AMPGZ,"Amplitech Group, Inc. - Series B Right",NASDAQ,US
@@ -4309,7 +4309,7 @@ AMSS,AMSS,AMASS Brands Inc. - Common Stock,NASDAQ,US
 AMST,AMST,Amesite Inc. - Common Stock,NASDAQ,US
 AMT,AMT,American Tower Corporation (REIT) Common Stock,NYSE,US
 AMTB,AMTB,Amerant Bancorp Inc. Class A Common Stock,NYSE,US
-AMTD,AMTD,"AMTD IDEA Group American Depositary Shares, each representing six (6) Class A Ordinary Shares",NYSE,US
+AMTD,AMTD,"AMTD IDEA Group American Depositary Shares, each representing three hundred sixty (360) Class A Ordinary Shares",NYSE,US
 AMTM,AMTM,"Amentum Holdings, Inc. Common Stock",NYSE,US
 AMTX,AMTX,"Aemetis, Inc - Common Stock",NASDAQ,US
 AMUB,AMUB,"ETRACS Alerian MLP Index ETN Series B due July 18, 2042",NYSE Arca,US
@@ -4620,7 +4620,6 @@ ATI,ATI,ATI Inc. Common Stock,NYSE,US
 ATII,ATII,Archimedes Tech SPAC Partners II Co. - Ordinary Shares,NASDAQ,US
 ATIIU,ATIIU,Archimedes Tech SPAC Partners II Co. - Unit,NASDAQ,US
 ATIIW,ATIIW,Archimedes Tech SPAC Partners II Co. - Warrant,NASDAQ,US
-ATKR,ATKR,Atkore Inc. Common Stock,NYSE,US
 ATLC,ATLC,Atlanticus Holdings Corporation - Common Stock,NASDAQ,US
 ATLCL,ATLCL,Atlanticus Holdings Corporation - 6.125% Senior Notes due 2026,NASDAQ,US
 ATLCP,ATLCP,"Atlanticus Holdings Corporation - 7.625% Series B Cumulative Perpetual Preferred Stock, no par value per share",NASDAQ,US
@@ -5547,7 +5546,6 @@ BTO,BTO,John Hancock Financial Opportunities Fund Common Stock,NYSE,US
 BTOC,BTOC,Armlogi Holding Corp. - common stock,NASDAQ,US
 BTOT,BTOT,iShares Total USD Fixed Income Market ETF,NYSE Arca ETF,US
 BTQ,BTQ,BTQ Technologies Corp. - Common Stock,NASDAQ,US
-BTRN,BTRN,Global X Bitcoin Trend Strategy ETF,NYSE Arca ETF,US
 BTSG,BTSG,"BrightSpring Health Services, Inc. - Common Stock",NASDAQ,US
 BTSGU,BTSGU,"BrightSpring Health Services, Inc. - Tangible Equity Unit",NASDAQ,US
 BTT,BTT,BlackRock Municipal 2030 Target Term Trust,NYSE,US
@@ -5867,7 +5865,7 @@ CDXS,CDXS,"Codexis, Inc. - Common Stock",NASDAQ,US
 CDZI,CDZI,"Cadiz, Inc. - Common Stock",NASDAQ,US
 CDZIP,CDZIP,"Cadiz, Inc. - Depositary Shares",NASDAQ,US
 CE,CE,Celanese Corporation Common Stock,NYSE,US
-CECO,CECO,CECO Environmental Corp. - Common Stock,NASDAQ,US
+CECO,CECO,CECO Environmental Corp. Common Stock,US,US
 CEE,CEE,"The Central and Eastern Europe Fund, Inc. (The) Common Stock",NYSE,US
 CEF,CEF,Sprott Physical Gold and Silver Trust Units,NYSE Arca ETF,US
 CEFA,CEFA,Global X S&P Catholic Values Developed ex-U.S. ETF,NASDAQ ETF,US
@@ -6674,6 +6672,7 @@ DCBO,DCBO,Docebo Inc. - Common Shares,NASDAQ,US
 DCGO,DCGO,DocGo Inc. - Common Stock,NASDAQ,US
 DCH,DCH,Dauch Corporation Common Stock,NYSE,US
 DCI,DCI,"Donaldson Company, Inc. Common Stock",NYSE,US
+DCM,DCM,"DeFi Capital Markets, Inc. Common Stock",NYSE American,US
 DCMT,DCMT,DoubleLine Commodity Strategy ETF,NYSE Arca ETF,US
 DCO,DCO,Ducommun Incorporated Common Stock,NYSE,US
 DCOM,DCOM,"Dime Commercial Bancshares, Inc. Common Stock",NYSE,US
@@ -7268,7 +7267,7 @@ EFSC,EFSC,Enterprise Financial Services Corporation - Common Stock,NASDAQ,US
 EFSCP,EFSCP,"Enterprise Financial Services Corporation - Depositary Shares Each Representing a 1/40th Interest in a Share of 5% Fixed Rate Non-Cumulative Perpetual Preferred Stock, Series A",NASDAQ,US
 EFSI,EFSI,Eagle Financial Services Inc - Common Stock,NASDAQ,US
 EFT,EFT,Eaton Vance Floating Rate Income Trust Common Shares of Beneficial Interest,NYSE,US
-EFTY,EFTY,"Etoiles Capital Group Co., Ltd. - Class A Ordinary Shares",NASDAQ,US
+EFTY,EFTY,"Etoiles Capital Group Co., Ltd. - Common Stock",NASDAQ,US
 EFU,EFU,ProShares UltraShort MSCI EAFE,NYSE Arca ETF,US
 EFV,EFV,iShares MSCI EAFE Value ETF,Cboe BZX ETF,US
 EFX,EFX,"Equifax, Inc. Common Stock",NYSE,US
@@ -9146,6 +9145,7 @@ HIMS,HIMS,"Hims & Hers Health, Inc. Class A Common Stock",NYSE,US
 HIMU,HIMU,iShares High Yield Muni Active ETF,Cboe BZX ETF,US
 HIMX,HIMX,"Himax Technologies, Inc. - American depositary shares, each of which represents two ordinary shares.",NASDAQ,US
 HIMZ,HIMZ,Defiance Daily Target 2X Long HIMS ETF,NASDAQ ETF,US
+HINC,HINC,Hartford High Yield ETF,NASDAQ ETF,US
 HIND,HIND,"Vyome Holdings, Inc. - Common Stock",NASDAQ,US
 HIO,HIO,"Western Asset High Income Opportunity Fund, Inc. Common Stock",NYSE,US
 HIPO,HIPO,Hippo Holdings Inc. Common Stock,NYSE,US
@@ -9469,7 +9469,7 @@ IBMX,IBMX,iShares iBonds Dec 2035 Term Muni Bond ETF,Cboe BZX ETF,US
 IBN,IBN,ICICI Bank Limited Common Stock,NYSE,US
 IBND,IBND,State Street SPDR Bloomberg International Corporate Bond ETF,NYSE Arca ETF,US
 IBO,IBO,"Impact BioMedical, Inc. Common Stock",NYSE American,US
-IBOC,IBOC,International Bancshares Corporation - Common Stock,NASDAQ,US
+IBOC,IBOC,International Bancshares Corporation Common Stock,US,US
 IBOT,IBOT,VanEck Robotics ETF,NASDAQ ETF,US
 IBP,IBP,"Installed Building Products, Inc. Common Stock",NYSE,US
 IBRN,IBRN,iShares Neuroscience and Healthcare ETF,NYSE Arca ETF,US
@@ -9872,7 +9872,6 @@ IRS,IRS,IRSA Inversiones Y Representaciones S.A. Global Depositary Shares (Each 
 IRT,IRT,"Independence Realty Trust, Inc. Common Stock",NYSE,US
 IRTC,IRTC,"iRhythm Holdings, Inc.  - Common Stock",NASDAQ,US
 IRTR,IRTR,iShares LifePath Retirement ETF,NYSE Arca ETF,US
-IRVH,IRVH,Global X Interest Rate Volatility & Inflation Hedge ETF,NYSE Arca ETF,US
 IRWD,IRWD,"Ironwood Pharmaceuticals, Inc. - Class A Common Stock",NASDAQ,US
 ISBA,ISBA,Isabella Bank Corporation - Common stock,NASDAQ,US
 ISBG,ISBG,IncomeSTKd 1x Bitcoin & 1x Gold Premium ETF,Cboe BZX ETF,US
@@ -10584,6 +10583,7 @@ LCTD,LCTD,iShares World ex U.S. Carbon Transition Readiness Aware Active ETF,NYS
 LCTO,LCTO,Kurv U.S. Large Cap TaxOptimized ETF,Cboe BZX ETF,US
 LCTU,LCTU,iShares U.S. Carbon Transition Readiness Aware Active ETF,NYSE Arca ETF,US
 LCTX,LCTX,"Lineage Cell Therapeutics, Inc. Common Stock",NYSE American,US
+LCU,LCU,Lion Copper Corp. - Common Shares,NASDAQ,US
 LCUT,LCUT,"Lifetime Brands, Inc. - Common Stock",NASDAQ,US
 LDDR,LDDR,LifeX 2035 Income Bucket ETF,Cboe BZX ETF,US
 LDEM,LDEM,iShares ESG MSCI EM Leaders ETF,NASDAQ ETF,US
@@ -10813,7 +10813,6 @@ LRGC,LRGC,AB US Large Cap Strategic Equities ETF,NYSE Arca ETF,US
 LRGE,LRGE,ClearBridge Large Cap Growth Select ETF,NASDAQ ETF,US
 LRGF,LRGF,iShares U.S. Equity Factor ETF,NYSE Arca ETF,US
 LRGG,LRGG,Nomura Focused Large Growth ETF,NYSE Arca ETF,US
-LRHC,LRHC,La Rosa Holdings Corp. - Common Stock,NASDAQ,US
 LRMR,LRMR,"Larimar Therapeutics, Inc. - Common Stock",NASDAQ,US
 LRN,LRN,"Stride, Inc. Common Stock",NYSE,US
 LRND,LRND,NYLIM U.S. Large Cap R&D Leaders ETF,NASDAQ ETF,US
@@ -11273,7 +11272,6 @@ MMAY,MMAY,Pacer Swan SOS Moderate (May) ETF,Cboe BZX ETF,US
 MMCA,MMCA,NYLIM MacKay California Muni Intermediate ETF,NYSE Arca ETF,US
 MMD,MMD,NYLIM MacKay DefinedTerm Muni Opportunities Fund Common Shares,NYSE,US
 MMED,MMED,"MiniMed Group, Inc. - Common Stock",NASDAQ,US
-MMEDV,MMEDV,"MiniMed Group, Inc. - Common Stock When Issued",NASDAQ,US
 MMF,MMF,Corgi Money Market ETF,Cboe BZX ETF,US
 MMHI,MMHI,NYLIM MacKay Muni High Income ETF,NYSE Arca ETF,US
 MMI,MMI,"Marcus & Millichap, Inc. Common Stock",NYSE,US
@@ -11809,7 +11807,7 @@ NHI,NHI,"National Health Investors, Inc. Common Stock",NYSE,US
 NHIV,NHIV,NewHold Investment Corp IV - Class A Ordinary Shares,NASDAQ,US
 NHIVU,NHIVU,NewHold Investment Corp IV - Units,NASDAQ,US
 NHIVW,NHIVW,NewHold Investment Corp IV - Warrants,NASDAQ,US
-NHP,NHP,"National Healthcare Properties, Inc. - Class A Common Stock",NASDAQ,US
+NHP,NHP,"National Healthcare Properties, Inc. - Common Stock",NASDAQ,US
 NHS,NHS,Neuberger High Yield Strategies Fund Inc. Common Stock,NYSE American,US
 NHTC,NHTC,Natural Health Trends Corp. - Common Stock,NASDAQ,US
 NHYB,NHYB,Nuveen High Yield Corporate Bond ETF,NYSE Arca ETF,US
@@ -13253,7 +13251,6 @@ QCAP,QCAP,FT Vest Nasdaq-100 Conservative Buffer ETF - April,Cboe BZX ETF,US
 QCJA,QCJA,FT Vest Nasdaq-100 Conservative Buffer ETF - January,Cboe BZX ETF,US
 QCJL,QCJL,FT Vest Nasdaq-100 Conservative Buffer ETF - July,Cboe BZX ETF,US
 QCLN,QCLN,First Trust NASDAQ Clean Edge Green Energy Index Fund,NASDAQ ETF,US
-QCLR,QCLR,Global X NASDAQ 100 Collar 95-110 ETF,NASDAQ ETF,US
 QCLS,QCLS,"Q/C Technologies, Inc. - Common Stock",NASDAQ,US
 QCMD,QCMD,Direxion Daily QCOM Bear 1X ETF,NASDAQ ETF,US
 QCML,QCML,GraniteShares 2x Long QCOM Daily ETF,NASDAQ ETF,US
@@ -14141,7 +14138,6 @@ SEA,SEA,U.S. Global Sea to Sky Cargo ETF,NYSE Arca ETF,US
 SEAL-PA,SEAL$A,Seapeak LLC 9.00% Series A Cumulative Redeemable Perpetual Preferred Units,NYSE,US
 SEAL-PB,SEAL$B,Seapeak LLC 8.50% Series B Fixed-to-Floating Rate Cumulative Redeemable Perpetual Preferred Units,NYSE,US
 SEAT,SEAT,Vivid Seats Inc. - Class A common stock,NASDAQ,US
-SEATW,SEATW,Vivid Seats Inc. - Warrant,NASDAQ,US
 SEB,SEB,Seaboard Corporation Common Stock,NYSE American,US
 SECA,SECA,Main Active Rotation ETF,Cboe BZX ETF,US
 SECR,SECR,NYLIM MacKay Securitized Income ETF,NYSE Arca ETF,US
@@ -14181,6 +14177,7 @@ SEPT,SEPT,AllianzIM U.S. Large Cap Buffer10 Sep ETF,Cboe BZX ETF,US
 SEPU,SEPU,AllianzIM U.S. Equity Buffer15 Uncapped Sep ETF,Cboe BZX ETF,US
 SEPW,SEPW,AllianzIM U.S. Large Cap Buffer20 Sep ETF,Cboe BZX ETF,US
 SEPZ,SEPZ,TrueShares Structured Outcome (September) ETF,Cboe BZX ETF,US
+SEQ,SEQ,Sequoia ETF,NYSE Arca ETF,US
 SER,SER,"Serina Therapeutics, Inc. Common Stock",NYSE American,US
 SERA,SERA,"Sera Prognostics, Inc. - Class A Common Stock",NASDAQ,US
 SERV,SERV,Serve Robotics Inc. - Common Stock,NASDAQ,US
@@ -14714,6 +14711,7 @@ SPYU,SPYU,"MAX S&P 500 4X Leveraged ETNs due October 30, 2043",NYSE Arca ETF,US
 SPYV,SPYV,State Street SPDR Portfolio S&P 500 Value ETF,NYSE Arca ETF,US
 SPYX,SPYX,State Street SPDR S&P 500 Fossil Fuel Reserves Free ETF,NYSE Arca ETF,US
 SQBA,SQBA,FT Vest U.S. Equity Quarterly 15 Buffer ETF,Cboe BZX ETF,US
+SQBR,SQBR,FT Vest U.S. Equity Quarterly 20 Barrier ETF,Cboe BZX ETF,US
 SQFT,SQFT,"Presidio Property Trust, Inc. - Class A Common Stock",NASDAQ,US
 SQFTP,SQFTP,"Presidio Property Trust, Inc. - 9.375% Series D Cumulative Redeemable Perpetual Preferred Stock, $0.01 par value per share",NASDAQ,US
 SQFTW,SQFTW,"Presidio Property Trust, Inc. - Series A Common Stock Purchase Warrants",NASDAQ,US
@@ -14745,6 +14743,7 @@ SRPT,SRPT,"Sarepta Therapeutics, Inc. - Common Stock",NASDAQ,US
 SRRK,SRRK,Scholar Rock Holding Corporation - Common Stock,NASDAQ,US
 SRS,SRS,ProShares UltraShort Real Estate,NYSE Arca ETF,US
 SRTA,SRTA,"Strata Critical Medical, Inc. - Class A Common Stock",NASDAQ,US
+SRTM,SRTM,Stratum Holdings Corp. - Common Stock,NASDAQ,US
 SRTS,SRTS,"Sensus Healthcare, Inc. - Common Stock",NASDAQ,US
 SRTY,SRTY,ProShares UltraPro Short Russell2000,NYSE Arca ETF,US
 SRV,SRV,NXG Cushing Midstream Energy Fund Common Shares of Beneficial Interest,NYSE,US
@@ -15889,7 +15888,6 @@ UTWY,UTWY,US Treasury 20 Year Bond ETF,NASDAQ ETF,US
 UTZ,UTZ,Utz Brands Inc Class A Common Stock ,NYSE,US
 UUP,UUP,Invesco DB USD Index Bullish Fund ETF,NYSE Arca ETF,US
 UUPP,UUPP,Principal CLO ETF,Cboe BZX ETF,US
-UUU,UUU,"Universal Safety Products, Inc. Common Stock",NYSE American,US
 UUUC,UUUC,Corgi UUUU 2x Daily ETF,Cboe BZX ETF,US
 UUUG,UUUG,Leverage Shares 2X Long UUUU Daily ETF,NASDAQ ETF,US
 UUUU,UUUU,Energy Fuels Inc Ordinary Shares (Canada),NYSE American,US
@@ -16385,6 +16383,7 @@ WIA,WIA,Western Asset Inflation-Linked Income Fund,NYSE,US
 WIMA,WIMA,WisdomTree International Adaptive Moving Average Fund,NASDAQ ETF,US
 WIMI,WIMI,WiMi Hologram Cloud Inc. - Class B Ordinary Shares,NASDAQ,US
 WINA,WINA,Winmark Corporation - Common Stock,NASDAQ,US
+WINC,WINC,William Blair Emerging Income ETF,NYSE Arca ETF,US
 WING,WING,Wingstop Inc. - Common Stock,NASDAQ,US
 WINN,WINN,Harbor Long-Term Growers ETF,NYSE ETF,US
 WIP,WIP,State Street SPDR FTSE International Government Inflation-Protected Bond ETF,NYSE Arca ETF,US
@@ -16562,7 +16561,6 @@ XCCC,XCCC,BondBloxx CCC-Rated USD High Yield Corporate Bond ETF,NYSE Arca ETF,US
 XCEM,XCEM,Columbia EM Core ex-China ETF,NYSE Arca ETF,US
 XCH,XCH,XCHG Limited - ADS,NASDAQ,US
 XCHG,XCHG,AB US Equity ETF,NYSE Arca ETF,US
-XCLR,XCLR,Global X S&P 500 Collar 95-110 ETF,NYSE Arca ETF,US
 XCNY,XCNY,State Street SPDR S&P Emerging Markets ex-China ETF,NASDAQ ETF,US
 XCOM,XCOM,Corgi All Commodities 2x Daily ETF,Cboe BZX ETF,US
 XCOR,XCOR,FundX ETF,NYSE Arca ETF,US
