@@ -61,7 +61,8 @@
 |---|---|
 | 外壁のビフォーアフター（秋田市土崎） | `works/tsuchizaki-gaiheki-before.jpg` / `-after.jpg` |
 | 屋根のビフォーアフター（同上） | `works/tsuchizaki-yane-before.jpg` / `-after.jpg` |
-| 職人の作業 3枚 | `works/shokunin-gaiheki.jpg` / `shokunin-yane.jpg` / `shokunin-coking.jpg` |
+| 職人の作業 3枚 | `works/shokunin-gaiheki.jpg` / `shokunin-yane.jpg` / `shokunin-coking.jpg` ※写っているのが誰かは未確認 |
+| 職人の作業: 刷毛で板張りの外壁（2026-10-21 提供） | `works/shokunin-hake-gaiheki.jpg` ※**一級塗装技能士・掲載許可ともオーナー確認済み**（業者選びの記事のカバー）。工程名は未確認 |
 | ローラーでの塗装 | `works/gaiheki-roller.jpg` / `futaibu-roller.jpg` |
 | 緑の外壁の全景 | `works/gaiheki-green.jpg` |
 | チョーキングの指先 | `blog/20nen-chalking.jpg` |
@@ -75,6 +76,7 @@
 | 屋根: 棟まわりの塗膜はがれとサビ（2026-10-14 提供） | `works/yane-sabi-mune.jpg`（トリミング済み・屋根記事のカバー） |
 | 屋根: 全面にサビが回ったトタン＋雪止め（同上） | `works/yane-sabi-zenmen.jpg`（トリミング済み） |
 | 屋根: サビの点の寄り（同上） | `works/yane-sabi-yori.jpg` ※未使用 |
+| 屋根: 塗膜がめくれて錆が広がった面の寄り（2026-10-21 提供） | `works/yane-sabi-makure.jpg`（屋根記事の第4章）※**板ではなく塗膜のめくれ**。工程名は未確認 |
 | 屋根: ケレン（錆落とし）作業（同上） | `works/yane-keren.jpg` ／ `works/yane-keren-shokunin.jpg`（職人・全身） |
 | 屋根: 刷毛で部分塗り（同上） | `works/yane-shitanuri-hake.jpg` ※材料は**サビシャット**。工程名は未確認。**「錆止め」と書かない**・当面未使用 |
 | 屋根: 高圧洗浄（同上） | `works/yane-kouatsu-sen.jpg`（トリミング済み）※未使用 |
