@@ -61,7 +61,8 @@
 |---|---|
 | 外壁のビフォーアフター（秋田市土崎） | `works/tsuchizaki-gaiheki-before.jpg` / `-after.jpg` |
 | 屋根のビフォーアフター（同上） | `works/tsuchizaki-yane-before.jpg` / `-after.jpg` |
-| 職人の作業 3枚 | `works/shokunin-gaiheki.jpg` / `shokunin-yane.jpg` / `shokunin-coking.jpg` |
+| 職人の作業 3枚 | `works/shokunin-gaiheki.jpg` / `shokunin-yane.jpg` / `shokunin-coking.jpg` ※写っているのが誰かは未確認 |
+| 職人の作業: 刷毛で板張りの外壁（2026-10-21 提供） | `works/shokunin-hake-gaiheki.jpg` ※**一級塗装技能士とオーナー確認済み**（業者選びの記事のカバー）。工程名は未確認 |
 | ローラーでの塗装 | `works/gaiheki-roller.jpg` / `futaibu-roller.jpg` |
 | 緑の外壁の全景 | `works/gaiheki-green.jpg` |
 | チョーキングの指先 | `blog/20nen-chalking.jpg` |
