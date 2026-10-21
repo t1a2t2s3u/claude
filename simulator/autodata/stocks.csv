@@ -4077,6 +4077,7 @@ AIAI,AIAI,AIAI Holdings Corporation - Class A common stock,NASDAQ,US
 AIB,AIB,AIB Data Centers Inc. Common Stock,NYSE American,US
 AIBD,AIBD,Direxion Daily AI and Big Data Bear 2X ETF,NYSE Arca ETF,US
 AIBF,AIBF,iShares Future AI Beneficiaries ETF,NYSE Arca ETF,US
+AIBN,AIBN,Defiance AI Infrastructure Bond ETF,NYSE Arca ETF,US
 AIBU,AIBU,Direxion Daily AI and Big Data Bull 2X ETF,NYSE Arca ETF,US
 AIBZ,AIBZ,Bitzero Holdings Inc. - Common Shares,NASDAQ,US
 AICH,AICH,China AI ETF,NASDAQ ETF,US
@@ -4164,7 +4165,6 @@ ALAI,ALAI,Alger AI Enablers & Adopters ETF,NYSE Arca ETF,US
 ALAR,ALAR,Alarum Technologies Ltd. - American Depositary Shares,NASDAQ,US
 ALB,ALB,Albemarle Corporation Common Stock,NYSE,US
 ALB-PA,ALB$A,Albemarle Corporation Depositary Shares each representing a 1/20th of 7.25% Series A Mandatory Convertible Preferred Stock,NYSE,US
-ALBG,ALBG,Leverage Shares 2X Long ALB Daily ETF,NASDAQ ETF,US
 ALC,ALC,Alcon Inc. Ordinary Shares,NYSE,US
 ALCO,ALCO,"Alico, Inc. - Common Stock",NASDAQ,US
 ALDB,ALDB,Aptus Laddered Deep Buffer ETF,Cboe BZX ETF,US
@@ -4586,7 +4586,6 @@ ASTG,ASTG,Leverage Shares 2X Long ASTS Daily ETF,Cboe BZX ETF,US
 ASTH,ASTH,Astrana Health Inc. - Common Stock,NASDAQ,US
 ASTI,ASTI,"Ascent Solar Technologies, Inc - Common Stock",NASDAQ,US
 ASTL,ASTL,Algoma Steel Group Inc. - Common Shares,NASDAQ,US
-ASTLW,ASTLW,Algoma Steel Group Inc. - Warrant,NASDAQ,US
 ASTN,ASTN,Defiance Daily Target 2X Short ASTS ETF,Cboe BZX ETF,US
 ASTS,ASTS,"AST SpaceMobile, Inc. - Class A Common Stock",NASDAQ,US
 ASTT,ASTT,Corgi ASTS 2x Daily ETF,Cboe BZX ETF,US
@@ -5251,7 +5250,6 @@ BLRK,BLRK,Bluerock Acquisition Corp. - Class A Ordinary Shares,NASDAQ,US
 BLRKU,BLRKU,Bluerock Acquisition Corp. - Units,NASDAQ,US
 BLRKW,BLRKW,Bluerock Acquisition Corp. - Warrants,NASDAQ,US
 BLRX,BLRX,BioLineRx Ltd. - American Depositary Shares,NASDAQ,US
-BLSG,BLSG,Leverage Shares 2X Long BLSH Daily ETF,NASDAQ ETF,US
 BLSH,BLSH,Bullish Ordinary Shares,NYSE,US
 BLSM,BLSM,"BlossomHill Therapeutics, Inc. - Common Stock",NASDAQ,US
 BLST,BLST,Bluemonte Short Term Bond ETF,NYSE Arca ETF,US
@@ -5645,7 +5643,6 @@ BZAI,BZAI,"Blaize Holdings, Inc. - Common Stock",NASDAQ,US
 BZAIW,BZAIW,"Blaize Holdings, Inc. - Warrant",NASDAQ,US
 BZFD,BZFD,"BuzzFeed, Inc. - Class A Common Stock",NASDAQ,US
 BZFDW,BZFDW,"BuzzFeed, Inc. - Warrant",NASDAQ,US
-BZH,BZH,"Beazer Homes USA, Inc. Common Stock",NYSE,US
 BZQ,BZQ,ProShares UltraShort MSCI Brazil Capped,NYSE Arca ETF,US
 BZUN,BZUN,Baozun Inc. - American Depositary Shares,NASDAQ,US
 BZZ,BZZ,Corgi Drones & Urban Air Mobility ETF,Cboe BZX ETF,US
@@ -6409,7 +6406,6 @@ CRMG,CRMG,Leverage Shares 2X Long CRM Daily ETF,NASDAQ ETF,US
 CRML,CRML,Critical Metals Corp. - Ordinary Shares,NASDAQ,US
 CRMLW,CRMLW,Critical Metals Corp. - Warrants,NASDAQ,US
 CRMT,CRMT,"America's Car-Mart, Inc. - Common Stock",NASDAQ,US
-CRMU,CRMU,Leverage Shares 2x Long CRML Daily ETF,NASDAQ ETF,US
 CRMX,CRMX,Tradr 2X Long CRML Daily ETF,Cboe BZX ETF,US
 CRNC,CRNC,Cerence Inc. - Common Stock,NASDAQ,US
 CRNT,CRNT,Ceragon Networks Ltd. - Ordinary Shares,NASDAQ,US
@@ -7813,7 +7809,6 @@ FCUS,FCUS,Pinnacle Focused Opportunities ETF,NYSE Arca ETF,US
 FCUV,FCUV,Focus Universal Inc. - Common Stock,NASDAQ,US
 FCVT,FCVT,First Trust SSI Strategic Convertible Securities ETF,NASDAQ ETF,US
 FCX,FCX,"Freeport-McMoRan, Inc. Common Stock",NYSE,US
-FCXG,FCXG,Leverage Shares 2x Long FCX Daily ETF,NASDAQ ETF,US
 FDAT,FDAT,Tactical Advantage ETF,NYSE Arca ETF,US
 FDBC,FDBC,"Fidelity D & D Bancorp, Inc. - Common Stock",NASDAQ,US
 FDCF,FDCF,Fidelity Disruptive Communications ETF,NASDAQ ETF,US
@@ -8536,7 +8531,6 @@ GELS,GELS,Gelteq Limited - Ordinary Shares,NASDAQ,US
 GEM,GEM,Goldman Sachs ActiveBeta Emerging Markets Equity ETF,NYSE Arca ETF,US
 GEMD,GEMD,Goldman Sachs Access Emerging Markets USD Bond ETF,Cboe BZX ETF,US
 GEME,GEME,Pacific North of South EM Equity Active ETF,NASDAQ ETF,US
-GEMG,GEMG,Leverage Shares 2X Long GEMI Daily ETF,NASDAQ ETF,US
 GEMI,GEMI,"Gemini Space Station, Inc. - Class A Common Stock",NASDAQ,US
 GEMQ,GEMQ,Goldman Sachs Data Enhanced Emerging Markets Equity ETF,NASDAQ ETF,US
 GEN,GEN,Gen Digital Inc. - Common Stock,NASDAQ,US
@@ -8667,7 +8661,6 @@ GLE,GLE,Global Engine Group Holding Limited - Class A Ordinary Shares,NASDAQ,US
 GLED,GLED,GalaxyEdge Acquisition Corporation Ordinary Shares,NYSE,US
 GLED-R,GLED.R,GalaxyEdge Acquisition Corporation Rights to receive one-fourth (1/4) of one ordinary share,NYSE,US
 GLED-U,GLED.U,"GalaxyEdge Acquisition Corporation Units, each consisting of one Ordinary Share and one Right entitling the holder to receive 1/4th of one ordinary share",NYSE,US
-GLGG,GLGG,Leverage Shares 2X Long GLXY Daily ETF,NASDAQ ETF,US
 GLIBA,GLIBA,Liberty Capital Corporation - Series A GCI Group Common Stock,NASDAQ,US
 GLIBK,GLIBK,Liberty Capital Corporation - Series C GCI Group Common Stock,NASDAQ,US
 GLIN,GLIN,VanEck India Growth Leaders ETF,NYSE Arca ETF,US
@@ -11493,6 +11486,7 @@ MTEKW,MTEKW,Maris-Tech Ltd. - Warrants,NASDAQ,US
 MTEN,MTEN,Mingteng International Corporation Inc. - Class A Ordinary Shares,NASDAQ,US
 MTEX,MTEX,"Mannatech, Incorporated - Common Stock",NASDAQ,US
 MTG,MTG,MGIC Investment Corporation Common Stock,NYSE,US
+MTGG,MTGG,MayTech Global Growth ETF,NASDAQ ETF,US
 MTGP,MTGP,WisdomTree Mortgage Plus Bond Fund,NYSE Arca ETF,US
 MTH,MTH,Meritage Homes Corporation Common Stock,NYSE,US
 MTLS,MTLS,Materialise NV - American Depositary Shares,NASDAQ,US
@@ -11742,7 +11736,6 @@ NEHI,NEHI,NEOS Ethereum High Income ETF,Cboe BZX ETF,US
 NELS,NELS,Nelson Select ETF,Cboe BZX ETF,US
 NEM,NEM,Newmont Corporation,NYSE,US
 NEMD,NEMD,Neuberger Emerging Markets Debt Hard Currency ETF,NYSE Arca ETF,US
-NEMG,NEMG,Leverage Shares 2x Long NEM Daily ETF,NASDAQ ETF,US
 NEN,NEN,New England Realty Associates Limited Partnership Class A Depositary Receipts Evidencing Units of Limited Partnership,NYSE American,US
 NEO,NEO,"NeoGenomics, Inc. - Common Stock",NASDAQ,US
 NEOG,NEOG,Neogen Corporation - Common Stock,NASDAQ,US
@@ -12019,7 +12012,6 @@ NUDM,NUDM,Nuveen ESG International Developed Markets Equity ETF,Cboe BZX ETF,US
 NUDV,NUDV,Nuveen ESG Dividend ETF,Cboe BZX ETF,US
 NUE,NUE,Nucor Corporation Common Stock,NYSE,US
 NUEM,NUEM,Nuveen ESG Emerging Markets Equity ETF,Cboe BZX ETF,US
-NUG,NUG,Leverage Shares 2X Long NU Daily ETF,NASDAQ ETF,US
 NUGO,NUGO,Nuveen Growth Opportunities ETF,NYSE Arca ETF,US
 NUGT,NUGT,Direxion Daily Gold Miners Index Bull 2X ETF,NYSE Arca ETF,US
 NUGY,NUGY,GraniteShares YieldBOOST Gold Miners ETF,NASDAQ ETF,US
@@ -12338,7 +12330,6 @@ OPAD,OPAD,Offerpad Solutions Inc.  - Class A Common Stock,NASDAQ,US
 OPAL,OPAL,OPAL Fuels Inc. - Class A Common Stock,NASDAQ,US
 OPBK,OPBK,OP Bancorp - Common Stock,NASDAQ,US
 OPCH,OPCH,"Option Care Health, Inc. - Common Stock",NASDAQ,US
-OPEG,OPEG,Leverage Shares 2X Long OPEN Daily ETF,NASDAQ ETF,US
 OPEN,OPEN,Opendoor Technologies Inc  - Common Stock,NASDAQ,US
 OPENL,OPENL,"Opendoor Technologies Inc  - Series A Warrants, each whole warrant exercisable to purchase one share of Common Stock at an exercise price of $13.00 per warrant",NASDAQ,US
 OPENW,OPENW,"Opendoor Technologies Inc  - Series K Warrants, each whole warrant exercisable to purchase one share of Common Stock at an exercise price of $9.00 per warrant",NASDAQ,US
@@ -12586,7 +12577,6 @@ PBPH,PBPH,Portfolio Building Block World Pharma and Biotech Index ETF,NASDAQ ETF
 PBQQ,PBQQ,PGIM Laddered Nasdaq-100 Buffer 12 ETF,NASDAQ ETF,US
 PBR,PBR,Petroleo Brasileiro S.A. Petrobras ADS,NYSE,US
 PBR-A,PBR.A,Petroleo Brasileiro S.A. Petrobras American Depositary Shares representing Preferred Shares,NYSE,US
-PBRG,PBRG,Leverage Shares 2X Long PBR Daily ETF,NASDAQ ETF,US
 PBSC,PBSC,Pacer Barings Secured Credit Flex ETF,NASDAQ ETF,US
 PBSE,PBSE,PGIM S&P 500 Buffer 20 ETF - September,Cboe BZX ETF,US
 PBT,PBT,Permian Basin Royalty Trust Common Stock,NYSE,US
@@ -13090,7 +13080,6 @@ PSDM,PSDM,PGIM Short Duration Multi-Sector Bond ETF,Cboe BZX ETF,US
 PSEC,PSEC,Prospect Capital Corporation - Closed End Fund,NASDAQ,US
 PSEC-PA,PSEC$A,Prospect Capital Corporation 5.35% Series A Fixed Rate Cumulative Perpetual Preferred Stock,NYSE,US
 PSEP,PSEP,Innovator U.S. Equity Power Buffer ETF - September,Cboe BZX ETF,US
-PSET,PSET,Principal Quality ETF,NASDAQ ETF,US
 PSF,PSF,"Cohen & Steers Select Preferred and Income Fund, Inc. Common Stock",NYSE,US
 PSFD,PSFD,Pacer Swan SOS Flex (January) ETF,Cboe BZX ETF,US
 PSFE,PSFE,Paysafe Limited Common Shares,NYSE,US
@@ -13975,6 +13964,7 @@ SATA,SATA,"Strive, Inc. - Variable Rate Series A Perpetual Preferred Stock",NASD
 SATL,SATL,Satellogic Inc. - Class A Common Stock,NASDAQ,US
 SATLW,SATLW,Satellogic Inc. - Warrant,NASDAQ,US
 SATO,SATO,Invesco Alerian Galaxy Crypto Economy ETF,Cboe BZX ETF,US
+SATS,SATS,"Strive, Inc. - 15.00% Series A Perpetual SATS Preferred Stock",NASDAQ,US
 SAUG,SAUG,FT Vest U.S. Small Cap Moderate Buffer ETF - August,Cboe BZX ETF,US
 SAV,SAV,Saratoga Investment Corp 7.50% Notes due 2031,NYSE,US
 SAWG,SAWG,AAM Sawgrass US Large Cap Quality Growth ETF,NYSE Arca ETF,US
@@ -14533,7 +14523,7 @@ SNX,SNX,TD SYNNEX Corporation Common Stock,NYSE,US
 SNXX,SNXX,Tradr 2X Long SNDK Daily ETF,Cboe BZX ETF,US
 SNY,SNY,Sanofi - American Depositary Shares,NASDAQ,US
 SO,SO,Southern Company (The) Common Stock,NYSE,US
-SOAR,SOAR,"Volato Group, Inc. Class A Common Stock",NYSE American,US
+SOAR,SOAR,"SOAR AI, Inc. Class A Common Stock",NYSE American,US
 SOBO,SOBO,South Bow Corporation Common Shares,NYSE,US
 SOC,SOC,Sable Offshore Corp. Common Stock,NYSE,US
 SOCA,SOCA,Solarius Capital Acquisition Corp. - Class A Ordinary Share,NASDAQ,US
@@ -15687,7 +15677,6 @@ UDOW,UDOW,ProShares UltraPro Dow30,NYSE Arca ETF,US
 UDR,UDR,"UDR, Inc. Common Stock",NYSE,US
 UE,UE,Urban Edge Properties Common Shares of Beneficial Interest,NYSE,US
 UEC,UEC,Uranium Energy Corp. Common Stock,NYSE American,US
-UECG,UECG,Leverage Shares 2x Long UEC Daily ETF,NASDAQ ETF,US
 UEIC,UEIC,Universal Electronics Inc. - Common Stock,NASDAQ,US
 UEVM,UEVM,VictoryShares Emerging Markets Value Momentum ETF,NASDAQ ETF,US
 UFCS,UFCS,"United Fire Group, Inc - Common Stock",NASDAQ,US
@@ -15926,7 +15915,6 @@ VAIE,VAIE,VegaShares US Equity Autocallable Income ETF,NYSE Arca ETF,US
 VAL,VAL,Valaris Limited Common Shares,NYSE,US
 VAL-W,VAL.W,Valaris Limited Warrants,NYSE,US
 VALE,VALE,VALE S.A.  American Depositary Shares Each Representing one common share,NYSE,US
-VALG,VALG,Leverage Shares 2X Long VALE Daily ETF,NASDAQ ETF,US
 VALN,VALN,Valneva SE - American Depositary Shares,NASDAQ,US
 VALQ,VALQ,American Century U.S. Quality Value ETF,NYSE Arca ETF,US
 VALU,VALU,"Value Line, Inc. - Common Stock",NASDAQ,US
@@ -16948,7 +16936,6 @@ ZOOZ,ZOOZ,ZOOZ Strategy Ltd. - Ordinary Shares,NASDAQ,US
 ZOOZW,ZOOZW,ZOOZ Strategy Ltd. - Warrant,NASDAQ,US
 ZROZ,ZROZ,PIMCO 25  Year Zero Coupon U.S. Treasury Index Exchange-Traded Fund,NYSE Arca ETF,US
 ZS,ZS,"Zscaler, Inc. - Common Stock",NASDAQ,US
-ZSB,ZSB,USCF Sustainable Battery Metals Strategy Fund,NYSE Arca ETF,US
 ZSEP,ZSEP,Innovator Equity Defined Protection ETF - 1 Yr September,Cboe BZX ETF,US
 ZSL,ZSL,ProShares UltraShort Silver,NYSE Arca ETF,US
 ZSQR,ZSQR,Z Squared Inc. - Common Stock,NASDAQ,US
