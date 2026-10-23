@@ -4618,9 +4618,6 @@ ATHM,ATHM,"Autohome Inc. American Depositary Shares, each representing four clas
 ATHR,ATHR,"Aether Holdings, Inc. - Common Stock",NASDAQ,US
 ATHS,ATHS,Athene Holding Ltd. 7.250% Fixed-Rate Reset Junior Subordinated Debentures due 2064,NYSE,US
 ATI,ATI,ATI Inc. Common Stock,NYSE,US
-ATII,ATII,Archimedes Tech SPAC Partners II Co. - Ordinary Shares,NASDAQ,US
-ATIIU,ATIIU,Archimedes Tech SPAC Partners II Co. - Unit,NASDAQ,US
-ATIIW,ATIIW,Archimedes Tech SPAC Partners II Co. - Warrant,NASDAQ,US
 ATLC,ATLC,Atlanticus Holdings Corporation - Common Stock,NASDAQ,US
 ATLCL,ATLCL,Atlanticus Holdings Corporation - 6.125% Senior Notes due 2026,NASDAQ,US
 ATLCP,ATLCP,"Atlanticus Holdings Corporation - 7.625% Series B Cumulative Perpetual Preferred Stock, no par value per share",NASDAQ,US
@@ -6634,6 +6631,7 @@ DAUG,DAUG,FT Vest U.S. Equity Deep Buffer ETF - August,Cboe BZX ETF,US
 DAVA,DAVA,Endava plc American Depositary Shares (each representing one Class A Ordinary Share),NYSE,US
 DAVE,DAVE,Dave Inc.  - Class A Common Stock,NASDAQ,US
 DAVEW,DAVEW,Dave Inc.  - Warrants,NASDAQ,US
+DAVI,DAVI,Davion Healthcare Plc - Ordinary Shares,NASDAQ,US
 DAX,DAX,Global X DAX Germany ETF,NASDAQ ETF,US
 DB,DB,Deutsche Bank AG Common Stock,NYSE,US
 DBA,DBA,Invesco DB Agriculture Fund,NYSE Arca ETF,US
@@ -7343,6 +7341,7 @@ ELVN,ELVN,"Enliven Therapeutics, Inc.  - Common Stock",NASDAQ,US
 ELVR,ELVR,Elevra Lithium Limited - American Depository Shares,NASDAQ,US
 ELWT,ELWT,"Elauwit Connection, Inc. - Common Stock",NASDAQ,US
 EMA,EMA,Emera Incorporated Common Shares,NYSE,US
+EMAG,EMAG,Emerging Markets AI Mag 3 ETF,NASDAQ ETF,US
 EMAT,EMAT,Evolution Metals & Technologies Corp. - Common Stock,NASDAQ,US
 EMAU,EMAU,Corgi Emerging Markets Equities 15% Structured Buffer ETF - August Series,Cboe BZX ETF,US
 EMB,EMB,iShares J.P. Morgan USD Emerging Markets Bond ETF,NASDAQ ETF,US
@@ -7961,6 +7960,7 @@ FID,FID,First Trust S&P International Dividend Aristocrats ETF,NASDAQ ETF,US
 FIDI,FIDI,Fidelity International High Dividend ETF,NYSE Arca ETF,US
 FIDU,FIDU,Fidelity MSCI Industrials Index ETF,NYSE Arca ETF,US
 FIEE,FIEE,"FiEE, Inc - Common Stock",NASDAQ,US
+FIFT,FIFT,HCM Select 50 ETF,US ETF,US
 FIG,FIG,"Figma, Inc. Class A Common Stock",NYSE,US
 FIGB,FIGB,Fidelity Investment Grade Bond ETF,NYSE Arca ETF,US
 FIGG,FIGG,Leverage Shares 2x Long FIG Daily ETF,NASDAQ ETF,US
@@ -9493,6 +9493,7 @@ ICLO,ICLO,Invesco AAA CLO Floating Rate Note ETF,Cboe BZX ETF,US
 ICLR,ICLR,ICON plc - Ordinary Shares,NASDAQ,US
 ICMB,ICMB,"Investcorp Credit Management BDC, Inc. - Common Stock",NASDAQ,US
 ICMO,ICMO,Symmetry Panoramic International Country Momentum ETF,NASDAQ ETF,US
+ICOM,ICOM,Tema Commodity Income ETF,US ETF,US
 ICON,ICON,Icon Energy Corp. - Common stock,NASDAQ,US
 ICOP,ICOP,iShares Copper and Metals Mining ETF,NASDAQ ETF,US
 ICOW,ICOW,Pacer Developed Markets International Cash Cows 100 ETF,Cboe BZX ETF,US
@@ -11631,6 +11632,8 @@ NAMS,NAMS,NewAmsterdam Pharma Company N.V. - Ordinary Shares,NASDAQ,US
 NAMSW,NAMSW,NewAmsterdam Pharma Company N.V. - Warrant,NASDAQ,US
 NAN,NAN,Nuveen New York Quality Municipal Income Fund Common Stock,NYSE,US
 NANC,NANC,Subversive Congressional Democrats Trading ETF,Cboe BZX ETF,US
+NANO,NANO,Forge Nano Holdings Inc. - Common stock,NASDAQ,US
+NANOW,NANOW,Forge Nano Holdings Inc. - Warrants,NASDAQ,US
 NANR,NANR,State Street SPDR S&P North American Natural Resources ETF,NYSE Arca ETF,US
 NAPR,NAPR,Innovator Growth-100 Power Buffer ETF - April,Cboe BZX ETF,US
 NASA,NASA,Tema Space Innovators ETF,NYSE Arca ETF,US
@@ -15188,6 +15191,7 @@ THOR,THOR,Thornburg Premium Income Builder ETF,NYSE Arca ETF,US
 THQ,THQ,abrdn Healthcare Opportunities Fund Shares of Beneficial Interest,NYSE,US
 THRM,THRM,Gentherm Inc - Common Stock,NASDAQ,US
 THRO,THRO,iShares U.S. Thematic Rotation Active ETF,NYSE Arca ETF,US
+THRU,THRU,Tema Commodity Infrastructure ETF,US ETF,US
 THRV,THRV,Prospera Income ETF,NASDAQ ETF,US
 THRY,THRY,"Thryv Holdings, Inc. - Common Stock",NASDAQ,US
 THTA,THTA,SoFi Enhanced Yield ETF,NYSE Arca ETF,US
