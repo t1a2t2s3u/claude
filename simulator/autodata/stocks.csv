@@ -4432,6 +4432,7 @@ APURR,APURR,Aperture AC - Rights,NASDAQ,US
 APUS,APUS,"Apimeds Pharmaceuticals US, Inc. Common Stock",NYSE American,US
 APVO,APVO,Aptevo Therapeutics Inc. - Common Stock,NASDAQ,US
 APWC,APWC,"Asia Pacific Wire & Cable Corporation Limited  - Common shares, Par value .01 per share",NASDAQ,US
+APXC,APXC,Apex Critical Metals Corp. - American Depositary Shares,NASDAQ,US
 APXM,APXM,FT Vest U.S. Equity Max Buffer ETF - April,Cboe BZX ETF,US
 APXT,APXT,Apex Treasury Corporation - Class A Ordinary Share,NASDAQ,US
 APXTU,APXTU,Apex Treasury Corporation - Units,NASDAQ,US
@@ -7606,7 +7607,6 @@ EVC,EVC,Entravision Communications Corporation Common Stock,NYSE,US
 EVCM,EVCM,EverCommerce Inc. - Common Stock,NASDAQ,US
 EVER,EVER,"EverQuote, Inc. - Class A Common Stock",NASDAQ,US
 EVEX,EVEX,"Eve Holding, Inc. Common Stock",NYSE,US
-EVEX-W,EVEX.W,"Eve Holding, Inc. Warrants, each exercisable for one share of Common Stock at an exercise price of $11.50 per share",NYSE,US
 EVF,EVF,Eaton Vance Senior Income Trust Common Stock,NYSE,US
 EVG,EVG,Eaton Vance Short Diversified Income Fund Eaton Vance Short Duration Diversified Income Fund Common Shares of Beneficial Interest,NYSE,US
 EVGN,EVGN,Evogene Ltd. - Ordinary Shares,NASDAQ,US
@@ -10117,7 +10117,7 @@ JIRE,JIRE,JPMorgan International Research Enhanced Equity ETF,NYSE Arca ETF,US
 JIVE,JIVE,JPMorgan International Value ETF,NASDAQ ETF,US
 JJSF,JJSF,J & J Snack Foods Corp. - Common Stock,NASDAQ,US
 JKHY,JKHY,"Jack Henry & Associates, Inc. - Common Stock",NASDAQ,US
-JKS,JKS,JinkoSolar Holding Company Limited American Depositary Shares (each representing 4 Common Shares),NYSE,US
+JKS,JKS,Jinko Holdings Limited American Depositary Shares (each representing 4 Ordinary Shares),NYSE,US
 JL,JL,J-Long Group Limited - Class A Ordinary Shares,NASDAQ,US
 JLCO,JLCO,John Hancock Large Cap Opportunities ETF,NYSE Arca ETF,US
 JLHL,JLHL,Julong Holding Limited - Class A Ordinary Shares,NASDAQ,US
@@ -10843,7 +10843,7 @@ LTRN,LTRN,Lantern Pharma Inc. - Common Stock,NASDAQ,US
 LTRX,LTRX,"Lantronix, Inc. - Common Stock",NASDAQ,US
 LTRYW,LTRYW,Sports Entertainment Gaming Global Corporation  - Warrant,NASDAQ,US
 LTTI,LTTI,FT Vest 20+ Year Treasury & Target Income ETF,NYSE Arca ETF,US
-LU,LU,"Lufax Holding Ltd American Depositary Shares, each representing two (2) Ordinary Shares",NYSE,US
+LU,LU,Lufax Holding Ltd American Depositary Shares (each representing twenty (20) Ordinary Shares),NYSE,US
 LUCD,LUCD,Lucid Diagnostics Inc. - Common Stock,NASDAQ,US
 LUCK,LUCK,Lucky Strike Entertainment Corporation Class A Common Stock,NYSE,US
 LUCY,LUCY,"Innovative Eyewear, Inc. - Common Stock",NASDAQ,US
@@ -10885,6 +10885,7 @@ LXP-PC,LXP$C,LXP Industrial Trust 6.5% Series C Cumulative Convertible Preferred
 LXRX,LXRX,"Lexicon Pharmaceuticals, Inc. - Common Stock",NASDAQ,US
 LXU,LXU,"LSB Industries, Inc. Common Stock",NYSE,US
 LYB,LYB,LyondellBasell Industries NV Ordinary Shares Class A (Netherlands),NYSE,US
+LYCA,LYCA,"Lycia Therapeutics, Inc. - Common Stock",NASDAQ,US
 LYEL,LYEL,"Lyell Immunopharma, Inc. - Common Stock",NASDAQ,US
 LYFT,LYFT,"Lyft, Inc. - Class A Common Stock",NASDAQ,US
 LYG,LYG,Lloyds Banking Group Plc American Depositary Shares,NYSE,US
@@ -12435,6 +12436,7 @@ OVL,OVL,Overlay Shares Large Cap Equity ETF,Cboe BZX ETF,US
 OVLH,OVLH,Overlay Shares Hedged Large Cap Equity ETF,Cboe BZX ETF,US
 OVLY,OVLY,Oak Valley Bancorp (CA) - Common Stock,NASDAQ,US
 OVM,OVM,Overlay Shares Municipal Bond ETF,Cboe BZX ETF,US
+OVQ,OVQ,Overlay Shares Nasdaq 100 Income ETF,Cboe BZX ETF,US
 OVS,OVS,Overlay Shares Small Cap Equity ETF,Cboe BZX ETF,US
 OVT,OVT,Overlay Shares Short Term Bond ETF,Cboe BZX ETF,US
 OVV,OVV,Ovintiv Inc. (DE),NYSE,US
@@ -12528,6 +12530,8 @@ PAVM,PAVM,PAVmed Inc. - Common Stock,NASDAQ,US
 PAVS,PAVS,Paranovus Entertainment Technology Ltd. - Class A Ordinary Shares,NASDAQ,US
 PAWZ,PAWZ,ProShares Pet Care ETF,Cboe BZX ETF,US
 PAX,PAX,Patria Investments Limited - Class A Common Shares,NASDAQ,US
+PAXG,PAXG,Pine Tree Acquisition Corp. - Class A Ordinary Shares,NASDAQ,US
+PAXGR,PAXGR,Pine Tree Acquisition Corp. - Rights,NASDAQ,US
 PAXGU,PAXGU,Pine Tree Acquisition Corp. - Units,NASDAQ,US
 PAXS,PAXS,PIMCO Access Income Fund Common Shares of Beneficial Interest,NYSE,US
 PAY,PAY,"Paymentus Holdings, Inc. Class A Common Stock",NYSE,US
@@ -12684,7 +12688,6 @@ PEP,PEP,"PepsiCo, Inc. - Common Stock",NASDAQ,US
 PEPG,PEPG,PepGen Inc. - Common Stock,NASDAQ,US
 PEPS,PEPS,Parametric Equity Plus ETF,NASDAQ ETF,US
 PEPT,PEPT,REX Peptide ETF,NASDAQ ETF,US
-PERF,PERF,Perfect Corp. Class A Ordinary Share,NYSE,US
 PERI,PERI,Perion Network Ltd - Ordinary Shares,NASDAQ,US
 PESI,PESI,"Perma-Fix Environmental Services, Inc. - Common Stock",NASDAQ,US
 PETS,PETS,"PetMed Express, Inc. - Common Stock",NASDAQ,US
@@ -13318,6 +13321,7 @@ QPX,QPX,AdvisorShares Q Dynamic Growth ETF,NYSE Arca ETF,US
 QQA,QQA,Invesco QQQ Income Advantage ETF,NASDAQ ETF,US
 QQAU,QQAU,Corgi Growth & Technology 15% Structured Buffer ETF - August Series,Cboe BZX ETF,US
 QQBF,QQBF,FT Vest Nasdaq-100 Quarterly 15 Buffer ETF,Cboe BZX ETF,US
+QQDH,QQDH,Tuttle Capital Innovation 100 Income & Hedge ETF,Cboe BZX ETF,US
 QQDN,QQDN,ProShares UltraShort QQQ Mega,NASDAQ ETF,US
 QQEW,QQEW,First Trust Nasdaq-100 Select Equal Weight ETF,NASDAQ ETF,US
 QQH,QQH,HCM Defender 100 Index ETF,NYSE Arca ETF,US
@@ -13921,7 +13925,6 @@ SAAQW,SAAQW,Space Asset Acquisition Corp. - Warrants,NASDAQ,US
 SABA,SABA,Saba Capital Income & Opportunities Fund II Shares of Beneficial Interest,NYSE,US
 SABR,SABR,Sabre Corporation - Common Stock,NASDAQ,US
 SABS,SABS,"SAB Biotherapeutics, Inc. - Common Stock",NASDAQ,US
-SABSW,SABSW,"SAB Biotherapeutics, Inc. - Warrant",NASDAQ,US
 SAC,SAC,Safeguard Acquisition Corp. Class A Ordinary Shares,NYSE,US
 SAC-U,SAC.U,"Safeguard Acquisition Corp. Units, each consisting of one Class A ordinary share and one-half of one redeemable warrant",NYSE,US
 SAC-W,SAC.W,"Safeguard Acquisition Corp. Warrants, each whole warrant exercisable for one Class A ordinary share at an exercise price of $11.50 per share",NYSE,US
@@ -14119,8 +14122,6 @@ SDP,SDP,ProShares UltraShort Utilities,NYSE Arca ETF,US
 SDRL,SDRL,Seadrill Limited Common Shares,NYSE,US
 SDS,SDS,ProShares UltraShort S&P500,NYSE Arca ETF,US
 SDSI,SDSI,American Century Short Duration Strategic Income ETF,NASDAQ ETF,US
-SDST,SDST,Stardust Power Inc. - Common Stock,NASDAQ,US
-SDSTW,SDSTW,Stardust Power Inc. - Warrant,NASDAQ,US
 SDTY,SDTY,YieldMax S&P 500 0DTE Covered Call Strategy ETF,NASDAQ ETF,US
 SDUR,SDUR,Aristotle Short Term Income ETF,NYSE Arca ETF,US
 SDVD,SDVD,FT Vest SMID Rising Dividend Achievers Target Income ETF,Cboe BZX ETF,US
@@ -14454,6 +14455,7 @@ SMMT,SMMT,Summit Therapeutics Inc.  - Common Stock,NASDAQ,US
 SMMU,SMMU,Short Term Municipal Bond Active Exchange-Traded Fund,NYSE Arca ETF,US
 SMMV,SMMV,iShares MSCI USA Small-Cap Min Vol Factor ETF,Cboe BZX ETF,US
 SMN,SMN,ProShares UltraShort Materials,NYSE Arca ETF,US
+SMNG,SMNG,xETFs Samsung Group ETF,NASDAQ ETF,US
 SMOG,SMOG,VanEck Low Carbon Energy ETF,NYSE Arca ETF,US
 SMOM,SMOM,Symmetry Panoramic Sector Momentum ETF,NASDAQ ETF,US
 SMOT,SMOT,VanEck Morningstar SMID Moat ETF,Cboe BZX ETF,US
