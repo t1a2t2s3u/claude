@@ -3793,7 +3793,6 @@ ABVX,ABVX,Abivax SA - American Depositary Shares,NASDAQ,US
 ABX,ABX,"Abacus Global Management, Inc. Class A Common Stock",NYSE,US
 ABXB,ABXB,Abacus Flexible Bond Leaders ETF,Cboe BZX ETF,US
 ABXL,ABXL,"Abacus Global Management, Inc. 9.875% Fixed Rate Senior Notes due 2028",NYSE,US
-ACA,ACA,"Arcosa, Inc. Common Stock ",NYSE,US
 ACAA,ACAA,Averin Capital Acquisition Corp. - Class A Ordinary Shares,NASDAQ,US
 ACAAU,ACAAU,Averin Capital Acquisition Corp. - Units,NASDAQ,US
 ACAAW,ACAAW,Averin Capital Acquisition Corp. - Warrants,NASDAQ,US
@@ -3830,6 +3829,7 @@ ACI,ACI,"Albertsons Companies, Inc. Class A Common Stock",NYSE,US
 ACIC,ACIC,American Coastal Insurance Corporation - Common Stock,NASDAQ,US
 ACIG,ACIG,Hartford Alpha Capture International Growth ETF,Cboe BZX ETF,US
 ACII,ACII,Innovator Index Autocallable Income Strategy ETF,NYSE Arca ETF,US
+ACIN,ACIN,Hartford Alpha Capture International Equity ETF,Cboe BZX ETF,US
 ACIO,ACIO,Aptus Collared Investment Opportunity ETF,Cboe BZX ETF,US
 ACIU,ACIU,AC Immune SA - Common Stock,NASDAQ,US
 ACIV,ACIV,Hartford Alpha Capture International Value ETF,Cboe BZX ETF,US
@@ -3969,6 +3969,7 @@ AESPR,AESPR,Aeon Acquisition I Corp. - Rights,NASDAQ,US
 AESPU,AESPU,Aeon Acquisition I Corp. - Units,NASDAQ,US
 AESPW,AESPW,Aeon Acquisition I Corp. - Warrants,NASDAQ,US
 AESR,AESR,Anfield U.S. Equity Sector Rotation ETF,Cboe BZX ETF,US
+AETR,AETR,Aetherion Technologies Inc. - Common Shares,NASDAQ,US
 AEVA,AEVA,"Aeva Technologies, Inc. - Common Stock",NASDAQ,US
 AEXA,AEXA,American Exceptionalism Acquisition Corp. A Class A Ordinary Shares,NYSE,US
 AEYE,AEYE,"AudioEye, Inc. - Common Stock",NASDAQ,US
@@ -5734,6 +5735,7 @@ CATX,CATX,"Perspective Therapeutics, Inc. Common Stock",NYSE American,US
 CATY,CATY,Cathay General Bancorp - Common Stock,NASDAQ,US
 CAUG,CAUG,Corgi U.S. Equities 15% Structured Buffer ETF - August Series,Cboe BZX ETF,US
 CAVA,CAVA,"CAVA Group, Inc. Common Stock",NYSE,US
+CAYN,CAYN,Calamos Least-Of Autocallable Income ETF,NYSE Arca ETF,US
 CB,CB,Chubb Limited  Common Stock,NYSE,US
 CBAN,CBAN,"Colony Bankcorp, Inc. Common Stock",NYSE,US
 CBAT,CBAT,CBAK Energy Technology Limited - Ordinary Shares,NASDAQ,US
@@ -5833,7 +5835,6 @@ CCZ,CCZ,Comcast Holdings ZONES,NYSE,US
 CD,CD,Chaince Digital Holdings Inc. - American Ordinary Shares,NASDAQ,US
 CDC,CDC,VictoryShares US EQ Income Enhanced Volatility Wtd ETF,NASDAQ ETF,US
 CDE,CDE,"Coeur Mining, Inc. Common Stock",NYSE,US
-CDEI,CDEI,"Calvert US Large-Cap Diversity, Equity and Inclusion Index ETF",NYSE Arca ETF,US
 CDIG,CDIG,City Different Investments Global Equity ETF,NASDAQ ETF,US
 CDIO,CDIO,Cardio Diagnostics Holdings Inc. - Common stock,NASDAQ,US
 CDIOW,CDIOW,Cardio Diagnostics Holdings Inc. - Warrant,NASDAQ,US
@@ -7325,7 +7326,6 @@ ELLA,ELLA,Ellington Credit Company 8.50% Notes due 2031,NYSE,US
 ELLO,ELLO,Ellomay Capital Ltd Ordinary Shares (Israel),NYSE American,US
 ELM,ELM,Elm Market Navigator ETF,NYSE Arca ETF,US
 ELMD,ELMD,"Electromed, Inc. Common Stock",NYSE American,US
-ELME,ELME,Elme Communities Common Stock,NYSE,US
 ELMT,ELMT,The Elmet Group Co. - Common Stock,NASDAQ,US
 ELOG,ELOG,Eastern International Ltd. - Ordinary Shares,NASDAQ,US
 ELOL,ELOL,Leverage Shares 100% TSLA AND 100% SPCX Daily ETF,NASDAQ ETF,US
@@ -7778,6 +7778,7 @@ FCBC,FCBC,"First Community Bankshares, Inc. - Common Stock",NASDAQ,US
 FCBD,FCBD,Frontier Asset Core Bond ETF,NYSE Arca ETF,US
 FCBM,FCBM,"First Carolina Financial Services, Inc. Common Stock",NYSE,US
 FCCO,FCCO,First Community Corporation - Common Stock,NASDAQ,US
+FCDH,FCDH,Forcendra Holding Limited - Class A Ordinary Shares,NASDAQ,US
 FCEF,FCEF,First Trust Income Opportunities ETF,NASDAQ ETF,US
 FCEL,FCEL,"FuelCell Energy, Inc. - Common Stock",NASDAQ,US
 FCF,FCF,First Commonwealth Financial Corporation Common Stock,NYSE,US
@@ -8556,7 +8557,6 @@ GF,GF,"New Germany Fund, Inc. (The) Common Stock",NYSE,US
 GFAI,GFAI,"Guardforce AI Co., Limited - Ordinary Shares",NASDAQ,US
 GFEB,GFEB,FT Vest U.S. Equity Moderate Buffer ETF - February,Cboe BZX ETF,US
 GFF,GFF,Griffon Corporation Common Stock,NYSE,US
-GFGF,GFGF,Guru Favorite Stocks ETF,NASDAQ ETF,US
 GFI,GFI,Gold Fields Limited American Depositary Shares,NYSE,US
 GFL,GFL,"GFL Environmental Inc. Subordinate voting shares, no par value",NYSE,US
 GFLW,GFLW,VictoryShares Free Cash Flow Growth ETF,NASDAQ ETF,US
@@ -8938,6 +8938,7 @@ GUACU,GUACU,Berto Acquisition Corp. II - Units,NASDAQ,US
 GUACW,GUACW,Berto Acquisition Corp. II - Warrants,NASDAQ,US
 GUG,GUG,Guggenheim Active Allocation Fund Common Shares of Beneficial Interest,NYSE,US
 GUMI,GUMI,Goldman Sachs Ultra Short Municipal Income ETF,NYSE Arca ETF,US
+GUNN,GUNN,Gunnison Copper Corp. American Depositary Shares (each representing thirty (30) Common Shares),NYSE American,US
 GUNR,GUNR,Northern Trust Morningstar Global Upstream Natural Resources ETF,NYSE Arca ETF,US
 GURE,GURE,"Gulf Resources, Inc. - Common Stock",NASDAQ,US
 GURU,GURU,Global X Guru Index ETF,NYSE Arca ETF,US
@@ -12511,7 +12512,6 @@ PANG,PANG,Leverage Shares 2X Long PANW Daily ETF,NASDAQ ETF,US
 PANL,PANL,Pangaea Logistics Solutions Ltd. - Common Stock,NASDAQ,US
 PANW,PANW,"Palo Alto Networks, Inc. - Common Stock",NASDAQ,US
 PAPI,PAPI,Parametric Equity Premium Income ETF,NYSE Arca ETF,US
-PAPL,PAPL,Pineapple Financial Inc. Common Stock,NYSE American,US
 PAPR,PAPR,Innovator U.S. Equity Power Buffer ETF - April,Cboe BZX ETF,US
 PAR,PAR,PAR Technology Corporation Common Stock,NYSE,US
 PARA,PARA,"Banzai International, Inc. - Class A Common Stock",NASDAQ,US
@@ -13142,6 +13142,7 @@ PTH,PTH,Invesco Dorsey Wright Healthcare Momentum ETF,NASDAQ ETF,US
 PTHS,PTHS,Pelthos Therapeutics Inc. Common Stock,NYSE American,US
 PTIN,PTIN,Pacer Trendpilot International ETF,NYSE Arca ETF,US
 PTIR,PTIR,GraniteShares 2x Long PLTR Daily ETF,NASDAQ ETF,US
+PTIV,PTIV,Pineapple Financial Inc. Common Stock,NYSE American,US
 PTL,PTL,Inspire 500 ETF,NYSE Arca ETF,US
 PTLC,PTLC,Pacer Trendpilot US Large Cap ETF,Cboe BZX ETF,US
 PTLE,PTLE,PTL LTD - Class A Ordinary Shares,NASDAQ,US
@@ -13430,6 +13431,7 @@ RACC,RACC,Research Alliance Corporation III - Class A Ordinary Shares,NASDAQ,US
 RACD,RACD,Research Alliance Corporation IV - Class A Ordinary Shares,NASDAQ,US
 RACE,RACE,Ferrari N.V. Common Shares,NYSE,US
 RACK,RACK,VanEck Data Center Supply Chain ETF,Cboe BZX ETF,US
+RADD,RADD,AB US Research Advanced ETF,NASDAQ ETF,US
 RADX,RADX,Radiopharm Theranostics Limited - American Depositary Shares,NASDAQ,US
 RAFE,RAFE,PIMCO RAFI ESG U.S. ETF,NYSE Arca ETF,US
 RAIL,RAIL,"Freightcar America, Inc. - Common Stock",NASDAQ,US
@@ -16188,7 +16190,6 @@ VSGX,VSGX,Vanguard ESG International Stock ETF,Cboe BZX ETF,US
 VSH,VSH,"Vishay Intertechnology, Inc. Common Stock",NYSE,US
 VSHY,VSHY,Virtus Newfleet Short Duration High Yield Bond ETF,NYSE Arca ETF,US
 VSLU,VSLU,Applied Finance Valuation Large Cap ETF,NYSE Arca ETF,US
-VSME,VSME,VS Media Holdings Limited - Class A Ordinary Shares,NASDAQ,US
 VSMV,VSMV,VictoryShares US Multi-Factor Minimum Volatility ETF,NASDAQ ETF,US
 VSNT,VSNT,"Versant Media Group, Inc. - Class A Common Stock",NASDAQ,US
 VSOL,VSOL,VanEck Solana ETF,NASDAQ ETF,US
@@ -16319,7 +16320,6 @@ WDS,WDS,"Woodside Energy Group Limited American Depositary Shares, each represen
 WDTE,WDTE,Defiance S&P 500 Weekly Distribution ETF,NYSE Arca ETF,US
 WEA,WEA,Western Asset Bond Fund Share of Beneficial Interest,NYSE,US
 WEAT,WEAT,Teucrium Wheat Fund ETV,NYSE Arca ETF,US
-WEAV,WEAV,"Weave Communications, Inc. Common Stock",NYSE,US
 WEBL,WEBL,Direxion Daily Dow Jones Internet Bull 3X ETF,NYSE Arca ETF,US
 WEBS,WEBS,Direxion Daily Dow Jones Internet Bear 3X ETF,NYSE Arca ETF,US
 WEBX,WEBX,Corgi Chinese Internet 2x Daily ETF,Cboe BZX ETF,US
@@ -16433,7 +16433,6 @@ WPAC-U,WPAC.U,"White Pearl Acquisition Corp. Units, each consisting of one Class
 WPC,WPC,W. P. Carey Inc. REIT,NYSE,US
 WPM,WPM,Wheaton Precious Metals Corp Common Shares (Canada),NYSE,US
 WPP,WPP,WPP plc American Depositary Shares,NYSE,US
-WPRT,WPRT,Westport Fuel Systems Inc - Common Shares,NASDAQ,US
 WQEY,WQEY,WISeQey Corp - Ordinary Shares,NASDAQ,US
 WQTM,WQTM,WisdomTree Quantum Computing Fund,Cboe BZX ETF,US
 WR,WR,Corgi U.S. War Machine ETF,Cboe BZX ETF,US
