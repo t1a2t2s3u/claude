@@ -1,8 +1,11 @@
 # 定期タスクに貼る文面（3本）
 
-Claude Code デスクトップ › Code タブ › Routines › New routine › **Local**。
-Name と Schedule は表のとおり。Instructions に各文面をそのまま貼る。
-作業フォルダはこのキットのフォルダ。Worktree はオフ。
+Claude Code デスクトップ › Code タブ › **Scheduled** › **New task** ›
+Advanced settings › **Only on this computer** をオン › **Local folder** で
+このキットのフォルダを選ぶ（古いアプリでは Routines › New routine › Local。
+公式: https://code.claude.com/docs/en/desktop-scheduled-tasks 、2026-10-28 確認）。
+Name と Trigger（時刻）は表のとおり。Instructions に各文面をそのまま貼る。
+Worktree はオフ。
 
 | Name | Schedule | 文面 |
 |---|---|---|
