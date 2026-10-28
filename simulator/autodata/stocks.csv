@@ -10259,9 +10259,7 @@ KAUG,KAUG,Innovator US Small Cap Power Buffer ETF - August,Cboe BZX ETF,US
 KAZR,KAZR,Skyline Builders Group Holding Limited - Class A Ordinary Shares,NASDAQ,US
 KB,KB,KB Financial Group Inc,NYSE,US
 KBA,KBA,KraneShares Bosera MSCI China A 50 Connect Index ETF,NYSE Arca ETF,US
-KBAB,KBAB,KraneShares 2x Long BABA Daily ETF,NASDAQ ETF,US
 KBDC,KBDC,"Kayne Anderson BDC, Inc. Common Stock",NYSE,US
-KBDU,KBDU,KraneShares 2x Long BIDU Daily ETF,NASDAQ ETF,US
 KBE,KBE,State Street SPDR S&P Bank ETF,NYSE Arca ETF,US
 KBFR,KBFR,Innovator U.S. Small Cap Managed 10 Buffer ETF,NYSE Arca ETF,US
 KBH,KBH,KB Home Common Stock,NYSE,US
@@ -10279,7 +10277,6 @@ KC,KC,Kingsoft Cloud Holdings Limited - American Depositary Shares,NASDAQ,US
 KCA-U,KCA.U,"Kensington Capital Acquisition Corp. VI New Units, each consisting of one Class A Ordinary Share and three-quarters of one Class 2 Redeemable Warrant",NYSE,US
 KCAC-U,KCAC.U,"Kensington Capital Acquisition Corp. VI Units, each consisting of one Class A ordinary share, one-quarter of one Class 1 redeemable warrant and three-quarters of one Class 2 redeemable warrant",NYSE,US
 KCAC-W,KCAC.W,"Kensington Capital Acquisition Corp. VI Class 1 redeemable warrants, each exercisable for one Class A ordinary share at an exercise price of $11.50",NYSE,US
-KCAI,KCAI,KraneShares China Alpha Index ETF,NYSE Arca ETF,US
 KCCA,KCCA,KraneShares California Carbon Allowance Strategy ETF,NYSE Arca ETF,US
 KCE,KCE,State Street SPDR S&P Capital Markets ETF,NYSE Arca ETF,US
 KCHP,KCHP,KICK Korea Semiconductor Index ETF,NYSE Arca ETF,US
@@ -10336,7 +10333,6 @@ KGRN,KGRN,KraneShares MSCI China Clean Technology Index ETF,NYSE Arca ETF,US
 KGS,KGS,"Kodiak Gas Services, Inc. Common Stock",NYSE,US
 KHC,KHC,The Kraft Heinz Company Common Stock,NYSE,US
 KHPI,KHPI,Kensington Hedged Premium Income ETF,Cboe BZX ETF,US
-KHYB,KHYB,KraneShares Asia Pacific High Income USD Bond ETF,NYSE Arca ETF,US
 KIDS,KIDS,OrthoPediatrics Corp. - Common Stock,NASDAQ,US
 KIDZ,KIDZ,KIDZ AI Inc. - Class B Common Stock,NASDAQ,US
 KIDZW,KIDZW,KIDZ AI Inc. - Warrants,NASDAQ,US
@@ -10351,7 +10347,6 @@ KIQQ,KIQQ,KraneShares InspereX Nasdaq Dynamic Buffered High Income Index ETF,NAS
 KITT,KITT,"Nauticus Robotics, Inc. - Common stock",NASDAQ,US
 KITTW,KITTW,"Nauticus Robotics, Inc. - Warrant",NASDAQ,US
 KJAN,KJAN,Innovator U.S. Small Cap Power Buffer ETF - January,Cboe BZX ETF,US
-KJD,KJD,KraneShares 2x Long JD Daily ETF,NASDAQ ETF,US
 KJUL,KJUL,Innovator U.S. Small Cap Power Buffer ETF - July,Cboe BZX ETF,US
 KJUN,KJUN,Innovator U.S. Small Cap Power Buffer ETF - June,Cboe BZX ETF,US
 KKR,KKR,KKR & Co. Inc. Common Stock,NYSE,US
@@ -10378,7 +10373,6 @@ KMDA,KMDA,Kamada Ltd. - Ordinary Shares,NASDAQ,US
 KMEM,KMEM,Kurv Memory Select ETF,Cboe BZX ETF,US
 KMI,KMI,"Kinder Morgan, Inc. Common Stock",NYSE,US
 KMID,KMID,Virtus KAR Mid-Cap ETF,NYSE Arca ETF,US
-KMLI,KMLI,KraneShares 2x Long MELI Daily ETF,NASDAQ ETF,US
 KMLM,KMLM,KraneShares Mount Lucas Managed Futures Index Strategy ETF,NYSE Arca ETF,US
 KMPB,KMPB,Kemper Corporation 5.875% Fixed-Rate Reset Junior Subordinated Debentures due 2062,NYSE,US
 KMPR,KMPR,Kemper Corporation,NYSE,US
@@ -10422,7 +10416,6 @@ KOSS,KOSS,Koss Corporation - Common Stock,NASDAQ,US
 KOYN,KOYN,CSLM Digital Asset Acquisition Corp III - Class A Ordinary Shares,NASDAQ,US
 KOYNU,KOYNU,CSLM Digital Asset Acquisition Corp III - Units,NASDAQ,US
 KOYNW,KOYNW,CSLM Digital Asset Acquisition Corp III - Warrants,NASDAQ,US
-KPDD,KPDD,KraneShares 2x Long PDD Daily ETF,NASDAQ ETF,US
 KPET,KPET,KPET Ultra Paceline Corporation Class A Ordinary Shares,NYSE,US
 KPET-U,KPET.U,"KPET Ultra Paceline Corporation Units, each consisting of one Class A Ordinary Share and one-sixth of one Warrant",NYSE,US
 KPET-W,KPET.W,"KPET Ultra Paceline Corporation Warrants, each whole warrant exercisable for one Class A ordinary share at an exercise price of $11.50 per share",NYSE,US
@@ -11430,10 +11423,9 @@ MSFW,MSFW,Roundhill MSFT WeeklyPay ETF,Cboe BZX ETF,US
 MSFX,MSFX,T-Rex 2X Long Microsoft Daily Target ETF,Cboe BZX ETF,US
 MSFY,MSFY,Kurv Yield Premium Strategy Microsoft (MSFT) ETF,Cboe BZX ETF,US
 MSGE,MSGE,Madison Square Garden Entertainment Corp. Class A Common Stock,NYSE,US
-MSGK-V,MSGK.V,Madison Square Garden Sports Corp. Class A Common Stock When-Issued,NYSE,US
+MSGK,MSGK,MSG Knickerbockers Corp. Class A Common Stock,NYSE,US
 MSGM,MSGM,Motorsport Games Inc. - Class A Common Stock,NASDAQ,US
-MSGR-V,MSGR.V,MSG Rangers Corp. Class A Common Stock When-Issued,NYSE,US
-MSGS,MSGS,Madison Square Garden Sports Corp. Class A Common Stock (New),NYSE,US
+MSGR,MSGR,MSG Rangers Corp. Class A Common Stock,NYSE,US
 MSGY,MSGY,Masonglory Limited - Class A Ordinary Shares,NASDAQ,US
 MSI,MSI,"Motorola Solutions, Inc. Common Stock",NYSE,US
 MSIF,MSIF,"MSC Income Fund, Inc. Common Stock",NYSE,US
@@ -11640,7 +11632,6 @@ NANR,NANR,State Street SPDR S&P North American Natural Resources ETF,NYSE Arca E
 NAPR,NAPR,Innovator Growth-100 Power Buffer ETF - April,Cboe BZX ETF,US
 NASA,NASA,Tema Space Innovators ETF,NYSE Arca ETF,US
 NAT,NAT,Nordic American Tankers Limited Common Stock,NYSE,US
-NATH,NATH,"Nathan's Famous, Inc. - Common Stock",NASDAQ,US
 NATL,NATL,NCR Atleos Corporation Common Stock,NYSE,US
 NATO,NATO,Themes Transatlantic Defense ETF,NASDAQ ETF,US
 NATR,NATR,"Nature's Sunshine Products, Inc. - Common Stock",NASDAQ,US
@@ -12514,8 +12505,8 @@ PANW,PANW,"Palo Alto Networks, Inc. - Common Stock",NASDAQ,US
 PAPI,PAPI,Parametric Equity Premium Income ETF,NYSE Arca ETF,US
 PAPR,PAPR,Innovator U.S. Equity Power Buffer ETF - April,Cboe BZX ETF,US
 PAR,PAR,PAR Technology Corporation Common Stock,NYSE,US
-PARA,PARA,"Banzai International, Inc. - Class A Common Stock",NASDAQ,US
-PARAW,PARAW,"Banzai International, Inc. - Warrant",NASDAQ,US
+PARA,PARA,"Parabolic Technologies, Inc. - Class A Common Stock",NASDAQ,US
+PARAW,PARAW,"Parabolic Technologies, Inc. - Warrant",NASDAQ,US
 PARK,PARK,"Park Dental Partners, Inc. - Common Stock",NASDAQ,US
 PARR,PARR,"Par Pacific Holdings, Inc.  Common Stock",NYSE,US
 PASG,PASG,"Passage Bio, Inc. - Common Stock",NASDAQ,US
@@ -14088,6 +14079,7 @@ SCOW,SCOW,Pacer S&P SmallCap 600 Quality FCF Aristocrats ETF,Cboe BZX ETF,US
 SCPQ,SCPQ,Social Commerce Partners Corporation - Class A Ordinary Shares,NASDAQ,US
 SCPQU,SCPQU,Social Commerce Partners Corporation - Unit,NASDAQ,US
 SCPQW,SCPQW,Social Commerce Partners Corporation - Warrant,NASDAQ,US
+SCQCU,SCQCU,SPACCircle Acquisition Corp. - Units,NASDAQ,US
 SCSB,SCSB,Sterling Capital Short Duration Bond ETF,Cboe BZX ETF,US
 SCSC,SCSC,"ScanSource, Inc. - Common Stock",NASDAQ,US
 SCSE,SCSE,Corgi U.S. Small-Cap 15% Structured Buffer ETF - September Series,Cboe BZX ETF,US
@@ -15364,7 +15356,6 @@ TORK,TORK,KraneShares Actuator ETF,NASDAQ ETF,US
 TORO,TORO,Toro Corp. - Common Shares,NASDAQ,US
 TOS,TOS,Twin Oak Strategic Solutions ETF,Cboe BZX ETF,US
 TOST,TOST,"Toast, Inc. Class A Common Stock",NYSE,US
-TOT,TOT,LionShares U.S. Equity Total Return ETF,NYSE Arca ETF,US
 TOTL,TOTL,State Street DoubleLine Total Return Tactical ETF,NYSE Arca ETF,US
 TOTR,TOTR,T. Rowe Price Total Return ETF,NYSE Arca ETF,US
 TOUR,TOUR,Tuniu Corporation - American Depositary Shares,NASDAQ,US
@@ -16284,6 +16275,7 @@ WBIF,WBIF,WBI BullBear Value 3000 ETF,NYSE Arca ETF,US
 WBIG,WBIG,WBI BullBear Yield 3000 ETF,NYSE Arca ETF,US
 WBIL,WBIL,WBI BullBear Quality 3000 ETF,NYSE Arca ETF,US
 WBIY,WBIY,WBI Power Factor High Dividend ETF,NYSE ETF,US
+WBMO,WBMO,VanEck Wealth Builder ETF,NYSE Arca ETF,US
 WBTN,WBTN,WEBTOON Entertainment Inc. - Common stock,NASDAQ,US
 WBUY,WBUY,WEBUY GLOBAL LTD. - Class A Ordinary Shares,NASDAQ,US
 WBX,WBX,Wallbox N.V. Class A Ordinary Shares,NYSE,US
@@ -16862,6 +16854,7 @@ YSAG,YSAG,Y'all Street Physical Silver ETF,NASDAQ ETF,US
 YSAU,YSAU,Y'all Street Physical Gold ETF,NASDAQ ETF,US
 YSEP,YSEP,FT Vest International Equity Buffer ETF - September,Cboe BZX ETF,US
 YSG,YSG,"Yatsen Holding Limited American Depositary Shares, each representing twenty (20) Class A Ordinary Shares",NYSE,US
+YSKH,YSKH,YieldMax SKHY Option Income Strategy ETF,NASDAQ ETF,US
 YSPC,YSPC,YieldMax SPCX Option Income Strategy ETF,NYSE Arca ETF,US
 YSPY,YSPY,GraniteShares YieldBOOST SPY ETF,NASDAQ ETF,US
 YSS,YSS,York Space Systems Inc. Common Stock,NYSE,US
