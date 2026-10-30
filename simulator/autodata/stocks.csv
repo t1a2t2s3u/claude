@@ -3908,7 +3908,6 @@ ADEA,ADEA,Adeia Inc.  - Common Stock,NASDAQ,US
 ADGM,ADGM,"Adagio Medical Holdings, Inc - Common Stock",NASDAQ,US
 ADI,ADI,"Analog Devices, Inc. - Common Stock",NASDAQ,US
 ADIG,ADIG,ADI Global Distribution Inc. Common Stock,NYSE,US
-ADIL,ADIL,"Adial Pharmaceuticals, Inc - Common Stock",NASDAQ,US
 ADIU,ADIU,Leverage Shares 2X Long ADI Daily ETF,Cboe BZX ETF,US
 ADIV,ADIV,Guinness Atkinson Asia Pacific Dividend Builder ETF,NYSE Arca ETF,US
 ADM,ADM,Archer-Daniels-Midland Company Common Stock,NYSE,US
@@ -4784,6 +4783,7 @@ AZI,AZI,Autozi Internet Technology (Global) Ltd. - Class A Ordinary Shares,NASDA
 AZIO,AZIO,"Azio AI Holdings, Inc. - Common stock",NASDAQ,US
 AZN,AZN,AstraZeneca PLC Ordinary Shares,NYSE,US
 AZO,AZO,"AutoZone, Inc. Common Stock",NYSE,US
+AZR,AZR,"Azora Therapeutics, Inc. - Common Stock",NASDAQ,US
 AZTA,AZTA,"Azenta, Inc. - Common Stock",NASDAQ,US
 AZTD,AZTD,Aztlan Global Stock Selection DM SMID ETF,NYSE Arca ETF,US
 AZTR,AZTR,Azitra Inc Common Stock,NYSE American,US
@@ -5096,6 +5096,7 @@ BGX,BGX,Blackstone Long Short Credit Income Fund Common Shares,NYSE,US
 BGY,BGY,Blackrock Enhanced International Dividend Trust,NYSE,US
 BH,BH,Biglari Holdings Inc. Class B Common Stock,NYSE,US
 BH-A,BH.A,Biglari Holdings Inc. Class A Common Stock,NYSE,US
+BHAIU,BHAIU,BHAV Acquisition Corp II - Units,NASDAQ,US
 BHAV,BHAV,BHAV Acquisition Corp - Class A Ordinary Shares,NASDAQ,US
 BHAVR,BHAVR,BHAV Acquisition Corp - Rights,NASDAQ,US
 BHAVU,BHAVU,BHAV Acquisition Corp - Units,NASDAQ,US
@@ -7314,6 +7315,7 @@ ELAB,ELAB,PMGC Holdings Inc. - Common Stock,NASDAQ,US
 ELAN,ELAN,Elanco Animal Health Incorporated Common Stock,NYSE,US
 ELBM,ELBM,Electra Battery Materials Corporation - Common Stock,NASDAQ,US
 ELC,ELC,"Entergy Louisiana, Inc. Collateral Trust Mortgage Bonds, 4.875 % Series due September 1, 2066",NYSE,US
+ELCF,ELCF,Eventide Large Cap Focus ETF,NYSE Arca ETF,US
 ELCV,ELCV,Strategy Shares Eventide High Dividend ETF,NYSE Arca ETF,US
 ELD,ELD,WisdomTree Emerging Markets Local Debt Fund,NYSE Arca ETF,US
 ELDN,ELDN,"Eledon Pharmaceuticals, Inc. - Common Stock",NASDAQ,US
@@ -7545,6 +7547,7 @@ ET-PI,ET$I,Energy Transfer L.P. Series I Fixed Rate Perpetual Preferred Units,US
 ETB,ETB,Eaton Vance Tax-Managed Buy-Write Income Fund Eaton Vance Tax-Managed Buy-Write Income Fund Common Shares of Beneficial Interest,NYSE,US
 ETCO,ETCO,Grayscale Ethereum High Income ETF,NYSE Arca ETF,US
 ETD,ETD,Ethan Allen Interiors Inc. Common Stock,NYSE,US
+ETDG,ETDG,Eventide Dividend Growth ETF,NYSE Arca ETF,US
 ETEC,ETEC,iShares Breakthrough Environmental Solutions ETF,NASDAQ ETF,US
 ETFT,ETFT,Fundsmith Equity ETF,NYSE Arca ETF,US
 ETG,ETG,Eaton Vance Tax-Advantaged Global Dividend Income Fund Common Shares of Beneficial Interest,NYSE,US
@@ -7744,6 +7747,7 @@ FBCG,FBCG,Fidelity Blue Chip Growth ETF,Cboe BZX ETF,US
 FBCV,FBCV,Fidelity Blue Chip Value ETF,Cboe BZX ETF,US
 FBDC,FBDC,FT Confluence BDC & Specialty Finance Income ETF,NYSE Arca ETF,US
 FBDT,FBDT,First Breach Inc. - Common Stock,NASDAQ,US
+FBEQ,FBEQ,Franklin US Equity Bitcoin Drip Index ETF,NASDAQ ETF,US
 FBGL,FBGL,FBS Global Limited - Ordinary Shares,NASDAQ,US
 FBIN,FBIN,"Fortune Brands Innovations, Inc. Common Stock",NYSE,US
 FBIO,FBIO,"Fortress Biotech, Inc. - Common Stock",NASDAQ,US
@@ -7954,6 +7958,7 @@ FHYS,FHYS,Federated Hermes Short Duration High Yield ETF,NYSE Arca ETF,US
 FIAT,FIAT,YieldMax Short COIN Option Income Strategy ETF,NYSE Arca ETF,US
 FIAX,FIAX,Nicholas Fixed Income Alternative ETF,NYSE Arca ETF,US
 FIBK,FIBK,"First Interstate BancSystem, Inc. - Common Stock",NASDAQ,US
+FIBT,FIBT,Franklin US Innovation Bitcoin DRIP Index ETF,NASDAQ ETF,US
 FICO,FICO,Fair Isaac Corporation Common Stock,NYSE,US
 FICS,FICS,First Trust International Developed Capital Strength ETF,NASDAQ ETF,US
 FID,FID,First Trust S&P International Dividend Aristocrats ETF,NASDAQ ETF,US
@@ -8448,6 +8453,7 @@ GAUG,GAUG,FT Vest U.S. Equity Moderate Buffer ETF - August,Cboe BZX ETF,US
 GAUZ,GAUZ,Gauzy Ltd. - Ordinary Shares,NASDAQ,US
 GAVA,GAVA,Grayscale Avalanche Staking ETF,NASDAQ ETF,US
 GBAB,GBAB,Guggenheim Taxable Municipal Bond & Investment Grade Debt Trust Common Shares of Beneficial Interest,NYSE,US
+GBC,GBC,"Georgia Banking Company, Inc. - Common Stock",NASDAQ,US
 GBCI,GBCI,"Glacier Bancorp, Inc. Common Stock",NYSE,US
 GBDC,GBDC,"Golub Capital BDC, Inc. - Closed End Fund",NASDAQ,US
 GBFH,GBFH,GBank Financial Holdings Inc. - Common Stock,NASDAQ,US
@@ -10197,7 +10203,7 @@ JRSH,JRSH,"Jerash Holdings (US), Inc. - Common Stock",NASDAQ,US
 JRVR,JRVR,"James River Group Holdings, Inc. - Common Stock",NASDAQ,US
 JSCP,JSCP,JPMorgan Short Duration Core Plus ETF,NYSE Arca ETF,US
 JSI,JSI,Janus Henderson Securitized Income ETF,NYSE Arca ETF,US
-JSM,JSM,"Navient Corporation - 6% Senior Notes due December 15, 2043",NASDAQ,US
+JSM,JSM,"Navient LLC - 6% Senior Notes due December 15, 2043",NASDAQ,US
 JSMD,JSMD,Janus Henderson Small/Mid Cap Growth Alpha ETF,NASDAQ ETF,US
 JSML,JSML,Janus Henderson Small Cap Growth Alpha ETF,NASDAQ ETF,US
 JSPR,JSPR,"Jasper Therapeutics, Inc. - Class A Common Stock",NASDAQ,US
@@ -11634,7 +11640,7 @@ NATO,NATO,Themes Transatlantic Defense ETF,NASDAQ ETF,US
 NATR,NATR,"Nature's Sunshine Products, Inc. - Common Stock",NASDAQ,US
 NAUG,NAUG,Innovator Growth-100 Power Buffer ETF - August,Cboe BZX ETF,US
 NAUT,NAUT,"Nautilus Biotechnology, Inc. - Common Stock",NASDAQ,US
-NAVI,NAVI,Navient Corporation - Common Stock,NASDAQ,US
+NAVI,NAVI,"Navient Holdings, Inc. - Common Stock",NASDAQ,US
 NAVN,NAVN,"Navan, Inc. - Class A Common Stock",NASDAQ,US
 NAZ,NAZ,Nuveen Arizona Quality Municipal Income Fund Common Stock,NYSE,US
 NB,NB,NioCorp Developments Ltd. - Common Stock,NASDAQ,US
@@ -12759,7 +12765,7 @@ PHR,PHR,"Phreesia, Inc. Common Stock",NYSE,US
 PHUN,PHUN,"Phunware, Inc. - Common Stock",NASDAQ,US
 PHVS,PHVS,Pharvaris N.V. - Ordinary Shares,NASDAQ,US
 PHXE-P,PHXE$,"Phoenix Energy One, LLC Series A Cumulative Redeemable Preferred Shares",NYSE American,US
-PHYL,PHYL,PGIM Active High Yield Bond ETF,NYSE Arca ETF,US
+PHYL,PHYL,PGIM Active High Yield Bond ETF,Cboe BZX ETF,US
 PHYS,PHYS,Sprott Physical Gold Trust ETV,NYSE Arca ETF,US
 PI,PI,"Impinj, Inc. - Common Stock",NASDAQ,US
 PICB,PICB,Invesco International Corporate Bond ETF,NYSE Arca ETF,US
@@ -14373,7 +14379,7 @@ SLI,SLI,Standard Lithium Ltd. Common Shares,NYSE American,US
 SLJY,SLJY,Amplify SILJ Junior Silver Miners Covered Call ETF,NYSE Arca ETF,US
 SLM,SLM,SLM Corporation - Common Stock,NASDAQ,US
 SLMBP,SLMBP,"SLM Corporation - Floating Rate Non-Cumulative Preferred Stock, Series B",NASDAQ,US
-SLMT,SLMT,Brera Holdings PLC - Class B Ordinary Shares,NASDAQ,US
+SLMT,SLMT,Solmate Infrastructure Public Limited Company - Class B Ordinary Shares,NASDAQ,US
 SLN,SLN,Silence Therapeutics Plc - American Depository Share,NASDAQ,US
 SLND,SLND,"Southland Holdings, Inc. Common Stock",NYSE American,US
 SLND-W,SLND.W,"Southland Holdings, Inc. Warrants",NYSE American,US
