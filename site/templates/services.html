@@ -18,6 +18,21 @@
     <p class="price-basis">{{ plan.basis }}{% if plan.warranty %}／保証 {{ plan.warranty }}{% endif %}</p>
     {% endif %}
 
+    {# 「何が含まれるか」は金額より先に読ませる。別請求の有無が分からないまま
+       金額だけ見ても、他社と比べられない（2026-10-31 本人の指示で表の上へ移動）。 #}
+    {% if plan and plan.includes %}
+    <div class="includes">
+      <h3>この料金に含まれるもの</h3>
+      <ul class="include-list">
+        {% for item in plan.includes %}<li>{{ item }}</li>{% endfor %}
+      </ul>
+      <p class="includes-note">
+        足場代や高圧洗浄を別請求にする業者もありますが、当社はすべて込みの金額です。
+        あとから追加費用が出ることはありません。
+      </p>
+    </div>
+    {% endif %}
+
     <div class="sheet">
       <table class="price-table">
         <thead>
@@ -79,19 +94,6 @@
 
       <p class="sim-note"><strong>これは目安です。</strong>外壁の面積、下地の傷み具合、必要な補修の量で金額は変わります。延床面積が同じでも、総2階と平屋では塗る面積が違います。<strong>正確な金額は現地調査のうえでお出しします（無料です）。</strong></p>
     </section>
-    {% endif %}
-
-    {% if plan and plan.includes %}
-    <div class="includes">
-      <h3>この料金に含まれるもの</h3>
-      <ul class="include-list">
-        {% for item in plan.includes %}<li>{{ item }}</li>{% endfor %}
-      </ul>
-      <p class="includes-note">
-        足場代や高圧洗浄を別請求にする業者もありますが、当社はすべて込みの金額です。
-        あとから追加費用が出ることはありません。
-      </p>
-    </div>
     {% endif %}
 
     {% if plan and plan.bonus_options %}
