@@ -49,10 +49,12 @@
 
 ## 企画
 
-- [企画] 公式の「AI秘書」が出た。手作りの2ヶ月は無駄だったのか — Claude Duet とうちの秘書を比べる
-  （無料 / ブリーフ: strategy/briefs/2026-10-26-claude-duet-vs-handmade.md）
-- [企画] AI社員、本当に13人も要るのか — 「減らした人」の記録を読んで、全員の勤務評定をしてみた
-  （無料 / ブリーフ: strategy/briefs/2026-10-26-staff-performance-review.md）
+- [執筆済み] 公式の「AI秘書」が出た。手作りの2ヶ月は無駄だったのか — Claude Duet とうちの秘書を比べる
+  （無料 / ブリーフ: strategy/briefs/2026-10-26-claude-duet-vs-handmade.md /
+  下書き: articles/drafts/2026-10-26-claude-duet-vs-handmade.md）
+- [執筆済み] AI社員、本当に13人も要るのか — 「減らした人」の記録を読んで、全員の勤務評定をしてみた
+  （無料 / ブリーフ: strategy/briefs/2026-10-26-staff-performance-review.md /
+  下書き: articles/drafts/2026-10-26-staff-performance-review.md）
 
 ---
 
