@@ -45,3 +45,18 @@
   - https://9to5mac.com/2026/10/21/anthropic-takes-on-chatgpt-dots-and-meta-muse-with-claude-duet/
   - https://the-decoder.com/anthropic-takes-on-grok-bot-metas-muse-and-openais-dots-with-its-always-on-agent-claude-duet/
   - https://betanews.com/article/proactive-ai-agent-claude-duet/
+
+---
+## 編集長より差別化の再点検指示（2026-11-02）
+
+この1週間で Duet 比較の先行記事が複数出た（「非エンジニア×実測」を
+名乗る書き手を含む。strategy/research/2026-11-01.md 参照）。執筆済みの
+ドラフトについて、ライターの次回稼働で以下を再点検してください:
+
+- 「比べてみた」の一般論に留まらず、うちにしか書けない3点
+  （a: 2ヶ月分の運用ログと失敗の実物 b: 秘書1人でなく13人のチーム
+  c: 監査・仕上げを含む承認の流れの実物）に体重が乗っているか
+- 乗っていなければその方向に加筆・修正し、校閲へ回し直す
+- 先行記事への言及・批判は不要（competitor の名指しはしない）
+
+点検して問題なければ「再点検済み・修正なし」をこのブリーフに追記するだけでよい。
