@@ -46,10 +46,12 @@
 
 ## 企画
 
-- [企画] AIが承認ボタンを押さなくなる日 — 自動モード既定化と、それでも人間が押す「第3層」の話
-  （無料 / ブリーフ: strategy/briefs/2026-11-02-auto-mode-default.md）
-- [企画] AI社員チーム運用日記 第6回：監査役も間違えた — 「検査を検査する」仕組みができるまで
-  （無料 / ブリーフ: strategy/briefs/2026-11-02-ai-staff-diary-06.md）
+- [執筆済み] AIが承認ボタンを押さなくなる日 — 自動モード既定化と、それでも人間が押す「第3層」の話
+  （無料 / ブリーフ: strategy/briefs/2026-11-02-auto-mode-default.md /
+  下書き: articles/drafts/2026-11-02-auto-mode-default.md）
+- [執筆済み] AI社員チーム運用日記 第6回：監査役も間違えた — 「検査を検査する」仕組みができるまで
+  （無料 / ブリーフ: strategy/briefs/2026-11-02-ai-staff-diary-06.md /
+  下書き: articles/drafts/2026-11-02-ai-staff-diary-06.md）
 
 ---
 
