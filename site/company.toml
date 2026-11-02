@@ -75,7 +75,7 @@ qualifications = ["一級塗装技能士（在籍）", "有機溶剤作業主任
 # Google ビジネスプロフィールの公開URL。
 # 構造化データの sameAs と、クチコミ帯の「クチコミを見る」リンクに使います。
 # プロフィール画面の「プロフィールを共有」から取得できます。
-gbp_url = ""
+gbp_url = "https://g.page/r/CWf36k8NH_I5EAE"
 
 instagram_url = "https://www.instagram.com/tatsumi_tosou_kougyou/"
 
