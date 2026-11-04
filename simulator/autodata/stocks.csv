@@ -4672,7 +4672,6 @@ AUPH,AUPH,Aurinia Pharmaceuticals Inc - Common Shares,NASDAQ,US
 AUR,AUR,"Aurora Innovation, Inc.  - Class A Common Stock",NASDAQ,US
 AURA,AURA,"Aura Biosciences, Inc. - Common Stock",NASDAQ,US
 AURE,AURE,Aurelion Inc.  - Class A Ordinary Shares,NASDAQ,US
-AUROW,AUROW,"Aurora Innovation, Inc.  - Warrant",NASDAQ,US
 AUSF,AUSF,Global X Adaptive U.S. Factor ETF,NYSE Arca ETF,US
 AUSM,AUSM,Allspring Ultra Short Municipal ETF,NYSE Arca ETF,US
 AUST,AUST,Austin Gold Corp. Common Shares,NYSE American,US
@@ -7366,6 +7365,7 @@ EMGF,EMGF,iShares Emerging Markets Equity Factor ETF,Cboe BZX ETF,US
 EMHC,EMHC,State Street SPDR Bloomberg Emerging Markets USD Bond ETF,NYSE Arca ETF,US
 EMHY,EMHY,iShares J.P. Morgan EM High Yield Bond ETF,Cboe BZX ETF,US
 EMIF,EMIF,iShares Emerging Markets Infrastructure ETF,NASDAQ ETF,US
+EMIL,EMIL,VanEck EM Focus Inflation Bond ETF,NYSE Arca ETF,US
 EMIS,EMIS,Emmis Acquisition Corp. - Class A Ordinary Share,NASDAQ,US
 EMISR,EMISR,Emmis Acquisition Corp. - Rights,NASDAQ,US
 EMJL,EMJL,Corgi Emerging Markets Equities 15% Structured Buffer ETF - July Series,Cboe BZX ETF,US
@@ -9187,7 +9187,6 @@ HNRG,HNRG,Hallador Energy Company - Common Stock,NASDAQ,US
 HNST,HNST,"The Honest Company, Inc. - Common Stock",NASDAQ,US
 HNVR,HNVR,"Hanover Bancorp, Inc. - Common Stock",NASDAQ,US
 HODL,HODL,VanEck Bitcoin Trust ,Cboe BZX ETF,US
-HODO,HODO,House of Doge Inc. - Common Stock,NASDAQ,US
 HODU,HODU,Direxion Daily HOOD Bull 2X ETF,NASDAQ ETF,US
 HOFT,HOFT,Hooker Furnishings Corporation - Common Stock,NASDAQ,US
 HOG,HOG,"Harley-Davidson, Inc. Common Stock",NYSE,US
@@ -9706,7 +9705,6 @@ INDO,INDO,Indonesia Energy Corporation Limited Ordinary Shares,NYSE American,US
 INDP,INDP,"Indaptus Therapeutics, Inc. - Common Stock",NASDAQ,US
 INDQ,INDQ,Pacer ActiveAlpha India Quality ETF,NASDAQ ETF,US
 INDS,INDS,Pacer Industrial Real Estate ETF,NYSE Arca ETF,US
-INDV,INDV,"Indivior Pharmaceuticals, Inc.  - Common Stock",NASDAQ,US
 INDY,INDY,iShares India 50 ETF,NASDAQ ETF,US
 INDZ,INDZ,VanEck India Select ETF,NYSE Arca ETF,US
 INEO,INEO,INNEOVA Holdings Limited - Class A Ordinary Shares,NASDAQ,US
@@ -11227,8 +11225,6 @@ MLCI,MLCI,Mount Logan Capital Inc. - Common Stock,NASDAQ,US
 MLCIL,MLCIL,Mount Logan Capital Inc. - 8.00% Notes Due 2031,NASDAQ,US
 MLCO,MLCO,Melco Resorts & Entertainment Limited - American Depositary Shares ,NASDAQ,US
 MLDR,MLDR,Global X Intermediate-Term Treasury Ladder ETF,NYSE Arca ETF,US
-MLEC,MLEC,Moolec Science SA - Ordinary Shares,NASDAQ,US
-MLECW,MLECW,Moolec Science SA - Warrant,NASDAQ,US
 MLGO,MLGO,"MicroAlgo, Inc. - Ordinary Shares",NASDAQ,US
 MLI,MLI,"Mueller Industries, Inc. Common Stock",NYSE,US
 MLKN,MLKN,"MillerKnoll, Inc. - Common Stock",NASDAQ,US
@@ -14859,7 +14855,7 @@ SUNB,SUNB,"Sunbelt Rentals Holdings, Inc. Common Stock",NYSE,US
 SUNC,SUNC,"SunocoCorp LLC Common Units, representing limited liability company interests",US,US
 SUNE,SUNE,"SUNation Energy, Inc. - Common Stock",NASDAQ,US
 SUNS,SUNS,"Sunrise Realty Trust, Inc. - Common Stock",NASDAQ,US
-SUPN,SUPN,"Supernus Pharmaceuticals, Inc. - Common Stock",NASDAQ,US
+SUPN,SUPN,"Supernus, Inc. - Common Stock",NASDAQ,US
 SUPP,SUPP,TCW Transform Supply Chain ETF,NASDAQ ETF,US
 SUPV,SUPV,Grupo Supervielle S.A. American Depositary Shares each Representing five Class B shares,NYSE,US
 SUPX,SUPX,SuperX AI Technology Limited - Ordinary Shares,NASDAQ,US
@@ -14903,7 +14899,6 @@ SWAN,SWAN,Amplify BlackSwan Growth & Treasury Core ETF,NYSE Arca ETF,US
 SWBI,SWBI,"Smith & Wesson Brands, Inc. - Common Stock",NASDAQ,US
 SWIM,SWIM,"Latham Group, Inc. - Common Stock",NASDAQ,US
 SWK,SWK,"Stanley Black & Decker, Inc. Common Stock",NYSE,US
-SWKHL,SWKHL,SWK Holdings Corporation - 9.00% Senior Notes due 2027,NASDAQ,US
 SWKS,SWKS,"Skyworks Solutions, Inc. - Common Stock",NASDAQ,US
 SWMR,SWMR,"Swarmer, Inc - common stock",NASDAQ,US
 SWP,SWP,SWP Growth & Income ETF,NASDAQ ETF,US
@@ -15159,6 +15154,7 @@ TGTX,TGTX,"TG Therapeutics, Inc. - Common Stock",NASDAQ,US
 TH,TH,Target Hospitality Corp. - Common Stock,NASDAQ,US
 THC,THC,Tenet Healthcare Corporation Common Stock,NYSE,US
 THCH,THCH,TH International Limited - Ordinary shares,NASDAQ,US
+THCR,THCR,THOR Conservative Risk Dynamic ETF,NYSE ETF,US
 THD,THD,iShares MSCI Thailand ETF,NYSE Arca ETF,US
 THEO,THEO,BOA Acquisition Corp. II - Class A Ordinary Shares,NASDAQ,US
 THEOR,THEOR,BOA Acquisition Corp. II - Rights,NASDAQ,US
@@ -16205,6 +16201,7 @@ VTS,VTS,"Vitesse Energy, Inc. Common Stock",NYSE,US
 VTSI,VTSI,"VirTra, Inc. - Common Stock",NASDAQ,US
 VTV,VTV,Vanguard Morningstar Value ETF,NYSE Arca ETF,US
 VTVT,VTVT,vTv Therapeutics Inc. - Class A Common Stock,NASDAQ,US
+VTVX,VTVX,XFUNDS Value Income ETF,NYSE Arca ETF,US
 VTWG,VTWG,Vanguard Russell 2000 Growth ETF,NASDAQ ETF,US
 VTWO,VTWO,Vanguard Russell 2000 ETF,NASDAQ ETF,US
 VTWV,VTWV,Vanguard Russell 2000 Value ETF,NASDAQ ETF,US
