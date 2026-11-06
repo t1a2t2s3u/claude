@@ -3798,6 +3798,7 @@ ACCV,ACCV,Accelevation Holdings Corp. - Class A ordinary shares,NASDAQ,US
 ACDC,ACDC,ProFrac Holding Corp. - Class A Common Stock,NASDAQ,US
 ACEI,ACEI,Innovator Equity Autocallable Income Strategy ETF,NYSE Arca ETF,US
 ACEL,ACEL,"Accel Entertainment, Inc. ",NYSE,US
+ACEM,ACEM,American Century Emerging Markets Insights ETF,NASDAQ ETF,US
 ACEP,ACEP,ARS Core Equity Portfolio ETF,NASDAQ ETF,US
 ACES,ACES,ALPS Clean Energy ETF,NYSE Arca ETF,US
 ACET,ACET,"Adicet Bio, Inc. - Common Stock",NASDAQ,US
@@ -4010,6 +4011,8 @@ AGIO,AGIO,"Agios Pharmaceuticals, Inc. - Common Stock",NASDAQ,US
 AGIQ,AGIQ,SoFi Agentic AI ETF,NYSE Arca ETF,US
 AGIX,AGIX,KraneShares Public-Private AI & Technology ETF,NASDAQ ETF,US
 AGL,AGL,"agilon health, inc. Common Stock",NYSE,US
+AGLT,AGLT,"Agility Robotics, Inc. - Ordinary Shares",NASDAQ,US
+AGLTW,AGLTW,"Agility Robotics, Inc. - Warrants",NASDAQ,US
 AGM,AGM,Federal Agricultural Mortgage Corporation Common Stock,NYSE,US
 AGM-A,AGM.A,Federal Agricultural Mortgage Corporation Common Stock,NYSE,US
 AGM-PD,AGM$D,"Federal Agricultural Mortgage Corporation 5.700% Non-Cumulative Preferred Stock, Series D",NYSE,US
@@ -4888,6 +4891,7 @@ BBLB,BBLB,JPMorgan BetaBuilders U.S. Treasury Bond 20+ Year ETF,Cboe BZX ETF,US
 BBLG,BBLG,Bone Biologics Corp - Common Stock,NASDAQ,US
 BBLS,BBLS,Munificent Seven ETF,NYSE Arca ETF,US
 BBLU,BBLU,EA Bridgeway Blue Chip ETF,NYSE Arca ETF,US
+BBLX,BBLX,BondBloxx Core Plus ETF,NYSE Arca ETF,US
 BBMC,BBMC,JPMorgan BetaBuilders U.S. Mid Cap Equity ETF,Cboe BZX ETF,US
 BBN,BBN,BlackRock Taxable Municipal Bond Trust Common Shares of Beneficial Interest,NYSE,US
 BBNX,BBNX,"Beta Bionics, Inc. - Common Stock",NASDAQ,US
@@ -5039,6 +5043,7 @@ BFEW,BFEW,FT Vest Laddered U.S. Equity Equal Weight Buffer ETF,Cboe BZX ETF,US
 BFH,BFH,"Bread Financial Holdings, Inc. Common Stock",NYSE,US
 BFH-PA,BFH$A,"Bread Financial Holdings, Inc. Depositary Shares, each representing a 1/40th interest in a share of 8.625% Non-Cumulative Perpetual Preferred Stock, Series A",NYSE,US
 BFH-PB,BFH$B,"Bread Financial Holdings, Inc. Depositary Shares, each representing a 1/40th interest in a share of 8.875% Fixed Rate Reset Non-Cumulative Perpetual Preferred Stock, Series B",NYSE,US
+BFH-PC,BFH$C,"Bread Financial Holdings, Inc. Depositary Shares, each representing a 1/40th interest in a share of its 9.375% Fixed Rate Reset Non-Cumulative Perpetual Preferred Stock, Series C",NYSE,US
 BFIX,BFIX,Build Bond Innovation ETF,NYSE Arca ETF,US
 BFJA,BFJA,FT Vest Bitcoin Strategy Floor15 ETF - January,NYSE Arca ETF,US
 BFJL,BFJL,FT Vest Bitcoin Strategy Floor15 ETF July,NYSE Arca ETF,US
@@ -5820,9 +5825,6 @@ CCSO,CCSO,Carbon Collective Climate Solutions U.S. Equity ETF,NASDAQ ETF,US
 CCTG,CCTG,CCSC Technology International Holdings Limited - Class A Ordinary Shares,NASDAQ,US
 CCU,CCU,"Compania Cervecerias Unidas, S.A. Common Stock",NYSE,US
 CCUP,CCUP,T-REX 2X Long CRCL Daily Target ETF,Cboe BZX ETF,US
-CCXI,CCXI,Churchill Capital Corp XI - Class A Ordinary Shares,NASDAQ,US
-CCXIU,CCXIU,Churchill Capital Corp XI - Units,NASDAQ,US
-CCXIW,CCXIW,Churchill Capital Corp XI - Warrants,NASDAQ,US
 CCZ,CCZ,Comcast Holdings ZONES,NYSE,US
 CD,CD,Chaince Digital Holdings Inc. - American Ordinary Shares,NASDAQ,US
 CDC,CDC,VictoryShares US EQ Income Enhanced Volatility Wtd ETF,NASDAQ ETF,US
@@ -5831,7 +5833,7 @@ CDIG,CDIG,City Different Investments Global Equity ETF,NASDAQ ETF,US
 CDIO,CDIO,Cardio Diagnostics Holdings Inc. - Common stock,NASDAQ,US
 CDIOW,CDIOW,Cardio Diagnostics Holdings Inc. - Warrant,NASDAQ,US
 CDL,CDL,VictoryShares US Large Cap High Div Volatility Wtd ETF,NASDAQ ETF,US
-CDLR,CDLR,Cadeler A/S American Depositary Share (each representing four (4) Ordinary Shares),NYSE,US
+CDLR,CDLR,Cadeler plc Ordinary Shares,NYSE,US
 CDLX,CDLX,"Cardlytics, Inc. - Common Stock",NASDAQ,US
 CDNA,CDNA,"CareDx, Inc. - Common Stock",NASDAQ,US
 CDNG,CDNG,Leverage Shares 2X Long CDNS Daily ETF,Cboe BZX ETF,US
@@ -6771,6 +6773,7 @@ DFII,DFII,FT Vest Bitcoin Strategy & Target Income ETF,NYSE Arca ETF,US
 DFIN,DFIN,"Donnelley Financial Solutions, Inc. Common Stock ",NYSE,US
 DFIP,DFIP,Dimensional Inflation-Protected Securities ETF,NYSE Arca ETF,US
 DFIS,DFIS,Dimensional International Small Cap ETF,Cboe BZX ETF,US
+DFIT,DFIT,Davidson Intermediate Taxable ETF,Cboe BZX ETF,US
 DFIV,DFIV,Dimensional International Value ETF,NYSE Arca ETF,US
 DFJ,DFJ,WisdomTree Japan SmallCap Fund,NYSE Arca ETF,US
 DFLI,DFLI,Dragonfly Energy Holdings Corp - Common Stock,NASDAQ,US
@@ -6883,6 +6886,7 @@ DKL,DKL,"Delek Logistics Partners, L.P. Common Units representing Limited Partne
 DKNG,DKNG,DraftKings Inc. - Class A Common Stock,NASDAQ,US
 DKS,DKS,Dick's Sporting Goods Inc Common Stock,NYSE,US
 DLAG,DLAG,FT Vest U.S. Equity Dual Directional Buffer ETF - August,Cboe BZX ETF,US
+DLAY,DLAY,Tuttle Capital AI Bottleneck ETF,Cboe BZX ETF,US
 DLB,DLB,Dolby Laboratories Common Stock,NYSE,US
 DLCU,DLCU,U.S. Large Company Portfolio: ETF Class Shares,NASDAQ ETF,US
 DLFE,DLFE,FT Vest U.S. Equity Dual Directional Buffer ETF - February,Cboe BZX ETF,US
@@ -7570,7 +7574,7 @@ ETX,ETX,Eaton Vance Municipal Income 2028 Term Trust Common Shares of Beneficial
 ETY,ETY,"Eaton Vance Tax-Managed Diversified Equity Income Fund Common Shares of Beneficial Interest,",NYSE,US
 EU,EU,enCore Energy Corp. - Common Stock,NASDAQ,US
 EUAD,EUAD,Select STOXX Europe Aerospace & Defense ETF,Cboe BZX ETF,US
-EUDA,EUDA,Euda Health Holdings Limited - Ordinary Shares,NASDAQ,US
+EUDA,EUDA,Euda Health Holdings Limited - Class A Ordinary Shares,NASDAQ,US
 EUDAW,EUDAW,Euda Health Holdings Limited - Warrant,NASDAQ,US
 EUDG,EUDG,WisdomTree Europe Quality Dividend Growth Fund,NYSE Arca ETF,US
 EUDV,EUDV,ProShares MSCI Europe Dividend Growers ETF,Cboe BZX ETF,US
@@ -8112,6 +8116,7 @@ FMET,FMET,Fidelity Metaverse ETF,NASDAQ ETF,US
 FMF,FMF,First Trust Managed Futures Strategy Fund,NYSE Arca ETF,US
 FMFC,FMFC,Kandal M Venture Limited - Class A ordinary Shares,NASDAQ,US
 FMHI,FMHI,First Trust Municipal High Income ETF,NASDAQ ETF,US
+FMIG,FMIG,FMI Global Equity ETF,NYSE Arca ETF,US
 FMKT,FMKT,The Free Markets ETF,NYSE Arca ETF,US
 FMN,FMN,Federated Hermes Premier Municipal Income Fund,NYSE,US
 FMNB,FMNB,Farmers National Banc Corp. - Common Stock,NASDAQ,US
@@ -9155,7 +9160,7 @@ HLN,HLN,Haleon plc American Depositary Shares (Each representing two Ordinary Sh
 HLNE,HLNE,Hamilton Lane Incorporated - Class A Common Stock,NASDAQ,US
 HLP,HLP,Hongli Group Inc. - Class A Ordinary Shares,NASDAQ,US
 HLSQ,HLSQ,Tessera Defense and Homeland Security Inc. Common Stock,NYSE American,US
-HLT,HLT,Hilton Worldwide Holdings Inc. Common Stock ,NYSE,US
+HLT,HLT,Hilton Worldwide Holdings Inc. - Common Stock,NASDAQ,US
 HLTH,HLTH,Tema Healthcare AI ETF,NASDAQ ETF,US
 HLXC,HLXC,Helix Acquisition Corp. III - Class A Ordinary Shares,NASDAQ,US
 HMAY,HMAY,Corgi U.S. Equities 100% Structured Buffer ETF - May Series,Cboe BZX ETF,US
@@ -9709,6 +9714,7 @@ INGN,INGN,"Inogen, Inc - Common Stock",NASDAQ,US
 INGR,INGR,Ingredion Incorporated Common Stock,NYSE,US
 INHD,INHD,Inno Holdings Inc. - Common Stock,NASDAQ,US
 INIO,INIO,INNIO N.V. - Ordinary Shares,NASDAQ,US
+INJC,INJC,Canary Staked INJ ETF,NASDAQ ETF,US
 INK,INK,AB Equity Premium Income ETF,NASDAQ ETF,US
 INKM,INKM,State Street Income Allocation ETF,NYSE Arca ETF,US
 INKT,INKT,"MiNK Therapeutics, Inc. - Common Stock",NASDAQ,US
@@ -16713,9 +16719,9 @@ XT,XT,iShares Future Exponential Technologies ETF,NASDAQ ETF,US
 XTAI,XTAI,Corgi Taiwan 2x Daily ETF,Cboe BZX ETF,US
 XTAP,XTAP,Innovator U.S. Equity Accelerated Plus ETF - April,Cboe BZX ETF,US
 XTEN,XTEN,BondBloxx Bloomberg Ten Year Target Duration US Treasury ETF,NYSE Arca ETF,US
-XTER,XTER,Karman Line Acquisition Corp. - Class A Ordinary Shares,NASDAQ,US
-XTERU,XTERU,Karman Line Acquisition Corp. - Units,NASDAQ,US
-XTERW,XTERW,Karman Line Acquisition Corp. - Warrants,NASDAQ,US
+XTER,XTER,Xterax Corporation II - Class A Ordinary Shares,NASDAQ,US
+XTERU,XTERU,Xterax Corporation II - Units,NASDAQ,US
+XTERW,XTERW,Xterax Corporation II - Warrants,NASDAQ,US
 XTIA,XTIA,"XTI Aerospace, Inc. Common Stock  - Common Stock",NASDAQ,US
 XTJA,XTJA,Innovator U.S. Equity Accelerated Plus ETF - January,Cboe BZX ETF,US
 XTJL,XTJL,Innovator U.S. Equity Accelerated Plus ETF - July,Cboe BZX ETF,US
