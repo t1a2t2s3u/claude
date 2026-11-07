@@ -4164,9 +4164,6 @@ ALB-PA,ALB$A,Albemarle Corporation Depositary Shares each representing a 1/20th 
 ALC,ALC,Alcon Inc. Ordinary Shares,NYSE,US
 ALCO,ALCO,"Alico, Inc. - Common Stock",NASDAQ,US
 ALDB,ALDB,Aptus Laddered Deep Buffer ETF,Cboe BZX ETF,US
-ALDF,ALDF,Aldel Financial II Inc. - Class A Ordinary Shares,NASDAQ,US
-ALDFU,ALDFU,Aldel Financial II Inc. - Units,NASDAQ,US
-ALDFW,ALDFW,Aldel Financial II Inc. - Warrants,NASDAQ,US
 ALDX,ALDX,"Aldeyra Therapeutics, Inc. - Common Stock",NASDAQ,US
 ALEC,ALEC,"Alector, Inc. - Common Stock",NASDAQ,US
 ALF,ALF,Centurion Acquisition Corp. - Class A Ordinary Shares,NASDAQ,US
@@ -10578,7 +10575,9 @@ LDUR,LDUR,PIMCO Enhanced Low Duration Active Exchange-Traded Fund,NYSE Arca ETF,
 LE,LE,"Lands' End, Inc. - Common Stock",NASDAQ,US
 LEA,LEA,Lear Corporation Common Stock,NYSE,US
 LECO,LECO,"Lincoln Electric Holdings, Inc. - Common Shares",NASDAQ,US
+LEDR,LEDR,Leader's Advantage Acquisition Corp. - Class A Ordinary Shares,NASDAQ,US
 LEDRU,LEDRU,Leader's Advantage Acquisition Corp. - Units,NASDAQ,US
+LEDRW,LEDRW,Leader's Advantage Acquisition Corp. - Warrants,NASDAQ,US
 LEDS,LEDS,SemiLEDS Corporation - Common Stock,NASDAQ,US
 LEE,LEE,"Lee Enterprises, Incorporated - Common Stock",NASDAQ,US
 LEGH,LEGH,Legacy Housing Corporation - Common Stock,NASDAQ,US
@@ -14314,9 +14313,7 @@ SK,SK,Corgi SK hynix 2x Daily ETF,Cboe BZX ETF,US
 SKDD,SKDD,GraniteShares 2x Short SK Hynix Daily ETF,NASDAQ ETF,US
 SKE,SKE,Skeena Resources Limited Common Shares,NYSE,US
 SKF,SKF,ProShares UltraShort Financials,NYSE Arca ETF,US
-SKHA,SKHA,Tradr 2X Long SK hynix Daily ETF,Cboe BZX ETF,US
 SKHL,SKHL,Direxion Daily SK Hynix Bull 2X ETF,NYSE Arca ETF,US
-SKHN,SKHN,Tradr 2X Short SK hynix Daily ETF,Cboe BZX ETF,US
 SKHQ,SKHQ,Leverage Shares 2X Short Sk Hynix Daily ETF,Cboe BZX ETF,US
 SKHU,SKHU,ProShares Ultra SK hynix,NYSE Arca ETF,US
 SKHX,SKHX,Leverage Shares 2X Long SK Hynix Daily ETF,Cboe BZX ETF,US
@@ -15798,7 +15795,6 @@ USDE,USDE,StablecoinX Inc. - Class A Common Stock,NASDAQ,US
 USDEW,USDEW,StablecoinX Inc. - Warrants,NASDAQ,US
 USDU,USDU,WisdomTree Bloomberg U.S. Dollar Bullish Fund,NYSE Arca ETF,US
 USDX,USDX,SGI Enhanced Core ETF,NASDAQ ETF,US
-USE,USE,USCF Energy Commodity Strategy Absolute Return Fund,NYSE Arca ETF,US
 USEA,USEA,United Maritime Corporation - Common Stock,NASDAQ,US
 USEP,USEP,Innovator U.S. Equity Ultra Buffer ETF - September,Cboe BZX ETF,US
 USEW,USEW,Cambria US EW ETF,Cboe BZX ETF,US
@@ -16458,7 +16454,6 @@ WTG,WTG,Wintergreen Acquisition Corp. - Ordinary Shares,NASDAQ,US
 WTGUR,WTGUR,Wintergreen Acquisition Corp. - Rights,NASDAQ,US
 WTGUU,WTGUU,Wintergreen Acquisition Corp. - Unit,NASDAQ,US
 WTI,WTI,"W&T Offshore, Inc. Common Stock",NYSE,US
-WTIB,WTIB,USCF Oil Plus Bitcoin Strategy Fund,NYSE Arca ETF,US
 WTID,WTID,MicroSectors Energy 3X Inverse Leveraged ETNs,NYSE Arca ETF,US
 WTIP,WTIP,WisdomTree Inflation Plus Fund,NASDAQ ETF,US
 WTIU,WTIU,MicroSectors Energy 3X Leveraged ETNs,NYSE Arca ETF,US
