@@ -50,10 +50,10 @@
 
 ## 企画
 
-- [企画] 「承認疲れ」で形だけのOKを押す前に — 人間の承認を「はい/いいえ」の数問まで減らした、うちの実データ
-  （無料 / ブリーフ: strategy/briefs/2026-11-09-approval-fatigue.md）
-- [企画] うちの有料記事のネタが、出す前に無料で出回った — それでも「有料で出す部分」とは何か
-  （無料 / ブリーフ: strategy/briefs/2026-11-09-what-stays-paid.md）
+- [執筆済み] 「承認疲れ」で形だけのOKを押す前に — 人間の承認を「はい/いいえ」の数問まで減らした、うちの実データ
+  （無料 / ブリーフ: strategy/briefs/2026-11-09-approval-fatigue.md / 下書き: articles/drafts/2026-11-09-approval-fatigue.md）
+- [執筆済み] うちの有料記事のネタが、出す前に無料で出回った — それでも「有料で出す部分」とは何か
+  （無料 / ブリーフ: strategy/briefs/2026-11-09-what-stays-paid.md / 下書き: articles/drafts/2026-11-09-what-stays-paid.md）
 
 ---
 
