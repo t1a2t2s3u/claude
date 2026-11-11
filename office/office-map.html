@@ -207,7 +207,7 @@
   </section>
 
   <section class="panel inbox" aria-label="あなたの番 ─ 本業の確認待ち">
-    <h3>🔔 あなたの番 ─ 本業（SEO・MEO）からの確認待ち<span class="cnt zero" id="inbox-cnt">0</span></h3>
+    <h3>🔔 あなたの番 ─ 本業（SEO・MEO・SNS）からの確認待ち<span class="cnt zero" id="inbox-cnt">0</span></h3>
     <p class="howto">💬 の札を押すと返事の文がコピーされます。チャットに貼って送るだけで担当者に伝わります。📋 は投稿文のコピー。終わったら「済み」。</p>
     <ul class="items" id="inbox"><li class="empty">読み込み中…</li></ul>
   </section>
@@ -243,6 +243,7 @@
           <tr><th>月曜 9:00</th><td>SEOディレクター: 週次レポート・今週やること・ブリーフ<small>あなた: 「今週やること（オーナー担当）」を確認 5分</small></td></tr>
           <tr><th>火曜 9:00</th><td>ブログライター: 記事を月2本、ブログ記事ボードに納品<small>あなた: ボードで読んで「ブログ ○○ OK」 15分</small></td></tr>
           <tr><th>木曜 9:00</th><td>MEO担当: GBP投稿文案2本（第1木曜は登録情報の点検も）<small>あなた: 週1回、写真1枚を添えてGBPに投稿 10分</small></td></tr>
+          <tr><th>金曜 10:00</th><td>本業SNS担当: インスタ文案2本（LINE配信月の前月は配信文案も）<small>あなた: 「あなたの番」からコピーしてインスタに投稿 5分×2</small></td></tr>
           <tr><th>工事完了ごと</th><td>施工写真をチームに渡す／引き渡し時に口コミをお願い<small>写真は施工事例・GBP・ブログに使います</small></td></tr>
           <tr><th>3·6·9·12月</th><td>GBP登録情報の点検（月初）<small>4月・10月: 既存記事の見直し（補助金記事は毎年4月）</small></td></tr>
         </table>
@@ -281,6 +282,7 @@
     { id: "seo-director", room: "main", emoji: "🔧", name: "SEOディレクター", role: "施策の調査・優先順位付け・指示出し", days: [1], hour: 9, desk: { x: 2, y: 5 },  hair: "#3a2a1e" },
     { id: "seo-writer",   room: "main", emoji: "🖌️", name: "塗装ブログ",     role: "ホームページ記事（月2本）",           days: [2], hour: 9, desk: { x: 6, y: 5 },  hair: "#8a5a2b" },
     { id: "meo",          room: "main", emoji: "📍", name: "MEO担当",        role: "ビジネスプロフィール運用",             days: [4], hour: 9, desk: { x: 10, y: 5 }, hair: "#1f1f1f" },
+    { id: "seo-sns",      room: "main", emoji: "📸", name: "本業SNS",        role: "インスタ・公式LINEの文案",             days: [5], hour: 10, desk: { x: 6, y: 8 },  hair: "#4a3020" },
     { id: "editor",       room: "side", emoji: "📰", name: "編集長",         role: "戦略・企画・ブリーフ作成",             days: [1], hour: 8, desk: { x: 16, y: 5 }, hair: "#2c2c2c" },
     { id: "researcher",   room: "side", emoji: "🔎", name: "リサーチャー",   role: "トレンド調査・週次レポート",           days: [0], hour: 8, desk: { x: 20, y: 5 }, hair: "#c9a24d" },
     { id: "writer",       room: "side", emoji: "✍️", name: "ライター",       role: "note記事の下書き執筆",                 days: [2,4], hour: 8, desk: { x: 24, y: 5 }, hair: "#6b3e2a" },

@@ -9,7 +9,7 @@ sessions act as staff members with defined roles, driven by skills in
 `.claude/skills/` and scheduled Routines. There is no application code to
 build or run.
 
-The 14 employees are organised into four departments. Keep this structure when
+The 15 employees are organised into four departments. Keep this structure when
 adding staff: a new employee joins a department (or a new one is declared here
 and on the office board), it does not just get appended to a flat list.
 
@@ -31,6 +31,11 @@ Katagami City, Minamiakita District; https://tatsumi-tosou.com/).
   Tuesdays.
 - **meo** — Google Business Profile posts, profile audits, review replies.
   Thursdays. The owner posts manually.
+- **seo-sns** (本業SNS) — the company's Instagram (@tatsumi_tosou_kougyou)
+  captions, two a week, and official-LINE broadcast drafts ahead of the
+  broadcast months in `seo/schedule.md`, into `seo/social/queue.md` with an
+  owner-inbox card per ready post. Fridays. The owner posts manually.
+  Separate from the note team's `sns` employee.
 
 The website itself lives on another branch of this same repository:
 `claude/seo-meo-automation-mvntxp` (Cloudflare serves its committed `dist/`;
@@ -119,7 +124,8 @@ placeholders for these — fabricating experiences or earnings is forbidden).
   on the site branch at `docs/photo-requests.md`, added to before a run
   starts), `reports/`, `briefs/`,
   `articles/` (site-format drafts plus `.memo.md` sidecars; see its README),
-  and `gbp/queue.md` (Business Profile post drafts).
+  `gbp/queue.md` (Business Profile post drafts), and `social/queue.md`
+  (Instagram / LINE drafts).
 - `office/` — HTML sources of the published boards (office, blog board,
   finishing sheet).
 - `audit/` — the auditor's weekly reports (`YYYY-MM-DD.md`).
