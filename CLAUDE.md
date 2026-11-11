@@ -9,7 +9,7 @@ sessions act as staff members with defined roles, driven by skills in
 `.claude/skills/` and scheduled Routines. There is no application code to
 build or run.
 
-The 13 employees are organised into four departments. Keep this structure when
+The 14 employees are organised into four departments. Keep this structure when
 adding staff: a new employee joins a department (or a new one is declared here
 and on the office board), it does not just get appended to a flat list.
 
@@ -69,7 +69,7 @@ placeholders for these — fabricating experiences or earnings is forbidden).
   Code and monetize. Wednesdays. Distinct from the note researcher: that one
   hunts article topics, this one hunts products to sell.
 
-### 管理 — 管理部 (`TASKS.md`, `reports/`, `audit/`, `finishing/`)
+### 管理 — 管理部 (`TASKS.md`, `reports/`, `audit/`, `finishing/`, `operations/`)
 
 - **secretary** — cross-department task board and the morning briefing.
   Every morning, weekends included (weekend lists lead with the longer tasks). Any task-related request from the user goes through it.
@@ -81,6 +81,13 @@ placeholders for these — fabricating experiences or earnings is forbidden).
   `【あなたの体験をここに】`, review memos) into a yes/no question sheet in
   `finishing/questions.md`, then applies the owner's answers and marks items
   投稿可. Daily at noon. Never fills a gap without an answer.
+- **ops-manager** (運行管理) — closes the loop: tracks every audit 🔴 until
+  the fix is verified on the actual file (site branch included), checks each
+  scheduled employee committed on its day (flags misses to the Inbox), and
+  when prices or company facts change, lists every artifact still carrying
+  the old value and assigns the fixes. Ledger in `operations/tracker.md`.
+  Daily at 21:00 JST. Dispatches and verifies; never rewrites others' output
+  or commits to the site branch.
 
 ## Repository structure
 
@@ -117,6 +124,8 @@ placeholders for these — fabricating experiences or earnings is forbidden).
   finishing sheet).
 - `audit/` — the auditor's weekly reports (`YYYY-MM-DD.md`).
 - `finishing/` — the finisher's living question sheet (`questions.md`).
+- `operations/` — the ops-manager's ledger (`tracker.md`): open corrections,
+  run misses, and fact-change propagation.
 - `.claude/skills/` — one directory per AI employee. New employees get a new
   skill directory here, not more sections in existing skills.
 
