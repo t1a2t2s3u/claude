@@ -4591,7 +4591,6 @@ ASYS,ASYS,"Amtech Systems, Inc. - Common Stock",NASDAQ,US
 AT,AT,Defiance Robotics Actuators ETF,Cboe BZX ETF,US
 ATAT,ATAT,Atour Lifestyle Holdings Limited - American Depositary Shares,NASDAQ,US
 ATC,ATC,GraniteShares Autocallable COIN ETF,NASDAQ ETF,US
-ATCH,ATCH,"AtlasClear Holdings, Inc. Common Stock",NYSE American,US
 ATCL,ATCL,REX Autocallable Income ETF,NYSE Arca ETF,US
 ATCX,ATCX,Atlas Critical Minerals Corporation - Common Stock,NASDAQ,US
 ATEC,ATEC,"Alphatec Holdings, Inc. - Common Stock",NASDAQ,US
@@ -9153,7 +9152,6 @@ HLMN,HLMN,Hillman Solutions Corp. - Common Stock,NASDAQ,US
 HLN,HLN,Haleon plc American Depositary Shares (Each representing two Ordinary Shares),NYSE,US
 HLNE,HLNE,Hamilton Lane Incorporated - Class A Common Stock,NASDAQ,US
 HLP,HLP,Hongli Group Inc. - Class A Ordinary Shares,NASDAQ,US
-HLSQ,HLSQ,Tessera Defense and Homeland Security Inc. Common Stock,NYSE American,US
 HLT,HLT,Hilton Worldwide Holdings Inc. - Common Stock,NASDAQ,US
 HLTH,HLTH,Tema Healthcare AI ETF,NASDAQ ETF,US
 HLXC,HLXC,Helix Acquisition Corp. III - Class A Ordinary Shares,NASDAQ,US
@@ -9436,6 +9434,7 @@ IBIO,IBIO,"iBio, Inc. - Common Stock",NASDAQ,US
 IBIT,IBIT,iShares Bitcoin Trust ETF,NASDAQ ETF,US
 IBKR,IBKR,"Interactive Brokers Group, Inc. - Class A Common Stock",NASDAQ,US
 IBLC,IBLC,iShares Blockchain and Tech ETF,NYSE Arca ETF,US
+IBLY,IBLY,FT Vest Equity Target Income Plus 0-3 Month Treasury ETF,Cboe BZX ETF,US
 IBM,IBM,International Business Machines Corporation Common Stock,NYSE,US
 IBMO,IBMO,iShares iBonds Dec 2026 Term Muni Bond ETF,Cboe BZX ETF,US
 IBMP,IBMP,iShares iBonds Dec 2027 Term Muni Bond ETF,Cboe BZX ETF,US
@@ -9814,6 +9813,10 @@ IQ,IQ,"iQIYI, Inc. - American Depositary Shares",NASDAQ,US
 IQDF,IQDF,Northern Trust International Quality Dividend ETF,NYSE Arca ETF,US
 IQDG,IQDG,WisdomTree International Quality Dividend Growth Fund,Cboe BZX ETF,US
 IQDY,IQDY,Northern Trust International Quality Dividend Dynamic ETF,NYSE Arca ETF,US
+IQEE,IQEE,Invesco Emerging Markets Enhanced ETF,NYSE Arca ETF,US
+IQEI,IQEI,Invesco International Developed Enhanced ETF,NYSE Arca ETF,US
+IQEL,IQEL,Invesco U.S. Large Cap Enhanced ETF,NYSE Arca ETF,US
+IQES,IQES,Invesco U.S. Small Cap Enhanced ETF,NYSE Arca ETF,US
 IQGR,IQGR,Astoria International Quality Growth Kings ETF,NASDAQ ETF,US
 IQHI,IQHI,NYLIM MacKay High Income ETF,NYSE Arca ETF,US
 IQI,IQI,Invesco Quality Municipal Income Trust Common Stock,NYSE,US
@@ -10414,7 +10417,6 @@ KPLT,KPLT,"Katapult Holdings, Inc. - Common Stock",NASDAQ,US
 KPO,KPO,Kensington Premium Opportunities ETF,Cboe BZX ETF,US
 KPRO,KPRO,KraneShares 100% KWEB Defined Outcome January 2027 ETF,NYSE Arca ETF,US
 KPRX,KPRX,"Kiora Pharmaceuticals, Inc.  - Common Stock",NASDAQ,US
-KPTI,KPTI,Karyopharm Therapeutics Inc. - Common Stock,NASDAQ,US
 KQQQ,KQQQ,Kurv Technology Titans Select ETF,NASDAQ ETF,US
 KR,KR,Kroger Company (The) Common Stock,NYSE,US
 KRAQ,KRAQ,KRAKacquisition Corp - Class A Ordinary Shares,NASDAQ,US
@@ -11054,7 +11056,6 @@ MEMA,MEMA,Man Active Emerging Markets Alternative ETF,NASDAQ ETF,US
 MEME,MEME,Roundhill Meme Stock ETF,NYSE Arca ETF,US
 MEMS,MEMS,Matthews Emerging Markets Discovery Active ETF,NASDAQ ETF,US
 MEMX,MEMX,Matthews Emerging Markets ex China Active ETF,NYSE Arca ETF,US
-MEMY,MEMY,Tuttle Capital Meme Stock Income Blast ETF,Cboe BZX ETF,US
 MENS,MENS,Jyong Biotech Ltd. - Ordinary shares,NASDAQ,US
 MEOH,MEOH,Methanex Corporation - Common Stock,NASDAQ,US
 MER-PK,MER$K,"Bank of America Corporation Income Capital Obligation Notes initially due December 15, 2066",NYSE,US
