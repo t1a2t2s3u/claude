@@ -5896,8 +5896,8 @@ CFG-PI,CFG$I,"Citizens Financial Group, Inc. Depositary Shares, Each Representin
 CFIT,CFIT,Cambria Fixed Income Trend ETF,Cboe BZX ETF,US
 CFND,CFND,C1 Fund Inc. Common Stock,NYSE,US
 CFO,CFO,VictoryShares US 500 Enhanced Volatility Wtd ETF,NASDAQ ETF,US
-CFR,CFR,"Cullen/Frost Bankers, Inc. Common Stock",NYSE,US
-CFR-PB,CFR$B,"Cullen/Frost Bankers, Inc. Depositary Shares, each representing a 1/40th ownership interest in a share of 4.450% non-cumulative perpetual preferred stock, Series B",NYSE,US
+CFR,CFR,"Cullen/Frost Bankers, Inc. Common Stock",US,US
+CFR-PB,CFR$B,"Cullen/Frost Bankers, Inc. Depositary Shares, each representing a 1/40th ownership interest in a share of 4.450% non-cumulative perpetual preferred stock, Series B",US,US
 CFTR-PA,CFTR$A,"Cantor Fitzgerald Income Trust, Inc. 9.50% Series A Cumulative Redeemable Preferred Stock",NYSE,US
 CG,CG,The Carlyle Group Inc. - Common Stock,NASDAQ,US
 CGABL,CGABL,The Carlyle Group Inc. - 4.625% Subordinated Notes due 2061,NASDAQ,US
@@ -6391,6 +6391,7 @@ CRMD,CRMD,CorMedix Inc. - Common Stock,NASDAQ,US
 CRMG,CRMG,Leverage Shares 2X Long CRM Daily ETF,NASDAQ ETF,US
 CRML,CRML,Critical Metals Corp. - Ordinary Shares,NASDAQ,US
 CRMLW,CRMLW,Critical Metals Corp. - Warrants,NASDAQ,US
+CRMN,CRMN,Skyline Builders Group Holding Limited - Class A Ordinary Shares,NASDAQ,US
 CRMT,CRMT,"America's Car-Mart, Inc. - Common Stock",NASDAQ,US
 CRMX,CRMX,Tradr 2X Long CRML Daily ETF,Cboe BZX ETF,US
 CRNC,CRNC,Cerence Inc. - Common Stock,NASDAQ,US
@@ -8653,6 +8654,7 @@ GLIBK,GLIBK,Liberty Capital Corporation - Series C GCI Group Common Stock,NASDAQ
 GLIN,GLIN,VanEck India Growth Leaders ETF,NYSE Arca ETF,US
 GLIX,GLIX,Lazard Listed Infrastructure ETF,NYSE Arca ETF,US
 GLL,GLL,ProShares UltraShort Gold,NYSE Arca ETF,US
+GLLD,GLLD,"MicroSectors Gold 3X Leveraged ETNs due January 29, 2043",NYSE Arca ETF,US
 GLND,GLND,Greenland Energy Company - Common Stock,NASDAQ,US
 GLNDW,GLNDW,Greenland Energy Company - Warrant,NASDAQ,US
 GLNG,GLNG,Golar LNG Limited - Common Shares,NASDAQ,US
@@ -10249,7 +10251,6 @@ KARS,KARS,KraneShares Electric Vehicles and Future Mobility Index ETF,NYSE Arca 
 KAT,KAT,Scharf ETF,NASDAQ ETF,US
 KATT,KATT,T-REX 2X Long PURR Daily Target ETF,Cboe BZX ETF,US
 KAUG,KAUG,Innovator US Small Cap Power Buffer ETF - August,Cboe BZX ETF,US
-KAZR,KAZR,Skyline Builders Group Holding Limited - Class A Ordinary Shares,NASDAQ,US
 KB,KB,KB Financial Group Inc,NYSE,US
 KBA,KBA,KraneShares Bosera MSCI China A 50 Connect Index ETF,NYSE Arca ETF,US
 KBDC,KBDC,"Kayne Anderson BDC, Inc. Common Stock",NYSE,US
@@ -10261,6 +10262,7 @@ KBONU,KBONU,Karbon Capital Partners Corp. - Units,NASDAQ,US
 KBONW,KBONW,Karbon Capital Partners Corp. - Warrant,NASDAQ,US
 KBR,KBR,"KBR, Inc. Common Stock",NYSE,US
 KBSX,KBSX,FST Corp. - Ordinary Shares,NASDAQ,US
+KBTY,KBTY,Guinness Atkinson K-Beauty ETF,NYSE Arca ETF,US
 KBUF,KBUF,KraneShares 90% KWEB Defined Outcome January 2027 ETF,NYSE Arca ETF,US
 KBWB,KBWB,Invesco KBW Bank ETF,NASDAQ ETF,US
 KBWD,KBWD,Invesco KBW High Dividend Yield Financial ETF,NASDAQ ETF,US
@@ -10384,7 +10386,6 @@ KNOP,KNOP,KNOT Offshore Partners LP Common Units representing Limited Partner In
 KNOV,KNOV,Innovator U.S. Small Cap Power Buffer ETF - November,Cboe BZX ETF,US
 KNOW,KNOW,Fundamentals First ETF,Cboe BZX ETF,US
 KNRG,KNRG,Simplify Kayne Anderson Energy and Infrastructure Credit ETF,NYSE Arca ETF,US
-KNRX,KNRX,KNOREX LTD. Class A Ordinary Shares,NYSE American,US
 KNSA,KNSA,"Kiniksa Pharmaceuticals International, plc - Class A Ordinary Shares",NASDAQ,US
 KNSL,KNSL,"Kinsale Capital Group, Inc. Common Stock",NYSE,US
 KNTK,KNTK,Kinetik Holdings Inc. Class A Common Stock,NYSE,US
@@ -10898,6 +10899,7 @@ MAGC,MAGC,Roundhill China Magnificent Seven ETF,Cboe BZX ETF,US
 MAGG,MAGG,Madison Aggregate Bond ETF,NYSE Arca ETF,US
 MAGH,MAGH,Magnitude International Ltd - Ordinary Shares,NASDAQ,US
 MAGN,MAGN,Magnera Corporation Common Stock,NYSE,US
+MAGP,MAGP,Roundhill Magnificent Seven Plus ETF,Cboe BZX ETF,US
 MAGS,MAGS,Roundhill Magnificent Seven ETF,Cboe BZX ETF,US
 MAGX,MAGX,Roundhill Daily 2X Long Magnificent Seven ETF,Cboe BZX ETF,US
 MAGY,MAGY,Roundhill Magnificent Seven Covered Call ETF,Cboe BZX ETF,US
@@ -11812,6 +11814,7 @@ NIXT,NIXT,Research Affiliates Deletions ETF,NASDAQ ETF,US
 NIXX,NIXX,"Nixxy, Inc. - Common Stock",NASDAQ,US
 NJAN,NJAN,Innovator Growth-100 Power Buffer ETF - January,Cboe BZX ETF,US
 NJNK,NJNK,Columbia U.S. High Yield ETF,NYSE Arca ETF,US
+NJPN,NJPN,Nomura Japan Equity ETF,NYSE Arca ETF,US
 NJR,NJR,NewJersey Resources Corporation Common Stock,NYSE,US
 NJUL,NJUL,Innovator Growth-100 Power Buffer ETF - July,Cboe BZX ETF,US
 NJUN,NJUN,Innovator Growth-100 Power Buffer ETF - June,Cboe BZX ETF,US
@@ -12108,7 +12111,6 @@ NXTG,NXTG,First Trust Indxx NextG ETF,NASDAQ ETF,US
 NXTS,NXTS,Nexentis Technologies Inc. - Common Stock,NASDAQ,US
 NXTT,NXTT,Next Technology Holding Inc. - Ordinary Shares,NASDAQ,US
 NXUS,NXUS,Nuveen International Aggregate Bond ETF,NYSE Arca ETF,US
-NXXT,NXXT,"NextNRG, Inc. - Common Stock",NASDAQ,US
 NYAX,NYAX,Nayax Ltd. - Ordinary Shares,NASDAQ,US
 NYC,NYC,American Strategic Investment Co. Class A Common Stock,NYSE,US
 NYF,NYF,iShares New York Muni Bond ETF,NYSE Arca ETF,US
@@ -14234,7 +14236,6 @@ SHLS,SHLS,"Shoals Technologies Group, Inc. - Class A Common Stock",NASDAQ,US
 SHM,SHM,State Street SPDR Nuveen ICE Short Term Municipal Bond ETF,NYSE Arca ETF,US
 SHMD,SHMD,SCHMID Group N.V. - Class A Ordinary Shares,NASDAQ,US
 SHMDW,SHMDW,SCHMID Group N.V. - Warrants,NASDAQ,US
-SHNY,SHNY,"MicroSectors Gold 3X Leveraged ETNs due January 29, 2043",NYSE Arca ETF,US
 SHO,SHO,"Sunstone Hotel Investors, Inc. Sunstone Hotel Investors, Inc. Common Shares",NYSE,US
 SHO-PH,SHO$H,"Sunstone Hotel Investors, Inc. 6.125% Series H Cumulative Redeemable Preferred Stock",NYSE,US
 SHO-PI,SHO$I,"Sunstone Hotel Investors, Inc. 5.70% Series I Cumulative Redeemable Preferred Stock",NYSE,US
@@ -15967,6 +15968,7 @@ VEL,VEL,"Velocity Financial, Inc. Common Stock",NYSE,US
 VELL,VELL,Defiance Daily Target 2X Long VELO ETF,Cboe BZX ETF,US
 VELO,VELO,"Velo3D, Inc. - Common stock",NASDAQ,US
 VEM,VEM,Virtus Emerging Markets Dividend ETF,NYSE Arca ETF,US
+VEMB,VEMB,Vanguard Emerging Markets Bond Active ETF,Cboe BZX ETF,US
 VEMY,VEMY,Virtus Stone Harbor Emerging Markets High Yield Bond ETF,NYSE Arca ETF,US
 VENU,VENU,Venu Holding Corporation Common Stock,NYSE American,US
 VEON,VEON,VEON Ltd. - American Depositary Shares,NASDAQ,US
