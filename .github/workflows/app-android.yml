@@ -1,0 +1,57 @@
+# Sonae のアプリ版（Android）をビルドして APK を成果物として残す。
+# このリポジトリの開発コンテナには Android SDK が入らない（配布元が
+# ネットワークで遮断されている）ため、ビルドはここで行う。
+name: Build Android app
+
+on:
+  push:
+    branches: [claude/monthly-payment-overview-xr06td]
+    paths:
+      - 'index.html'
+      - 'release/**'
+      - 'app/**'
+      - '.github/workflows/app-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: 税計算のテスト（本体が壊れていないか）
+        run: node test/tax.test.mjs
+
+      - name: 依存を入れる
+        working-directory: app
+        run: npm ci
+
+      - name: www/ を組み立てて Android に同期
+        working-directory: app
+        run: |
+          npm run build
+          npx cap sync android
+
+      - name: APK をビルド
+        working-directory: app/android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sonae-debug-apk
+          path: app/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error

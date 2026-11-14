@@ -875,11 +875,34 @@ function loadEmbedded(){
 }
 let state = loadEmbedded();
 let art = null, dl = null;
-/* 書き出し。Artifact の中では downloads 機能を使う（サンドボックスのため
-   <a download> が効かない）。自分のサーバーに置いたときはブラウザに任せる */
-function canSave(){ return !!dl || !window.claude; }
+/* ---------- アプリ版（Capacitor）----------
+   ネイティブの中では window.Capacitor がブリッジごと入ってくるので、
+   バンドラを入れずにプラグインを呼べる。Web版・Artifact版では undefined。 */
+const CAP = window.Capacitor || null;
+const CAP_PLUGINS = (CAP && CAP.Plugins) || {};
+const capFs = CAP_PLUGINS.Filesystem || null;
+const capShare = CAP_PLUGINS.Share || null;
+const isApp = !!(CAP && CAP.isNativePlatform && CAP.isNativePlatform());
+/* アプリ版の控え。WebView の localStorage は端末の空き容量次第で
+   消されることがあるので、同じ内容をファイルにも書いておく */
+const APP_STATE_FILE = 'sonae-state.json';
+
+/* 書き出し。Artifact の中では downloads 機能（サンドボックスのため
+   <a download> が効かない）、アプリの中では端末に書いて共有シートへ、
+   自分のサーバーに置いたときはブラウザに任せる */
+function canSave(){ return !!dl || !!capFs || !window.claude; }
 function saveFile(filename, data, mime){
   if(dl) return dl.save({filename, data});
+  if(capFs){
+    /* いったん端末に書いてから共有シートに渡す。保存先（ファイル / メール /
+       クラウド）は利用者が選ぶ。キャンセルは失敗ではない */
+    return capFs.writeFile({path:filename, data, directory:'CACHE', encoding:'utf8'})
+      .then(res=>{
+        if(!capShare) { toast('端末に保存しました：'+filename); return; }
+        return capShare.share({title:filename, url:res.uri, dialogTitle:'保存先を選んでください'})
+          .catch(err=>{ if(!/cancel/i.test((err && (err.message||err.code))||'')) throw err; });
+      });
+  }
   return new Promise((resolve, reject)=>{
     try{
       const url = URL.createObjectURL(new Blob([data], {type:(mime||'text/plain')+';charset=utf-8'}));
@@ -914,24 +937,42 @@ document.body.appendChild(root);
 
 (window.claude && window.claude.use ? window.claude.use('artifact') : Promise.resolve(null))
   .then(ns=>{
-    if(ns){ art = ns; saveMode = 'artifact'; }
-    else{
-      saveMode = 'local';
-      try{
-        let raw = localStorage.getItem(STORE_KEY);
-        if(!raw) for(const k of OLD_KEYS){ raw = localStorage.getItem(k); if(raw) break; }
-        if(raw) state = migrate(JSON.parse(raw));
-      }catch(e){}
+    if(ns){ art = ns; saveMode = 'artifact'; render(); return; }
+    saveMode = isApp ? 'app' : 'local';
+    let raw = null;
+    try{
+      raw = localStorage.getItem(STORE_KEY);
+      if(!raw) for(const k of OLD_KEYS){ raw = localStorage.getItem(k); if(raw) break; }
+    }catch(e){}
+    if(raw){
+      try{ state = migrate(JSON.parse(raw)); }catch(e){}
+      render();
+      return;
     }
-    render();
+    /* localStorage が空のときだけファイルを見る。WebView の localStorage は
+       端末の空き容量が苦しいと消されることがあり、そのときの保険になる */
+    if(!capFs){ render(); return; }
+    return capFs.readFile({path:APP_STATE_FILE, directory:'DOCUMENTS', encoding:'utf8'})
+      .then(r=>{
+        const st = migrate(JSON.parse(r.data));
+        if(st.biz.length || st.payments.length || st.saves.length || st.invoices.length){
+          state = st;
+          try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+          toast('記録を読み直しました');
+        }
+      })
+      .catch(()=>{})
+      .then(()=>render());
   })
-  .catch(()=>{ saveMode = 'local'; render(); });
+  .catch(()=>{ saveMode = isApp ? 'app' : 'local'; render(); });
 (window.claude && window.claude.use ? window.claude.use('downloads') : Promise.resolve(null))
   .then(ns=>{ dl = ns; render(); }).catch(()=>{});
 
 /* 自分のサーバーに置いたときだけ、PWA（ホーム画面アプリ）として動かす。
-   Artifact 上では manifest も sw.js も無いので何もしない。 */
-if(!window.claude && location.protocol !== 'file:'){
+   Artifact 上では manifest も sw.js も無いので何もしない。
+   アプリ版でも登録しない。本体をキャッシュに抱えると、ストアから配った
+   新しい版が使われないままになる。 */
+if(!window.claude && !CAP && location.protocol !== 'file:'){
   const ml = document.createElement('link');
   ml.rel = 'manifest'; ml.href = 'manifest.webmanifest';
   document.head.appendChild(ml);
@@ -943,6 +984,7 @@ if(!window.claude && location.protocol !== 'file:'){
 function persist(next){
   state = migrate(Object.assign({}, state, next));
   try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  appBackup(state);
   render();
   if(art && !readOnly){
     art.publish(docFor(state)).catch(err=>{
@@ -958,6 +1000,15 @@ function persist(next){
       toast('保存に失敗しました。時間をおいてもう一度お試しください');
     });
   }
+}
+
+/* アプリ版の控え。localStorage が消えても記録が残るよう、同じ内容を
+   書類フォルダにも置く（iOS では iCloud バックアップの対象になる）。
+   書けなくても操作は止めない */
+function appBackup(st){
+  if(!capFs) return;
+  capFs.writeFile({path:APP_STATE_FILE, data:JSON.stringify(st),
+    directory:'DOCUMENTS', encoding:'utf8'}).catch(()=>{});
 }
 
 let toastTimer = null;
@@ -1301,6 +1352,7 @@ function render(){
   else content = renderTax(ctx);
 
   const saveNote = saveMode === 'artifact' ? '変更は自動で保存されます'
+    : saveMode === 'app' ? 'この端末の中に保存されます'
     : saveMode === 'local' ? 'この端末（ブラウザ）に保存されます' : '';
 
   root.innerHTML =

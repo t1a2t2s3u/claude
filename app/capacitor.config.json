@@ -1,0 +1,12 @@
+{
+  "appId": "jp.sonae.app",
+  "appName": "Sonae",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#f3f2ed"
+  },
+  "ios": {
+    "backgroundColor": "#f3f2ed",
+    "contentInset": "always"
+  }
+}

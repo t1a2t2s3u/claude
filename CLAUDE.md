@@ -59,10 +59,24 @@ longer applies is worse than no tip. Effect amounts come from the marginal
 rate, and expenses vs. income deductions are deliberately kept apart
 (expenses also reduce 国保 and 個人事業税; income deductions do not).
 
+The same `index.html` runs in three places, and the branches are picked at
+runtime, never by a build: the Artifact (`window.claude`), an ordinary web
+host (neither global), and the native app (`window.Capacitor`). The app build
+copies `index.html` verbatim — `app/scripts/build-www.mjs` never rewrites it,
+and refuses to run if records are still embedded in `app-state`. In the app,
+`localStorage` is mirrored to a Documents file so records survive the WebView
+dropping its storage, and the service worker is **not** registered: caching the
+shell there would keep a store update from ever reaching the user.
+
 ## Repository structure
 
 - `index.html` — the entire application.
 - `README.md` — user-facing description (Japanese).
+- `release/` — manifest, service worker and icons for self-hosting.
+- `app/` — the iOS/Android wrapper (Capacitor). `npm run sync` rebuilds `www/`
+  and pushes it into both native projects. The Android SDK is not installable
+  in this container (dl.google.com is blocked), so the APK is built by
+  `.github/workflows/app-android.yml`; iOS needs a Mac.
 
 ## Development workflow
 

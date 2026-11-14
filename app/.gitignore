@@ -1,0 +1,14 @@
+node_modules/
+# www/ は index.html から毎回組み立てる（scripts/build-www.mjs）
+www/
+# ビルドの中間生成物
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/app/src/main/assets/public/
+ios/App/App/public/
+ios/App/Pods/
+ios/App/build/
+ios/.build/
+.DS_Store
