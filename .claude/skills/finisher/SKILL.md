@@ -18,7 +18,8 @@ AI社員の成果物には、オーナーにしか埋められない箇所（`�
   1. `articles/ready/`（校閲合格・投稿待ち）
   2. `articles/drafts/`（校閲メモが付いているもの）
   3. `seo/articles/drafts/`, `seo/gbp/queue.md`,
-     `seo/social/queue.md`（本業SNS＝Instagram・公式LINEの文案。2026-11-12 追加）
+     `seo/social/queue.md`（本業SNS＝Instagram・公式LINEの文案。2026-11-12 追加・
+     **2026-11-15 オーナー承認済み**「Q8 はい」）
   4. `sns/queue.md` の当日分（プレースホルダがある場合のみ）
 - 作業ブランチ: `claude/ai-employee-claude-code-d99jvr`
 
