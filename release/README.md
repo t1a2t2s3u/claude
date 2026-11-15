@@ -9,10 +9,14 @@ your-site/
   index.html            ← リポジトリ直下のものをコピー
   manifest.webmanifest
   sw.js
+  privacy.html          ← プライバシーポリシー（アプリ版を配るときは必須）
   icon-180.png
   icon-192.png
   icon-512.png
 ```
+
+`privacy.html` は Google Play / App Store が URL の提示を求めるページです。
+公開前に「お問い合わせ」の連絡先を記入してください。
 
 `index.html` は、`window.claude` が無く `file:` でもないときだけ
 manifest を読み込み、`sw.js` を登録します。

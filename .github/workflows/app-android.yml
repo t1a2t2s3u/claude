@@ -55,3 +55,40 @@ jobs:
           name: sonae-debug-apk
           path: app/android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+
+      # Google Play は AAB しか受け付けない。署名鍵が登録されるまでは飛ばす。
+      # 鍵は ANDROID_KEYSTORE_BASE64 などのシークレットに入れる（下の README 参照）。
+      - name: 署名鍵があるか
+        id: keystore
+        run: |
+          if [ -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "署名鍵が未登録のため、リリース用 AAB は作りません。" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: 鍵を取り出す
+        if: steps.keystore.outputs.ready == 'true'
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/upload.jks"
+
+      - name: リリース用 AAB をビルド
+        if: steps.keystore.outputs.ready == 'true'
+        working-directory: app/android
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/upload.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew bundleRelease --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        if: steps.keystore.outputs.ready == 'true'
+        with:
+          name: sonae-release-aab
+          path: app/android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
+
+      - name: 鍵を消す
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.jks"

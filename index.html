@@ -886,6 +886,7 @@ const isApp = !!(CAP && CAP.isNativePlatform && CAP.isNativePlatform());
 /* アプリ版の控え。WebView の localStorage は端末の空き容量次第で
    消されることがあるので、同じ内容をファイルにも書いておく */
 const APP_STATE_FILE = 'sonae-state.json';
+const APP_STATE_DIR = 'DATA';
 
 /* 書き出し。Artifact の中では downloads 機能（サンドボックスのため
    <a download> が効かない）、アプリの中では端末に書いて共有シートへ、
@@ -952,7 +953,7 @@ document.body.appendChild(root);
     /* localStorage が空のときだけファイルを見る。WebView の localStorage は
        端末の空き容量が苦しいと消されることがあり、そのときの保険になる */
     if(!capFs){ render(); return; }
-    return capFs.readFile({path:APP_STATE_FILE, directory:'DOCUMENTS', encoding:'utf8'})
+    return capFs.readFile({path:APP_STATE_FILE, directory:APP_STATE_DIR, encoding:'utf8'})
       .then(r=>{
         const st = migrate(JSON.parse(r.data));
         if(st.biz.length || st.payments.length || st.saves.length || st.invoices.length){
@@ -1003,12 +1004,14 @@ function persist(next){
 }
 
 /* アプリ版の控え。localStorage が消えても記録が残るよう、同じ内容を
-   書類フォルダにも置く（iOS では iCloud バックアップの対象になる）。
-   書けなくても操作は止めない */
+   ファイルにも置く。書けなくても操作は止めない。
+   DATA は iOS では書類フォルダ（iCloud バックアップの対象）、Android では
+   アプリ専用の内部領域になる。DOCUMENTS は Android だと公開フォルダで、
+   帳簿を他のアプリから見える場所に置くことになるので使わない */
 function appBackup(st){
   if(!capFs) return;
   capFs.writeFile({path:APP_STATE_FILE, data:JSON.stringify(st),
-    directory:'DOCUMENTS', encoding:'utf8'}).catch(()=>{});
+    directory:APP_STATE_DIR, encoding:'utf8'}).catch(()=>{});
 }
 
 let toastTimer = null;
