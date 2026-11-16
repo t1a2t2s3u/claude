@@ -32,10 +32,10 @@
 
 ## 企画
 
-- [企画] AI社員が13人いても、人間が話しかけるのは1か所だけ — 「窓口」設計の実物公開
-  （無料 / ブリーフ: strategy/briefs/2026-11-16-single-contact-design.md）
-- [企画] AIに仕事を任せるなら「作る係」と「疑う係」を分ける — AI社員でも採用選考でも同じだった
-  （無料 / ブリーフ: strategy/briefs/2026-11-16-maker-checker-pattern.md）
+- [執筆済み] AI社員が13人いても、人間が話しかけるのは1か所だけ — 「窓口」設計の実物公開
+  （無料 / ブリーフ: strategy/briefs/2026-11-16-single-contact-design.md / 下書き: articles/drafts/2026-11-16-single-contact-design.md）
+- [執筆済み] AIに仕事を任せるなら「作る係」と「疑う係」を分ける — AI社員でも採用選考でも同じだった
+  （無料 / ブリーフ: strategy/briefs/2026-11-16-maker-checker-pattern.md / 下書き: articles/drafts/2026-11-16-maker-checker-pattern.md）
 
 ---
 
