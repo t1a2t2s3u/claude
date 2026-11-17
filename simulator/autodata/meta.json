@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-16T01:30:45+00:00",
+  "generated_at": "2026-11-17T04:20:53+00:00",
   "jp_count": 3693,
-  "us_count": 13248,
-  "fundamentals_count": 10738,
-  "fetched_now": 1553,
-  "fundamentals_errors": 0,
+  "us_count": 13245,
+  "fundamentals_count": 10742,
+  "fetched_now": 1557,
+  "fundamentals_errors": 1,
   "scope": "prime"
 }

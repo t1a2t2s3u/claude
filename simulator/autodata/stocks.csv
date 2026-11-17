@@ -4987,7 +4987,6 @@ BEAGR,BEAGR,Bold Eagle Acquisition Corp. - Right,NASDAQ,US
 BEAGU,BEAGU,Bold Eagle Acquisition Corp. - Units,NASDAQ,US
 BEAM,BEAM,Beam Therapeutics Inc. - Common Stock,NASDAQ,US
 BEAT,BEAT,"Heartbeam, Inc. - Common Stock",NASDAQ,US
-BEATW,BEATW,"Heartbeam, Inc. - Warrant",NASDAQ,US
 BEBE,BEBE,TGE Value Creative Solutions Corp Class A Ordinary Shares,NYSE,US
 BEBE-U,BEBE.U,"TGE Value Creative Solutions Corp Units, each consisting of one Class A ordinary share and one-half of one redeemable warrant",NYSE,US
 BEBE-W,BEBE.W,"TGE Value Creative Solutions Corp Redeemable warrants, each whole warrant exercisable for one Class A ordinary share at an exercise price of $11.50 per share",NYSE,US
@@ -5192,7 +5191,6 @@ BKEM,BKEM,BNY Mellon Emerging Markets Equity ETF,NYSE Arca ETF,US
 BKF,BKF,iShares MSCI BIC ETF,NYSE Arca ETF,US
 BKFI,BKFI,BNY Mellon Active Core Bond ETF,NYSE Arca ETF,US
 BKGI,BKGI,BNY Mellon Global Infrastructure Income ETF,Cboe BZX ETF,US
-BKH,BKH,Black Hills Corporation Common Stock,NYSE,US
 BKHA,BKHA,Black Hawk Acquisition Corporation - Class A Ordinary Shares,NASDAQ,US
 BKHAR,BKHAR,Black Hawk Acquisition Corporation - Rights,NASDAQ,US
 BKHAU,BKHAU,Black Hawk Acquisition Corporation - Units,NASDAQ,US
@@ -5423,7 +5421,9 @@ BRNY,BRNY,Burney U.S. Factor Rotation ETF,NASDAQ ETF,US
 BRO,BRO,"Brown & Brown, Inc. Common Stock",NYSE,US
 BROL,BROL,Baron Risk Optimized Large Cap ETF,NYSE ETF,US
 BROS,BROS,Dutch Bros Inc. Class A Common Stock,NYSE,US
+BRRK,BRRK,Bluerock Acquisition Corp. II - Class A Ordinary Shares,NASDAQ,US
 BRRKU,BRRKU,Bluerock Acquisition Corp. II - Units,NASDAQ,US
+BRRKW,BRRKW,Bluerock Acquisition Corp. II - Warrants,NASDAQ,US
 BRRR,BRRR,Coinshares Bitcoin ETF,NASDAQ ETF,US
 BRSL,BRSL,"Brightstar Lottery PLC Trading under the Legal Name to begin at the market open on July 21, 2025. Ordinary Shares",NYSE,US
 BRSM,BRSM,MFS Blended Research Small-Mid Cap ETF,NYSE Arca ETF,US
@@ -5509,7 +5509,6 @@ BSY,BSY,"Bentley Systems, Incorporated - Class B Common Stock",NASDAQ,US
 BTA,BTA,Beacon Tactical Alternatives Risk ETF,NYSE Arca ETF,US
 BTAL,BTAL,AGF U.S. Market Neutral Anti-Beta Fund,NYSE Arca ETF,US
 BTBD,BTBD,"BT Brands, Inc. - Common Stock",NASDAQ,US
-BTBDW,BTBDW,"BT Brands, Inc. - Warrant",NASDAQ,US
 BTBT,BTBT,"Bit Digital, Inc. - Ordinary Share",NASDAQ,US
 BTC,BTC,Grayscale Bitcoin Mini Trust (BTC),NYSE Arca ETF,US
 BTCC,BTCC,Grayscale Bitcoin High Income ETF,NYSE Arca ETF,US
@@ -8155,7 +8154,7 @@ FOA,FOA,Finance of America Companies Inc. Class A Common Stock,NYSE,US
 FOCL,FOCL,"EDAP TMS S.A. - American Depositary Shares, each representing One Ordinary Share",NASDAQ,US
 FOCT,FOCT,FT Vest U.S. Equity Buffer ETF - October,Cboe BZX ETF,US
 FOF,FOF,"Cohen & Steers Closed-End Opportunity Fund, Inc. Common Stock",NYSE,US
-FOFO,FOFO,"Hang Feng Technology Innovation Co., Ltd. - Ordinary Shares",NASDAQ,US
+FOFO,FOFO,"Hang Feng Technology Innovation Co., Ltd. - Class A Ordinary Shares",NASDAQ,US
 FOIL,FOIL,"Londian Wason New Energy Tech Inc. American Depositary Shares, each representing five Ordinary Shares",NYSE,US
 FOMG,FOMG,Leverage Shares 2X Long FORM Daily ETF,Cboe BZX ETF,US
 FOPC,FOPC,Frontier Asset Opportunistic Credit ETF,NYSE Arca ETF,US
@@ -9031,6 +9030,7 @@ HCMA,HCMA,HCM III Acquisition Corp. - Class A Ordinary Share,NASDAQ,US
 HCMAU,HCMAU,HCM III Acquisition Corp. - Units,NASDAQ,US
 HCMAW,HCMAW,HCM III Acquisition Corp. - Warrants,NASDAQ,US
 HCMT,HCMT,Direxion HCM Tactical Enhanced US ETF,NYSE Arca ETF,US
+HCOP,HCOP,Hartford Hybrid and Credit Opportunities ETF,NASDAQ ETF,US
 HCOW,HCOW,Amplify COWS Covered Call ETF,NASDAQ ETF,US
 HCRB,HCRB,Hartford Core Bond ETF,Cboe BZX ETF,US
 HCSG,HCSG,"Healthcare Services Group, Inc. - Common Stock",NASDAQ,US
@@ -9357,6 +9357,7 @@ HYTR,HYTR,Counterpoint High Yield Trend ETF,NYSE ETF,US
 HYUP,HYUP,Xtrackers High Beta High Yield Bond ETF,NYSE Arca ETF,US
 HYXF,HYXF,iShares ESG Advanced High Yield Corporate Bond ETF,NASDAQ ETF,US
 HYZD,HYZD,WisdomTree Interest Rate Hedged High Yield Bond Fund,NASDAQ ETF,US
+HZN,HZN,Bright Horizon Energy Corporation Common Stock,NYSE,US
 HZO,HZO,"MarineMax, Inc.  (FL) Common Stock",NYSE,US
 IA,IA,"Innovative Solutions and Support, Inc. - Common Stock",NASDAQ,US
 IACL,IACL,GraniteShares US 100 Autocallable Income ETF,Cboe BZX ETF,US
@@ -9899,7 +9900,6 @@ ITDI,ITDI,iShares LifePath Target Date 2065 ETF,NYSE Arca ETF,US
 ITDJ,ITDJ,iShares LifePath Target Date 2070 ETF,NYSE Arca ETF,US
 ITEQ,ITEQ,Amplify BlueStar Israel Technology ETF,NYSE Arca ETF,US
 ITG,ITG,"ITG, Inc. - Class A Common Stock",NASDAQ,US
-ITGR,ITGR,Integer Holdings Corporation Common Stock,NYSE,US
 ITHA,ITHA,ITHAX Acquisition Corp III - Class A Ordinary Shares,NASDAQ,US
 ITHAU,ITHAU,ITHAX Acquisition Corp III - Units,NASDAQ,US
 ITHAW,ITHAW,ITHAX Acquisition Corp III - Warrants,NASDAQ,US
@@ -10456,7 +10456,6 @@ KT,KT,KT Corporation Common Stock,NYSE,US
 KTB,KTB,"Kontoor Brands, Inc. Common Stock ",NYSE,US
 KTCC,KTCC,Key Tronic Corporation - Common Stock,NASDAQ,US
 KTEC,KTEC,KraneShares Hang Seng TECH Index ETF,NYSE Arca ETF,US
-KTF,KTF,DWS Municipal Income Trust,NYSE,US
 KTH,KTH,Structures Products Cp 8% CorTS Issued by Peco Energy Cap Tr II Preferred Stock,NYSE,US
 KTN,KTN,Structured Products Corp 8.205% CorTS 8.205% Corporate Backed Trust Securities (CorTS),NYSE,US
 KTOS,KTOS,"Kratos Defense & Security Solutions, Inc. - Common Stock",NASDAQ,US
@@ -10851,7 +10850,6 @@ LVLU,LVLU,"Lulu's Fashion Lounge Holdings, Inc. - Common Stock",NASDAQ,US
 LVO,LVO,"LiveOne, Inc. - Common Stock",NASDAQ,US
 LVS,LVS,Las Vegas Sands Corp. Common Stock,NYSE,US
 LVWR,LVWR,"LiveWire Group, Inc. Common Stock",NYSE,US
-LVWR-W,LVWR.W,"LiveWire Group, Inc. Warrants, each exercisable for one share of Common Stock at an exercise price of $11.50 per share",NYSE,US
 LW,LW,"Lamb Weston Holdings, Inc. Common Stock ",NYSE,US
 LWAC,LWAC,LightWave Acquisition Corp. - Class A Ordinary Shares,NASDAQ,US
 LWACU,LWACU,LightWave Acquisition Corp. - Units,NASDAQ,US
@@ -10971,7 +10969,7 @@ MBRX,MBRX,"Moleculin Biotech, Inc. - Common Stock",NASDAQ,US
 MBS,MBS,Angel Oak Mortgage-Backed Securities ETF,NASDAQ ETF,US
 MBSD,MBSD,Northern Trust Disciplined Duration MBS ETF,NYSE Arca ETF,US
 MBSF,MBSF,Regan Floating Rate MBS ETF,NYSE Arca ETF,US
-MBSX,MBSX,Regan Fixed Rate MBS ETF,NYSE Arca ETF,US
+MBSX,MBSX,Regan Fixed Rate MBS ETF,US ETF,US
 MBUU,MBUU,"Malibu Boats, Inc. - Common Stock",NASDAQ,US
 MBVI,MBVI,M3-Brigade Acquisition VI Corp. - Class A Ordinary Shares,NASDAQ,US
 MBVIU,MBVIU,M3-Brigade Acquisition VI Corp. - Units,NASDAQ,US
@@ -12074,7 +12072,6 @@ NWAX-W,NWAX.W,"New America Acquisition I Corp. Warrants, each whole warrant is e
 NWBI,NWBI,"Northwest Bancshares, Inc. - Common Stock",NASDAQ,US
 NWCL,NWCL,newcleo plc - Ordinary Shares,NASDAQ,US
 NWCLW,NWCLW,newcleo plc - Warrants,NASDAQ,US
-NWE,NWE,"NorthWestern Energy Group, Inc.  - Common Stock",NASDAQ,US
 NWFL,NWFL,Norwood Financial Corp. - Common Stock,NASDAQ,US
 NWG,NWG,"NatWest Group plc American Depositary Shares, (each representing two (2) Ordinary Shares)",NYSE,US
 NWGL,NWGL,CL Workshop Group Limited - American Depositary Shares,NASDAQ,US
@@ -12807,7 +12804,6 @@ PLAY,PLAY,"Dave & Buster's Entertainment, Inc. - Common Stock",NASDAQ,US
 PLBC,PLBC,Plumas Bancorp - Common Stock,NASDAQ,US
 PLBL,PLBL,Polibeli Group Ltd - Class A Ordinary Shares,NASDAQ,US
 PLBY,PLBY,"Playboy, Inc. - Common Stock",NASDAQ,US
-PLCE,PLCE,"Children's Place, Inc. (The) - Common Stock",NASDAQ,US
 PLCI,PLCI,Pelican Acquisition II Corporation - Ordinary Shares,NASDAQ,US
 PLCIR,PLCIR,Pelican Acquisition II Corporation - Right,NASDAQ,US
 PLCIU,PLCIU,Pelican Acquisition II Corporation - Unit,NASDAQ,US
@@ -12928,7 +12924,9 @@ PONOU,PONOU,"Pono Capital Four, Inc. - Units",NASDAQ,US
 PONY,PONY,Pony AI Inc. - American Depositary Shares,NASDAQ,US
 POOL,POOL,Pool Corporation - Common Stock,NASDAQ,US
 POR,POR,Portland General Electric Co Common Stock,NYSE,US
+PORT,PORT,Southport Acquisition Corp. II Class A Ordinary Shares,NYSE,US
 PORT-U,PORT.U,"Southport Acquisition Corp. II Units, each consisting of one Class A ordinary share and one-third of one redeemable warrant",NYSE,US
+PORT-W,PORT.W,"Southport Acquisition Corp. II Redeemable warrants, each whole warrant exercisable for one Class A ordinary share at an exercise price of $11.50",NYSE,US
 POST,POST,"Post Holdings, Inc. Common Stock",NYSE,US
 POW,POW,VistaShares Electrification Supercycle ETF,NYSE Arca ETF,US
 POWA,POWA,Invesco Bloomberg Pricing Power ETF,NYSE Arca ETF,US
@@ -14793,7 +14791,6 @@ STLA,STLA,Stellantis N.V. Common Shares,NYSE,US
 STLD,STLD,"Steel Dynamics, Inc. - Common Stock",NASDAQ,US
 STLL,STLL,Leverage Shares 2X Long STRL Daily ETF,Cboe BZX ETF,US
 STLN,STLN,"Starling Oncology, Inc. - Common Stock",NASDAQ,US
-STLNW,STLNW,"Starling Oncology, Inc. - Warrant",NASDAQ,US
 STLR,STLR,Stellar ETF,Cboe BZX ETF,US
 STLU,STLU,2x Stellar ETF,Cboe BZX ETF,US
 STM,STM,STMicroelectronics N.V. Common Stock,NYSE,US
