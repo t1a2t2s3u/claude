@@ -3811,7 +3811,6 @@ ACGLN,ACGLN,"Arch Capital Group Ltd. - Depositary Shares, each Representing a 1/
 ACGLO,ACGLO,"Arch Capital Group Ltd. - Depositary Shares Each Representing 1/1,000th Interest in a Share of5.45% Non-Cumulative Preferred Shares, Series F",NASDAQ,US
 ACGO,ACGO,Hartford Alpha Capture Growth ETF,Cboe BZX ETF,US
 ACGR,ACGR,American Century Large Cap Growth ETF,NYSE Arca ETF,US
-ACH,ACH,"Accendra Health, Inc. Common Stock",NYSE,US
 ACHC,ACHC,"Acadia Healthcare Company, Inc. - Common Stock",NASDAQ,US
 ACHP,ACHP,Global X Asia Semiconductor ETF,NASDAQ ETF,US
 ACHR,ACHR,Archer Aviation Inc. Class A Common Stock,NYSE,US
@@ -4580,7 +4579,6 @@ ASTH,ASTH,Astrana Health Inc. - Common Stock,NASDAQ,US
 ASTI,ASTI,"Ascent Solar Technologies, Inc - Common Stock",NASDAQ,US
 ASTL,ASTL,Algoma Steel Group Inc. - Common Shares,NASDAQ,US
 ASTM,ASTM,Allspring Strategic Municipal Bond Fund ETF,NASDAQ ETF,US
-ASTN,ASTN,Defiance Daily Target 2X Short ASTS ETF,Cboe BZX ETF,US
 ASTS,ASTS,"AST SpaceMobile, Inc. - Class A Common Stock",NASDAQ,US
 ASTT,ASTT,Corgi ASTS 2x Daily ETF,Cboe BZX ETF,US
 ASTX,ASTX,Tradr 2X Long ASTS Daily ETF,Cboe BZX ETF,US
@@ -6561,6 +6559,8 @@ CWEN,CWEN,"Clearway Energy, Inc. Class C Common Stock",NYSE,US
 CWH,CWH,"Camping World Holdings, Inc. Class A Common Stock",NYSE,US
 CWI,CWI,State Street SPDR MSCI ACWI ex-US ETF,NYSE Arca ETF,US
 CWK,CWK,Cushman & Wakefield Ltd. Common Shares,NYSE,US
+CWPD,CWPD,CWP Premium Dividend ETF,NASDAQ ETF,US
+CWPG,CWPG,CWP Premium Growth ETF,NASDAQ ETF,US
 CWS,CWS,AdvisorShares Focused Equity ETF,NYSE Arca ETF,US
 CWST,CWST,"Casella Waste Systems, Inc. - Class A Common Stock",NASDAQ,US
 CWT,CWT,California Water Service Group Common Stock,NYSE,US
@@ -6617,6 +6617,7 @@ DAR,DAR,Darling Ingredients Inc. Common Stock,NYSE,US
 DARE,DARE,"Dare Bioscience, Inc. - Common Stock",NASDAQ,US
 DARP,DARP,Grizzle Growth ETF,NYSE Arca ETF,US
 DASH,DASH,"DoorDash, Inc. - Common Stock",NASDAQ,US
+DAU,DAU,GraniteShares Autocallable AMD ETF,NASDAQ ETF,US
 DAUG,DAUG,FT Vest U.S. Equity Deep Buffer ETF - August,Cboe BZX ETF,US
 DAVA,DAVA,Endava plc American Depositary Shares (each representing one Class A Ordinary Share),NYSE,US
 DAVE,DAVE,Dave Inc.  - Class A Common Stock,NASDAQ,US
@@ -6968,6 +6969,7 @@ DPZ,DPZ,Domino's Pizza Inc - Common Stock,NASDAQ,US
 DQ,DQ,"DAQO New Energy Corp. American Depositary Shares, each representing five ordinary shares",NYSE,US
 DQJN,DQJN,FT Vest Nasdaq-100 Dual Directional Buffer ETF - June,Cboe BZX ETF,US
 DQSE,DQSE,FT Vest Nasdaq-100 Dual Directional Buffer ETF - September,Cboe BZX ETF,US
+DRAC,DRAC,GraniteShares Autocallable DRAM ETF,NASDAQ ETF,US
 DRAI,DRAI,Draco Evolution AI ETF,NYSE Arca ETF,US
 DRAL,DRAL,Defiance Daily Target 2X Long DRAM ETF,Cboe BZX ETF,US
 DRAM,DRAM,Roundhill Memory ETF,Cboe BZX ETF,US
@@ -7078,7 +7080,6 @@ DV,DV,"DoubleVerify Holdings, Inc. Common Stock",NYSE,US
 DVA,DVA,DaVita Inc. Common Stock,NYSE,US
 DVDN,DVDN,Kingsbarn Dividend Opportunity ETF,NYSE Arca ETF,US
 DVGR,DVGR,DAC 3D Dividend Growth ETF,NASDAQ ETF,US
-DVLT,DVLT,Datavault AI Inc. - Common Stock,NASDAQ,US
 DVLU,DVLU,First Trust Dorsey Wright Momentum & Value ETF,NASDAQ ETF,US
 DVN,DVN,Devon Energy Corporation Common Stock,NYSE,US
 DVND,DVND,Touchstone Dividend Select ETF,NYSE Arca ETF,US
@@ -8679,7 +8680,7 @@ GLX,GLX,Corgi GLXY 2x Daily ETF,Cboe BZX ETF,US
 GLXG,GLXG,Galaxy Payroll Group Limited - Class A Ordinary Shares,NASDAQ,US
 GLXU,GLXU,T-REX 2X Long GLXY Daily Target ETF,Cboe BZX ETF,US
 GLXY,GLXY,Galaxy Digital Inc. - Class A common stock,NASDAQ,US
-GM,GM,General Motors Company Common Stock,NYSE,US
+GM,GM,General Motors Company - Common Stock,NASDAQ,US
 GMAB,GMAB,Genmab A/S - American Depositary Shares,NASDAQ,US
 GMAC,GMAC,Simplify Brookwood Global Macro ETF,NYSE Arca ETF,US
 GMAR,GMAR,FT Vest U.S. Equity Moderate Buffer ETF - March,Cboe BZX ETF,US
@@ -11037,6 +11038,7 @@ MDXH,MDXH,MDxHealth SA - Ordinary Shares,NASDAQ,US
 MDY,MDY,State Street SPDR S&P MIDCAP 400 ETF Trust,NYSE Arca ETF,US
 MDYG,MDYG,State Street SPDR S&P 400 Mid Cap Growth ETF,NYSE Arca ETF,US
 MDYV,MDYV,State Street SPDR S&P 400 Mid Cap Value ETF,NYSE Arca ETF,US
+MEA,MEA,GraniteShares Autocallable META ETF,NASDAQ ETF,US
 MEAR,MEAR,iShares Short Maturity Municipal Bond Active ETF,Cboe BZX ETF,US
 MEC,MEC,"Mayville Engineering Company, Inc. Common Stock",NYSE,US
 MED,MED,MEDIFAST INC Common Stock,NYSE,US
@@ -11301,7 +11303,7 @@ MOBBW,MOBBW,Mobilicom Limited - Warrants,NASDAQ,US
 MOBI,MOBI,"Mobia Medical, Inc. - Common Stock",NASDAQ,US
 MOBX,MOBX,"Mobix Labs, Inc. - Class A Common Stock",NASDAQ,US
 MOBXW,MOBXW,"Mobix Labs, Inc. - Warrants",NASDAQ,US
-MOD,MOD,Modine Manufacturing Company Common Stock,NYSE,US
+MOD,MOD,"Modexus Solutions, Inc. Common Stock",NYSE,US
 MODD,MODD,"Modular Medical, Inc. - common stock",NASDAQ,US
 MODL,MODL,VictoryShares WestEnd U.S. Sector ETF,NASDAQ ETF,US
 MOG-A,MOG.A,Moog Inc. Class A Common Stock,NYSE,US
@@ -11959,6 +11961,7 @@ NTAL,NTAL,GraniteShares 2x Long NTAP Daily ETF,NASDAQ ETF,US
 NTAP,NTAP,"NetApp, Inc. - Common Stock",NASDAQ,US
 NTB,NTB,Bank of N.T. Butterfield & Son Limited (The) Voting Ordinary Shares,NYSE,US
 NTCL,NTCL,NETCLASS TECHNOLOGY INC - Class A Ordinary Shares,NASDAQ,US
+NTCR,NTCR,Nuveen Technology & Infrastructure Credit ETF,NASDAQ ETF,US
 NTCT,NTCT,"NetScout Systems, Inc. - Common Stock",NASDAQ,US
 NTES,NTES,"NetEase, Inc. - American Depositary Shares, each representing 5 ordinary shares",NASDAQ,US
 NTGR,NTGR,"NETGEAR, Inc. - Common Stock",NASDAQ,US
@@ -12591,6 +12594,7 @@ PCG-PH,PCG$H,Pacific Gas & Electric Co. 4.50% 1st Preferred Stock,NYSE American,
 PCG-PI,PCG$I,Pacific Gas & Electric Co. 4.36% 1st Preferred Stock,NYSE American,US
 PCG-PX,PCG$X,PG&E Corp 6.000% Series A Mandatory Convertible Preferred Stock,NYSE,US
 PCHI,PCHI,Polen High Income ETF,NYSE Arca ETF,US
+PCHX,PCHX,State Street SPDR Nasdaq MyPaycheck ETF,NASDAQ ETF,US
 PCI,PCI,PGIM Corporate Bond 5-10 Year ETF,Cboe BZX ETF,US
 PCL,PCL,PGIM Corporate Bond 10+ Year ETF,Cboe BZX ETF,US
 PCLA,PCLA,PicoCELA Inc. - American Depositary Shares,NASDAQ,US
@@ -12775,6 +12779,7 @@ PIO,PIO,Invesco Global Water ETF,NASDAQ ETF,US
 PIPE,PIPE,Invesco SteelPath MLP & Energy Infrastructure ETF,Cboe BZX ETF,US
 PIPR,PIPR,Piper Sandler Companies Common Stock,NYSE,US
 PIT,PIT,VanEck Commodity Strategy ETF,Cboe BZX ETF,US
+PIVT,PIVT,VanEck Pivotal Trends ETF,NASDAQ ETF,US
 PIZ,PIZ,Invesco Dorsey Wright Developed Markets Momentum ETF,NASDAQ ETF,US
 PJAN,PJAN,Innovator U.S. Equity Power Buffer ETF - January,Cboe BZX ETF,US
 PJFG,PJFG,PGIM Jennison Focused Growth ETF,NYSE Arca ETF,US
@@ -13653,7 +13658,6 @@ RJVI,RJVI,RJ Eagle Vertical Income ETF,NYSE Arca ETF,US
 RKDA,RKDA,"Arcadia Biosciences, Inc. - Common Stock",NASDAQ,US
 RKLB,RKLB,Rocket Lab Corporation - Common Stock,NASDAQ,US
 RKLX,RKLX,Defiance Daily Target 2X Long RKLB ETF,NASDAQ ETF,US
-RKLZ,RKLZ,Defiance Daily Target 2x Short RKLB ETF,NASDAQ ETF,US
 RKNG,RKNG,Defiance Retail Kings ETF,NASDAQ ETF,US
 RKSG,RKSG,Ruk Strategic Growth ETF,NYSE Arca ETF,US
 RKT,RKT,"Rocket Companies, Inc. Class A Common Stock",NYSE,US
@@ -14280,6 +14284,7 @@ SIM,SIM,"Grupo Simec, S.A.B. de C.V. American Depositary Shares",NYSE American,U
 SIMA,SIMA,SIM Acquisition Corp. I - Class A Ordinary Shares,NASDAQ,US
 SIMAU,SIMAU,SIM Acquisition Corp. I - Unit,NASDAQ,US
 SIMAW,SIMAW,SIM Acquisition Corp. I - Warrant,NASDAQ,US
+SIMI,SIMI,American Beacon SiM High Income ETF,NYSE Arca ETF,US
 SIMO,SIMO,"Silicon Motion Technology Corporation - American Depositary Shares, each representing four ordinary shares",NASDAQ,US
 SIMS,SIMS,State Street SPDR S&P Kensho Intelligent Structures ETF,NYSE Arca ETF,US
 SIMX,SIMX,Corgi SIMO 2x Daily ETF,Cboe BZX ETF,US
@@ -14816,7 +14821,6 @@ STRRP,STRRP,"Star Equity Holdings, Inc. - 10% Series A Cumulative Perpetual Pref
 STRT,STRT,STRATTEC SECURITY CORPORATION - Common Stock,NASDAQ,US
 STRW,STRW,"Strawberry Fields REIT, Inc. Common Stock",NYSE American,US
 STRZ,STRZ,Starz Entertainment Corp. - Common Shares,NASDAQ,US
-STSM,STSM,Defiance Daily Target 2X Short TSM ETF,NYSE Arca ETF,US
 STT,STT,State Street Corporation Common Stock,NYSE,US
 STT-PG,STT$G,"State Street Corporation Depositary shares, each representing a 1/4,000th ownership interest in a share of Fixed-to-Floating Rate Non-Cumulative",NYSE,US
 STTK,STTK,"Shattuck Labs, Inc. - Common Stock",NASDAQ,US
@@ -15589,6 +15593,7 @@ TXNM,TXNM,"TXNM Energy, Inc. Common Stock",NYSE,US
 TXNU,TXNU,Direxion Daily TXN Bull 2X ETF,NYSE Arca ETF,US
 TXNY,TXNY,Northern Trust New York Intermediate Tax-Exempt Bond ETF,NASDAQ ETF,US
 TXO,TXO,"TXO Partners, L.P. Common Units Representing Limited Partner Interests",NYSE,US
+TXR,TXR,Torex Resources Inc. Common Shares,NYSE,US
 TXRH,TXRH,"Texas Roadhouse, Inc. - Common Stock",NASDAQ,US
 TXS,TXS,Texas Capital Texas Equity Index ETF,US ETF,US
 TXT,TXT,Textron Inc. Common Stock,NYSE,US
@@ -15918,7 +15923,6 @@ VBIO,VBIO,"Valion Bio, Inc. - Common stock",NASDAQ,US
 VBK,VBK,Vanguard Morningstar Small-Cap Growth ETF,NYSE Arca ETF,US
 VBNB,VBNB,VanEck BNB ETF,NASDAQ ETF,US
 VBND,VBND,Vident U.S. Bond Strategy ETF,NYSE Arca ETF,US
-VBNK,VBNK,VersaBank - Common Shares,NASDAQ,US
 VBR,VBR,Vanguard Morningstar Small-Cap Value ETF,NYSE Arca ETF,US
 VC,VC,Visteon Corporation - Common Stock,NASDAQ,US
 VCEB,VCEB,Vanguard ESG U.S. Corporate Bond ETF,Cboe BZX ETF,US
@@ -16141,6 +16145,7 @@ VRM,VRM,"Vroom, Inc. - Common Stock",NASDAQ,US
 VRNS,VRNS,"Varonis Systems, Inc. - Common Stock",NASDAQ,US
 VRP,VRP,Invesco Variable Rate Preferred ETF,NYSE Arca ETF,US
 VRRM,VRRM,Verra Mobility Corporation - Class A Common Stock,NASDAQ,US
+VRSA,VRSA,Versa Bancorp - Common Stock,NASDAQ,US
 VRSK,VRSK,"Verisk Analytics, Inc. - Common Stock",NASDAQ,US
 VRSN,VRSN,"VeriSign, Inc. - Common Stock",NASDAQ,US
 VRT,VRT,"Vertiv Holdings, LLC Class A Common Stock",NYSE,US
@@ -16869,6 +16874,7 @@ ZCMD,ZCMD,Zhongchao Inc. - Class A Ordinary Shares,NASDAQ,US
 ZCSH,ZCSH,The Zcash ETF Shares,NYSE Arca ETF,US
 ZD,ZD,"Ziff Davis, Inc. - Common Stock",NASDAQ,US
 ZDAI,ZDAI,"DirectBooking Technology Co., Ltd. - Class A Ordinary Shares",NASDAQ,US
+ZDAY,ZDAY,Bitwise AI Cyber Defense ETF,NYSE Arca ETF,US
 ZDEK,ZDEK,Innovator Equity Defined Protection ETF - 1 Yr December,Cboe BZX ETF,US
 ZDGE,ZDGE,"Zedge, Inc. Class B Common Stock ",NYSE American,US
 ZDIS,ZDIS,Virtus Zevenbergen Discovery Growth ETF,NYSE Arca ETF,US
