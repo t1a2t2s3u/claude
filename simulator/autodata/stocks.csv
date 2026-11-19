@@ -4376,6 +4376,7 @@ APCB,APCB,ActivePassive Core Bond ETF,NYSE Arca ETF,US
 APD,APD,"Air Products and Chemicals, Inc. Common Stock",NYSE,US
 APDB,APDB,Aptus April Deep Buffer ETF,Cboe BZX ETF,US
 APEI,APEI,"American Public Education, Inc. - Common Stock",NASDAQ,US
+APFS,APFS,Artisan Focus Fund: ETF Class Shares,NYSE Arca ETF,US
 APG,APG,APi Group Corporation Common Stock,NYSE,US
 APH,APH,Amphenol Corporation Common Stock,NYSE,US
 APHG,APHG,Leverage Shares 2X Long APH Daily ETF,Cboe BZX ETF,US
@@ -4396,6 +4397,7 @@ APMCU,APMCU,AmperCap Acquisition Company - Unit,NASDAQ,US
 APMD,APMD,"Apnimed, Inc. - Common Stock",NASDAQ,US
 APMI,APMI,Corgi AMAT 2x Daily ETF,Cboe BZX ETF,US
 APMU,APMU,ActivePassive Intermediate Municipal Bond ETF,NYSE Arca ETF,US
+APNX,APNX,Artisan Select Equity Fund: ETF Class Shares,NYSE Arca ETF,US
 APO,APO,"Apollo Global Management, Inc. (New) Common Stock",NYSE,US
 APOC,APOC,Innovator Equity Defined Protection ETF - 6mo Apr/Oct,Cboe BZX ETF,US
 APOG,APOG,"Apogee Enterprises, Inc. - Common Stock",NASDAQ,US
@@ -5790,6 +5792,7 @@ CCFE,CCFE,Concourse Capital Focused Equity ETF,NASDAQ ETF,US
 CCG,CCG,Cheche Group Inc. - Class A Ordinary Shares,NASDAQ,US
 CCGWW,CCGWW,Cheche Group Inc. - Warrant,NASDAQ,US
 CCHH,CCHH,CCH Holdings Ltd - Class A Ordinary Shares,NASDAQ,US
+CCHP,CCHP,Global X China Semiconductor ETF,NASDAQ ETF,US
 CCI,CCI,Crown Castle Inc. Common Stock,NYSE,US
 CCID,CCID,Carlyle Credit Income Fund 7.375% Series D Term Preferred Shares due 2028,NYSE,US
 CCIF,CCIF,Carlyle Credit Income Fund Shares of Beneficial Interest,NYSE,US
@@ -8694,6 +8697,7 @@ GMEY,GMEY,YieldMax GME Option Income Strategy ETF,NYSE Arca ETF,US
 GMF,GMF,State Street SPDR S&P Emerging Asia Pacific ETF,NYSE Arca ETF,US
 GMHS,GMHS,Gamehaus Holdings Inc. - Class A Ordinary Shares,NASDAQ,US
 GMIE,GMIE,"GMO International Equity Fund, ETF Class",NYSE Arca ETF,US
+GMIX,GMIX,iShares Macro AlphaBeta Active ETF,NYSE Arca ETF,US
 GMM,GMM,Global Mofy AI Limited  - Class A Ordinary Shares,NASDAQ,US
 GMMA,GMMA,GammaRoad Market Navigation ETF,NYSE Arca ETF,US
 GMMF,GMMF,iShares Government Money Market ETF,NYSE ETF,US
@@ -8920,6 +8924,7 @@ GTY,GTY,Getty Realty Corporation Common Stock,NYSE,US
 GUAC,GUAC,Berto Acquisition Corp. II - Ordinary Shares,NASDAQ,US
 GUACU,GUACU,Berto Acquisition Corp. II - Units,NASDAQ,US
 GUACW,GUACW,Berto Acquisition Corp. II - Warrants,NASDAQ,US
+GUER,GUER,"Guerrilla RF, Inc. - Common Stock",NASDAQ,US
 GUG,GUG,Guggenheim Active Allocation Fund Common Shares of Beneficial Interest,NYSE,US
 GUMI,GUMI,Goldman Sachs Ultra Short Municipal Income ETF,NYSE Arca ETF,US
 GUNN,GUNN,Gunnison Copper Corp. American Depositary Shares (each representing thirty (30) Common Shares),NYSE American,US
@@ -9447,7 +9452,6 @@ IBMW,IBMW,iShares iBonds Dec 2034 Term Muni Bond ETF,Cboe BZX ETF,US
 IBMX,IBMX,iShares iBonds Dec 2035 Term Muni Bond ETF,Cboe BZX ETF,US
 IBN,IBN,ICICI Bank Limited Common Stock,NYSE,US
 IBND,IBND,State Street SPDR Bloomberg International Corporate Bond ETF,NYSE Arca ETF,US
-IBO,IBO,"Impact BioMedical, Inc. Common Stock",NYSE American,US
 IBOC,IBOC,International Bancshares Corporation Common Stock,US,US
 IBOT,IBOT,VanEck Robotics ETF,NASDAQ ETF,US
 IBP,IBP,"Installed Building Products, Inc. Common Stock",NYSE,US
@@ -9825,6 +9829,7 @@ IQMM,IQMM,ProShares GENIUS Money Market ETF,NYSE Arca ETF,US
 IQMX,IQMX,IQM Quantum Computers Oyj - American Depositary Shares,NASDAQ,US
 IQMXW,IQMXW,IQM Quantum Computers Oyj - Warrants to purchase American Depositary Shares,NASDAQ,US
 IQQ,IQQ,iShares Nasdaq 100 ETF,NASDAQ ETF,US
+IQQI,IQQI,IncomeQ Nasdaq-100 Premium Income ETF,NASDAQ ETF,US
 IQQQ,IQQQ,ProShares Nasdaq-100 High Income ETF,NASDAQ ETF,US
 IQSI,IQSI,NYLIM Candriam International Equity ETF,NYSE Arca ETF,US
 IQSM,IQSM,NYLIM Candriam U.S. Mid Cap Equity ETF,NYSE Arca ETF,US
@@ -12611,7 +12616,6 @@ PCPC,PCPC,Porter & Company Property & Casualty Index ETF,Cboe BZX ETF,US
 PCPI,PCPI,PIMCO Inflation PLUS Active Exchange-Traded Fund,NASDAQ ETF,US
 PCPP,PCPP,Porter & Company Porter Portfolio Index ETF,Cboe BZX ETF,US
 PCQ,PCQ,PIMCO California Municipal Income Fund Common Stock,NYSE,US
-PCRX,PCRX,"Pacira BioSciences, Inc. - Common Stock",NASDAQ,US
 PCS,PCS,PGIM Corporate Bond 0-5 Year ETF,Cboe BZX ETF,US
 PCSA,PCSA,"Processa Pharmaceuticals, Inc. - Common Stock",NASDAQ,US
 PCSG,PCSG,Polen 5Perspectives Small-Mid Growth ETF,NYSE Arca ETF,US
@@ -14087,6 +14091,7 @@ SCZM,SCZM,Santacruz Silver Mining Ltd. - Common Shares,NASDAQ,US
 SD,SD,"SandRidge Energy, Inc. Common Stock",NYSE,US
 SDA,SDA,SunCar Technology Group Inc. - Ordinary Shares,NASDAQ,US
 SDAWW,SDAWW,SunCar Technology Group Inc. - Warrant,NASDAQ,US
+SDC,SDC,KICK Space Data Center & Infrastructure Index ETF,NASDAQ ETF,US
 SDCI,SDCI,USCF SummerHaven Dynamic Commodity Strategy No K-1 Fund,NYSE Arca ETF,US
 SDCP,SDCP,Virtus Newfleet Short Duration Core Plus Bond ETF,NYSE Arca ETF,US
 SDD,SDD,ProShares UltraShort SmallCap600,NYSE Arca ETF,US
@@ -14227,11 +14232,10 @@ SHE,SHE,State Street SPDR MSCI USA Gender Diversity ETF,NYSE Arca ETF,US
 SHEH,SHEH,Shell plc ADRhedged,NYSE Arca ETF,US
 SHEL,SHEL,Shell PLC American Depositary Shares (each representing two (2) Ordinary Shares) ,NYSE,US
 SHEN,SHEN,Shenandoah Telecommunications Co - Common Stock,NASDAQ,US
-SHFS,SHFS,"SHF Holdings, Inc. - Class A Common Stock",NASDAQ,US
-SHFSW,SHFSW,"SHF Holdings, Inc. - Warrants",NASDAQ,US
 SHG,SHG,Shinhan Financial Group Co Ltd American Depositary Shares,NYSE,US
 SHIM,SHIM,Shimmick Corporation - Common Stock,NASDAQ,US
 SHIP,SHIP,Seanergy Maritime Holdings Corp. - Common Stock,NASDAQ,US
+SHLA,SHLA,Global X Asia Defense Tech ETF,NYSE Arca ETF,US
 SHLD,SHLD,Global X Defense Tech ETF,NYSE Arca ETF,US
 SHLS,SHLS,"Shoals Technologies Group, Inc. - Class A Common Stock",NASDAQ,US
 SHM,SHM,State Street SPDR Nuveen ICE Short Term Municipal Bond ETF,NYSE Arca ETF,US
@@ -15406,6 +15410,7 @@ TRIL,TRIL,VegaShares Trillions ETF,Cboe BZX ETF,US
 TRIN,TRIN,Trinity Capital Inc. Common Stock,NYSE,US
 TRIO,TRIO,MC Trio Equity Buffered ETF,Cboe BZX ETF,US
 TRIP,TRIP,"TripAdvisor, Inc. - Common Stock",NASDAQ,US
+TRLL,TRLL,Direxion Trillions ETF,NYSE Arca ETF,US
 TRLV,TRLV,Trulieve Cannabis Corp. Subordinate Voting Shares,NYSE,US
 TRMB,TRMB,Trimble Inc. - Common Stock,NASDAQ,US
 TRMD,TRMD,TORM plc - Class A Common Stock,NASDAQ,US
@@ -15614,7 +15619,6 @@ TYLD,TYLD,Cambria Tactical Yield ETF,Cboe BZX ETF,US
 TYLG,TYLG,Global X Information Technology Covered Call & Growth ETF,NYSE Arca ETF,US
 TYO,TYO,Direxion Daily 10-Yr Treasury Bear 3x Shrs,NYSE Arca ETF,US
 TYRA,TYRA,"Tyra Biosciences, Inc. - Common Stock",NASDAQ,US
-TYYY,TYYY,xETFs TSLA Daily Income ETF,NYSE Arca ETF,US
 TZA,TZA,Direxion Small Cap Bear 3X ETF,NYSE Arca ETF,US
 TZOO,TZOO,Travelzoo - Common Stock,NASDAQ,US
 U,U,Unity Software Inc. Common Stock,NYSE,US
@@ -15969,6 +15973,7 @@ VELO,VELO,"Velo3D, Inc. - Common stock",NASDAQ,US
 VEM,VEM,Virtus Emerging Markets Dividend ETF,NYSE Arca ETF,US
 VEMB,VEMB,Vanguard Emerging Markets Bond Active ETF,Cboe BZX ETF,US
 VEMY,VEMY,Virtus Stone Harbor Emerging Markets High Yield Bond ETF,NYSE Arca ETF,US
+VEN,VEN,Teucrium Venezuela Future Opportunities ETF,NYSE Arca ETF,US
 VENU,VENU,Venu Holding Corporation Common Stock,NYSE American,US
 VEON,VEON,VEON Ltd. - American Depositary Shares,NASDAQ,US
 VERA,VERA,"Vera Therapeutics, Inc. - Class A Common Stock",NASDAQ,US
@@ -16213,6 +16218,7 @@ VUSV,VUSV,Vanguard Wellington U.S. Value Active ETF,Cboe BZX ETF,US
 VUZI,VUZI,Vuzix Corporation  - Common Stock,NASDAQ,US
 VV,VV,Vanguard Morningstar Large-Cap ETF,NYSE Arca ETF,US
 VVOS,VVOS,"Vivos Therapeutics, Inc. - Common Stock",NASDAQ,US
+VVPL,VVPL,Vulcan Value Partners ETF,Cboe BZX ETF,US
 VVR,VVR,Invesco Senior Income Trust Common Stock (DE),NYSE,US
 VVV,VVV,Valvoline Inc. Common Stock,NYSE,US
 VVVV,VVVV,vVARDIS Holding AG Class A Ordinary Shares,NYSE,US
@@ -16498,7 +16504,6 @@ WYFL,WYFL,Defiance Daily Target 2X Long WYFI ETF,Cboe BZX ETF,US
 WYHG,WYHG,Wing Yip Food Holdings Group Limited - American Depositary Shares,NASDAQ,US
 WYNN,WYNN,"Wynn Resorts, Limited - Common Stock",NASDAQ,US
 WYY,WYY,WidePoint Corporation Common Stock,NYSE American,US
-WZRD,WZRD,Opportunistic Trader ETF,Cboe BZX ETF,US
 XA,XA,Corgi AI Cybersecurity ETF,Cboe BZX ETF,US
 XAGG,XAGG,Eaton Vance Income Opportunities ETF,NYSE Arca ETF,US
 XAGI,XAGI,Corgi AGIX 2x Daily ETF,Cboe BZX ETF,US
@@ -16779,6 +16784,7 @@ YALA,YALA,"Yalla Group Limited American Depositary Shares, each representing one
 YALL,YALL,Truth Social God Bless America ETF,NYSE Arca ETF,US
 YANG,YANG,Direxion Daily FTSE China Bear 3X ETF,NYSE Arca ETF,US
 YARW,YARW,"Yarrow Bioscience, Inc. - Common Stock",NASDAQ,US
+YASX,YASX,Yorkville America Space Index ETF,NYSE Arca ETF,US
 YB,YB,Yuanbao Inc. - American Depositary Shares,NASDAQ,US
 YBIT,YBIT,YieldMax Bitcoin Option Income Strategy ETF,NYSE Arca ETF,US
 YBST,YBST,GraniteShares YieldBoost Single Stock Universe ETF,NASDAQ ETF,US
@@ -16826,6 +16832,7 @@ YMAX,YMAX,YieldMax Universe Fund of Option Income ETFs,NYSE Arca ETF,US
 YMM,YMM,Full Truck Alliance Co. Ltd. American Depositary Shares (each representing 20 Class A Ordinary Shares),NYSE,US
 YMT,YMT,Yimutian Inc. - American Depositary Shares; each representing 25 Class A ordinary shares,NASDAQ,US
 YNOT,YNOT,Horizon Digital Frontier ETF,NASDAQ ETF,US
+YO,YO,Amplify S&P 500 Buffered Autocallable Yield Opportunity ETF,NYSE Arca ETF,US
 YOKE,YOKE,YOKE Core ETF,NASDAQ ETF,US
 YOLO,YOLO,AdvisorShares Pure Cannabis ETF,NYSE Arca ETF,US
 YORW,YORW,The York Water Company - Common Stock,NASDAQ,US
@@ -16915,6 +16922,7 @@ ZMUN,ZMUN,F/m Ultrashort Tax-Free Municipal ETF,NASDAQ ETF,US
 ZNB,ZNB,Zeta Network Group - Class A Ordinary Shares,NASDAQ,US
 ZNOV,ZNOV,Innovator Equity Defined Protection ETF - 1 Yr November,Cboe BZX ETF,US
 ZNTL,ZNTL,"Zentalis Pharmaceuticals, Inc. - common stock",NASDAQ,US
+ZOAR,ZOAR,Zoar Limited Ordinary Shares,NYSE American,US
 ZOCT,ZOCT,Innovator Equity Defined Protection ETF - 1 Yr October,Cboe BZX ETF,US
 ZONE,ZONE,Zone Frontier Inc. Class B Common Stock,NYSE American,US
 ZOOZ,ZOOZ,ZOOZ Strategy Ltd. - Ordinary Shares,NASDAQ,US
