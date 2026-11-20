@@ -4344,6 +4344,7 @@ ANNAW,ANNAW,"AleAnna, Inc. - Warrant",NASDAQ,US
 ANNX,ANNX,"Annexon, Inc. - common stock",NASDAQ,US
 ANPA,ANPA,Rich Sparkle Holdings Limited - Ordinary Shares,NASDAQ,US
 ANRO,ANRO,"Alto Neuroscience, Inc. Common Stock",NYSE,US
+ANT,ANT,"Anthropic, PBC - Class A Common Stock",NASDAQ,US
 ANTA,ANTA,Antalpha Platform Holding Company - Class A Ordinary Shares,NASDAQ,US
 ANTW,ANTW,Anthropic AI Lab Ecosystem ETF,NYSE Arca ETF,US
 ANTX,ANTX,"AN2 Therapeutics, Inc. - Common Stock",NASDAQ,US
@@ -5904,6 +5905,7 @@ CG,CG,The Carlyle Group Inc. - Common Stock,NASDAQ,US
 CGABL,CGABL,The Carlyle Group Inc. - 4.625% Subordinated Notes due 2061,NASDAQ,US
 CGAU,CGAU,Centerra Gold Inc. Common Shares,NYSE,US
 CGBD,CGBD,"Carlyle Secured Lending, Inc. - Closed End Fund",NASDAQ,US
+CGBI,CGBI,Capital Group Multi-Asset Income Builder ETF,NYSE Arca ETF,US
 CGBL,CGBL,Capital Group Core Balanced ETF,NYSE Arca ETF,US
 CGC,CGC,Canopy Growth Corporation - Common Shares,NASDAQ,US
 CGCB,CGCB,Capital Group Core Bond ETF,NYSE Arca ETF,US
@@ -5926,6 +5928,7 @@ CGHY,CGHY,Capital Group High Yield Bond ETF,NYSE Arca ETF,US
 CGIB,CGIB,Capital Group International Bond ETF (USD-Hedged),NYSE Arca ETF,US
 CGIC,CGIC,Capital Group International Core Equity ETF,NYSE Arca ETF,US
 CGIE,CGIE,Capital Group International Equity ETF,NYSE Arca ETF,US
+CGMI,CGMI,Capital Group Multi-Asset Income ETF,NYSE Arca ETF,US
 CGMM,CGMM,Capital Group U.S. Small and Mid Cap ETF,NYSE Arca ETF,US
 CGMS,CGMS,Capital Group U.S. Multi-Sector Income ETF,NYSE Arca ETF,US
 CGMU,CGMU,Capital Group Municipal Income ETF,NYSE Arca ETF,US
@@ -7417,6 +7420,7 @@ ENTX,ENTX,Entera Bio Ltd. - Ordinary Shares,NASDAQ,US
 ENVA,ENVA,"Enova International, Inc. Common Stock",NYSE,US
 ENVB,ENVB,"Enveric Biosciences, Inc.  - Common Stock",NASDAQ,US
 ENVX,ENVX,Enovix Corporation - Common Stock,NASDAQ,US
+ENVXW,ENVXW,Enovix Corporation - Warrants,NASDAQ,US
 ENZL,ENZL,iShares MSCI New Zealand ETF,NASDAQ ETF,US
 EO,EO,Corgi EOSE 2x Daily ETF,Cboe BZX ETF,US
 EOCN,EOCN,Eocene Ltd. - Ordinary Shares,NASDAQ,US
@@ -7806,6 +7810,9 @@ FDEC,FDEC,FT Vest U.S. Equity Buffer ETF - December,Cboe BZX ETF,US
 FDEM,FDEM,Fidelity Emerging Markets Multifactor ETF,Cboe BZX ETF,US
 FDEV,FDEV,Fidelity International Multifactor ETF,Cboe BZX ETF,US
 FDG,FDG,American Century Focused Dynamic Growth ETF,NYSE Arca ETF,US
+FDGX,FDGX,First Digital Acquisition Corp Ltd. - Class A Ordinary Shares,NASDAQ,US
+FDGXU,FDGXU,First Digital Acquisition Corp Ltd. - Units,NASDAQ,US
+FDGXW,FDGXW,First Digital Acquisition Corp Ltd. - Warrants,NASDAQ,US
 FDHY,FDHY,Fidelity Enhanced High Yield ETF,NYSE Arca ETF,US
 FDIG,FDIG,Fidelity Crypto Industry and Digital Payments ETF,NASDAQ ETF,US
 FDIQ,FDIQ,Invesco Bloomberg Financial Data Providers ETF,NASDAQ ETF,US
@@ -8103,6 +8110,7 @@ FMAT,FMAT,Fidelity MSCI Materials Index ETF,NYSE Arca ETF,US
 FMAY,FMAY,FT Vest U.S. Equity Buffer ETF - May,Cboe BZX ETF,US
 FMB,FMB,First Trust Managed Municipal ETF,NASDAQ ETF,US
 FMBH,FMBH,"First Mid Bancshares, Inc. - Common Stock",NASDAQ,US
+FMBM,FMBM,F&M Bank Corp. Common Stock,NYSE American,US
 FMC,FMC,FMC Corporation Common Stock,NYSE,US
 FMCE,FMCE,FM Compounders Equity ETF,NYSE Arca ETF,US
 FMCX,FMCX,FM Focus Equity ETF,NYSE Arca ETF,US
@@ -8699,7 +8707,6 @@ GMHS,GMHS,Gamehaus Holdings Inc. - Class A Ordinary Shares,NASDAQ,US
 GMIE,GMIE,"GMO International Equity Fund, ETF Class",NYSE Arca ETF,US
 GMIX,GMIX,iShares Macro AlphaBeta Active ETF,NYSE Arca ETF,US
 GMM,GMM,Global Mofy AI Limited  - Class A Ordinary Shares,NASDAQ,US
-GMMA,GMMA,GammaRoad Market Navigation ETF,NYSE Arca ETF,US
 GMMF,GMMF,iShares Government Money Market ETF,NYSE ETF,US
 GMNY,GMNY,Goldman Sachs Dynamic New York Municipal Income ETF,NYSE Arca ETF,US
 GMOC,GMOC,GMO Ultra-Short Income ETF,NYSE Arca ETF,US
@@ -8798,6 +8805,7 @@ GPTY,GPTY,YieldMax AI & Tech Portfolio Option Income ETF,NYSE Arca ETF,US
 GPUS,GPUS,"Hyperscale Data, Inc. Common Stock",NYSE American,US
 GPUS-PD,GPUS$D,"Hyperscale Data, Inc. 13.00% Series D Cumulative Redeemable Perpetual Preferred Stock",NYSE American,US
 GPZ,GPZ,VanEck Alternative Asset Manager ETF,NYSE Arca ETF,US
+GQGG,GQGG,GQG Global Equity ETF,NYSE Arca ETF,US
 GQGU,GQGU,GQG US Equity ETF,NYSE Arca ETF,US
 GQI,GQI,Natixis Gateway Quality Income ETF,NYSE Arca ETF,US
 GQQQ,GQQQ,Astoria US Quality Growth Kings ETF,NASDAQ ETF,US
@@ -8854,6 +8862,7 @@ GSAT,GSAT,"Globalstar, Inc. - Common Stock",NASDAQ,US
 GSBC,GSBC,"Great Southern Bancorp, Inc. - Common Stock",NASDAQ,US
 GSBD,GSBD,"Goldman Sachs BDC, Inc. Common Stock",NYSE,US
 GSC,GSC,Goldman Sachs Small Cap Equity ETF,NYSE Arca ETF,US
+GSCZ,GSCZ,Goldman Sachs Securitized Income ETF,NYSE Arca ETF,US
 GSEE,GSEE,Goldman Sachs MarketBeta Emerging Markets Equity ETF,Cboe BZX ETF,US
 GSEP,GSEP,FT Vest U.S. Equity Moderate Buffer ETF - September,Cboe BZX ETF,US
 GSEU,GSEU,Goldman Sachs ActiveBeta Europe Equity ETF,NYSE Arca ETF,US
@@ -10011,6 +10020,7 @@ JAGU,JAGU,Jaguar Uranium Corp. Class A Common Shares,NYSE American,US
 JAGX,JAGX,"Jaguar Health, Inc. - Common Stock",NASDAQ,US
 JAJL,JAJL,Innovator Equity Defined Protection ETF - 6mo Jan/Jul,Cboe BZX ETF,US
 JAKK,JAKK,"JAKKS Pacific, Inc. - Common Stock",NASDAQ,US
+JALL,JALL,JPMorgan All Country Research Enhanced Equity ETF,NYSE Arca ETF,US
 JAN,JAN,"Janus Living, Inc. Class A-1 Common Stock",NYSE,US
 JANB,JANB,Aptus January Buffer ETF,Cboe BZX ETF,US
 JANH,JANH,Innovator Premium Income 20 Barrier ETF - January,Cboe BZX ETF,US
@@ -10408,9 +10418,6 @@ KORP,KORP,American Century Diversified Corporate Bond ETF,NYSE Arca ETF,US
 KORU,KORU,Direxion Daily South Korea Bull 3X ETF,NYSE Arca ETF,US
 KOS,KOS,Kosmos Energy Ltd. Common Shares (DE),NYSE,US
 KOSS,KOSS,Koss Corporation - Common Stock,NASDAQ,US
-KOYN,KOYN,CSLM Digital Asset Acquisition Corp III - Class A Ordinary Shares,NASDAQ,US
-KOYNU,KOYNU,CSLM Digital Asset Acquisition Corp III - Units,NASDAQ,US
-KOYNW,KOYNW,CSLM Digital Asset Acquisition Corp III - Warrants,NASDAQ,US
 KPET,KPET,KPET Ultra Paceline Corporation Class A Ordinary Shares,NYSE,US
 KPET-U,KPET.U,"KPET Ultra Paceline Corporation Units, each consisting of one Class A Ordinary Share and one-sixth of one Warrant",NYSE,US
 KPET-W,KPET.W,"KPET Ultra Paceline Corporation Warrants, each whole warrant exercisable for one Class A ordinary share at an exercise price of $11.50 per share",NYSE,US
@@ -10866,7 +10873,6 @@ LWLX,LWLX,Tradr 2X Long LWLG Daily ETF,Cboe BZX ETF,US
 LX,LX,LexinFintech Holdings Ltd. - American Depositary Shares,NASDAQ,US
 LXEH,LXEH,"Lixiang Education Holding Co., Ltd. - American Depositary Shares",NASDAQ,US
 LXEO,LXEO,"Lexeo Therapeutics, Inc. - Common Stock",NASDAQ,US
-LXFR,LXFR,Luxfer Holdings PLC Ordinary Shares,NYSE,US
 LXRX,LXRX,"Lexicon Pharmaceuticals, Inc. - Common Stock",NASDAQ,US
 LXU,LXU,"LSB Industries, Inc. Common Stock",NYSE,US
 LYB,LYB,LyondellBasell Industries NV Ordinary Shares Class A (Netherlands),NYSE,US
@@ -14054,7 +14060,6 @@ SCIO,SCIO,First Trust Structured Credit Income Opportunities ETF,NYSE Arca ETF,U
 SCJ,SCJ,iShares MSCI Japan Sm Cap,NYSE Arca ETF,US
 SCJL,SCJL,Corgi U.S. Small-Cap 15% Structured Buffer ETF - July Series,Cboe BZX ETF,US
 SCJN,SCJN,Corgi U.S. Small-Cap 15% Structured Buffer ETF - June Series,Cboe BZX ETF,US
-SCKT,SCKT,"Socket Mobile, Inc. - Common Stock",NASDAQ,US
 SCL,SCL,Stepan Company Common Stock,NYSE,US
 SCLX,SCLX,Scilex Holding Company - Common Stock,NASDAQ,US
 SCLXW,SCLXW,Scilex Holding Company - Warrant,NASDAQ,US
@@ -14762,7 +14767,6 @@ SSPY,SSPY,Stratified LargeCap Index ETF,NYSE Arca ETF,US
 SSRM,SSRM,SSR Mining Inc. - Common Stock,NASDAQ,US
 SSS,SSS,CYBER HORNET S&P 500 and Solana 75/25 Strategy ETF,NASDAQ ETF,US
 SST,SST,"System1, Inc. Class A Common Stock",NYSE,US
-SSTI,SSTI,"SoundThinking, Inc. - Common Stock",NASDAQ,US
 SSTK,SSTK,"Shutterstock, Inc. Common Stock",NYSE,US
 SSUS,SSUS,Day Hagan Smart Sector ETF,NYSE Arca ETF,US
 SSXU,SSXU,Day Hagan Smart Sector International ETF,NYSE Arca ETF,US
@@ -15129,6 +15133,7 @@ TFI,TFI,State Street SPDR Nuveen ICE Municipal Bond ETF,NYSE Arca ETF,US
 TFII,TFII,TFI International Inc. Common Shares,NYSE,US
 TFIN,TFIN,"Triumph Financial, Inc. Common Stock",NYSE,US
 TFIN-P,TFIN$,"Triumph Financial, Inc. Depositary Shares, Each Representing a 1/40th Interest in a Share of 7.125% Series C Fixed-Rate Non-Cumulative Perpetual Preferred Stock",NYSE,US
+TFIX,TFIX,T. Rowe Price Capital Appreciation Fixed Income ETF,NYSE Arca ETF,US
 TFJL,TFJL,Innovator 20  Year Treasury Bond 5 Floor ETF - July,Cboe BZX ETF,US
 TFLO,TFLO,iShares Treasury Floating Rate Bond ETF,NYSE Arca ETF,US
 TFLR,TFLR,T. Rowe Price Floating Rate ETF,NYSE Arca ETF,US
@@ -15645,7 +15650,7 @@ UBR,UBR,ProShares Ultra MSCI Brazil Capped,NYSE Arca ETF,US
 UBRL,UBRL,GraniteShares 2x Long UBER Daily ETF,NASDAQ ETF,US
 UBS,UBS,UBS Group AG Registered Ordinary Shares,NYSE,US
 UBSI,UBSI,"United Bankshares, Inc. - Common Stock",NASDAQ,US
-UBT,UBT,ProShares Ultra 20+ Year Treasury,NYSE Arca ETF,US
+UBT,UBT,ProShares Ultra 20 Year Treasury,NYSE Arca ETF,US
 UCAR,UCAR,U Power Limited - Class A Ordinary Shares,NASDAQ,US
 UCB,UCB,"United Community Banks, Inc. Common Stock",NYSE,US
 UCBG,UCBG,State Street SPDR UC Investments 90/10 Endowment Strategy Index ETF,NYSE Arca ETF,US
