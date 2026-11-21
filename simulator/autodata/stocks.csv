@@ -3743,6 +3743,7 @@ AAT,AAT,"American Assets Trust, Inc. Common Stock",NYSE,US
 AAUA,AAUA,Alpha Architect US Equity 3 ETF,Cboe BZX ETF,US
 AAUB,AAUB,Alpha Architect US Equity 4 ETF,NASDAQ ETF,US
 AAUC,AAUC,Allied Gold Corporation Common Shares,NYSE,US
+AAUD,AAUD,Alpha Architect US Equity 5 ETF,NASDAQ ETF,US
 AAUS,AAUS,Alpha Architect US Equity ETF,NASDAQ ETF,US
 AAVM,AAVM,Alpha Architect Global Factor Equity ETF,NASDAQ ETF,US
 AAXJ,AAXJ,iShares MSCI All Country Asia ex Japan ETF,NASDAQ ETF,US
@@ -4280,7 +4281,6 @@ AMOD,AMOD,"Alpha Modus Holdings, Inc. - Class A Common Stock",NASDAQ,US
 AMODW,AMODW,"Alpha Modus Holdings, Inc. - Warrant",NASDAQ,US
 AMP,AMP,"Ameriprise Financial, Inc. Common Stock",NYSE,US
 AMPG,AMPG,"Amplitech Group, Inc. - Common Stock",NASDAQ,US
-AMPGZ,AMPGZ,"Amplitech Group, Inc. - Series B Right",NASDAQ,US
 AMPH,AMPH,"Amphastar Pharmaceuticals, Inc. - Common Stock",NASDAQ,US
 AMPL,AMPL,"Amplitude, Inc. - Class A Common Stock",NASDAQ,US
 AMPU,AMPU,Defiance Daily Target 2X Long AMPX ETF,Cboe BZX ETF,US
@@ -6598,6 +6598,7 @@ CZFS,CZFS,"Citizens Financial Services, Inc. - Common Stock",NASDAQ,US
 CZNC,CZNC,Citizens & Northern Corp - Common Stock,NASDAQ,US
 CZR,CZR,"Caesars Entertainment, Inc. - Common Stock",NASDAQ,US
 CZWI,CZWI,"Citizens Community Bancorp, Inc. - Common Stock",NASDAQ,US
+CZZL,CZZL,Cizzle Brands Corporation - Common Stock,NASDAQ,US
 D,D,"Dominion Energy, Inc. Common Stock",NYSE,US
 DAAQ,DAAQ,Digital Asset Acquisition Corp. - Class A Ordinary shares,NASDAQ,US
 DAAQU,DAAQU,Digital Asset Acquisition Corp. - Units,NASDAQ,US
@@ -9883,6 +9884,7 @@ ISHG,ISHG,iShares 1-3 Year International Treasury Bond ETF,NASDAQ ETF,US
 ISHP,ISHP,First Trust S-Network E-Commerce ETF,NASDAQ ETF,US
 ISMD,ISMD,Inspire Small/Mid Cap ETF,NYSE Arca ETF,US
 ISMF,ISMF,iShares Managed Futures Active ETF,Cboe BZX ETF,US
+ISMH,ISMH,xETFs International Semiconductor ETF,NASDAQ ETF,US
 ISNR,ISNR,Snow Rothschild Acquisition Corp. - Class A Ordinary Shares,NASDAQ,US
 ISNRU,ISNRU,Snow Rothschild Acquisition Corp. - Units,NASDAQ,US
 ISNRW,ISNRW,Snow Rothschild Acquisition Corp. - Warrants,NASDAQ,US
@@ -10155,7 +10157,7 @@ JOBC,JOBC,Corgi JOBY 2x Daily ETF,Cboe BZX ETF,US
 JOBX,JOBX,Tradr 2X Long JOBY Daily ETF,Cboe BZX ETF,US
 JOBY,JOBY,"Joby Aviation, Inc. Common Stock",NYSE,US
 JOE,JOE,St. Joe Company (The) Common Stock,NYSE,US
-JOET,JOET,Virtus Terranova U.S. Quality Momentum ETF,NYSE Arca ETF,US
+JOET,JOET,Virtus NYSE Terranova U.S. Quality Momentum ETF,NYSE Arca ETF,US
 JOF,JOF,Japan Smaller Capitalization Fund Inc Common Stock,NYSE,US
 JOJO,JOJO,ATAC Credit Rotation ETF,NYSE Arca ETF,US
 JONE,JONE,Jones Ventures INTL Acquisition1 Corp - Class A Ordinary Shares,NASDAQ,US
@@ -11071,7 +11073,6 @@ MEMX,MEMX,Matthews Emerging Markets ex China Active ETF,NYSE Arca ETF,US
 MENS,MENS,Jyong Biotech Ltd. - Ordinary shares,NASDAQ,US
 MEOH,MEOH,Methanex Corporation - Common Stock,NASDAQ,US
 MER-PK,MER$K,"Bank of America Corporation Income Capital Obligation Notes initially due December 15, 2066",NYSE,US
-MERC,MERC,Mercer International Inc. - Common Stock,NASDAQ,US
 MESH,MESH,Meshflow Acquisition Corp. - Class A Ordinary Shares,NASDAQ,US
 MESHU,MESHU,Meshflow Acquisition Corp. - Units,NASDAQ,US
 MESHW,MESHW,Meshflow Acquisition Corp. - Warrants,NASDAQ,US
@@ -12322,13 +12323,9 @@ OOMA,OOMA,"Ooma, Inc. Common Stock",NYSE,US
 OOSP,OOSP,Obra Opportunistic Structured Products ETF,NYSE Arca ETF,US
 OPAD,OPAD,Offerpad Solutions Inc.  - Class A Common Stock,NASDAQ,US
 OPAL,OPAL,OPAL Fuels Inc. - Class A Common Stock,NASDAQ,US
-OPAY,OPAY,"OPay Limited American Depositary Shares, each representing ten Ordinary Shares",NYSE,US
 OPBK,OPBK,OP Bancorp - Common Stock,NASDAQ,US
 OPCH,OPCH,"Option Care Health, Inc. - Common Stock",NASDAQ,US
 OPEN,OPEN,Opendoor Technologies Inc  - Common Stock,NASDAQ,US
-OPENL,OPENL,"Opendoor Technologies Inc  - Series A Warrants, each whole warrant exercisable to purchase one share of Common Stock at an exercise price of $13.00 per warrant",NASDAQ,US
-OPENW,OPENW,"Opendoor Technologies Inc  - Series K Warrants, each whole warrant exercisable to purchase one share of Common Stock at an exercise price of $9.00 per warrant",NASDAQ,US
-OPENZ,OPENZ,"Opendoor Technologies Inc  - Series Z Warrants, each whole warrant exercisable to purchase one share of Common Stock at an exercise price of $17.00 per warrant",NASDAQ,US
 OPER,OPER,ETF ClearShares Ultra-Short Maturity ETF,NYSE Arca ETF,US
 OPEX,OPEX,Tradr 2X Long OPEN Daily ETF,Cboe BZX ETF,US
 OPFI,OPFI,OppFi Inc. Class A Common Stock,NYSE,US
@@ -14551,6 +14548,7 @@ SOLZ,SOLZ,Solana ETF,NASDAQ ETF,US
 SOMN,SOMN,Southern Company (The) 2025 Series A Corporate Units,NYSE,US
 SON,SON,Sonoco Products Company Common Stock,NYSE,US
 SONM,SONM,"DNA X, Inc. - Common Stock",NASDAQ,US
+SONN,SONN,Southern Company (The) 2026 Series A Corporate Units,NYSE,US
 SONO,SONO,"Sonos, Inc. - Common Stock",NASDAQ,US
 SONY,SONY,Sony Group Corporation American Depositary Shares ,NYSE,US
 SOPH,SOPH,SOPHiA GENETICS SA - Ordinary Shares,NASDAQ,US
@@ -15866,7 +15864,6 @@ UTSI,UTSI,UTStarcom Holdings Corp - Ordinary Shares,NASDAQ,US
 UTSL,UTSL,Direxion Daily Utilities Bull 3X ETF,NYSE Arca ETF,US
 UTWO,UTWO,US Treasury 2 Year Note ETF,NASDAQ ETF,US
 UTWY,UTWY,US Treasury 20 Year Bond ETF,NASDAQ ETF,US
-UTZ,UTZ,Utz Brands Inc Class A Common Stock ,NYSE,US
 UUP,UUP,Invesco DB USD Index Bullish Fund ETF,NYSE Arca ETF,US
 UUPP,UUPP,Principal CLO ETF,Cboe BZX ETF,US
 UUUC,UUUC,Corgi UUUU 2x Daily ETF,Cboe BZX ETF,US
@@ -16828,6 +16825,7 @@ YJ,YJ,Yunji Inc. - American Depository Shares,NASDAQ,US
 YJUN,YJUN,FT Vest International Equity Moderate Buffer ETF - June,Cboe BZX ETF,US
 YLD,YLD,Principal Active High Yield ETF,NYSE Arca ETF,US
 YLDE,YLDE,Franklin ClearBridge Enhanced Income ETF,NASDAQ ETF,US
+YLDS,YLDS,Harbor Arena Structured Income ETF,NYSE Arca ETF,US
 YLDW,YLDW,Westwood Enhanced Income Opportunity ETF,NYSE Arca ETF,US
 YLDY,YLDY,Horizon High Income ETF,Cboe BZX ETF,US
 YMAG,YMAG,YieldMax Magnificent 7 Fund of Option Income ETFs,NYSE Arca ETF,US
