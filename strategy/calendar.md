@@ -44,10 +44,10 @@
 
 ## 企画
 
-- [企画] AIに財布を預けられるか — 「購入のたびに人間が承認」が世界標準になった週に、うちの第3層ルールを答え合わせする
-  （無料 / ブリーフ: strategy/briefs/2026-11-23-ai-wallet-approval.md）
-- [企画] ニュースで Claude を知ったあなたへ — プログラミング未経験の私は、この3ヶ月AI社員と暮らしてきた
-  （無料 / ブリーフ: strategy/briefs/2026-11-23-hello-from-user.md）
+- [執筆済み] AIに財布を預けられるか — 「購入のたびに人間が承認」が世界標準になった週に、うちの第3層ルールを答え合わせする
+  （無料 / ブリーフ: strategy/briefs/2026-11-23-ai-wallet-approval.md / 下書き: articles/drafts/2026-11-23-ai-wallet-approval.md）
+- [執筆済み] ニュースで Claude を知ったあなたへ — プログラミング未経験の私は、この3ヶ月AI社員と暮らしてきた
+  （無料 / ブリーフ: strategy/briefs/2026-11-23-hello-from-user.md / 下書き: articles/drafts/2026-11-23-hello-from-user.md）
 
 ---
 

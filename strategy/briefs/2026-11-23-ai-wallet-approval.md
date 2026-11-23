@@ -1,5 +1,5 @@
 # ブリーフ: AIに財布を預けられるか — 「購入のたびに人間が承認」が世界標準になった週に、うちの第3層ルールを答え合わせする
-- 状態: 未着手
+- 状態: 執筆済み
 - 種別: 無料（集客・ニュース読み解き。有料「何をどこまで任せるか」への導線）
 - 想定読者: 「AIが買い物まで代行する」ニュースを見て、便利さと不安の
   両方を感じた人。AIエージェントに支払い・契約系の仕事を任せるか
@@ -38,3 +38,20 @@
   - https://techcrunch.com/2026/11/13/chatgpts-new-wallet-lets-ai-agents-shop-and-check-out-for-you/
   - https://www.cnbc.com/2026/11/13/openai-chatgpt-wallet-dot-purchases.html
   - https://claude.com/resources/articles/claude-duet
+
+---
+## ライターより（2026-11-24）
+
+- 参考のうち itmedia.co.jp / techcrunch.com / cnbc.com はライターの
+  作業環境から到達不可（DNS解決不可）で、ChatGPT Wallet の仕様は
+  一次確認できていません。本文は全箇所を「〜と報じられています」の
+  伝聞粒度で書き、本文と出典の両方に「報道の記載・公式ページでの確認は
+  未了」と明記しました。断定に直す場合は編集長の環境での一次確認を
+  お願いします。
+- Duet は公式ページを確認日2026-11-24で再確認（off-limits の原文
+  "A few things are off-limits even with your approval..." を取得済み）。
+  あわせて「仮想カードで支払い実カード番号は共有しない」「支払い前に
+  内容を提示して承認待ち」も同ページで確認し、構成2に使用。
+  Claude Code 自動モードは確認日2026-11-12 の照合結果を使用。
+- GitHub の予算上限（1回10ドル）は備考の規定どおり不使用
+  （リサーチ記録でも一次未確認のため）。
