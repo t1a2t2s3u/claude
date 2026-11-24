@@ -4094,6 +4094,7 @@ AIIA-U,AIIA.U,"AI Infrastructure Acquisition Corp. Units, each consisting of one
 AIIO,AIIO,Robo.ai Inc. - Class B Ordinary Shares,NASDAQ,US
 AIIOW,AIIOW,Robo.ai Inc. - Warrant,NASDAQ,US
 AIIR,AIIR,Air Global PLC - Ordinary shares,NASDAQ,US
+AIL,AIL,GraniteShares 2x Long Anthropic Daily ETF,NASDAQ ETF,US
 AIM,AIM,AIM ImmunoTech Inc. Common Stock,NYSE American,US
 AIMD,AIMD,"Ainos, Inc. - Common Stock",NASDAQ,US
 AIMDW,AIMDW,"Ainos, Inc. - warrants",NASDAQ,US
@@ -4194,6 +4195,7 @@ ALLR,ALLR,"Allarity Therapeutics, Inc. - Common stock",NASDAQ,US
 ALLT,ALLT,Allot Ltd. - Ordinary Shares,NASDAQ,US
 ALLW,ALLW,State Street Bridgewater All Weather ETF,NASDAQ ETF,US
 ALLY,ALLY,Ally Financial Inc. Common Stock,NYSE,US
+ALLZ,ALLZ,Zacks All-Cap Core ETF,Cboe BZX ETF,US
 ALM,ALM,Almonty Industries Inc. - Common Shares,NASDAQ,US
 ALMR,ALMR,"Alamar Biosciences, Inc. - Class A common stock",NASDAQ,US
 ALMS,ALMS,Alumis Inc. - Common Stock,NASDAQ,US
@@ -4321,6 +4323,7 @@ AMZY,AMZY,YieldMax AMZN Option Income Strategy ETF,NYSE Arca ETF,US
 AMZZ,AMZZ,GraniteShares 2x Long AMZN Daily ETF,NASDAQ ETF,US
 AN,AN,"AutoNation, Inc. Common Stock",NYSE,US
 ANAB,ANAB,"AnaptysBio, Inc. - Common Stock",NASDAQ,US
+ANDD,ANDD,Leverage Shares 2X Short Anthropic Daily ETF,Cboe BZX ETF,US
 ANDE,ANDE,"The Andersons, Inc. - Common Stock",NASDAQ,US
 ANDG,ANDG,Andersen Group Inc. Class A Common Stock,NYSE,US
 ANEL,ANEL,Defiance Daily Target 2x Long ANET ETF,NASDAQ ETF,US
@@ -4344,10 +4347,21 @@ ANNAW,ANNAW,"AleAnna, Inc. - Warrant",NASDAQ,US
 ANNX,ANNX,"Annexon, Inc. - common stock",NASDAQ,US
 ANPA,ANPA,Rich Sparkle Holdings Limited - Ordinary Shares,NASDAQ,US
 ANRO,ANRO,"Alto Neuroscience, Inc. Common Stock",NYSE,US
+ANS,ANS,GraniteShares 2x Short Anthropic Daily ETF,NASDAQ ETF,US
+ANSS,ANSS,Leverage Shares 1X Short Anthropic Daily ETF,Cboe BZX ETF,US
 ANT,ANT,"Anthropic, PBC - Class A Common Stock",NASDAQ,US
 ANTA,ANTA,Antalpha Platform Holding Company - Class A Ordinary Shares,NASDAQ,US
+ANTC,ANTC,Defiance 2X ANT Long Daily ETF,NASDAQ ETF,US
+ANTD,ANTD,Direxion Daily Anthropic Bear 2X ETF,NASDAQ ETF,US
+ANTO,ANTO,Direxion Daily Anthropic Bull 2X ETF,NASDAQ ETF,US
+ANTQ,ANTQ,Defiance 2X ANT Short Daily ETF,NASDAQ ETF,US
+ANTT,ANTT,Tradr 2X Long Anthropic Daily ETF,Cboe BZX ETF,US
+ANTU,ANTU,ProShares Ultra Anthropic,NASDAQ ETF,US
 ANTW,ANTW,Anthropic AI Lab Ecosystem ETF,NYSE Arca ETF,US
 ANTX,ANTX,"AN2 Therapeutics, Inc. - Common Stock",NASDAQ,US
+ANTY,ANTY,ProShares UltraShort Anthropic,NASDAQ ETF,US
+ANTZ,ANTZ,Tradr 2X Short Anthropic Daily ETF,Cboe BZX ETF,US
+ANUU,ANUU,Leverage Shares 2X Long Anthropic Daily ETF,Cboe BZX ETF,US
 ANV,ANV,GraniteShares Autocallable NVDA ETF,NASDAQ ETF,US
 ANVS,ANVS,"Annovis Bio, Inc. Common Stock",NYSE,US
 AOA,AOA,iShares Core 80/20 Aggressive Allocation ETF,NYSE Arca ETF,US
@@ -4608,6 +4622,7 @@ ATHE,ATHE,Alterity Therapeutics Limited - American Depositary Shares,NASDAQ,US
 ATHM,ATHM,"Autohome Inc. American Depositary Shares, each representing four class A ordinary shares.",NYSE,US
 ATHR,ATHR,"Aether Holdings, Inc. - Common Stock",NASDAQ,US
 ATHS,ATHS,Athene Holding Ltd. 7.250% Fixed-Rate Reset Junior Subordinated Debentures due 2064,NYSE,US
+ATHX,ATHX,2x Anthropic ETF,Cboe BZX ETF,US
 ATI,ATI,ATI Inc. Common Stock,NYSE,US
 ATLC,ATLC,Atlanticus Holdings Corporation - Common Stock,NASDAQ,US
 ATLCL,ATLCL,Atlanticus Holdings Corporation - 6.125% Senior Notes due 2026,NASDAQ,US
@@ -4735,6 +4750,7 @@ AVXC,AVXC,Avantis Emerging Markets ex-China Equity ETF,NASDAQ ETF,US
 AVXL,AVXL,Anavex Life Sciences Corp. - Common Stock,NASDAQ,US
 AVXX,AVXX,Defiance Daily Target 2x Long AVAV ETF,NASDAQ ETF,US
 AVY,AVY,Avery Dennison Corporation Common Stock,NYSE,US
+AVZO,AVZO,"Avenzo Therapeutics, Inc. - Common Stock",NASDAQ,US
 AWAY,AWAY,Amplify Travel Tech ETF,NYSE Arca ETF,US
 AWF,AWF,Alliancebernstein Global High Income Fund,NYSE,US
 AWI,AWI,Armstrong World Industries Inc Common Stock,NYSE,US
@@ -5145,10 +5161,9 @@ BIOT,BIOT,Instinct Bio Technical Company Holdings Inc. - Common stock,NASDAQ,US
 BIOTW,BIOTW,Instinct Bio Technical Company Holdings Inc. - Warrants,NASDAQ,US
 BIOX,BIOX,Bioceres Crop Solutions Corp. - Ordinary Shares,NASDAQ,US
 BIOY,BIOY,GraniteShares YieldBOOST Biotech ETF,NASDAQ ETF,US
-BIP,BIP,Brookfield Infrastructure Partners LP Limited Partnership Units,NYSE,US
-BIP-PA,BIP$A,"Brookfield Infrastructure Partners LP 5.125% Class A Preferred Limited Partnership Units, Series 13",NYSE,US
-BIP-PB,BIP$B,"Brookfield Infrastructure Partners LP 5.000% Class A Preferred Limited Partnership Units, Series 14",NYSE,US
-BIPC,BIPC,Brookfield Infrastructure Corporation Brookfield Infrastructure Corporation,NYSE,US
+BIP,BIP,Brookfield Infrastructure Partners Inc. Class A Subordinate Voting Shares,NYSE,US
+BIPF-PA,BIPF$A,"Brookfield Infrastructure Partners LP 5.125% Class A Preferred Limited Partnership Units, Series 13",NYSE,US
+BIPF-PB,BIPF$B,"Brookfield Infrastructure Partners LP 5.000% Class A Preferred Limited Partnership Units, Series 14",NYSE,US
 BIPH,BIPH,Brookfield Infrastructure Corporation 5.000% Subordinated Notes due 2081,NYSE,US
 BIPI,BIPI,BIP Bermuda Holdings I Limited 5.125% Perpetual Subordinated Notes,NYSE,US
 BIPJ,BIPJ,Brookfield Infrastructure Corporation 7.250% Subordinated Notes due 2084,NYSE,US
@@ -5192,9 +5207,6 @@ BKEM,BKEM,BNY Mellon Emerging Markets Equity ETF,NYSE Arca ETF,US
 BKF,BKF,iShares MSCI BIC ETF,NYSE Arca ETF,US
 BKFI,BKFI,BNY Mellon Active Core Bond ETF,NYSE Arca ETF,US
 BKGI,BKGI,BNY Mellon Global Infrastructure Income ETF,Cboe BZX ETF,US
-BKHA,BKHA,Black Hawk Acquisition Corporation - Class A Ordinary Shares,NASDAQ,US
-BKHAR,BKHAR,Black Hawk Acquisition Corporation - Rights,NASDAQ,US
-BKHAU,BKHAU,Black Hawk Acquisition Corporation - Units,NASDAQ,US
 BKHY,BKHY,BNY Mellon High Yield ETF,NYSE Arca ETF,US
 BKIE,BKIE,BNY Mellon International Equity ETF,NYSE Arca ETF,US
 BKKT,BKKT,"Bakkt, Inc. Class A Common Stock",NYSE,US
@@ -6061,6 +6073,7 @@ CJUN,CJUN,Corgi U.S. Equities 15% Structured Buffer ETF - June Series,Cboe BZX E
 CKX,CKX,"CKX Lands, Inc. Common Stock",NYSE American,US
 CL,CL,Colgate-Palmolive Company Common Stock,NYSE,US
 CLAR,CLAR,Clarus Corporation - Common Stock,NASDAQ,US
+CLAU,CLAU,T-REX 2X Long Anthropic Daily Target ETF,Cboe BZX ETF,US
 CLB,CLB,Core Laboratories Inc. Common Stock,NYSE,US
 CLBK,CLBK,"Columbia Financial, Inc. - Common Stock",NASDAQ,US
 CLBR,CLBR,Colombier Acquisition Corp. III Class A Ordinary Shares,NYSE,US
@@ -6114,6 +6127,7 @@ CLVT,CLVT,Clarivate Plc Ordinary Shares,NYSE,US
 CLW,CLW,Clearwater Paper Corporation Common Stock,NYSE,US
 CLWT,CLWT,Euro Tech Holdings Company Limited - Ordinary Shares,NASDAQ,US
 CLX,CLX,Clorox Company (The) Common Stock,NYSE,US
+CLYD,CLYD,"Clywedog Therapeutics Holdings, Inc. - Common Stock",NASDAQ,US
 CLYM,CLYM,"Climb Bio, Inc. - Common Stock",NASDAQ,US
 CM,CM,Canadian Imperial Bank of Commerce Common Stock,NYSE,US
 CMAG,CMAG,Corgi Mag 7 ETF,Cboe BZX ETF,US
@@ -6859,6 +6873,7 @@ DISK,DISK,Tema Memory ETF,NYSE Arca ETF,US
 DISV,DISV,Dimensional International Small Cap Value ETF,Cboe BZX ETF,US
 DIT,DIT,AMCON Distributing Company Common Stock,NYSE American,US
 DIV,DIV,Global X Super Dividend ETF,NYSE Arca ETF,US
+DIVA,DIVA,AB Equity Income ETF,NYSE Arca ETF,US
 DIVB,DIVB,iShares Core Dividend ETF,Cboe BZX ETF,US
 DIVD,DIVD,Altrius Global Dividend ETF,NASDAQ ETF,US
 DIVE,DIVE,Dana Concentrated Dividend ETF,NYSE Arca ETF,US
@@ -7399,6 +7414,7 @@ ENHA,ENHA,Enhanced Group Inc. Class A Common Stock,NYSE,US
 ENHE,ENHE,iShares Enhanced Emerging Markets Active ETF,NASDAQ ETF,US
 ENHI,ENHI,iShares Enhanced International Active ETF,NASDAQ ETF,US
 ENHU,ENHU,iShares Enhanced Large Cap Core Active ETF,NASDAQ ETF,US
+ENHV,ENHV,iShares Enhanced Large Cap Value Active ETF,NASDAQ ETF,US
 ENIC,ENIC,Enel Chile S.A. American Depositary Shares (Each representing 50 shares of Common Stock),NYSE,US
 ENJ,ENJ,"Entergy New Orleans, LLC First Mortgage Bonds, 5.0% Series due December 1, 2052",NYSE,US
 ENLT,ENLT,Enlight Renewable Energy Ltd. - Ordinary Shares,NASDAQ,US
@@ -7627,6 +7643,8 @@ EVOXW,EVOXW,Evolution Global Acquisition Corp - Warrants,NASDAQ,US
 EVPF,EVPF,Eaton Vance Preferred Securities and Income ETF,NASDAQ ETF,US
 EVR,EVR,Evercore Inc. Class A Common Stock,NYSE,US
 EVRG,EVRG,"Evergy, Inc. - Common Stock",NASDAQ,US
+EVRL,EVRL,Everli Global Holdings - Class A Ordinary Shares,NASDAQ,US
+EVRLW,EVRLW,Everli Global Holdings - Warrant,NASDAQ,US
 EVSB,EVSB,Eaton Vance Ultra-Short Income ETF,NYSE Arca ETF,US
 EVSD,EVSD,Eaton Vance Short Duration Income ETF,NASDAQ ETF,US
 EVSM,EVSM,Eaton Vance Short Duration Municipal Income ETF,NYSE Arca ETF,US
@@ -8551,7 +8569,7 @@ GEVO,GEVO,"Gevo, Inc. - Common Stock",NASDAQ,US
 GEVX,GEVX,Tradr 2X Long GEV Daily ETF,Cboe BZX ETF,US
 GEW,GEW,Cambria Global EW ETF,NASDAQ ETF,US
 GF,GF,"New Germany Fund, Inc. (The) Common Stock",NYSE,US
-GFAI,GFAI,"Guardforce AI Co., Limited - Ordinary Shares",NASDAQ,US
+GFAI,GFAI,"Guardforce AI Co., Limited - Class A Ordinary Shares",NASDAQ,US
 GFEB,GFEB,FT Vest U.S. Equity Moderate Buffer ETF - February,Cboe BZX ETF,US
 GFF,GFF,Griffon Corporation Common Stock,NYSE,US
 GFI,GFI,Gold Fields Limited American Depositary Shares,NYSE,US
@@ -10900,9 +10918,6 @@ MAA,MAA,"Mid-America Apartment Communities, Inc. Common Stock",NYSE,US
 MAAS,MAAS,Maase Inc. - Class A Ordinary Shares,NASDAQ,US
 MAAY,MAAY,GraniteShares YieldBOOST MARA ETF,NASDAQ ETF,US
 MAC,MAC,Macerich Company (The) Common Stock,NYSE,US
-MACI,MACI,Melar Acquisition Corp. I - Class A Ordinary Shares,NASDAQ,US
-MACIU,MACIU,Melar Acquisition Corp. I - Unit,NASDAQ,US
-MACIW,MACIW,Melar Acquisition Corp. I - Warrant,NASDAQ,US
 MADE,MADE,iShares U.S. Manufacturing ETF,NYSE Arca ETF,US
 MAGA,MAGA,Truth Social America First ETF,NYSE Arca ETF,US
 MAGC,MAGC,Roundhill China Magnificent Seven ETF,Cboe BZX ETF,US
@@ -13665,7 +13680,6 @@ RJVI,RJVI,RJ Eagle Vertical Income ETF,NYSE Arca ETF,US
 RKDA,RKDA,"Arcadia Biosciences, Inc. - Common Stock",NASDAQ,US
 RKLB,RKLB,Rocket Lab Corporation - Common Stock,NASDAQ,US
 RKLX,RKLX,Defiance Daily Target 2X Long RKLB ETF,NASDAQ ETF,US
-RKNG,RKNG,Defiance Retail Kings ETF,NASDAQ ETF,US
 RKSG,RKSG,Ruk Strategic Growth ETF,NYSE Arca ETF,US
 RKT,RKT,"Rocket Companies, Inc. Class A Common Stock",NYSE,US
 RKTO,RKTO,Rocket One Inc. - Common Stock,NASDAQ,US
@@ -13680,7 +13694,6 @@ RLMD,RLMD,"Relmada Therapeutics, Inc. - Common Stock",NASDAQ,US
 RLTY,RLTY,Cohen & Steers Real Estate Opportunities and Income Fund Common Shares of Beneficial Interest,NYSE,US
 RLX,RLX,"RLX Technology Inc. American Depositary Shares, each representing the right to receive one (1) Class A ordinary share",NYSE,US
 RLY,RLY,State Street Multi-Asset Real Return ETF,NYSE Arca ETF,US
-RLYB,RLYB,Rallybio Corporation - Common Stock,NASDAQ,US
 RM,RM,Regional Management Corp. Common Stock,NYSE,US
 RMBC,RMBC,Corgi RMBS 2x Daily ETF,Cboe BZX ETF,US
 RMBI,RMBI,"Richmond Mutual Bancorporation, Inc. - Common Stock",NASDAQ,US
@@ -14726,7 +14739,6 @@ SRI,SRI,"Stoneridge, Inc. Common Stock",NYSE,US
 SRJN,SRJN,Spire Inc. 6.375% Junior Subordinated Notes due 2086,NYSE,US
 SRL,SRL,Scully Royalty Ltd.,NYSE,US
 SRLN,SRLN,State Street Blackstone Senior Loan ETF,NYSE Arca ETF,US
-SROI,SROI,Calamos Antetokounmpo Global Sustainable Equities ETF,NYSE Arca ETF,US
 SRPT,SRPT,"Sarepta Therapeutics, Inc. - Common Stock",NASDAQ,US
 SRRK,SRRK,Scholar Rock Holding Corporation - Common Stock,NASDAQ,US
 SRS,SRS,ProShares UltraShort Real Estate,NYSE Arca ETF,US
@@ -15982,6 +15994,7 @@ VERA,VERA,"Vera Therapeutics, Inc. - Class A Common Stock",NASDAQ,US
 VERI,VERI,"Veritone, Inc. - Common Stock",NASDAQ,US
 VERU,VERU,Veru Inc. - Common Stock,NASDAQ,US
 VERX,VERX,"Vertex, Inc. - Class A Common Stock",NASDAQ,US
+VESI,VESI,"Vesicor Therapeutics Holdings, Inc. - Class A Ordinary Shares",NASDAQ,US
 VET,VET,Vermilion Energy Inc. Common (Canada),NYSE,US
 VETZ,VETZ,Academy Veteran Bond ETF,NYSE Arca ETF,US
 VEU,VEU,Vanguard FTSE All World Ex US ETF,NYSE Arca ETF,US
@@ -16874,6 +16887,7 @@ ZBAO,ZBAO,Zhibao Technology Inc. - Class A Ordinary Shares,NASDAQ,US
 ZBH,ZBH,"Zimmer Biomet Holdings, Inc. Common Stock",NYSE,US
 ZBIO,ZBIO,"Zenas BioPharma, Inc. - Common Stock",NASDAQ,US
 ZBRA,ZBRA,Zebra Technologies Corporation - Class A Common Stock,NASDAQ,US
+ZCAP,ZCAP,Zacks Small-Cap Core ETF,Cboe BZX ETF,US
 ZCBA,ZCBA,Global X Zero Coupon Bond 2030 ETF,NYSE Arca ETF,US
 ZCBB,ZCBB,Global X Zero Coupon Bond 2031 ETF,NYSE Arca ETF,US
 ZCBC,ZCBC,Global X Zero Coupon Bond 2032 ETF,NYSE Arca ETF,US
@@ -16889,6 +16903,7 @@ ZDEK,ZDEK,Innovator Equity Defined Protection ETF - 1 Yr December,Cboe BZX ETF,U
 ZDGE,ZDGE,"Zedge, Inc. Class B Common Stock ",NYSE American,US
 ZDIS,ZDIS,Virtus Zevenbergen Discovery Growth ETF,NYSE Arca ETF,US
 ZECP,ZECP,Zacks Earnings Consistent Portfolio ETF,Cboe BZX ETF,US
+ZECX,ZECX,2x ZCSH ETF,NYSE Arca ETF,US
 ZENA,ZENA,"ZenaTech, Inc. - Common Stock",NASDAQ,US
 ZEO,ZEO,Zeo Energy Corporation - Class A Common Stock,NASDAQ,US
 ZEOWW,ZEOWW,Zeo Energy Corporation - Warrants,NASDAQ,US
