@@ -6276,7 +6276,6 @@ COPR,COPR,Idaho Copper Corporation Common Stock,NYSE American,US
 COPR-W,COPR.W,Idaho Copper Corporation Common Stock Purchase Warrant,NYSE American,US
 COPX,COPX,Global X Copper Miners ETF,NYSE Arca ETF,US
 COPY,COPY,"Tweedy, Browne Insider + Value ETF",NYSE Arca ETF,US
-COPZ,COPZ,Defiance Daily Target 2X Long Copper Miners ETF,NYSE Arca ETF,US
 COR,COR,"Cencora, Inc. Common Stock",NYSE,US
 CORB,CORB,AB Core Bond ETF,NYSE Arca ETF,US
 CORD,CORD,T-REX 2X Inverse CRWV Daily Target ETF,Cboe BZX ETF,US
@@ -6312,7 +6311,6 @@ CPER,CPER,United States Copper Index Fund ETV,NYSE Arca ETF,US
 CPF,CPF,Central Pacific Financial Corp New,NYSE,US
 CPHC,CPHC,Canterbury Park Holding Corporation - Common Stock,NASDAQ,US
 CPHI,CPHI,"China Pharma Holdings, Inc. Common Stock",NYSE American,US
-CPHY,CPHY,F/m Compoundr High Yield Bond ETF,NASDAQ ETF,US
 CPII,CPII,American Beacon Ionic Inflation Protection ETF,NYSE Arca ETF,US
 CPIX,CPIX,Cumberland Pharmaceuticals Inc. - Common Stock,NASDAQ,US
 CPK,CPK,Chesapeake Utilities Corporation Common Stock,NYSE,US
@@ -7171,7 +7169,6 @@ EBF,EBF,"Ennis, Inc. Common Stock",NYSE,US
 EBI,EBI,Longview Advantage ETF,NASDAQ ETF,US
 EBIT,EBIT,Harbor AlphaEdge Small Cap Earners ETF,NYSE Arca ETF,US
 EBIZ,EBIZ,Global X E-commerce ETF,NASDAQ ETF,US
-EBMT,EBMT,"Eagle Bancorp Montana, Inc. - Common Stock",NASDAQ,US
 EBND,EBND,State Street SPDR Bloomberg Emerging Markets Local Bond ETF,NYSE Arca ETF,US
 EBON,EBON,Ebang International Holdings Inc. - Class A Ordinary Shares,NASDAQ,US
 EBS,EBS,Emergent BioSolutions Inc. Common Stock,NYSE,US
@@ -9816,9 +9813,6 @@ IPAV,IPAV,Global X Infrastructure Development ex-U.S. ETF,Cboe BZX ETF,US
 IPAY,IPAY,Amplify Digital Payments ETF,NYSE Arca ETF,US
 IPB,IPB,"Merrill Lynch & Co., Inc. 6.0518% Index Plus Trust Certificates Series 2003-1",NYSE ETF,US
 IPDN,IPDN,"Professional Diversity Network, Inc. - Common Stock",NASDAQ,US
-IPFX,IPFX,Inflection Point Acquisition Corp. VI - Class A Ordinary Shares,NASDAQ,US
-IPFXU,IPFXU,Inflection Point Acquisition Corp. VI - Units,NASDAQ,US
-IPFXW,IPFXW,Inflection Point Acquisition Corp. VI - Warrant,NASDAQ,US
 IPGP,IPGP,IPG Photonics Corporation - Common Stock,NASDAQ,US
 IPHA,IPHA,Innate Pharma S.A. - American Depositary Shares,NASDAQ,US
 IPHX,IPHX,Inflection Point Acquisition Corp. VIII - Class A Ordinary Shares,NASDAQ,US
@@ -9960,6 +9954,7 @@ IVAL,IVAL,Alpha Architect International Quantitative Value ETF,NASDAQ ETF,US
 IVDA,IVDA,"Iveda Solutions, Inc. - Common Stock",NASDAQ,US
 IVDAW,IVDAW,"Iveda Solutions, Inc. - Warrant",NASDAQ,US
 IVE,IVE,iShares S&P 500 Value ETF,NYSE Arca ETF,US
+IVEA,IVEA,Dan IVES Wedbush AI Autocallable Income ETF,NYSE Arca ETF,US
 IVEP,IVEP,Dan IVES Wedbush AI Power & Infrastructure ETF,NYSE Arca ETF,US
 IVES,IVES,Dan IVES Wedbush AI Revolution ETF,NYSE Arca ETF,US
 IVF,IVF,"INVO Fertility, Inc. - Common Stock",NASDAQ,US
@@ -10322,7 +10317,6 @@ KDVD,KDVD,Keeley Dividend ETF,NYSE Arca ETF,US
 KE,KE,"Kimball Electronics, Inc. - Common Stock",NASDAQ,US
 KEAT,KEAT,Keating Active ETF,NASDAQ ETF,US
 KEEL,KEEL,Keel Infrastructure Corp. - Common Stock,NASDAQ,US
-KEEX,KEEX,Defiance Daily Target 2x Long KEEL ETF,Cboe BZX ETF,US
 KELYA,KELYA,"Kelly Services, Inc. - Class A Common Stock",NASDAQ,US
 KELYB,KELYB,"Kelly Services, Inc. - Class B Common Stock",NASDAQ,US
 KEMQ,KEMQ,KraneShares Public-Private Emerging Markets Internet and Technology ETF,NYSE Arca ETF,US
@@ -11819,7 +11813,7 @@ NI,NI,NiSource Inc Common Stock,NYSE,US
 NIC,NIC,Nicolet Bankshares Inc. Common Stock,NYSE,US
 NICE,NICE,NICE Ltd - American Depositary Shares each representing one Ordinary Share,NASDAQ,US
 NICM,NICM,Nicola Mining Inc. - American Depositary Shares,NASDAQ,US
-NICO,NICO,Hexis Active Nicotine Engagement ETF,NYSE Arca ETF,US
+NICO,NICO,Hexis Active Nicotine Engagement ETF,US ETF,US
 NIE,NIE,Virtus Equity & Convertible Income Fund Common Shares of Beneficial Interest,NYSE,US
 NIHI,NIHI,NEOS MSCI EAFE High Income ETF,Cboe BZX ETF,US
 NIKI,NIKI,"Niki BioSolutions, Inc. - Common Stock",NASDAQ,US
@@ -12176,6 +12170,7 @@ OBE,OBE,Obsidian Energy Ltd. Common Shares,NYSE American,US
 OBIL,OBIL,US Treasury 12 Month Bill ETF,NASDAQ ETF,US
 OBIO,OBIO,"Orchestra BioMed Holdings, Inc. - Ordinary Shares",NASDAQ,US
 OBK,OBK,"Origin Bancorp, Inc. Common Stock",US,US
+OBMT,OBMT,"Opportunity Bancorp, Inc. - Common Stock",NASDAQ,US
 OBND,OBND,State Street Loomis Sayles Opportunistic Bond ETF,Cboe BZX ETF,US
 OBOR,OBOR,KraneShares MSCI One Belt One Road Index ETF,NYSE Arca ETF,US
 OBT,OBT,"Orange County Bancorp, Inc. - Common Stock",NASDAQ,US
@@ -13373,6 +13368,8 @@ QSIG,QSIG,WisdomTree U.S. Short Term Corporate Bond Fund,Cboe BZX ETF,US
 QSIX,QSIX,Pacer Metaurus Nasdaq 100 Dividend Multiplier 600 ETF,NASDAQ ETF,US
 QSML,QSML,WisdomTree U.S. SmallCap Quality Growth Fund,NASDAQ ETF,US
 QSOL,QSOL,Invesco Galaxy Solana ETF,Cboe BZX ETF,US
+QSPC,QSPC,"Quantum Space, Inc. Class A-1 Common Stock",NYSE,US
+QSPC-W,QSPC.W,"Quantum Space, Inc. Warrants, each whole warrant exercisable for one share of Class A-1 Common Stock at an exercise price of $11.50 per share",NYSE American,US
 QSPT,QSPT,FT Vest Nasdaq-100 Buffer ETF - September,Cboe BZX ETF,US
 QSR,QSR,Restaurant Brands International Inc. Common Shares,NYSE,US
 QSU,QSU,Defiance Daily Target 2X Long QS ETF,NYSE Arca ETF,US
@@ -13478,7 +13475,6 @@ RC,RC,Ready Capital Corporation Common Stock,NYSE,US
 RC-PC,RC$C,Ready Capital Corporation 6.25% Series C Cumulative Convertible Preferred Stock,NYSE,US
 RC-PE,RC$E,Ready Capital Corporation 6.50% Series E Cumulative Redeemable Preferred Stock,NYSE,US
 RCAT,RCAT,"Red Cat Holdings, Inc. - Common Stock",NASDAQ,US
-RCAX,RCAX,Defiance Daily Target 2x Long RCAT ETF,NASDAQ ETF,US
 RCBC,RCBC,River City Bank - Common stock,NASDAQ,US
 RCD,RCD,Ready Capital Corporation 9.00% Senior Notes due 2029,NYSE,US
 RCEL,RCEL,"Avita Medical, Inc. - Common Stock",NASDAQ,US
@@ -16798,6 +16794,7 @@ YAAS,YAAS,Youxin Technology Ltd - Class A Ordinary shares,NASDAQ,US
 YALA,YALA,"Yalla Group Limited American Depositary Shares, each representing one Class A Ordinary Share",NYSE,US
 YALL,YALL,Truth Social God Bless America ETF,NYSE Arca ETF,US
 YANG,YANG,Direxion Daily FTSE China Bear 3X ETF,NYSE Arca ETF,US
+YANT,YANT,YieldMax ANT Option Income Strategy ETF,NYSE Arca ETF,US
 YARW,YARW,"Yarrow Bioscience, Inc. - Common Stock",NASDAQ,US
 YASX,YASX,Yorkville America Space Index ETF,NYSE Arca ETF,US
 YB,YB,Yuanbao Inc. - American Depositary Shares,NASDAQ,US
