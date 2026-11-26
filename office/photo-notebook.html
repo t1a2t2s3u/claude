@@ -1,0 +1,617 @@
+<title>現場写真庫</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700&display=swap">
+<style>
+  /* 現場で片手で使う1カラム。上: 写真を入れる → 写真庫。下: 撮ってほしい写真のリスト */
+  :root {
+    --bg: #f4f8f9;
+    --surface: #ffffff;
+    --surface-2: #eaf2f5;
+    --ink: #14242b;
+    --ink-muted: #5d7079;
+    --line: #d9e5ea;
+    --brand: #0b4a5f;
+    --accent: #d1551a;
+    --done: #1d7a5c;
+    --warn-bg: #fdf0e6;
+    --font-display: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    --font-body: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d1619; --surface: #152126; --surface-2: #1c2b31;
+      --ink: #e4edf0; --ink-muted: #94a8b0; --line: #26373e;
+      --brand: #5ec4dd; --accent: #f0864a; --done: #4fc79b; --warn-bg: #2e231c;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1619; --surface: #152126; --surface-2: #1c2b31;
+    --ink: #e4edf0; --ink-muted: #94a8b0; --line: #26373e;
+    --brand: #5ec4dd; --accent: #f0864a; --done: #4fc79b; --warn-bg: #2e231c;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: var(--font-body); font-size: 15px; line-height: 1.75;
+    margin: 0;
+  }
+  .wrap { max-width: 46rem; margin: 0 auto; padding-inline: 16px; padding-block: 0 3rem; }
+  header.top { padding-block: 2.2rem .6rem; }
+  .eyebrow { font-family: var(--font-display); font-weight: 700; font-size: .72rem; letter-spacing: .14em; color: var(--brand); margin: 0 0 .5rem; }
+  h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.7rem, 6vw, 2.3rem); line-height: 1.3; margin: 0 0 .6rem; text-wrap: balance; }
+  .lead { margin: 0; color: var(--ink-muted); font-size: .95rem; }
+  nav.jump { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1rem; }
+  nav.jump a {
+    font-size: .82rem; font-weight: 700; text-decoration: none; color: var(--brand);
+    border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: .3rem .8rem;
+  }
+
+  h2.sec { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; margin: 2.4rem 0 .3rem; }
+  .sec-why { margin: 0 0 1rem; font-size: .88rem; color: var(--ink-muted); }
+
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.05rem; }
+  .note { font-size: .8rem; color: var(--ink-muted); margin: .5rem 0 0; }
+  .note.err { color: var(--accent); }
+
+  /* 写真を入れる */
+  .pick {
+    display: grid; place-items: center; text-align: center; gap: .2rem;
+    border: 2px dashed var(--line); border-radius: 12px; padding: 1.4rem 1rem; cursor: pointer;
+    background: var(--surface-2);
+  }
+  .pick strong { font-family: var(--font-display); font-size: 1.05rem; color: var(--brand); }
+  .pick span { font-size: .8rem; color: var(--ink-muted); }
+  .pick input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .pick:focus-within { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .pending { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .8rem; }
+  .pending img { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+  form.meta { display: grid; gap: .8rem; margin-top: 1rem; }
+  form.meta[hidden] { display: none; }
+  .field { display: grid; gap: .3rem; }
+  .field > span { font-size: .82rem; font-weight: 700; }
+  .field small { font-weight: 400; color: var(--ink-muted); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+  @media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } }
+  select, input[type=text], input[type=date], textarea {
+    font: inherit; font-size: .92rem; color: var(--ink); background: var(--surface);
+    border: 1px solid var(--line); border-radius: 8px; padding: .5rem .6rem; width: 100%; box-sizing: border-box;
+  }
+  textarea { min-height: 3.2rem; resize: vertical; }
+  .seg { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .seg label {
+    font-size: .84rem; border: 1px solid var(--line); border-radius: 99px; padding: .3rem .75rem;
+    background: var(--surface); cursor: pointer; user-select: none;
+  }
+  .seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .seg input:checked + span { color: #fff; }
+  .seg label:has(input:checked) { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .seg label:has(input:focus-visible) { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .btn {
+    font: inherit; font-weight: 700; font-size: .95rem; border: 0; border-radius: 10px; cursor: pointer;
+    padding: .7rem 1rem; background: var(--brand); color: #fff;
+  }
+  .btn[disabled] { opacity: .5; cursor: default; }
+  .btn.ghost { background: transparent; color: var(--brand); border: 1px solid var(--line); }
+  .btn.danger { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+  .privacy { background: var(--surface-2); border-radius: 10px; padding: .7rem .85rem; font-size: .84rem; }
+  .privacy b { color: var(--accent); }
+
+  /* 写真庫 */
+  .filters { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: .9rem; }
+  .filters select { width: auto; font-size: .84rem; padding: .35rem .5rem; }
+  .filters label.only { font-size: .84rem; display: flex; gap: .35rem; align-items: center; }
+  .count { font-size: .82rem; color: var(--ink-muted); margin-left: auto; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .6rem; }
+  .ph {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    display: grid; grid-template-rows: auto 1fr; cursor: pointer; text-align: left; padding: 0; font: inherit; color: inherit;
+  }
+  .ph:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .ph img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; background: var(--surface-2); }
+  .ph .cap { padding: .45rem .55rem .55rem; display: grid; gap: .15rem; }
+  .ph .t { font-size: .82rem; font-weight: 700; line-height: 1.4; }
+  .ph .s { font-size: .72rem; color: var(--ink-muted); line-height: 1.4; }
+  .badge { justify-self: start; font-size: .68rem; font-weight: 700; padding: .05rem .45rem; border-radius: 99px; white-space: nowrap; }
+  .b-ok { background: var(--done); color: #fff; }
+  .b-hold { background: var(--warn-bg); color: var(--accent); border: 1px solid var(--accent); }
+  .b-used { background: var(--surface-2); color: var(--ink-muted); }
+  .empty { color: var(--ink-muted); font-size: .88rem; padding: 1rem 0; }
+
+  dialog { border: 0; border-radius: 14px; padding: 0; width: min(40rem, calc(100vw - 24px)); background: var(--surface); color: var(--ink); }
+  dialog::backdrop { background: rgba(0,0,0,.45); }
+  .dlg-img { width: 100%; max-height: 60vh; object-fit: contain; background: #000; display: block; }
+  .dlg-body { padding: 1rem 1.05rem 1.1rem; display: grid; gap: .8rem; }
+  .dlg-actions { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: space-between; }
+
+  /* 撮影リスト（以前のブログ写真ノート） */
+  .progress-row { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; font-size: .8rem; color: var(--ink-muted); }
+  .progress-count { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .bar { height: 7px; border-radius: 99px; background: var(--surface-2); margin-top: .5rem; overflow: hidden; }
+  .bar span { display: block; height: 100%; width: 0; background: var(--done); border-radius: 99px; transition: width .25s ease; }
+  .rules { background: var(--surface-2); border-radius: 10px; padding: 1rem 1.1rem; margin-top: 1.2rem; }
+  .rules h3 { font-family: var(--font-display); font-size: .85rem; letter-spacing: .06em; margin: 0 0 .6rem; color: var(--brand); }
+  .rules ul { margin: 0; padding-left: 1.1rem; font-size: .88rem; }
+  .rules li { margin-bottom: .25rem; }
+  section.group { margin-top: 2rem; }
+  .group-head { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; margin-bottom: .2rem; }
+  .group-head h3 { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; margin: 0; }
+  .chip { font-size: .7rem; font-weight: 700; letter-spacing: .06em; padding: .15rem .55rem; border-radius: 99px; white-space: nowrap; }
+  .chip-now { background: var(--accent); color: #fff; }
+  .chip-late { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+  .chip-soon { background: var(--surface-2); color: var(--ink-muted); }
+  .group-why { margin: .1rem 0 .9rem; font-size: .85rem; color: var(--ink-muted); }
+  ul.items { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+  .item { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; display: grid; grid-template-columns: auto 1fr; gap: .1rem .75rem; align-items: start; padding: .85rem .95rem; }
+  .item.is-done { background: var(--surface-2); border-color: var(--surface-2); }
+  .box { appearance: none; -webkit-appearance: none; width: 22px; height: 22px; margin: .15rem 0 0; border: 2px solid var(--line); border-radius: 6px; background: var(--surface); display: grid; place-content: center; cursor: pointer; grid-row: span 2; }
+  .box:checked { background: var(--done); border-color: var(--done); }
+  .box:checked::after { content: ""; width: 11px; height: 6px; border-left: 2.5px solid #fff; border-bottom: 2.5px solid #fff; transform: rotate(-45deg) translate(1px, -2px); }
+  .box:disabled { cursor: default; opacity: .45; }
+  .item-name { font-family: var(--font-display); font-weight: 500; font-size: 1rem; margin: 0; line-height: 1.5; min-width: 0; }
+  .item.is-done .item-name { color: var(--ink-muted); text-decoration: line-through; text-decoration-color: var(--line); }
+  .item-why { margin: 0; font-size: .82rem; color: var(--ink-muted); min-width: 0; }
+  .must { color: var(--accent); font-weight: 700; font-size: .78rem; margin-left: .3rem; white-space: nowrap; }
+  footer.end { margin-top: 2.8rem; padding-top: 1.2rem; border-top: 1px solid var(--line); font-size: .85rem; color: var(--ink-muted); }
+  footer.end h2 { font-family: var(--font-display); font-size: .95rem; color: var(--ink); margin: 0 0 .4rem; }
+  footer.end p { margin: 0 0 .6rem; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">辰弥塗装工業 ／ ホームページ・ブログ</p>
+    <h1>現場写真庫</h1>
+    <p class="lead">施工写真・現場の写真を撮りためておく場所です。スマホから入れておけば、ブログの担当がここから選んで記事に使います。LINEで送る必要はありません。</p>
+    <nav class="jump" aria-label="ページ内">
+      <a href="#add">＋ 写真を入れる</a>
+      <a href="#library">写真庫を見る</a>
+      <a href="#wanted">撮ってほしい写真</a>
+    </nav>
+  </header>
+
+  <!-- 写真を入れる -->
+  <h2 class="sec" id="add">写真を入れる</h2>
+  <p class="sec-why">撮ったままの写真でかまいません。入れるときに<strong>位置情報（GPS）などの撮影データを消して</strong>、横1600pxに縮めてから保存します。</p>
+  <div class="card" id="add-card">
+    <p class="note" id="add-off">読み込み中…</p>
+    <div id="add-on" hidden>
+      <label class="pick" id="pick">
+        <input type="file" id="file" accept="image/*" multiple>
+        <strong>📷 写真を選ぶ（何枚でも）</strong>
+        <span>同じ現場・同じ工程の写真をまとめて選ぶと、下の項目を1回入れるだけで済みます</span>
+      </label>
+      <div class="pending" id="pending"></div>
+
+      <form class="meta" id="meta" hidden>
+        <div class="row2">
+          <label class="field"><span>撮影日</span><input type="date" id="f-date"></label>
+          <label class="field"><span>地域 <small>（市町まで。番地は書かない）</small></span>
+            <select id="f-area">
+              <option value="">選ぶ</option>
+              <option>秋田市</option><option>潟上市</option><option>五城目町</option><option>八郎潟町</option>
+              <option>井川町</option><option>大潟村</option><option>その他</option><option>自社・倉庫</option>
+            </select>
+          </label>
+        </div>
+        <div class="field"><span>工程</span>
+          <div class="seg" id="f-stage">
+            <label><input type="radio" name="stage" value="施工前"><span>施工前</span></label>
+            <label><input type="radio" name="stage" value="施工中"><span>施工中</span></label>
+            <label><input type="radio" name="stage" value="施工後"><span>施工後</span></label>
+            <label><input type="radio" name="stage" value="劣化症状"><span>劣化症状</span></label>
+            <label><input type="radio" name="stage" value="道具・車・人"><span>道具・車・人</span></label>
+            <label><input type="radio" name="stage" value="その他"><span>その他</span></label>
+          </div>
+        </div>
+        <div class="field"><span>部位</span>
+          <div class="seg" id="f-part">
+            <label><input type="radio" name="part" value="外壁"><span>外壁</span></label>
+            <label><input type="radio" name="part" value="屋根"><span>屋根</span></label>
+            <label><input type="radio" name="part" value="付帯部"><span>付帯部（雨どい・破風など）</span></label>
+            <label><input type="radio" name="part" value="ベランダ・防水"><span>ベランダ・防水</span></label>
+            <label><input type="radio" name="part" value="その他"><span>その他</span></label>
+          </div>
+        </div>
+        <label class="field"><span>ひとこと <small>（任意: 塗料名・何をしているところか・築年数など）</small></span>
+          <textarea id="f-note" placeholder="例: 錆止めの下塗り。トタン屋根、築30年くらい"></textarea>
+        </label>
+        <label class="field"><span>撮ってほしい写真リストの、どれにあたるか <small>（任意・選ぶとリストにチェックが付きます）</small></span>
+          <select id="f-shot"><option value="">どれでもない</option></select>
+        </label>
+
+        <div class="privacy">
+          <div class="field"><span>ホームページやSNSに載せてよい建物ですか</span>
+            <div class="seg" id="f-perm">
+              <label><input type="radio" name="perm" value="own"><span>自社・自分の建物</span></label>
+              <label><input type="radio" name="perm" value="ok"><span>お客様の許可あり</span></label>
+              <label><input type="radio" name="perm" value="ask"><span>まだ聞いていない</span></label>
+            </div>
+          </div>
+          <div class="field" style="margin-top:.7rem"><span>表札・車のナンバー・郵便物・隣の家・窓に映った室内</span>
+            <div class="seg" id="f-clear">
+              <label><input type="radio" name="clear" value="clear"><span>写っていない</span></label>
+              <label><input type="radio" name="clear" value="crop"><span>写っているかも（切り取りが必要）</span></label>
+            </div>
+          </div>
+          <p class="note">「まだ聞いていない」「写っているかも」でも入れてかまいません。<b>その写真はブログに使わず</b>、確認がとれるまで写真庫で待たせます。</p>
+        </div>
+
+        <button type="submit" class="btn" id="save">写真庫に入れる</button>
+        <p class="note" id="save-note" hidden></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- 写真庫 -->
+  <h2 class="sec" id="library">写真庫</h2>
+  <p class="sec-why">緑の「ブログに使える」が付いた写真だけを、ブログ・Googleの投稿・インスタで使います。写真をタップすると、項目を直したり削除したりできます。</p>
+  <div class="filters">
+    <select id="q-stage" aria-label="工程で絞る"><option value="">工程: すべて</option></select>
+    <select id="q-part" aria-label="部位で絞る"><option value="">部位: すべて</option></select>
+    <label class="only"><input type="checkbox" id="q-ok"> 使える写真だけ</label>
+    <span class="count" id="q-count"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="grid-empty">読み込み中…</p>
+
+  <dialog id="dlg" aria-label="写真の詳細">
+    <img class="dlg-img" id="d-img" alt="">
+    <div class="dlg-body">
+      <div class="row2">
+        <label class="field"><span>撮影日</span><input type="date" id="d-date"></label>
+        <label class="field"><span>地域</span><input type="text" id="d-area"></label>
+      </div>
+      <div class="row2">
+        <label class="field"><span>工程</span><select id="d-stage"></select></label>
+        <label class="field"><span>部位</span><select id="d-part"></select></label>
+      </div>
+      <label class="field"><span>ひとこと</span><textarea id="d-note"></textarea></label>
+      <div class="row2">
+        <label class="field"><span>載せてよい建物か</span>
+          <select id="d-perm"><option value="own">自社・自分の建物</option><option value="ok">お客様の許可あり</option><option value="ask">まだ聞いていない</option></select>
+        </label>
+        <label class="field"><span>表札・ナンバー・隣家など</span>
+          <select id="d-clear"><option value="clear">写っていない</option><option value="crop">写っているかも（切り取りが必要）</option></select>
+        </label>
+      </div>
+      <p class="note" id="d-used"></p>
+      <p class="note" id="d-note-msg" hidden></p>
+      <div class="dlg-actions">
+        <button type="button" class="btn danger" id="d-del">この写真を削除</button>
+        <span style="display:flex;gap:.5rem">
+          <button type="button" class="btn ghost" id="d-close">閉じる</button>
+          <button type="button" class="btn" id="d-save">保存</button>
+        </span>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 撮ってほしい写真（旧ブログ写真ノート） -->
+  <h2 class="sec" id="wanted">撮ってほしい写真</h2>
+  <p class="sec-why">記事に使いたい写真の一覧です。写真庫に入れるときに「どれにあたるか」を選ぶと自動でチェックが付きます。手でチェックしてもかまいません。</p>
+  <div class="card">
+    <div class="progress-row">
+      <span class="progress-count"><span id="done-count">0</span> / <span id="total-count">0</span> 枚</span>
+      <span id="status-text">読み込み中…</span>
+    </div>
+    <div class="bar"><span id="bar-fill"></span></div>
+    <p class="note" id="chk-note" hidden></p>
+  </div>
+  <div class="rules">
+    <h3>撮るときの約束</h3>
+    <ul>
+      <li>明るいうちに撮る（曇りでよい。夕方以降は避ける）</li>
+      <li><strong>寄りと引きの2枚。</strong>寄りだけだと何の部位か伝わらない</li>
+      <li>表札・車のナンバー・近隣の家が写っていないか確認する</li>
+      <li>前後の比較は<strong>同じ位置・同じ角度</strong>で</li>
+      <li>お客様の建物は「ホームページやSNSに載せてもいいですか」と一言もらう</li>
+    </ul>
+  </div>
+  <main id="groups"></main>
+
+  <footer class="end">
+    <h2>この写真庫のしくみ</h2>
+    <p>写真は撮影データ（位置情報など）を消し、横1600pxに縮めてから保存しています。元の写真はスマホに残ります。</p>
+    <p>「まだ聞いていない」「写っているかも」の写真は、ブログの担当が使いません。切り取りが必要な写真は、担当が切り取ってから使います（隣の家が写っている場合など）。</p>
+    <p>写真庫はこのページの持ち主（あなた）と、AI社員だけが見られます。一般には公開されません。</p>
+    <p>撮影リスト最終更新 2026年11月26日</p>
+  </footer>
+</div>
+
+<script>
+  // ===== 撮ってほしい写真（チェックは db の shots/<id>） =====
+  var GROUPS = [
+    {
+      title: "雨漏りの記事", chip: "公開済み", chipClass: "chip-soon",
+      why: "10月6日に公開しました。天井の雨染みは届いて掲載しています。残りは記事に後から足せるので、撮れたときで構いません。",
+      items: [
+        { id: "ame-01", name: "天井や壁の雨染み", why: "記事のサムネイル候補。「これ、うちだ」と気づいてもらう1枚", must: true },
+        { id: "ame-02", name: "ベランダ・屋上の防水層のひび割れ、水たまり", why: "劣化のサインの説明に使います。12月の防水の記事でも使います" },
+        { id: "ame-03", name: "切れた・痩せたコーキング", why: "水の入り口の説明に使います" },
+        { id: "ame-04", name: "散水調査・原因調査をしている様子", why: "「原因を特定してから直す」という説明の裏づけ" },
+        { id: "ame-05", name: "谷板金・棟板金のサビや浮き", why: "水が入りやすい6か所の説明に使います" },
+        { id: "ame-06", name: "軒先のつらら、屋根の雪庇", why: "「すが漏り」の説明。12月のつららの記事でも使います。冬に撮れれば十分です" }
+      ]
+    },
+    {
+      title: "9月から止まっています", chip: "未着", chipClass: "chip-late",
+      why: "前にお願いしたまま届いていないものです。公開済みの記事に後から足せます。",
+      items: [
+        { id: "mit-01", name: "見積書（金額は伏せてよい）", why: "相場の記事のサムネイル。「見積書のどこを見るか」の話なので実物が効きます" },
+        { id: "mit-02", name: "塗料の缶（メーカー名・製品名が見えるもの）", why: "10月13日に2缶いただきました。掲載はしますが、製品名とパックのグレードは結びつけずに書きます" }
+      ]
+    },
+    {
+      title: "屋根（トタン）の記事", chip: "公開済み", chipClass: "chip-soon",
+      why: "10月27日に公開した「屋根塗装は意味がない」の記事です。トタンの写真は記事に後から足せます。屋根に上がって撮るものばかりなので、無理はしないでください。",
+      items: [
+        { id: "yane-01", name: "錆が浮いたトタン屋根の寄り", why: "記事の中心。塗膜が切れたところから錆びる、という話の証拠", must: true },
+        { id: "yane-02", name: "錆止めの下塗りを入れているところ", why: "ホームセンターの塗料で上から塗っても錆が出る、という説明の裏づけ" },
+        { id: "yane-03", name: "穴が開いた・めくれたトタン", why: "ここまで来たら塗装では直らない、という説明に使います" },
+        { id: "yane-04", name: "ケレン（錆落とし）の作業", why: "手間が伝わります。金額の説明の代わりになります" }
+      ]
+    },
+    {
+      title: "これからの記事", chip: "急ぎません", chipClass: "chip-soon",
+      why: "現場で撮れる機会があれば、そのときで構いません。",
+      items: [
+        { id: "yuki-01", name: "雪止め金具の寄り", why: "10月13日にいただき、雪止めの記事に掲載しました" },
+        { id: "yuki-02", name: "屋根に雪が乗った状態、落雪の跡", why: "雪止めの記事（公開済み）に後から足せます。今シーズンで構いません" },
+        { id: "hari-01", name: "反り・浮き・割れたサイディング", why: "塗装と張り替えどっちが安い（公開済み）に後から足せます" },
+        { id: "hari-02", name: "張り替え中の様子", why: "塗装と張り替えどっちが安い（公開済み）に後から足せます" },
+        { id: "nagare-01", name: "工事の流れ 一連（足場→洗浄→養生→下塗り→中塗り→上塗り→完工）", why: "「工事の流れ」の記事にそのまま使えます。1現場を通して撮れると、記事1本ぶんの価値があります" }
+      ]
+    },
+    {
+      title: "いつでも歓迎", chip: "常時", chipClass: "chip-soon",
+      why: "撮りためておくと、どの記事でも使い回せます。劣化症状はセルフチェックのページでいま借り物の写真を使っているので、自社の現場のものに差し替えたいところです。",
+      items: [
+        { id: "jirei-01", name: "施工事例の before / after", why: "今1件しかありません。塗装でいちばん問い合わせにつながるページです", must: true },
+        { id: "maku-01", name: "垂れ幕を掛けた現場の全景", why: "現場看板が実際に使われている証拠。信頼材料になります" },
+        { id: "gen-01", name: "外壁のひび割れ（細いもの・太いもの）", why: "劣化症状の寄り。1症状1枚で" },
+        { id: "gen-02", name: "塗膜の膨れ・はがれ", why: "劣化症状の寄り" },
+        { id: "gen-03", name: "北面の苔・藻", why: "劣化症状の寄り" },
+        { id: "gen-04", name: "屋根の色あせ・サビ", why: "劣化症状の寄り" },
+        { id: "gen-05", name: "凍害で表面が崩れた外壁", why: "秋田の記事にしか書けない内容の裏づけになります" }
+      ]
+    }
+  ];
+  var STAGES = ["施工前", "施工中", "施工後", "劣化症状", "道具・車・人", "その他"];
+  var PARTS = ["外壁", "屋根", "付帯部", "ベランダ・防水", "その他"];
+  var PERM_LABEL = { own: "自社・自分の建物", ok: "お客様の許可あり", ask: "許可をまだ聞いていない" };
+
+  var ALL = []; GROUPS.forEach(function (g) { g.items.forEach(function (it) { ALL.push(it); }); });
+  var NAME_OF = {}; ALL.forEach(function (it) { NAME_OF[it.id] = it.name; });
+  var $ = function (id) { return document.getElementById(id); };
+  var db = null, assets = null;
+  var shotState = {}, boxes = {};
+  var photos = []; // {id, ...data}
+
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function note(id, text, isErr) { var n = $(id); n.textContent = text || ""; n.hidden = !text; n.classList.toggle("err", !!isErr); }
+  function usable(p) { return (p.perm === "own" || p.perm === "ok") && p.clear === "clear"; }
+  function today() { var d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); }
+
+  // ----- 撮影リスト -----
+  function renderShots() {
+    var root = $("groups");
+    var sel = $("f-shot");
+    GROUPS.forEach(function (g) {
+      var og = document.createElement("optgroup"); og.label = g.title;
+      var sec = el("section", "group");
+      var head = el("div", "group-head");
+      head.appendChild(el("h3", null, g.title));
+      head.appendChild(el("span", "chip " + g.chipClass, g.chip));
+      sec.appendChild(head);
+      sec.appendChild(el("p", "group-why", g.why));
+      var ul = el("ul", "items");
+      g.items.forEach(function (it) {
+        var o = document.createElement("option"); o.value = it.id; o.textContent = it.name; og.appendChild(o);
+        var li = el("li", "item"); li.id = "row-" + it.id;
+        var box = document.createElement("input");
+        box.type = "checkbox"; box.className = "box"; box.id = "chk-" + it.id; box.disabled = true;
+        box.addEventListener("change", function () { toggleShot(it.id, box.checked); });
+        boxes[it.id] = box; li.appendChild(box);
+        var label = el("label", "item-name", it.name); label.htmlFor = box.id;
+        if (it.must) label.appendChild(el("span", "must", "最優先"));
+        li.appendChild(label);
+        li.appendChild(el("p", "item-why", it.why));
+        ul.appendChild(li);
+      });
+      sel.appendChild(og);
+      sec.appendChild(ul); root.appendChild(sec);
+    });
+    $("total-count").textContent = String(ALL.length);
+  }
+  function paintShots() {
+    var done = 0;
+    ALL.forEach(function (it) {
+      var on = !!shotState[it.id]; if (on) done++;
+      var b = boxes[it.id]; if (b && b.checked !== on) b.checked = on;
+      var row = $("row-" + it.id); if (row) row.classList.toggle("is-done", on);
+    });
+    $("done-count").textContent = String(done);
+    $("bar-fill").style.width = (ALL.length ? done / ALL.length * 100 : 0) + "%";
+    var left = ALL.length - done;
+    $("status-text").textContent = left === 0 ? "全部そろいました" : "あと " + left + " 枚";
+  }
+  function toggleShot(id, on) {
+    if (!db) return;
+    var prev = !!shotState[id]; shotState[id] = on; paintShots();
+    db.doc("shots/" + id).set({ done: on, at: new Date().toISOString() }).catch(function () {
+      shotState[id] = prev; paintShots(); note("chk-note", "保存できませんでした。もう一度押してください。", true);
+    });
+  }
+
+  // ----- 写真を入れる -----
+  var picked = [];
+  function radioVal(name) { var r = document.querySelector('input[name="' + name + '"]:checked'); return r ? r.value : ""; }
+  $("file").addEventListener("change", function () {
+    picked = Array.prototype.slice.call(this.files || []).filter(function (f) { return /^image\//.test(f.type) || /\.(heic|heif)$/i.test(f.name); });
+    var pend = $("pending"); pend.textContent = "";
+    picked.forEach(function (f) { var im = document.createElement("img"); im.alt = ""; im.src = URL.createObjectURL(f); pend.appendChild(im); });
+    $("meta").hidden = picked.length === 0;
+    if (picked.length) {
+      var lm = picked[0].lastModified ? new Date(picked[0].lastModified) : new Date();
+      lm.setMinutes(lm.getMinutes() - lm.getTimezoneOffset());
+      $("f-date").value = lm.toISOString().slice(0, 10);
+      $("save").textContent = "写真庫に入れる（" + picked.length + "枚）";
+    }
+    note("save-note", "");
+  });
+
+  // 画像を読み直して JPEG で描き直す = 位置情報などの撮影データは引き継がれない
+  function reencode(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var w = img.naturalWidth, h = img.naturalHeight, max = 1600;
+        var s = Math.min(1, max / Math.max(w, h));
+        var cw = Math.round(w * s), ch = Math.round(h * s);
+        var c = document.createElement("canvas"); c.width = cw; c.height = ch;
+        c.getContext("2d").drawImage(img, 0, 0, cw, ch);
+        URL.revokeObjectURL(url);
+        c.toBlob(function (b) { b ? resolve({ blob: b, w: cw, h: ch }) : reject(new Error("encode")); }, "image/jpeg", 0.86);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error("decode")); };
+      img.src = url;
+    });
+  }
+
+  $("meta").addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!assets || !db || !picked.length) return;
+    var stage = radioVal("stage"), part = radioVal("part"), perm = radioVal("perm"), clear = radioVal("clear");
+    if (!stage || !part || !perm || !clear) { note("save-note", "工程・部位・載せてよいか・写り込みの4つを選んでください。", true); return; }
+    var meta = {
+      taken: $("f-date").value || today(), area: $("f-area").value, stage: stage, part: part,
+      note: $("f-note").value.trim().slice(0, 500), shot: $("f-shot").value, perm: perm, clear: clear
+    };
+    var btn = $("save"); btn.disabled = true;
+    var files = picked.slice(), okN = 0, ngN = 0;
+    var chain = Promise.resolve();
+    files.forEach(function (f, i) {
+      chain = chain.then(function () {
+        note("save-note", "保存中… " + (i + 1) + " / " + files.length);
+        return reencode(f).then(function (r) {
+          return assets.upload(r.blob, { type: "image/jpeg" }).then(function (up) {
+            var row = Object.assign({}, meta, { asset: up.id, w: r.w, h: r.h, bytes: up.sizeBytes, uploaded_at: new Date().toISOString(), used_in: [] });
+            return db.collection("photos").add(row);
+          });
+        }).then(function () { okN++; }, function (err) {
+          ngN++;
+          if (err && err.code === "quota_or_state") throw err;
+        });
+      });
+    });
+    chain.then(function () {
+      if (meta.shot && okN > 0 && !shotState[meta.shot]) toggleShot(meta.shot, true);
+    }).catch(function () {
+      note("save-note", "保存できる容量を超えました。使わない写真を削除してから入れてください。", true);
+    }).then(function () {
+      btn.disabled = false;
+      if (ngN === 0) {
+        note("save-note", okN + "枚を写真庫に入れました。");
+        picked = []; $("file").value = ""; $("pending").textContent = ""; $("meta").reset(); $("meta").hidden = true;
+      } else {
+        note("save-note", okN + "枚を入れました。" + ngN + "枚は読み込めませんでした（iPhoneの写真なら「互換性優先」の形式で撮るか、スクリーンショットで入れてください）。", true);
+      }
+    });
+  });
+
+  // ----- 写真庫 -----
+  function fillSelect(sel, list, first) {
+    if (first) { var o0 = document.createElement("option"); o0.value = ""; o0.textContent = first; sel.appendChild(o0); }
+    list.forEach(function (v) { var o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o); });
+  }
+  fillSelect($("q-stage"), STAGES); fillSelect($("q-part"), PARTS);
+  fillSelect($("d-stage"), STAGES); fillSelect($("d-part"), PARTS);
+  ["q-stage", "q-part", "q-ok"].forEach(function (id) { $(id).addEventListener("change", renderGrid); });
+
+  function renderGrid() {
+    var st = $("q-stage").value, pt = $("q-part").value, only = $("q-ok").checked;
+    var list = photos.filter(function (p) {
+      return (!st || p.stage === st) && (!pt || p.part === pt) && (!only || usable(p));
+    }).sort(function (a, b) { return String(b.taken || "").localeCompare(String(a.taken || "")) || String(b.uploaded_at || "").localeCompare(String(a.uploaded_at || "")); });
+    var g = $("grid"); g.textContent = "";
+    list.forEach(function (p) {
+      var b = el("button", "ph"); b.type = "button";
+      var im = document.createElement("img"); im.loading = "lazy"; im.alt = (p.stage || "") + " " + (p.part || ""); im.src = "/_blob/" + p.asset;
+      b.appendChild(im);
+      var cap = el("div", "cap");
+      cap.appendChild(el("span", "t", [p.part, p.stage].filter(Boolean).join("・")));
+      cap.appendChild(el("span", "s", [p.taken, p.area].filter(Boolean).join(" ")));
+      if (p.used_in && p.used_in.length) cap.appendChild(el("span", "badge b-used", "使用済み " + p.used_in.length));
+      else if (usable(p)) cap.appendChild(el("span", "badge b-ok", "ブログに使える"));
+      else cap.appendChild(el("span", "badge b-hold", p.perm === "ask" ? "許可の確認待ち" : "切り取りが必要"));
+      b.appendChild(cap);
+      b.addEventListener("click", function () { openDlg(p.id); });
+      g.appendChild(b);
+    });
+    var okN = photos.filter(usable).length;
+    $("q-count").textContent = photos.length ? ("全" + photos.length + "枚・使える" + okN + "枚") : "";
+    $("grid-empty").hidden = list.length > 0;
+    $("grid-empty").textContent = photos.length ? "この条件の写真はありません。" : "まだ写真がありません。上の「写真を入れる」から入れてください。";
+  }
+
+  var cur = null;
+  function openDlg(id) {
+    var p = photos.filter(function (x) { return x.id === id; })[0]; if (!p) return;
+    cur = p;
+    $("d-img").src = "/_blob/" + p.asset;
+    $("d-date").value = p.taken || ""; $("d-area").value = p.area || "";
+    $("d-stage").value = p.stage || "その他"; $("d-part").value = p.part || "その他";
+    $("d-note").value = p.note || ""; $("d-perm").value = p.perm || "ask"; $("d-clear").value = p.clear || "crop";
+    var used = (p.used_in || []).map(function (u) { return typeof u === "string" ? u : (u && u.where) || ""; }).filter(Boolean);
+    $("d-used").textContent = (p.shot && NAME_OF[p.shot] ? "撮影リスト: " + NAME_OF[p.shot] + "。" : "") + (used.length ? "使っている場所: " + used.join("、") : "まだどこにも使っていません。");
+    note("d-note-msg", "");
+    var canEdit = !!db;
+    ["d-date", "d-area", "d-stage", "d-part", "d-note", "d-perm", "d-clear", "d-save"].forEach(function (k) { $(k).disabled = !canEdit; });
+    $("d-del").hidden = !assets;
+    if ($("dlg").showModal) $("dlg").showModal(); else $("dlg").setAttribute("open", "");
+  }
+  function closeDlg() { if ($("dlg").close) $("dlg").close(); else $("dlg").removeAttribute("open"); cur = null; }
+  $("d-close").addEventListener("click", closeDlg);
+  $("d-save").addEventListener("click", function () {
+    if (!cur || !db) return;
+    var upd = {
+      taken: $("d-date").value, area: $("d-area").value.trim().slice(0, 40), stage: $("d-stage").value, part: $("d-part").value,
+      note: $("d-note").value.trim().slice(0, 500), perm: $("d-perm").value, clear: $("d-clear").value, edited_at: new Date().toISOString()
+    };
+    db.doc("photos/" + cur.id).update(upd).then(closeDlg, function () { note("d-note-msg", "保存できませんでした。もう一度押してください。", true); });
+  });
+  $("d-del").addEventListener("click", function () {
+    if (!cur || !db || !assets) return;
+    if ((cur.used_in || []).length && !confirm("この写真はもう記事などに使われています。写真庫から消しても、記事の写真は消えません。削除しますか？")) return;
+    if (!(cur.used_in || []).length && !confirm("この写真を写真庫から削除します。元に戻せません。よろしいですか？")) return;
+    var p = cur;
+    db.doc("photos/" + p.id).delete().then(function () { return assets.delete(p.asset); }).then(closeDlg, function () {
+      note("d-note-msg", "削除できませんでした。もう一度押してください。", true);
+    });
+  });
+
+  // ----- 起動 -----
+  renderShots(); paintShots(); renderGrid();
+  (function () {
+    if (!window.claude || !window.claude.use) { $("add-off").textContent = "写真を入れるのは、claude.ai で開いたときだけ使えます。"; $("grid-empty").textContent = "写真庫は claude.ai で開いたときに表示されます。"; return; }
+    window.claude.use("db").then(function (store) {
+      if (!store) { $("add-off").textContent = "この画面では写真庫を使えません。claude.ai にログインして開き直してください。"; $("grid-empty").textContent = "写真庫を読み込めませんでした。"; return; }
+      db = store;
+      store.collection("shots").onSnapshot(function (snap) {
+        var next = {}; snap.docs.forEach(function (d) { var b = d.data() || {}; if (b.done) next[d.id] = true; });
+        shotState = next; ALL.forEach(function (it) { if (boxes[it.id]) boxes[it.id].disabled = false; }); paintShots();
+      }, function () { note("chk-note", "チェックの読み込みに失敗しました。ページを開き直してください。", true); });
+      store.collection("photos").onSnapshot(function (snap) {
+        photos = snap.docs.map(function (d) { var x = d.data() || {}; x.id = d.id; return x; }).filter(function (x) { return /^[0-9a-f]{32}$/.test(String(x.asset || "")); });
+        renderGrid();
+      }, function () { $("grid-empty").textContent = "写真庫の読み込みに失敗しました。ページを開き直してください。"; });
+    });
+    window.claude.use("assets").then(function (a) {
+      assets = a;
+      if (!a) { $("add-off").textContent = "写真を入れられるのは、このページの持ち主だけです（写真庫は見られます）。"; return; }
+      $("add-off").hidden = true; $("add-on").hidden = false;
+    });
+  })();
+</script>

@@ -25,6 +25,8 @@ description: 辰弥塗装工業の本業SNS担当。会社のInstagram（@tatsum
 - `seo/photo-requests.md` — 写真の撮影・掲載ルール（ストック写真禁止、表札・ナンバー・
   隣家・お客様の建物の許可）
 - `seo/social/queue.md` — 直近の文案（重複を避ける）
+- 現場写真庫（db の `photos`。使い方は `seo/photo-requests.md` の「現場写真庫」）— 写真ありの投稿は
+  ここの「使ってよい」写真から選び、`写真:` 欄に写真の日付・工程を書く
 - `seo/gbp/queue.md` の直近1か月 — MEO担当の投稿と**同じネタを同じ週に出さない**
 - `seo/articles/published/` — 新しく公開されたブログ（告知のネタ）
 

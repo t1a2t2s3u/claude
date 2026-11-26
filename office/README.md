@@ -31,3 +31,9 @@
   毎週の稼働後に `product/pipeline.md` と `product/reports/` の最新から
   書き直し、同じURLに republish する。オフィスボードのリンク列と、
   マップで企画リサーチャーをタップした詳細から開ける。
+- `photo-notebook.html` — 現場写真庫（https://claude.ai/artifact/AX7QcYyqznpZ1vxoJRnqBz 、
+  旧「ブログ写真ノート」を 2026-11-26 に改良）。オーナーがスマホから写真を入れると、
+  ページが長辺1600pxの JPEG に描き直して（位置情報などの撮影データは消える）
+  artifact の assets に保存し、db の `photos/<id>` に工程・部位・地域・掲載許可・
+  写り込みの有無を記録する。下段は撮ってほしい写真のリスト（db の `shots/<id>`）。
+  capabilities は `db` と `assets`。スタッフ側の使い方は `seo/photo-requests.md` の「現場写真庫」。

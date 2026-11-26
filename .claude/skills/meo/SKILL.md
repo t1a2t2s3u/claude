@@ -15,6 +15,8 @@ description: 辰弥塗装工業のMEO担当。Googleビジネスプロフィー�
 
 - `seo/business-profile.md` — **事実の唯一の出典**
 - `seo/gbp/queue.md` — 直近の投稿文案（重複回避のため）
+- 現場写真庫（db の `photos`。使い方は `seo/photo-requests.md` の「現場写真庫」）—
+  投稿に添える写真は、使ってよい印（perm が own／ok かつ clear が clear）のものから選び、`detail` に写真の日付・工程を書く
 
 ## 週次稼働でやること（木曜）
 

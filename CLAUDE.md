@@ -215,6 +215,19 @@ run and republishes it to the same URL. Linked from the office board's
 shortcut row and from the 企画リサーチャー character's detail panel.
 Best-effort, like the other boards.
 
+## Photo library
+
+The painting company's site-photo library ("現場写真庫") — the owner uploads
+job-site photos from a phone (the page re-encodes each to a 1600px JPEG, so
+GPS/EXIF are stripped), tags stage / part / area / publish permission, and
+the shot-request checklist sits below it:
+https://claude.ai/artifact/AX7QcYyqznpZ1vxoJRnqBz
+
+Source: `office/photo-notebook.html`. Index is the db `photos` collection;
+files are artifact assets (fetch with an Artifact `read` and `path` = asset
+id). Only photos with `perm` own/ok and `clear` = clear may be published;
+staff record each use in `used_in`. Rules in `seo/photo-requests.md`.
+
 ## Conventions
 
 - User-facing content (task board, reports, skill instructions) is written in
