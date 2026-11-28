@@ -3982,6 +3982,7 @@ AFJKU,AFJKU,"Aimei Health Technology Co., Ltd - Unit",NASDAQ,US
 AFK,AFK,VanEck Africa Index ETF,NYSE Arca ETF,US
 AFL,AFL,AFLAC Incorporated Common Stock,NYSE,US
 AFLG,AFLG,First Trust Active Factor Large Cap ETF,NYSE Arca ETF,US
+AFLR,AFLR,Aligned Pathway Flourishing ETF,NYSE Arca ETF,US
 AFMC,AFMC,First Trust Active Factor Mid Cap ETF,NYSE Arca ETF,US
 AFOS,AFOS,ARS Focused Opportunity Strategy ETF,NASDAQ ETF,US
 AFRI,AFRI,Forafric Global PLC - Ordinary Shares,NASDAQ,US
@@ -5367,7 +5368,6 @@ BOTJ,BOTJ,"Bank of the James Financial Group, Inc. - Common Stock",NASDAQ,US
 BOTT,BOTT,Themes Humanoid Robotics ETF,NASDAQ ETF,US
 BOTZ,BOTZ,Global X Robotics & Artificial Intelligence ETF,NASDAQ ETF,US
 BOUT,BOUT,CapForce IBD Breakout Opportunities ETF,NYSE Arca ETF,US
-BOW,BOW,Bowhead Specialty Holdings Inc. Common Stock,NYSE,US
 BOX,BOX,"Box, Inc. Class A Common Stock",NYSE,US
 BOXA,BOXA,Alpha Architect Aggregate Bond ETF,Cboe BZX ETF,US
 BOXL,BOXL,Boxlight Corporation - Class A Common Stock,NASDAQ,US
@@ -6583,7 +6583,7 @@ CWPD,CWPD,CWP Premium Dividend ETF,NASDAQ ETF,US
 CWPG,CWPG,CWP Premium Growth ETF,NASDAQ ETF,US
 CWS,CWS,AdvisorShares Focused Equity ETF,NYSE Arca ETF,US
 CWST,CWST,"Casella Waste Systems, Inc. - Class A Common Stock",NASDAQ,US
-CWT,CWT,California Water Service Group Common Stock,NYSE,US
+CWT,CWT,Watermark Utilities Common Stock,NYSE,US
 CWVX,CWVX,Tradr 2X Long CRWV Daily ETF,Cboe BZX ETF,US
 CWY,CWY,GraniteShares YieldBOOST CRWV ETF,NASDAQ ETF,US
 CX,CX,"Cemex, S.A.B. de C.V. Sponsored ADR",NYSE,US
@@ -7098,7 +7098,6 @@ DUSG,DUSG,U.S. Small Cap Growth Portfolio: ETF Class Shares,NASDAQ ETF,US
 DUSL,DUSL,Direxion Daily Industrials Bull 3X ETF,NYSE Arca ETF,US
 DUST,DUST,Direxion Daily Gold Miners Index Bear 2X ETF,NYSE Arca ETF,US
 DUTY,DUTY,U.S. Defense ETF,NYSE Arca ETF,US
-DV,DV,"DoubleVerify Holdings, Inc. Common Stock",NYSE,US
 DVA,DVA,DaVita Inc. Common Stock,NYSE,US
 DVDN,DVDN,Kingsbarn Dividend Opportunity ETF,NYSE Arca ETF,US
 DVGR,DVGR,DAC 3D Dividend Growth ETF,NASDAQ ETF,US
@@ -8837,7 +8836,7 @@ GRBK-PA,GRBK$A,"Green Brick Partners, Inc. Depositary Shares (each representing 
 GRC,GRC,Gorman-Rupp Company (The) Common Stock,NYSE,US
 GRCE,GRCE,"Grace Therapeutics, Inc. - Common Stock",NASDAQ,US
 GRDN,GRDN,"Guardian Pharmacy Services, Inc. Class A Common Stock",NYSE,US
-GRDX,GRDX,GridAI Technologies Corp.  - Common Stock,NASDAQ,US
+GRDX,GRDX,GridAI Power Corp. - Common Stock,NASDAQ,US
 GREK,GREK,Global X MSCI Greece ETF,NYSE Arca ETF,US
 GRF,GRF,"Eagle Capital Growth Fund, Inc. Common Stock",NYSE American,US
 GRFS,GRFS,"Grifols, S.A. - American Depositary Shares",NASDAQ,US
@@ -9066,7 +9065,6 @@ HCOP,HCOP,Hartford Hybrid and Credit Opportunities ETF,NASDAQ ETF,US
 HCOW,HCOW,Amplify COWS Covered Call ETF,NASDAQ ETF,US
 HCRB,HCRB,Hartford Core Bond ETF,Cboe BZX ETF,US
 HCSG,HCSG,"Healthcare Services Group, Inc. - Common Stock",NASDAQ,US
-HCTI,HCTI,"Healthcare Triangle, Inc. - Common Stock",NASDAQ,US
 HCWB,HCWB,HCW Biologics Inc. - Common Stock,NASDAQ,US
 HCXY,HCXY,"Hercules Capital, Inc. 6.25% Notes due 2033",NYSE,US
 HD,HD,"Home Depot, Inc. (The) Common Stock",NYSE,US
@@ -9290,6 +9288,7 @@ HTHT,HTHT,H World Group Limited - American Depositary Shares,NASDAQ,US
 HTLD,HTLD,"Heartland Express, Inc. - Common Stock",NASDAQ,US
 HTLM,HTLM,HomesToLife Ltd - Ordinary Shares,NASDAQ,US
 HTO,HTO,H2O America  - Common Stock,NASDAQ,US
+HTOEU,HTOEU,H2O America  - Equity Units,NASDAQ,US
 HTOO,HTOO,Fusion Fuel Green PLC - Ordinary Shares,NASDAQ,US
 HTRB,HTRB,Hartford Total Return Bond ETF,NYSE Arca ETF,US
 HTT,HTT,"High Templar Tech Limited American depositary shares, each representing one Class A ordinary share",NYSE,US
@@ -11685,7 +11684,7 @@ NBTR,NBTR,Neuberger Total Return Bond ETF,NYSE Arca ETF,US
 NBTX,NBTX,Nanobiotix S.A. - ADSs,NASDAQ,US
 NBXG,NBXG,Neuberger Next Generation Connectivity Fund Inc. Common Stock,NYSE,US
 NC,NC,"NACCO Industries, Inc. Common Stock",NYSE,US
-NCA,NCA,Nuveen California Municipal Value Fund,NYSE,US
+NCA,NCA,Nuveen California Municipal Income Fund Common Stock,NYSE,US
 NCDL,NCDL,Nuveen Churchill Direct Lending Corp. Common Stock,NYSE,US
 NCEL,NCEL,NewcelX Ltd. - Ordinary Shares,NASDAQ,US
 NCEW,NCEW,New Century Logistics (BVI) Limited - Ordinary Shares,NASDAQ,US
@@ -11889,7 +11888,7 @@ NNNN,NNNN,Anbio Biotechnology - Class A Ordinary Shares,NASDAQ,US
 NNOV,NNOV,Innovator Growth-100 Power Buffer ETF - November,Cboe BZX ETF,US
 NNOX,NNOX,NANO-X IMAGING LTD - Ordinary Shares,NASDAQ,US
 NNVC,NNVC,"NanoViricides, Inc. Common Stock",NYSE American,US
-NNY,NNY,Nuveen New York Municipal Value Fund Common Stock,NYSE,US
+NNY,NNY,Nuveen New York Municipal Income Fund Common Stock,NYSE,US
 NOA,NOA,North American Construction Group Ltd. Common Shares (no par),NYSE,US
 NOAH,NOAH,Noah Holdings Limited American Depositary Shares,NYSE,US
 NOBL,NOBL,ProShares S&P 500 Dividend Aristocrats ETF,Cboe BZX ETF,US
@@ -14219,7 +14218,7 @@ SGHT,SGHT,"Sight Sciences, Inc. - Common Stock",NASDAQ,US
 SGI,SGI,Somnigroup International Inc. Common Stock,NYSE,US
 SGLC,SGLC,SGI U.S. Large Cap Core ETF,NYSE Arca ETF,US
 SGLD,SGLD,Scorpio Gold Corporation - Common Stock,NASDAQ,US
-SGLY,SGLY,Singularity Future Technology Ltd. - Common Stock,NASDAQ,US
+SGLY,SGLY,Compower Ltd. - Common Stock,NASDAQ,US
 SGML,SGML,Sigma Lithium Corporation - common shares,NASDAQ,US
 SGMT,SGMT,Sagimet Biosciences Inc. - Series A Common Stock,NASDAQ,US
 SGOL,SGOL,abrdn Physical Gold Shares ETF,NYSE Arca ETF,US
@@ -14574,7 +14573,6 @@ SOUL-U,SOUL.U,"Soulpower Acquisition Corporation Units, each consisting of one C
 SOUN,SOUN,"SoundHound AI, Inc. - Class A Common Stock",NASDAQ,US
 SOUNW,SOUNW,"SoundHound AI, Inc. - Warrant",NASDAQ,US
 SOUX,SOUX,Defiance Daily Target 2X Long SOUN ETF,NASDAQ ETF,US
-SOVF,SOVF,Sovereign's Capital Flourish Fund,NYSE Arca ETF,US
 SOWG,SOWG,Sow Good Inc. - Common Stock,NASDAQ,US
 SOXL,SOXL,Direxion Daily Semiconductor Bull 3X ETF,NYSE Arca ETF,US
 SOXQ,SOXQ,Invesco PHLX Semiconductor ETF,NASDAQ ETF,US
@@ -16228,7 +16226,6 @@ VUSI,VUSI,Voya Ultra Short Income ETF,NYSE Arca ETF,US
 VUSV,VUSV,Vanguard Wellington U.S. Value Active ETF,Cboe BZX ETF,US
 VUZI,VUZI,Vuzix Corporation  - Common Stock,NASDAQ,US
 VV,VV,Vanguard Morningstar Large-Cap ETF,NYSE Arca ETF,US
-VVOS,VVOS,"Vivos Therapeutics, Inc. - Common Stock",NASDAQ,US
 VVPL,VVPL,Vulcan Value Partners ETF,Cboe BZX ETF,US
 VVR,VVR,Invesco Senior Income Trust Common Stock (DE),NYSE,US
 VVV,VVV,Valvoline Inc. Common Stock,NYSE,US
